@@ -5,14 +5,17 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Generated;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.zenith.RenderState;
@@ -21,6 +24,7 @@ import org.zenith.client.modules.impl.misc.NameProtectModule;
 import org.zenith.utility.misc.HudBatchState;
 import org.zenith.utility.misc.KawaseShaderKey;
 import org.zenith.utility.render.ImmediateRenderer;
+import org.zenith.utility.render.OutlineVertexProvider;
 import org.zenith.utility.render.RoundedRectBatch;
 import org.zenith.utility.render.display.base.GlowColor;
 
@@ -281,14 +285,30 @@ public final class MsdfRenderer {
    }
 
    public static void renderTextWithVanillaFallback(
-      MsdfFont var0, Component var1, float var2, Font var3, Object var4, Matrix4f var5, float var6, float var7, float var8, int var9
+      MsdfFont font, Component text, float size, Font vanillaFont, Object unused, Matrix4f matrix, float x, float y, float z, int color
    ) {
-      List<FormattedTextProcessor.TextSegment> var10 = FormattedTextProcessor.processText(var1, var9);
-      float var11 = var6;
+      float cursor = x;
+      List<MsdfRenderer.VanillaRun> vanillaRuns = null;
 
-      for (Object var13_o : (Iterable<?>)(Object)(var10)) {
-         FormattedTextProcessor.TextSegment var13 = (FormattedTextProcessor.TextSegment)var13_o;
-         var11 = renderTextSegmentWithFallback(var0, var3, var4, normalizeTextForMsdf(var13.text()), var2, var13.color(), var5, var11, var7, var8);
+      for (FormattedTextProcessor.TextSegment segment : FormattedTextProcessor.processText(text, color)) {
+         for (FormattedTextProcessor.TextRun run : FormattedTextProcessor.splitRuns(font, segment)) {
+            if (run.msdf()) {
+               renderText(font, run.text(), size, segment.color(), matrix, cursor, y, z);
+               cursor += font.getWidth(run.text(), size);
+            } else {
+               FormattedCharSequence sequence = run.sequence();
+               if (vanillaRuns == null) {
+                  vanillaRuns = new ArrayList<>();
+               }
+
+               vanillaRuns.add(new MsdfRenderer.VanillaRun(sequence, cursor, segment.color()));
+               cursor += vanillaFont.width(sequence) * vanillaTextScale(vanillaFont, size);
+            }
+         }
+      }
+
+      if (vanillaRuns != null) {
+         renderVanillaRuns(font, vanillaRuns, size, matrix, y, z);
       }
    }
 
@@ -339,94 +359,27 @@ public final class MsdfRenderer {
       return var0.getBaseline() * var1;
    }
 
-   private static float renderTextSegmentWithFallback(
-      MsdfFont var0, Font var1, Object var2, String var3, float var4, int var5, Matrix4f var6, float var7, float var8, float var9
-   ) {
-      StringBuilder var10 = new StringBuilder();
-      boolean var11 = false;
-      boolean var12 = false;
-      int var13 = 0;
-
-      while (var13 < var3.length()) {
-         int var14 = var3.codePointAt(var13);
-         int var15 = var13 + Character.charCount(var14);
-         if (var14 == 167) {
-            var13 = skipFormattingCode(var3, var15);
-         } else {
-            boolean var16 = canRenderWithMsdf(var0, var14);
-            if (var11 && var12 != var16) {
-               var7 = renderTextRun(var0, var1, var2, var10.toString(), var12, var4, var5, var6, var7, var8, var9);
-               var10.setLength(0);
-            }
-
-            var10.append(var3, var13, var15);
-            var11 = true;
-            var12 = var16;
-            var13 = var15;
-         }
-      }
-
-      if (var11) {
-         var7 = renderTextRun(var0, var1, var2, var10.toString(), var12, var4, var5, var6, var7, var8, var9);
-      }
-
-      return var7;
-   }
-
-   private static float renderTextRun(
-      MsdfFont var0,
-      Font var1,
-      Object var2,
-      String var3,
-      boolean var4,
-      float var5,
-      int var6,
-      Matrix4f var7,
-      float var8,
-      float var9,
-      float var10
-   ) {
-      if (var3.isEmpty()) {
-         return var8;
-      } else if (var4) {
-         renderText(var0, var3, var5, var6, var7, var8, var9, var10);
-         return var8 + var0.getWidth(var3, var5);
-      } else {
-         renderVanillaText(var0, var1, var2, var3, var5, var6, var7, var8, var9, var10);
-         return var8 + var1.width(var3) * vanillaTextScale(var1, var5);
-      }
-   }
-
-   private static void renderVanillaText(
-      MsdfFont var0, Font var1, Object var2, String var3, float var4, int var5, Matrix4f var6, float var7, float var8, float var9
-   ) {
+   /**
+    * Все ванильные куски одного текста рисуются одним проходом рендера (раньше — отдельный проход на каждый кусок,
+    * а в нике вида «★ Ник ❤» их несколько). Фон и MSDF-часть сбрасываются перед этим, поэтому порядок слоёв прежний.
+    */
+   private static void renderVanillaRuns(MsdfFont font, List<MsdfRenderer.VanillaRun> runs, float size, Matrix4f matrix, float y, float z) {
       flushBatch();
-      float var10 = vanillaTextScale(var1, var4);
-      float var11 = var8 + textLineOffset(var0, var4) - (9 - 2) * var10;
-      Matrix4f var12 = new Matrix4f(var6).translate(var7, var11, var9).scale(var10, var10, 1.0F);
+      float scale = vanillaTextScale(null, size);
+      float top = y + textLineOffset(font, size) - (9 - 2) * scale;
       // 26.2 removed Font#drawInBatch(MultiBufferSource); vanilla glyphs are submitted as a text feature instead
-      DisplayMode var14 = ImmediateRenderer.method8005() ? DisplayMode.SEE_THROUGH : DisplayMode.NORMAL;
-      com.mojang.blaze3d.vertex.PoseStack var15 = new com.mojang.blaze3d.vertex.PoseStack();
-      var15.last().pose().set(var12);
-      org.zenith.utility.render.OutlineVertexProvider.method1542(
-         var16 -> var16.submitText(var15, 0.0F, 0.0F, net.minecraft.util.FormattedCharSequence.forward(var3, net.minecraft.network.chat.Style.EMPTY), false, var14, 15728880, var5, 0, 0)
-      );
+      DisplayMode mode = ImmediateRenderer.method8005() ? DisplayMode.SEE_THROUGH : DisplayMode.NORMAL;
+      OutlineVertexProvider.method1542(collector -> {
+         for (MsdfRenderer.VanillaRun run : runs) {
+            PoseStack pose = new PoseStack();
+            pose.last().pose().set(new Matrix4f(matrix).translate(run.x(), top, z).scale(scale, scale, 1.0F));
+            collector.submitText(pose, 0.0F, 0.0F, run.text(), false, mode, VANILLA_TEXT_LIGHT, run.color(), 0, 0);
+         }
+      });
    }
 
    private static float vanillaTextScale(Font var0, float var1) {
       return var1 / Math.max(1.0F, 9.0F);
-   }
-
-   private static boolean canRenderWithMsdf(MsdfFont var0, int var1) {
-      return var1 <= 65535 && var0.hasGlyph(var1);
-   }
-
-   private static int skipFormattingCode(String var0, int var1) {
-      return var1 >= var0.length() ? var1 : var1 + Character.charCount(var0.codePointAt(var1));
-   }
-
-   private static String normalizeTextForMsdf(String var0) {
-      return MsdfFont.normalizeSmallCaps(var0);
    }
 
    public static void renderText(
@@ -434,6 +387,9 @@ public final class MsdfRenderer {
    ) {
       float var11 = var0.getWidth(var1, var2) * 2.0F;
       renderText(var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11);
+   }
+
+   private record VanillaRun(FormattedCharSequence text, float x, int color) {
    }
 
    @Generated
