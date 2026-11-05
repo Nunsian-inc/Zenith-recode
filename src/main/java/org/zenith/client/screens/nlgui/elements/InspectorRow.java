@@ -1,6 +1,7 @@
 package org.zenith.client.screens.nlgui.elements;
 
 import com.google.gson.JsonObject;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -1080,13 +1081,10 @@ public class InspectorRow implements MouseBindTarget {
       if (var2 != null) {
          return var2.text(var1);
       } else {
-         String var3 = String.valueOf(var0.getFloatValue2());
-         int var4 = 0;
-         int var5;
-         if ((var5 = var3.indexOf(46)) != -1 && (var3.charAt(var5 + 1) != '0' || var3.length() > var5 + 2 && var3.charAt(var5 + 2) != '0')) {
-            var4 = var3.length() - var5 - 1;
-         }
-
+         // Знаков после запятой — столько же, сколько у шага (0.1 → 1, 0.05 → 2, 0.005 → 3);
+         // раньше смотрелись только две первые цифры шага, и 0.005 давал 0 знаков («1.435» → «1»).
+         float var3 = Math.abs(var0.getFloatValue2());
+         int var4 = Float.isFinite(var3) && var3 != 0.0F ? Mth.clamp(new BigDecimal(Float.toString(var3)).stripTrailingZeros().scale(), 0, 8) : 0;
          return String.format(Locale.US, "%." + var4 + "f", var1);
       }
    }
