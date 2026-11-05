@@ -202,6 +202,7 @@
     "module.autoWeb.searchXZ": "width",
     "module.autoZamok.boxesPerTrip": "storage",
     "module.backtrack.delay": "timer",
+    "module.velocity.mode": "shield",
     "module.backtrack.renderBox": "box",
     "module.baseFinder.max": "limit-max",
     "module.baseFinder.min": "limit-min",
