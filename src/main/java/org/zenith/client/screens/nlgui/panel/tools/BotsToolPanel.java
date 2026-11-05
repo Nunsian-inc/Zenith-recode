@@ -1111,7 +1111,7 @@ public class BotsToolPanel extends ToolTab {
    public void renderFooter(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
       if (this.nameInput == null) {
          this.nameInput = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.0F), t("gui.tools.bots.add.hint"), 16.0F);
-         this.nameInput.setType(SearchBox.Type.ENGLISH);
+         this.nameInput.setType(SearchBox.Type.ENGLISH_NAME);
          this.nameInput.setType2(SearchBox.Type2.ONLY_ONE_WORLD);
       }
 
