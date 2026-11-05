@@ -65,6 +65,7 @@
     "entity.MixinOtherClientPlayerEntity",
     "gui.MixinPressableWidget",
     "gui.MixinSliderWidget",
+    "gui.MixinChatComponent",
     "input.MixinInput",
     "input.MixinKeyboard",
     "input.MixinKeyboardInput",

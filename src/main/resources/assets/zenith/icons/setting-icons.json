@@ -216,6 +216,8 @@
     "module.betterMinecraft.animate": "animation",
     "module.betterMinecraft.animate.inventory": "items",
     "module.betterMinecraft.animate.storages": "storage",
+    "module.betterMinecraft.chat": "chat",
+    "module.betterMinecraft.chat.antiSpam": "stack",
     "module.blink.packetsPerSecond": "network",
     "module.blockESP.itemSelectSetting": "singleplayer",
     "module.blockESP.mode": "search",
