@@ -4,9 +4,12 @@ import com.darkmagician6.eventapi.EventTarget;
 import java.util.Comparator;
 import java.util.List;
 import lombok.Generated;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,7 +58,8 @@ public final class SpeedModule extends Module {
       "module.speed.mode.grimOld",
       "module.speed.mode.reallyWorld",
       "module.speed.mode.grimElytra",
-      "module.speed.mode.grim72"
+      "module.speed.mode.grim72",
+      "module.speed.mode.custom"
    );
    private final SliderSetting grim72SlowTimer = new SliderSetting(
       "module.speed.grim72SlowTimer", 0.4F, 0.0F, 2.0F, 0.1F, "module.speed.grim72SlowTimer.desc", "x", this::method6601
@@ -68,6 +72,47 @@ public final class SpeedModule extends Module {
       "module.speed.collisionRadius", 0.3F, 0.0F, 1.0F, 0.01F, "module.speed.collisionRadius.desc", "b", this::method6607
    );
    private final BooleanSetting onlyAura = new BooleanSetting("module.speed.onlyAura", "module.speed.onlyAura.desc", true, this::method6607);
+   // Custom: скорость (блоков за тик) задаётся вручную, отдельно под эффекты Скорости/Замедления.
+   private final SliderSetting customBaseSpeed = new SliderSetting(
+      "module.speed.customBaseSpeed", 0.36F, 0.1F, 1.0F, 0.01F, "module.speed.customBaseSpeed.desc", "", this::isCustomMode
+   );
+   private final SliderSetting customSpeedI = new SliderSetting(
+      "module.speed.customSpeedI", 0.41F, 0.1F, 1.0F, 0.01F, "module.speed.customSpeedI.desc", "", this::isCustomMode
+   );
+   private final SliderSetting customSpeedII = new SliderSetting(
+      "module.speed.customSpeedII", 0.47F, 0.1F, 1.0F, 0.01F, "module.speed.customSpeedII.desc", "", this::isCustomMode
+   );
+   private final SliderSetting customSpeedIII = new SliderSetting(
+      "module.speed.customSpeedIII", 0.53F, 0.1F, 1.0F, 0.01F, "module.speed.customSpeedIII.desc", "", this::isCustomMode
+   );
+   private final SliderSetting customSlowI = new SliderSetting(
+      "module.speed.customSlowI", 0.85F, 0.1F, 1.0F, 0.01F, "module.speed.customSlowI.desc", "x", this::isCustomMode
+   );
+   private final SliderSetting customSlowII = new SliderSetting(
+      "module.speed.customSlowII", 0.78F, 0.1F, 1.0F, 0.01F, "module.speed.customSlowII.desc", "x", this::isCustomMode
+   );
+   private final SliderSetting customSlowIII = new SliderSetting(
+      "module.speed.customSlowIII", 0.7F, 0.1F, 1.0F, 0.01F, "module.speed.customSlowIII.desc", "x", this::isCustomMode
+   );
+   private final BooleanSetting customAutoJump = new BooleanSetting(
+      "module.speed.customAutoJump", "module.speed.customAutoJump.desc", false, this::isCustomMode
+   );
+   private final SliderSetting customAirMultiplier = new SliderSetting(
+      "module.speed.customAirMultiplier", 1.435F, 1.0F, 2.0F, 0.005F, "module.speed.customAirMultiplier.desc", "x", this::isCustomMode
+   );
+   private final BooleanSetting customDamageBoost = new BooleanSetting(
+      "module.speed.customDamageBoost", "module.speed.customDamageBoost.desc", false, this::isCustomMode
+   );
+   private final SliderSetting customDamageSpeed = new SliderSetting(
+      "module.speed.customDamageSpeed",
+      0.5F,
+      0.1F,
+      2.0F,
+      0.01F,
+      "module.speed.customDamageSpeed.desc",
+      "",
+      () -> this.isCustomMode() && this.customDamageBoost.isEnabled()
+   );
    private int ticks = 0;
    private int intValue = 0;
    private double doubleValue;
@@ -394,6 +439,65 @@ public final class SpeedModule extends Module {
          if (var1 != null) {
             InventoryUtils.method934(var1, 6, true, false);
          }
+      }
+   }
+
+   private boolean isCustomMode() {
+      return this.mode.isSelected(5);
+   }
+
+   @EventTarget
+   public void onCustomUpdate(UpdateEvent var1) {
+      if (this.isCustomMode() && mc.player != null && mc.level != null) {
+         this.handleCustomMove(mc.player);
+      }
+   }
+
+   /** Custom: каждый тик ставит горизонтальную скорость по вводу; в воздухе — с множителем, без ввода — стоп. */
+   private void handleCustomMove(LocalPlayer var1) {
+      float var2 = this.customBaseSpeed.getValue3();
+      MobEffectInstance var3 = var1.getEffect(MobEffects.SPEED);
+      if (var3 != null) {
+         var2 = switch (var3.getAmplifier()) {
+            case 0 -> this.customSpeedI.getValue3();
+            case 1 -> this.customSpeedII.getValue3();
+            default -> this.customSpeedIII.getValue3();
+         };
+      }
+
+      MobEffectInstance var4 = var1.getEffect(MobEffects.SLOWNESS);
+      if (var4 != null) {
+         var2 *= switch (var4.getAmplifier()) {
+            case 0 -> this.customSlowI.getValue3();
+            case 1 -> this.customSlowII.getValue3();
+            default -> this.customSlowIII.getValue3();
+         };
+      }
+
+      if (this.customDamageBoost.isEnabled() && var1.hurtTime > 0) {
+         var2 += this.customDamageSpeed.getValue3();
+      }
+
+      if (this.customAutoJump.isEnabled() && this.method6609() && var1.onGround() && !mc.options.keyJump.isDown()) {
+         var1.jumpFromGround();
+      }
+
+      if (!var1.isInWater() && !var1.onGround() && !var1.isFallFlying()) {
+         this.setHorizontalSpeed(var1, var2 * this.customAirMultiplier.getValue3());
+      }
+
+      if (var1.onGround()) {
+         this.setHorizontalSpeed(var1, var2);
+      }
+   }
+
+   private void setHorizontalSpeed(LocalPlayer var1, double var2) {
+      Vec3 var4 = var1.getDeltaMovement();
+      if (!this.method6609()) {
+         var1.setDeltaMovement(0.0, var4.y, 0.0);
+      } else {
+         double var5 = MovementInputUtils.method7427(var1.getYRot(), ViaCompat.method4846(var1.input), ViaCompat.method4847(var1.input));
+         var1.setDeltaMovement(-Math.sin(var5) * var2, var4.y, Math.cos(var5) * var2);
       }
    }
 
