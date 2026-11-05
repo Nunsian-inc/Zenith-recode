@@ -19,6 +19,8 @@ public final class BetterMinecraftModule extends Module {
    private final MultiSelectSetting animate = new MultiSelectSetting("module.betterMinecraft.animate");
    private final MultiSelectSetting.Entry entry = new MultiSelectSetting.Entry(this.animate, "module.betterMinecraft.animate.storages", true);
    private final MultiSelectSetting.Entry entry2 = new MultiSelectSetting.Entry(this.animate, "module.betterMinecraft.animate.inventory", true);
+   private final MultiSelectSetting chat = new MultiSelectSetting("module.betterMinecraft.chat", "module.betterMinecraft.chat.desc");
+   private final MultiSelectSetting.Entry antiSpam = new MultiSelectSetting.Entry(this.chat, "module.betterMinecraft.chat.antiSpam", true);
 
    private BetterMinecraftModule() {
       this.setEnabled(true);
@@ -43,6 +45,11 @@ public final class BetterMinecraftModule extends Module {
 
    public boolean method2011() {
       return this.isEnabled() && this.entry2.isEnabled();
+   }
+
+   /** Антиспам чата: одинаковые сообщения подряд схлопываются в одно со счётчиком «(x3)» (см. MixinChatComponent). */
+   public boolean isAntiSpamEnabled() {
+      return this.isEnabled() && this.antiSpam.isEnabled();
    }
 
    public float method2012(long var1) {
