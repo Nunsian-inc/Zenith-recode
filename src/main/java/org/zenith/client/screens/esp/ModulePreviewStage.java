@@ -37,6 +37,12 @@ import org.zenith.utility.render.display.base.MenuDrawContext;
 public final class ModulePreviewStage implements MinecraftAccess {
    private static final float PX_PER_BLOCK = 96.0F;
    private static final float ARRIVAL_SPIN = 28.0F;
+   /**
+    * Отрицательный ID: сервер такие не выдаёт, поэтому с реальными сущностями не пересечётся.
+    * Без ID {@link net.minecraft.world.entity.Entity#getId()} в 26.x бросает исключение
+    * (его вызывает, например, рендер-миксин figura), и превью не рисуется.
+    */
+   private static final int PREVIEW_ENTITY_ID = -1_000_000;
    private ModulePreviewStage.Kind kind = ModulePreviewStage.Kind.MODEL;
    private Module owner;
    private boolean open;
@@ -245,6 +251,7 @@ public final class ModulePreviewStage implements MinecraftAccess {
          if (this.dummy == null || this.dummyWorld != mc.level) {
             this.dummyWorld = mc.level;
             this.dummy = new RemotePlayer(mc.level, new GameProfile(UUID.nameUUIDFromBytes("zenith-esp-preview".getBytes()), "Player"));
+            this.dummy.setId(PREVIEW_ENTITY_ID);
          }
 
          return this.dummy;
