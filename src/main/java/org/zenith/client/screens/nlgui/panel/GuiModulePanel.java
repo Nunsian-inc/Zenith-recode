@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Map.Entry;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import lombok.Generated;
 import net.minecraft.util.Mth;
 import org.zenith.Animation;
@@ -266,20 +264,8 @@ public class GuiModulePanel extends ElementPanel {
                if ((var19 = var17.getSearchVisibleProgress()) <= 0.01F) {
                   var17.forgetSlide();
                } else {
-                  boolean var10000;
-                  label250: {
-                     if (this.searchParents != null) {
-                        if (this.searchParents.getClass() == EmptyMap.class) {
-                           var10000 = false;
-                           break label250;
-                        }
-                     }
-
-                     var10000 = this.searchParents.containsKey(var17);
-                  }
-
-                  boolean var20 = var10000;
-                  float var21 = var10000 ? 12.0F : 0.0F;
+                  boolean var20 = this.searchParents.containsKey(var17);
+                  float var21 = var20 ? 12.0F : 0.0F;
                   float var22 = var7 + var21 + (var20 ? (1.0F - var19) * 8.0F : 0.0F);
                   float var23 = 236.0F - (var22 - var7);
                   var17.setWidth(var23);
@@ -293,9 +279,7 @@ public class GuiModulePanel extends ElementPanel {
                      float var29 = Math.max(this.scissorBounds.getFloatValue2(), var26.getFloatValue2());
                      float var30 = Math.min(this.scissorBounds.getFloatValue() + this.scissorBounds.width(), var26.getFloatValue() + var26.width());
                      float var31;
-                     if ((var31 = Math.min(this.scissorBounds.getFloatValue2() + this.scissorBounds.height(), var26.getFloatValue2() + var26.height()))
-                           <= var29
-                        || var30 <= var28) {
+                     if ((var31 = Math.min(this.scissorBounds.getFloatValue2() + this.scissorBounds.height(), var26.getFloatValue2() + var26.height())) <= var29 || var30 <= var28) {
                         var13 += var24;
                         if (var27) {
                            var15++;
@@ -582,19 +566,7 @@ public class GuiModulePanel extends ElementPanel {
       HashMap var7 = new HashMap();
 
       for (GuiModuleRowElement var9 : var1) {
-         boolean var10000;
-         label58: {
-            if (this.searchParents != null) {
-               if (this.searchParents.getClass() == EmptyMap.class) {
-                  var10000 = false;
-                  break label58;
-               }
-            }
-
-            var10000 = this.searchParents.containsKey(var9);
-         }
-
-         if (!var10000) {
+         if (!this.searchParents.containsKey(var9)) {
             if (var9.getModule().isPriority()) {
                if (var3) {
                   String var10 = this.groupOf(var9, true);
@@ -623,8 +595,7 @@ public class GuiModulePanel extends ElementPanel {
       var var14 = new HashSet<>(var1);
       List<GuiModuleRowElement> var15 = new ArrayList<>(var1.size());
 
-      for (Object var18_o : (Iterable<?>)(Object)(var2)) {
-         GuiModuleRowElement var18 = (GuiModuleRowElement)var18_o;
+      for (GuiModuleRowElement var18 : var2) {
          var15.add(var18);
 
          for (GuiModuleRowElement var13 : this.searchChildren.getOrDefault(var18, Collections.emptyList())) {
@@ -702,14 +673,12 @@ public class GuiModulePanel extends ElementPanel {
 
    private List<GuiModuleRowElement> applyBotFilter(List<GuiModuleRowElement> var1) {
       return this.botOnly && (!var1.isEmpty())
-         ? var1.stream().filter(var0 -> var0.getModule().isBotModule()).toList()
-         : var1;
+              ? var1.stream().filter(var0 -> var0.getModule().isBotModule()).toList()
+              : var1;
    }
 
    private List<GuiModuleRowElement> withBotElements(List<GuiModuleRowElement> var1, boolean var2) {
-      if (this.botOnly
-         && var2
-         && (this.botModuleElements != null && this.botModuleElements.getClass() == EmptyList.class ? false : !this.botModuleElements.isEmpty())) {
+      if (this.botOnly && var2 && !this.botModuleElements.isEmpty()) {
          ArrayList<GuiModuleRowElement> var3 = new ArrayList(var1);
          var3.addAll(this.botModuleElements);
          return var3;
@@ -736,9 +705,8 @@ public class GuiModulePanel extends ElementPanel {
    }
 
    public Module findModule(String var1) {
-      for (List var3 : this.categories.values()) {
-         for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-            GuiModuleRowElement var5 = (GuiModuleRowElement)var5_o;
+      for (List<GuiModuleRowElement> var3 : this.categories.values()) {
+         for (GuiModuleRowElement var5 : var3) {
             if (var5.getName().equalsIgnoreCase(var1)) {
                return var5.getModule();
             }
@@ -786,14 +754,12 @@ public class GuiModulePanel extends ElementPanel {
 
       List<GuiModuleRowElement> var17 = new ArrayList<>(var14.size());
 
-      for (Object var19_o : (Iterable<?>)(Object)(var14)) {
-         GuiModuleRowElement var19 = (GuiModuleRowElement)var19_o;
+      for (GuiModuleRowElement var19 : var14) {
          List<GuiModuleRowElement> var20 = this.searchChildren.getOrDefault(var19, Collections.emptyList());
          boolean var21 = !var3 || var19.matchesOwnSearch(var2);
          boolean var11 = false;
 
-         for (Object var13_o : (Iterable<?>)(Object)(var20)) {
-            GuiModuleRowElement var13 = (GuiModuleRowElement)var13_o;
+         for (GuiModuleRowElement var13 : var20) {
             var21 |= this.searchMatches.contains(var13);
             var11 |= var13.getSearchVisibleProgress() > 0.01F;
          }
@@ -807,8 +773,7 @@ public class GuiModulePanel extends ElementPanel {
          if (var19.shouldRenderInSearch() || var11) {
             var17.add(var19);
 
-            for (Object var23_o : (Iterable<?>)(Object)(var20)) {
-               GuiModuleRowElement var23 = (GuiModuleRowElement)var23_o;
+            for (GuiModuleRowElement var23 : var20) {
                if (var23.shouldRenderInSearch()) {
                   var17.add(var23);
                }
