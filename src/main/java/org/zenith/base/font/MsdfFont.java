@@ -279,6 +279,13 @@ public final class MsdfFont implements MinecraftAccess {
          case '…' -> '.';
          case 'ꜰ' -> 'F';
          case 'ꜱ' -> 'S';
+         // кириллица, которая выглядит как латиница (укр./бел. ники): рисуется гладким MSDF, а не пиксельным фолбэком
+         case 'і' -> 'i';
+         case 'І' -> 'I';
+         case 'ј' -> 'j';
+         case 'Ј' -> 'J';
+         case 'ѕ' -> 's';
+         case 'Ѕ' -> 'S';
          default -> var0;
       };
    }
@@ -308,68 +315,20 @@ public final class MsdfFont implements MinecraftAccess {
    }
 
    private float getTextWidthWithVanillaFallback(Component var1, float var2) {
-      Font var3 = mc.font;
-      float var4 = 0.0F;
+      Font vanillaFont = mc.font;
+      float width = 0.0F;
 
-      for (FormattedTextProcessor.TextSegment var6 : FormattedTextProcessor.processText(var1, -1)) {
-         var4 += this.getWidthWithVanillaFallback(var6.text(), var2, var3);
-      }
-
-      return var4;
-   }
-
-   private float getWidthWithVanillaFallback(String var1, float var2, Font var3) {
-      var1 = this.normalizeTextForMsdf(var1);
-      StringBuilder var4 = new StringBuilder();
-      boolean var5 = false;
-      boolean var6 = false;
-      float var7 = 0.0F;
-      int var8 = 0;
-
-      while (var8 < var1.length()) {
-         int var9 = var1.codePointAt(var8);
-         int var10 = var8 + Character.charCount(var9);
-         if (var9 == 167) {
-            var8 = this.skipFormattingCode(var1, var10);
-         } else {
-            boolean var11 = this.canRenderWithMsdf(var9);
-            if (var5 && var6 != var11) {
-               var7 += this.getRunWidth(var4.toString(), var6, var2, var3);
-               var4.setLength(0);
-            }
-
-            var4.append(var1, var8, var10);
-            var5 = true;
-            var6 = var11;
-            var8 = var10;
+      for (FormattedTextProcessor.TextSegment segment : FormattedTextProcessor.processText(var1, -1)) {
+         for (FormattedTextProcessor.TextRun run : FormattedTextProcessor.splitRuns(this, segment)) {
+            width += run.msdf() ? this.getWidth(run.text(), var2) : vanillaFont.width(run.sequence()) * this.vanillaTextScale(vanillaFont, var2);
          }
       }
 
-      if (var5) {
-         var7 += this.getRunWidth(var4.toString(), var6, var2, var3);
-      }
-
-      return var7;
-   }
-
-   private float getRunWidth(String var1, boolean var2, float var3, Font var4) {
-      return var2 ? this.getWidth(var1, var3) : var4.width(var1) * this.vanillaTextScale(var4, var3);
+      return width;
    }
 
    private float vanillaTextScale(Font var1, float var2) {
       return var2 / Math.max(1.0F, 9.0F);
-   }
-
-   private boolean canRenderWithMsdf(int var1) {
-      return var1 <= 65535 && this.hasGlyph(var1);
-   }
-
-   private int skipFormattingCode(String var1, int var2) {
-      return var2 >= var1.length() ? var2 : var2 + Character.charCount(var1.codePointAt(var2));
-   }
-
-   private String normalizeTextForMsdf(String var1) {
-      return normalizeSmallCaps(var1);
    }
 
    public org.zenith.base.font.Font getFont(float var1) {
