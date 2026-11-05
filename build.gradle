@@ -1,0 +1,74 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = 'zenith'
+}
+
+repositories {
+    mavenCentral()
+    // Loom 1.19 only nests module dependencies, so the bundled jars are served from a flat directory repo
+    flatDir {
+        dirs 'libs/mods', 'libs/figura'
+    }
+}
+
+// 26.x не обфусцирован: маппингов нет, код пишется сразу в именах Mojang.
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // сторонние классы, которые лежали внутри jar (kotlin, netty, vialoader, luaj, rhino, eventapi, discord rpc ...)
+    implementation files('libs/zenith-libs.jar')
+    // библиотеки ViaFabricPlus (вложены в его jar, в dev-запуске сами не подхватываются)
+    implementation fileTree(dir: 'libs/via', include: '*.jar')
+    // вложен в jar Baritone, в dev-запуске сам не подхватывается
+    implementation files('libs/nether-pathfinder-1.6.jar')
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    // вложенные моды (ViaFabricPlus, Baritone). Player Animator, Figura runtime и addon-api
+    // теперь лежат исходниками в src/main/java
+    ['local:ViaFabricPlus:5.1.2', 'local:baritone:26.3-SNAPSHOT'].each {
+        implementation it
+        include it
+    }
+    // luaj-форк Figura (был вложен в zenith-figura-runtime)
+    ['local:luaj-core:3.0.8-figura', 'local:luaj-jse:3.0.8-figura'].each {
+        implementation it
+        include it
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+    options.compilerArgs << '-Xmaxerrs' << '100000'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+}
+
+// как в оригинале: сторонние библиотеки упаковываются прямо в jar мода
+tasks.named('jar') {
+    from({ zipTree('libs/zenith-libs.jar') }) {
+        exclude 'META-INF/**'
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/zenith.accesswidener')
+}

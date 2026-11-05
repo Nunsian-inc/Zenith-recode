@@ -1,0 +1,54 @@
+package org.zenith.base.figura.lua;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import java.util.Objects;
+import java.util.function.Function;
+import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.VarArgFunction;
+import org.zenith.base.figura.utils.JsonUtils;
+import org.zenith.base.figura.utils.LuaUtils;
+
+public class FiguraLuaJson {
+   private static final Function<FiguraLuaRuntime, LuaValue> PARSE_JSON_FUNCTION = runtime -> new VarArgFunction() {
+      public Varargs invoke(Varargs args) {
+         return FiguraLuaJson.jsonStringToTable(args.checkjstring(1));
+      }
+
+      public String tojstring() {
+         return "function: parseJson";
+      }
+   };
+   private static final Function<FiguraLuaRuntime, LuaValue> TO_JSON_FUNCTION = runtime -> new VarArgFunction() {
+      public Varargs invoke(Varargs args) {
+         return (Varargs)(args.narg() == 0 ? LuaValue.NIL : LuaValue.valueOf(FiguraLuaJson.tableToJsonString(args.arg(1))));
+      }
+
+      public String tojstring() {
+         return "function: toJson";
+      }
+   };
+
+   public static void loadFunctions(FiguraLuaRuntime runtime) {
+      runtime.setGlobal("parseJson", PARSE_JSON_FUNCTION.apply(runtime));
+      runtime.setGlobal("toJson", TO_JSON_FUNCTION.apply(runtime));
+   }
+
+   public static LuaValue jsonStringToTable(String json) {
+      JsonElement jsonElement;
+      try {
+         jsonElement = JsonParser.parseString(json);
+      } catch (JsonSyntaxException var3) {
+         throw new LuaError("Failed to parse malformed Json: " + var3.getCause());
+      }
+
+      return JsonUtils.asLuaValue(jsonElement);
+   }
+
+   public static String tableToJsonString(LuaValue value) {
+      return Objects.requireNonNullElse(LuaUtils.asJsonValue(value), "null").toString();
+   }
+}

@@ -1,0 +1,181 @@
+package org.zenith.base.figura.lua.api.world;
+
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biome.Precipitation;
+import org.zenith.base.figura.lua.LuaWhitelist;
+import org.zenith.base.figura.lua.docs.LuaFieldDoc;
+import org.zenith.base.figura.lua.docs.LuaMethodDoc;
+import org.zenith.base.figura.lua.docs.LuaMethodOverload;
+import org.zenith.base.figura.lua.docs.LuaTypeDoc;
+import org.zenith.base.figura.math.vector.FiguraVec3;
+import org.zenith.base.figura.utils.ColorUtils;
+import org.zenith.base.figura.utils.LuaUtils;
+
+@LuaWhitelist
+@LuaTypeDoc(name = "Biome", value = "biome")
+public final class BiomeAPI {
+   private final Biome biome;
+   private BlockPos pos;
+   @LuaWhitelist
+   @LuaFieldDoc("biome.id")
+   public final String id;
+
+   public BiomeAPI(Biome biome, BlockPos pos) {
+      this.biome = biome;
+      this.pos = pos;
+      ClientLevel world = WorldAPI.getCurrentWorld();
+      if (world != null) {
+         this.id = world.registryAccess().lookupOrThrow(Registries.BIOME).getKey(biome).toString();
+      } else {
+         this.id = biome.toString();
+      }
+   }
+
+   private BlockPos getBlockPos() {
+      return this.pos == null ? BlockPos.ZERO : this.pos;
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_pos")
+   public FiguraVec3 getPos() {
+      return FiguraVec3.fromBlockPos(this.getBlockPos());
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc(
+      overloads = {
+            @LuaMethodOverload(argumentTypes = FiguraVec3.class, argumentNames = "pos"),
+            @LuaMethodOverload(argumentTypes = {Double.class, Double.class, Double.class}, argumentNames = {"x", "y", "z"})
+      },
+      aliases = "pos",
+      value = "biome.set_pos"
+   )
+   public BiomeAPI setPos(Object x, Double y, Double z) {
+      FiguraVec3 newPos = LuaUtils.parseVec3("setPos", x, y, z);
+      this.pos = newPos.asBlockPos();
+      return this;
+   }
+
+   @LuaWhitelist
+   public BiomeAPI pos(Object x, Double y, Double z) {
+      return this.setPos(x, y, z);
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_tags")
+   public List<String> getTags() {
+      List<String> list = new ArrayList<>();
+      ClientLevel world = WorldAPI.getCurrentWorld();
+      if (world == null) {
+         return list;
+      }
+
+      Registry<Biome> registry = world.registryAccess().lookupOrThrow(Registries.BIOME);
+      Holder<Biome> entry = registry.wrapAsHolder(this.biome);
+      entry.tags().forEach(tag -> list.add(tag.location().toString()));
+      return list;
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_temperature")
+   public float getTemperature() {
+      return this.biome.getBaseTemperature();
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_precipitation")
+   public String getPrecipitation() {
+      ClientLevel world = WorldAPI.getCurrentWorld();
+      return world == null ? Precipitation.NONE.name() : this.biome.getPrecipitationAt(this.getBlockPos(), world.getSeaLevel()).name();
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_sky_color")
+   public FiguraVec3 getSkyColor() {
+      return vec(this.biome.getAttributes().applyModifier(EnvironmentAttributes.SKY_COLOR, new org.joml.Vector3f()));
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_foliage_color")
+   public FiguraVec3 getFoliageColor() {
+      return ColorUtils.intToRGB(this.biome.getFoliageColor());
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_grass_color")
+   public FiguraVec3 getGrassColor() {
+      BlockPos blockPos = this.getBlockPos();
+      ClientLevel world = WorldAPI.getCurrentWorld();
+      return world != null
+         ? ColorUtils.intToRGB(BiomeColors.getAverageGrassColor(world, blockPos))
+         : ColorUtils.intToRGB(BiomeColors.GRASS_COLOR_RESOLVER.getColor(this.biome, blockPos.getX(), blockPos.getZ()));
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_fog_color")
+   public FiguraVec3 getFogColor() {
+      return vec(this.biome.getAttributes().applyModifier(EnvironmentAttributes.FOG_COLOR, new org.joml.Vector3f()));
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_water_color")
+   public FiguraVec3 getWaterColor() {
+      return ColorUtils.intToRGB(this.biome.getWaterColor());
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_water_fog_color")
+   public FiguraVec3 getWaterFogColor() {
+      return vec(this.biome.getAttributes().applyModifier(EnvironmentAttributes.WATER_FOG_COLOR, new org.joml.Vector3f()));
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.get_downfall")
+   public float getDownfall() {
+      return 0.5F;
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.is_hot")
+   public boolean isHot() {
+      return this.getTemperature() > 1.0F;
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc("biome.is_cold")
+   public boolean isCold() {
+      ClientLevel world = WorldAPI.getCurrentWorld();
+      return world == null
+         ? false
+         : this.getTemperature() <= 0.15F || Precipitation.SNOW.equals(this.biome.getPrecipitationAt(this.getBlockPos(), world.getSeaLevel()));
+   }
+
+   @LuaWhitelist
+   public boolean __eq(BiomeAPI other) {
+      return other != null && this.biome.equals(other.biome);
+   }
+
+   @LuaWhitelist
+   public Object __index(String arg) {
+      return "id".equals(arg) ? this.id : null;
+   }
+
+   @Override
+   public String toString() {
+      return this.id + " (Biome)";
+   }
+
+   // 26.x colour attributes are RGB float vectors (0..1) instead of packed ints
+   private static FiguraVec3 vec(org.joml.Vector3fc c) {
+      return FiguraVec3.of(c.x(), c.y(), c.z());
+   }
+}

@@ -1,0 +1,52 @@
+package org.zenith.base.figura.lua.api.json;
+
+import org.luaj.vm2.LuaValue;
+import org.zenith.base.figura.lua.LuaWhitelist;
+import org.zenith.base.figura.lua.docs.LuaMethodDoc;
+import org.zenith.base.figura.lua.docs.LuaMethodOverload;
+import org.zenith.base.figura.lua.docs.LuaTypeDoc;
+
+@LuaWhitelist
+@LuaTypeDoc(name = "JsonAPI", value = "json")
+public class JsonAPI {
+   public static JsonAPI INSTANCE = new JsonAPI();
+
+   private JsonAPI() {
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc(value = "json.new_builder", overloads = @LuaMethodOverload(returnType = FiguraJsonBuilder.class))
+   public static FiguraJsonBuilder newBuilder() {
+      return new FiguraJsonBuilder();
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc(value = "json.new_array", overloads = @LuaMethodOverload(returnType = FiguraJsonArray.class))
+   public static FiguraJsonArray newArray() {
+      return new FiguraJsonArray();
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc(value = "json.new_object", overloads = @LuaMethodOverload(returnType = FiguraJsonObject.class))
+   public static FiguraJsonObject newObject() {
+      return new FiguraJsonObject();
+   }
+
+   @LuaWhitelist
+   @LuaMethodDoc(
+      value = "json.is_serializable",
+      overloads = @LuaMethodOverload(argumentTypes = LuaValue.class, argumentNames = "val", returnType = Boolean.class)
+   )
+   public static boolean isSerializable(LuaValue val) {
+      return switch (val.type()) {
+         case -2, 0, 1, 3, 4, 5 -> true;
+         default -> false;
+         case 7 -> val.checkuserdata() instanceof FiguraJsonSerializer.JsonValue;
+      };
+   }
+
+   @Override
+   public String toString() {
+      return "JsonAPI";
+   }
+}

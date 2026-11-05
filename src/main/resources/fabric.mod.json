@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "zenith",
+  "version": "${version}",
+  "name": "ZenithDLC",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/zenith/icons/avatar.png",
+  "environment": "client",
+  "provides": [
+    "zenith_figura_runtime",
+    "zenith-addon-api",
+    "playeranimator",
+    "player-animator"
+  ],
+  "entrypoints": {
+    "preLaunch": [
+      "org.zenith.init.ZenithPreLaunch"
+    ],
+    "client": [
+      "dev.porno.playerAnim.fabric.client.FabricClientInitializer",
+      "org.zenith.base.figura.HeadlessCompatibilityEntrypoint",
+      "org.zenith.init.ZenithInitializer"
+    ]
+  },
+  "mixins": [
+    "zenithdlc.mixins.json",
+    "zenith-figura.mixins.json",
+    "playerAnimator-common.mixins.json"
+  ],
+  "accessWidener": "zenith.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "fabric-api": "*",
+    "minecraft": "~26.3"
+  }
+}

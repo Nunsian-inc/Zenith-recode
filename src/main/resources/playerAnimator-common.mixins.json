@@ -1,0 +1,30 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.porno.playerAnim.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "dev.porno.playerAnim.impl.mixin.MixinConfig",
+  "client": [
+    "ArmorFeatureRendererMixin",
+    "BipedEntityModelMixin",
+    "CapeLayerAccessor",
+    "CapeLayerMixin",
+    "CapeModelMixin",
+    "ElytraLayerMixin",
+    "FeatureRendererMixin",
+    "HeldItemMixin",
+    "LivingEntityRendererMixin",
+    "ModelPartMixin",
+    "PlayerEntityMixin",
+    "PlayerModelMixin",
+    "PlayerRendererMixin",
+    "PlayerRenderStateMixin",
+    "firstPerson.EntityRenderDispatcherMixin",
+    "firstPerson.ItemInHandRendererMixin",
+    "firstPerson.LevelRendererMixin",
+    "firstPerson.LivingEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
