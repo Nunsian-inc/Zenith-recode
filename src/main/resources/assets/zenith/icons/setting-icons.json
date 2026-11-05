@@ -547,6 +547,7 @@
     "module.elytraTarget.predictTicks": "timer",
     "module.elytraTarget.pursuitDistance": "distance",
     "module.elytraTarget.responseSpeed": "speed",
+    "module.elytraTarget.targetMode": "target",
     "module.emotes.autoF5": "camera",
     "module.emotes.autoF5Duration": "timer",
     "module.emotes.wheelBind": "radial-menu",

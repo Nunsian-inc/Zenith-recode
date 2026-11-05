@@ -4,7 +4,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -85,7 +84,7 @@ public final class ElytraHelperModule extends Module {
       if (var1.isPress(this.elytraSetting.getKeyCode())) {
          this.method7454();
       } else if (var1.isPress(this.fireworkSetting.getKeyCode()) && mc.player.isFallFlying()) {
-         InventoryUtils.method929(Items.FIREWORK_ROCKET, InteractionHand.OFF_HAND);
+         InventoryUtils.useFireworkInFlight();
       }
    }
 

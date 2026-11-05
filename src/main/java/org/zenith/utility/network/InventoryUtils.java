@@ -31,6 +31,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BundleItem;
+import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -489,6 +490,84 @@ public final class InventoryUtils implements ZenithAccess {
       closeScreen();
       UseItemUtils.useItem(var1);
       method900(var0, var1, true);
+   }
+
+   /**
+    * Запуск фейерверка в полёте на элитре так, чтобы предмет во второй руке (шар, тотем и т.п.) остался на месте.
+    * <p>
+    * Фейерверк уже во второй руке — используется оттуда. Иначе на ближайшем {@link HandleInputEvent} за один тик
+    * уходят пакеты: SWAP слота с фейерверком и второй руки (кнопка 40) → использование второй руки → обратный SWAP.
+    * Фейерверк возвращается в свой слот, предмет второй руки — обратно во вторую руку. В отличие от {@link #method930}
+    * движение не останавливается и ничего не ждёт, поэтому способ подходит для полёта.
+    */
+   public static void useFireworkInFlight() {
+      if (mc.player == null) {
+         return;
+      }
+
+      ItemStack firework = Items.FIREWORK_ROCKET.getDefaultInstance();
+      if (mc.player.getCooldowns().isOnCooldown(firework)) {
+         showItemNotice("N", firework.getHoverName(), " находится в кд");
+      } else if (!mc.player.getOffhandItem().is(Items.FIREWORK_ROCKET) && findFireworkSlot() == null) {
+         showItemNotice("M", firework.getHoverName(), " не найден");
+      } else if (mc.player.isUsingItem() && Zenith.getInstance().getServerDetector().method1642()) {
+         showItemNotice("M", Component.literal("Хавать"), " нельзя");
+      } else {
+         TaskScheduler scheduler = Zenith.getInstance().getTaskScheduler();
+         if (scheduler.method5117(FireworkRocketItem.class)) {
+            TaskScheduler.Entry2 task = new TaskScheduler.Entry2(FireworkRocketItem.class);
+            task.method5120(HandleInputEvent.class, event -> {
+               if (event.isCancelled()) {
+                  return false;
+               } else {
+                  launchFireworkFromOffhand();
+                  event.cancel();
+                  return true;
+               }
+            });
+            scheduler.method5110(task);
+         }
+      }
+   }
+
+   private static void launchFireworkFromOffhand() {
+      if (mc.player == null || mc.gameMode == null || !mc.player.isFallFlying()) {
+         return;
+      }
+
+      if (mc.player.getOffhandItem().is(Items.FIREWORK_ROCKET)) {
+         UseItemUtils.useItem(InteractionHand.OFF_HAND);
+         return;
+      }
+
+      Slot slot = findFireworkSlot();
+      if (slot != null && mc.player.containerMenu instanceof InventoryMenu && !AutoTotemModule.INSTANCE.method725()) {
+         method931(slot, InteractionHand.OFF_HAND);
+         closeScreen();
+      }
+   }
+
+   /** Слот инвентаря игрока с фейерверком (кроме второй руки); хотбар в приоритете. */
+   private static Slot findFireworkSlot() {
+      return method926()
+         .filter(slot -> slot.container instanceof Inventory && slot.getContainerSlot() != Inventory.SLOT_OFFHAND)
+         .filter(slot -> slot.getItem().is(Items.FIREWORK_ROCKET))
+         .max(Comparator.comparingInt(slot -> slot.index))
+         .orElse(null);
+   }
+
+   private static void showItemNotice(String icon, Component subject, String suffix) {
+      Zenith.getInstance()
+         .getHudHolder()
+         .method6972(
+            icon,
+            subject.copy()
+               .setStyle(Style.EMPTY.withColor(zenith.getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()))
+               .append(
+                  Component.literal(suffix)
+                     .setStyle(Style.EMPTY.withColor(zenith.getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287()))
+               )
+         );
    }
 
    public static void method932(Slot var0, int var1) {

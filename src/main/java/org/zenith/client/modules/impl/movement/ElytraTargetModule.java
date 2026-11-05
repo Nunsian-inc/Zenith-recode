@@ -1,16 +1,15 @@
 package org.zenith.client.modules.impl.movement;
 
 import com.darkmagician6.eventapi.EventTarget;
-import java.util.Comparator;
 import lombok.Generated;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.zenith.ChatLogger;
 import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.Rotation;
@@ -40,9 +39,19 @@ import org.zenith.utility.render.GlowUtil;
 )
 public final class ElytraTargetModule extends Module {
    private static final double CONST_doubleValue = 0.35;
+   /** Приоритет ротации, пока ElytraTarget сам ведёт полёт к цели. */
+   private static final int CHASE_ROTATION_PRIORITY = 7;
+   /** Ниже, чем у Aura (1/3): когда у Aura есть цель, наводится и бьёт она, ElytraTarget только держит курс между её ротациями. */
+   private static final int UNDER_AURA_ROTATION_PRIORITY = 0;
    public static final ElytraTargetModule INSTANCE = new ElytraTargetModule();
    private final SliderSetting pursuitDistance = new SliderSetting(
       "module.elytraTarget.pursuitDistance", 30.0F, 10.0F, 100.0F, 5.0F, "module.elytraTarget.pursuitDistance.desc", "b"
+   );
+   private final ModeSetting targetMode = new ModeSetting(
+      "module.elytraTarget.targetMode",
+      "module.elytraTarget.targetMode.desc",
+      "module.elytraTarget.targetMode.elytra",
+      "module.elytraTarget.targetMode.all"
    );
    private final BooleanSetting autoFWSetting = new BooleanSetting("module.elytraTarget.autoFWSetting", "module.elytraTarget.autoFWSetting.desc", true);
    private final ModeSetting predictMode = new ModeSetting(
@@ -83,6 +92,10 @@ public final class ElytraTargetModule extends Module {
    @Override
    public void onEnable() {
       this.resetState();
+      if (!AuraModule.INSTANCE.isEnabled()) {
+         ChatLogger.method2019("ElytraTarget работает вместе с Aura: сам не бьёт, а ведёт полёт к цели Aura. Включи Aura.");
+      }
+
       super.onEnable();
    }
 
@@ -104,20 +117,23 @@ public final class ElytraTargetModule extends Module {
    @EventTarget
    public void method5241(Event5 var1) {
       LocalPlayer var2 = mc.player;
-      this.livingEntity = this.method5251();
+      this.livingEntity = AuraModule.INSTANCE.isEnabled() ? this.method5251() : null;
       if (var2 != null && this.method5242(this.livingEntity)) {
          Vec3 var3 = this.method5247(this.livingEntity);
          this.box = this.method5253(var3);
          Vec3 var4 = var2.getEyePosition();
          Rotation var5 = RotationUtils.method6912(var3.subtract(var4));
+         int priority = AuraModule.INSTANCE.method6358() != null ? UNDER_AURA_ROTATION_PRIORITY : CHASE_ROTATION_PRIORITY;
          rotationManager.method7849(
-            new RotationRequest(var5, () -> bcCameraTestnerv.method1851(AuraModule.INSTANCE.method6320(), var5), AuraModule.INSTANCE.method6320()), 7, this
+            new RotationRequest(var5, () -> bcCameraTestnerv.method1851(AuraModule.INSTANCE.method6320(), var5), AuraModule.INSTANCE.method6320()),
+            priority,
+            this
          );
          if (this.autoFWSetting.isEnabled()
             && !ElytraMotionModule.INSTANCE.isFlag10()
             && !AutoTotemModule.INSTANCE.method725()
             && this.stopWatch.method7546(400L)) {
-            InventoryUtils.method930(Items.FIREWORK_ROCKET, var0 -> true, InteractionHand.OFF_HAND);
+            InventoryUtils.useFireworkInFlight();
             this.stopWatch.reset();
          }
       } else {
@@ -194,22 +210,31 @@ public final class ElytraTargetModule extends Module {
       );
    }
 
+   /** Цель Aura, если она подходит; иначе ближайшая сущность, которую Aura согласна бить (её фильтр «Цели», друзья, боты). */
    private LivingEntity method5251() {
       LivingEntity var1 = AuraModule.INSTANCE.method6358();
       if (this.method5252(var1)) {
          return var1;
       } else {
          LocalPlayer var2 = mc.player;
-         return var2 != null && mc.level != null
-            ? mc.level
-               .players()
-               .stream()
-               .filter(var1x -> var1x != var2)
-               .filter(this::method5252)
-               .filter(var0 -> !Zenith.getInstance().getFriends().method7626(var0))
-               .min(Comparator.comparingDouble(var2::distanceTo))
-               .orElse(null)
-            : null;
+         if (var2 != null && mc.level != null) {
+            LivingEntity nearest = null;
+            double nearestDistance = Double.MAX_VALUE;
+
+            for (Entity entity : mc.level.entitiesForRendering()) {
+               if (entity instanceof LivingEntity living && this.method5252(living) && AuraModule.INSTANCE.method6331(living)) {
+                  double distance = var2.distanceToSqr(living);
+                  if (distance < nearestDistance) {
+                     nearestDistance = distance;
+                     nearest = living;
+                  }
+               }
+            }
+
+            return nearest;
+         } else {
+            return null;
+         }
       }
    }
 
@@ -217,9 +242,10 @@ public final class ElytraTargetModule extends Module {
       LocalPlayer var2 = mc.player;
       return var2 != null
          && var1 != null
+         && var1 != var2
          && var1.isAlive()
          && var2.isFallFlying()
-         && var1.isFallFlying()
+         && (var1.isFallFlying() || this.targetMode.method2101("module.elytraTarget.targetMode.all"))
          && var2.distanceTo(var1) <= this.pursuitDistance.getValue3();
    }
 
