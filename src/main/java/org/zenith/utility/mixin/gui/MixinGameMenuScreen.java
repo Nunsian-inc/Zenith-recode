@@ -37,8 +37,7 @@ public class MixinGameMenuScreen {
          float var6 = MenuTheme.snap((var2.width - var4) / 2.0F);
          float var7 = MenuTheme.snap((var2.height - var5) / 2.0F);
 
-         for (Object var9_o : (Iterable<?>)(Object)(var3)) {
-            List var9 = (List)var9_o;
+         for (List var9 : var3) {
             float var10 = var9.size() == 1 ? var4 : COLUMN;
 
             for (int var11 = 0; var11 < var9.size(); var11++) {
@@ -68,10 +67,8 @@ public class MixinGameMenuScreen {
          float var10 = -Float.MAX_VALUE;
          float var11 = -Float.MAX_VALUE;
 
-         for (Object var13_o : (Iterable<?>)(Object)(var7)) {
-            List<AbstractWidget> var13 = (List)var13_o;
-            for (Object var15_o : (Iterable<?>)(Object)(var13)) {
-               AbstractWidget var15 = (AbstractWidget)var15_o;
+         for (List<AbstractWidget> var13 : var7) {
+            for (AbstractWidget var15 : var13) {
                var8 = Math.min(var8, (float)var15.getX());
                var9 = Math.min(var9, (float)var15.getY());
                var10 = Math.max(var10, (float)(var15.getX() + var15.getWidth()));

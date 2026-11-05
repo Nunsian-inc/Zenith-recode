@@ -81,8 +81,7 @@ public final class AutoPotionModule extends Module {
                      int var5 = mc.player.getInventory().getSelectedSlot();
                      boolean var6 = false;
 
-                     for (Object var8_o : (Iterable<?>)(Object)(var2)) {
-                        int var8 = (Integer)var8_o;
+                     for (int var8 : var2) {
                         if (PotionUtils.method2323(mc.player.getInventory().getItem(var8))) {
                            if (var8 < 9) {
                               PotionUtils.method2329(var8);

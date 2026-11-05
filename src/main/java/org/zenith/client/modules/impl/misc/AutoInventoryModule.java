@@ -692,8 +692,7 @@ public class AutoInventoryModule extends Module {
          }
       } else {
          if (this.items2.stream().noneMatch(var1x -> var1x.intValue == var4)) {
-            for (Object var8_o : (Iterable<?>)(Object)(var6)) {
-               Slot var8 = (Slot)var8_o;
+            for (Slot var8 : var6) {
                this.items2.add(new AutoInventoryModule.Data(var4, this.method190(var8.getItem())));
             }
          }

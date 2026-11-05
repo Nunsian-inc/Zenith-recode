@@ -86,8 +86,7 @@ public class ScoreboardHud extends Interface {
       float var11 = var5.width(var10);
       float var12 = 0.0F;
 
-      for (Object var14_o : (Iterable<?>)(Object)(var8)) {
-         ScoreboardHud.Entry var14 = (ScoreboardHud.Entry)var14_o;
+      for (ScoreboardHud.Entry var14 : var8) {
          var12 = Math.max(var12, var4.width(var14.name()));
       }
 

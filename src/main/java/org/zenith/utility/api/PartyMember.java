@@ -759,8 +759,7 @@ public final class PartyMember implements MinecraftAccess {
             if (!var4.equals(var5)) {
                ArrayList var8 = new ArrayList();
 
-               for (Object var10_o : (Iterable<?>)(Object)(var4)) {
-                  String var10 = (String)var10_o;
+               for (String var10 : var4) {
                   if (var6.getRegistry().method1421(var10) == null) {
                      var8.add(var10);
                   }
@@ -855,8 +854,7 @@ public final class PartyMember implements MinecraftAccess {
          this.items9.clear();
       }
 
-      for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-         Consumer var5 = (Consumer)var5_o;
+      for (Consumer var5 : var3) {
          var5.accept(var2);
       }
    }
@@ -876,8 +874,7 @@ public final class PartyMember implements MinecraftAccess {
          this.items8.clear();
       }
 
-      for (Object var6_o : (Iterable<?>)(Object)(var4)) {
-         Consumer var6 = (Consumer)var6_o;
+      for (Consumer var6 : var4) {
          var6.accept(var3);
       }
    }
@@ -893,8 +890,7 @@ public final class PartyMember implements MinecraftAccess {
             this.items8.clear();
          }
 
-         for (Object var7_o : (Iterable<?>)(Object)(var5)) {
-            Consumer var7 = (Consumer)var7_o;
+         for (Consumer var7 : var5) {
             var7.accept(null);
          }
       }

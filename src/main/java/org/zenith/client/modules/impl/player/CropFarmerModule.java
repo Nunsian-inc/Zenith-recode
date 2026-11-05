@@ -894,8 +894,7 @@ public final class CropFarmerModule extends Module {
                      ArrayList<Integer> var11 = new ArrayList<>(this.items3.get(var10));
                      var11.sort(Comparator.<Integer>comparingInt(var2x -> this.method4437(this.items2.get(var2x), var1)).reversed());
 
-                     for (Object var8_o : (Iterable<?>)(Object)(var11)) {
-                        int var8 = (Integer)var8_o;
+                     for (int var8 : var11) {
                         BitSet var9 = (BitSet)var1.clone();
                         var9.andNot(this.items2.get(var8));
                         var2.add(var8);

@@ -78,8 +78,7 @@ public class ParticleRenderer {
                BufferBuilder var18 = var13.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
                boolean var10 = false;
 
-               for (Object var12_o : (Iterable<?>)(Object)(var17)) {
-                  Handler7 var12 = (Handler7)var12_o;
+               for (Handler7 var12 : var17) {
                   if (var12.method1449(var1) >= 0.001F) {
                      method1481(var18, var12, var1);
                      var10 = true;

@@ -90,8 +90,7 @@ public class PartyHud extends Interface {
          if (this.items.size() > var3.size()) {
             HashSet var6 = new HashSet();
 
-            for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-               PartyHud.Data var8 = (PartyHud.Data)var8_o;
+            for (PartyHud.Data var8 : var3) {
                var6.add(var8.uid());
             }
 
@@ -105,8 +104,7 @@ public class PartyHud extends Interface {
       Font var9 = Fonts.NEW_REGULAR.getFont(4.6F);
       float var10 = HudListLayout.method7638("P", var20);
 
-      for (Object var12_o : (Iterable<?>)(Object)(var3)) {
-         PartyHud.Data var12 = (PartyHud.Data)var12_o;
+      for (PartyHud.Data var12 : var3) {
          var10 = Math.max(var10, 26.0F + var21.width(var12.name()) + 34.0F + 6.0F);
       }
 
@@ -126,8 +124,7 @@ public class PartyHud extends Interface {
          HudListLayout.method7636(var1, var14, var15, var22, "P", var20);
          float var16 = var15 + 20.0F + GuiStyle.PADDING.intValue() / 4.0F;
 
-         for (Object var18_o : (Iterable<?>)(Object)(var3)) {
-            PartyHud.Data var18 = (PartyHud.Data)var18_o;
+         for (PartyHud.Data var18 : var3) {
             this.method6107(var1, var2, var18, var14, var16, var22, var21, var9);
             var16 += 24.0F;
          }

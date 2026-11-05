@@ -230,8 +230,7 @@ public class WatermarkIslandHud extends Interface {
          LerpingBossEvent var2 = null;
          Data2 var3 = null;
 
-         for (Object var5_o : (Iterable<?>)(Object)(var1.entrySet())) {
-            Map.Entry var5 = (Map.Entry)var5_o;
+         for (Map.Entry var5 : var1.entrySet()) {
             LerpingBossEvent var6 = (LerpingBossEvent)var5.getValue();
             String var7 = var6.getName().getString();
             WatermarkIslandHud.Data var8 = this.items.get(var5.getKey());

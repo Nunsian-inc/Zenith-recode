@@ -344,8 +344,7 @@ public final class AutoMineModule extends Module {
          var15.sort(Comparator.comparingDouble(AutoMineModule.Data2::getDoubleValue));
          int var28 = 0;
 
-         for (Object var30_o : (Iterable<?>)(Object)(var15)) {
-            AutoMineModule.Data2 var30 = (AutoMineModule.Data2)var30_o;
+         for (AutoMineModule.Data2 var30 : var15) {
             if (var28++ >= 48) {
                break;
             }
@@ -372,8 +371,7 @@ public final class AutoMineModule extends Module {
 
       var8.subList(1, var8.size()).sort(Comparator.comparingDouble(var2x -> method4365(var7, Rotation.method3128(var2x, var4))));
 
-      for (Object var14_o : (Iterable<?>)(Object)(var8)) {
-         Vec3 var14 = (Vec3)var14_o;
+      for (Vec3 var14 : var8) {
          if (this.method4364(var1, var14, var4, var5)) {
             return new AutoMineModule.Data3(var1, var14);
          }

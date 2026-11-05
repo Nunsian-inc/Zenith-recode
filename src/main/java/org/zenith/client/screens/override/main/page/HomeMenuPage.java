@@ -146,8 +146,7 @@ public final class HomeMenuPage implements MainMenuPage {
       Font var12 = MenuTheme.regular(11.0F);
       float var13 = var7 - this.scroll.offset();
 
-      for (Object var15_o : (Iterable<?>)(Object)(var10)) {
-         HomeMenuPage.Entry var15 = (HomeMenuPage.Entry)var15_o;
+      for (HomeMenuPage.Entry var15 : var10) {
          MenuIcon var16 = var15.added() ? MenuIcons.PLUS : MenuIcons.MINUS;
          Font var17 = var16.font(11.0F);
          ZenithColor var18 = var15.added() ? MenuTheme.accent() : MenuTheme.textTertiary();
@@ -172,8 +171,7 @@ public final class HomeMenuPage implements MainMenuPage {
       );
       float var7 = var4.getFloatValue();
 
-      for (Object var9_o : (Iterable<?>)(Object)(var6)) {
-         HomeMenuPage.Stat var9 = (HomeMenuPage.Stat)var9_o;
+      for (HomeMenuPage.Stat var9 : var6) {
          this.drawStat(var1, var9, var7, var4.getFloatValue2());
          var7 += STAT_WIDTH + STAT_GAP;
       }

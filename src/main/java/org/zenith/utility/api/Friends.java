@@ -72,8 +72,7 @@ public final class Friends {
       } else {
          boolean var6 = false;
 
-         for (Object var5_o : (Iterable<?>)(Object)(var2)) {
-            String var5 = (String)var5_o;
+         for (String var5 : var2) {
             if (this.items.size() >= 200) {
                break;
             }

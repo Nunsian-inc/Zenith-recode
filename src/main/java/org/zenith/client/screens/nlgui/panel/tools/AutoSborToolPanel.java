@@ -216,8 +216,7 @@ public class AutoSborToolPanel extends ToolTab {
       } else {
          int var2 = 7;
 
-         for (Object var4_o : (Iterable<?>)(Object)(var1)) {
-            ItemEntry var4 = (ItemEntry)var4_o;
+         for (ItemEntry var4 : var1) {
             this.custom(
                22.0F,
                this.entering(
@@ -272,8 +271,7 @@ public class AutoSborToolPanel extends ToolTab {
       } else {
          int var2 = 3;
 
-         for (Object var4_o : (Iterable<?>)(Object)(var1)) {
-            SborList var4 = (SborList)var4_o;
+         for (SborList var4 : var1) {
             this.asideCustom(
                22.0F,
                this.entering(

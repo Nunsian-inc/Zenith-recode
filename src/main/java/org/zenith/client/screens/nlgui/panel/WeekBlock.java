@@ -83,8 +83,7 @@ public final class WeekBlock {
             ArrayList<PartyMember.Data5> var6 = new ArrayList<>(var2.getItems2());
             boolean var7 = true;
 
-            for (Object var9_o : (Iterable<?>)(Object)(var6)) {
-               PartyMember.Data5 var9 = (PartyMember.Data5)var9_o;
+            for (PartyMember.Data5 var9 : var6) {
                var7 &= var9.method1213().getLongValue() < 60000L && var9.method1213().getLongValue2() == 0L && var9.method1213().getLongValue3() == 0L;
             }
 
@@ -102,8 +101,7 @@ public final class WeekBlock {
                );
                long var13 = 1L;
 
-               for (Object var11_o : (Iterable<?>)(Object)(var6)) {
-                  PartyMember.Data5 var11 = (PartyMember.Data5)var11_o;
+               for (PartyMember.Data5 var11 : var6) {
                   var13 = Math.max(var13, this.sort == 1 ? var11.method1213().getLongValue2() : var11.method1213().getLongValue());
                }
 
@@ -367,8 +365,7 @@ public final class WeekBlock {
       this.host.custom(var3.size() * var4 + 6.0F, (var3x, var4x, var5, var6, var7, var8, var9, var10) -> {
          float var11 = var7 + 3.0F;
 
-         for (Object var13_o : (Iterable<?>)(Object)(var3)) {
-            String var13 = (String)var13_o;
+         for (String var13 : var3) {
             var3x.drawText(var2, var13, var6 + 8.0F, var11, var10.getTextTertiary().getZenithColor().method7294(var9));
             var11 += var4;
          }

@@ -166,8 +166,7 @@ public class PacketAuditModule extends Module {
          Collection<PlayerInfo> var1 = mc.getConnection().getOnlinePlayers();
          this.line("tab.size| " + var1.size());
 
-         for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-            PlayerInfo var3 = (PlayerInfo)var3_o;
+         for (PlayerInfo var3 : var1) {
             PlayerTeam var4 = var3.getTeam();
             this.line(
                "tab| "
@@ -274,8 +273,7 @@ public class PacketAuditModule extends Module {
       ArrayList<java.util.Map.Entry> var3 = new ArrayList<>(this.items2.entrySet());
       var3.sort((var0, var1x) -> Integer.compare(((AtomicInteger)var1x.getValue()).get(), ((AtomicInteger)var0.getValue()).get()));
 
-      for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-         java.util.Map.Entry var5 = (java.util.Map.Entry)var5_o;
+      for (java.util.Map.Entry var5 : var3) {
          this.line(
             String.format("%-46s %6d  %.1f/с", var5.getKey(), ((AtomicInteger)var5.getValue()).get(), (double)((AtomicInteger)var5.getValue()).get() / var1)
          );
@@ -286,8 +284,7 @@ public class PacketAuditModule extends Module {
          ArrayList<java.util.Map.Entry> var7 = new ArrayList<>(this.items5.entrySet());
          var7.sort((var0, var1x) -> Integer.compare(((AtomicInteger)var1x.getValue()).get(), ((AtomicInteger)var0.getValue()).get()));
 
-         for (Object var6_o : (Iterable<?>)(Object)(var7)) {
-            java.util.Map.Entry var6 = (java.util.Map.Entry)var6_o;
+         for (java.util.Map.Entry var6 : var7) {
             this.line(
                String.format("%-46s %6d  %.1f/s", var6.getKey(), ((AtomicInteger)var6.getValue()).get(), (double)((AtomicInteger)var6.getValue()).get() / var1)
             );

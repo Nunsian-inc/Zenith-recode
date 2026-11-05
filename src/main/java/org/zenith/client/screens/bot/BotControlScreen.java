@@ -272,8 +272,7 @@ public class BotControlScreen extends CustomScreen {
       var var6 = new ArrayList<>(var3.size());
       this.chatTotalLines = 0;
 
-      for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-         ChatMessage var8 = (ChatMessage)var8_o;
+      for (ChatMessage var8 : var3) {
          BotControlScreen.CachedChat var9 = this.chatCache.get(var8);
          if (var9 != null) {
             var6.add(var9);
@@ -627,8 +626,7 @@ public class BotControlScreen extends CustomScreen {
 
                         var5 = new ArrayList(var12.size());
 
-                        for (Object var14_o : (Iterable<?>)(Object)(var12)) {
-                           PlayerScoreEntry var14 = (PlayerScoreEntry)var14_o;
+                        for (PlayerScoreEntry var14 : var12) {
                            MutableComponent var15 = PlayerTeam.formatNameForTeam(var7.getPlayersTeam(var14.owner()), var14.ownerName());
                            MutableComponent var16 = var14.formatValue(var27);
                            var5.add(new BotControlScreen.SidebarRow(var15, var16, mc.font.width(var16)));

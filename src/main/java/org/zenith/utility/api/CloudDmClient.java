@@ -52,8 +52,7 @@ public final class CloudDmClient {
       List<CloudDmClient.Data2> var1 = this.items;
       boolean var2 = false;
 
-      for (Object var4_o : (Iterable<?>)(Object)(var1)) {
-         CloudDmClient.Data2 var4 = (CloudDmClient.Data2)var4_o;
+      for (CloudDmClient.Data2 var4 : var1) {
          if (method4858(var4.getText())) {
             var2 = true;
             break;
@@ -65,8 +64,7 @@ public final class CloudDmClient {
       } else {
          List<Data2> var6 = new ArrayList<>(var1.size());
 
-         for (Object var5_o : (Iterable<?>)(Object)(var1)) {
-            CloudDmClient.Data2 var5 = (CloudDmClient.Data2)var5_o;
+         for (CloudDmClient.Data2 var5 : var1) {
             if (!method4858(var5.getText())) {
                var6.add(var5);
             }
@@ -453,8 +451,7 @@ public final class CloudDmClient {
       synchronized (this.obj) {
          List<CloudDmClient.Data> var3 = this.messages;
 
-         for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-            CloudDmClient.Data var5 = (CloudDmClient.Data)var5_o;
+         for (CloudDmClient.Data var5 : var3) {
             if (var5.getLongValue() == var1.getLongValue()) {
                return;
             }

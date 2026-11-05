@@ -471,8 +471,7 @@ public final class AutoThrowModule extends Module {
             MobEffectInstance var4 = null;
             MobEffectInstance var5 = null;
 
-            for (Object var7_o : (Iterable<?>)(Object)(var2)) {
-               MobEffectInstance var7 = (MobEffectInstance)var7_o;
+            for (MobEffectInstance var7 : var2) {
                if (var7.getEffect().value().getCategory() == MobEffectCategory.BENEFICIAL
                   && !var7.getEffect().equals(MobEffects.SPEED)
                   && !var7.getEffect().equals(MobEffects.JUMP_BOOST)) {

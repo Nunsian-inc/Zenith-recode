@@ -903,8 +903,7 @@ public final class AutoBrewingModule extends Module {
          Vec3 var12 = mc.player.getEyePosition(1.0F);
          double var13 = mc.player.blockInteractionRange();
 
-         for (Object var9_o : (Iterable<?>)(Object)(var4)) {
-            Vec3 var9 = (Vec3)var9_o;
+         for (Vec3 var9 : var4) {
             Rotation var10 = RotationUtils.method6913(var9);
             BlockHitResult var11 = TargetUtils.method3216(var12, var10, var13, var1x -> var1x != null && var1x.getBlockPos().equals(var1));
             if (var11 != null && var11.getType() != HitResult.Type.MISS && var11.getBlockPos().equals(var1)) {

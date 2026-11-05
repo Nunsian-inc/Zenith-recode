@@ -166,8 +166,7 @@ public final class ScoreboardParser {
       List<List<Data>> var3 = new ArrayList<>(var2.size());
       boolean var4 = false;
 
-      for (Object var6_o : (Iterable<?>)(Object)(var2)) {
-         List var6 = (List)var6_o;
+      for (List var6 : var2) {
          String var7 = method7098(var6);
          String var8 = var7.trim();
          if (method7090(var8)) {

@@ -312,8 +312,7 @@ public final class CloudAvatarCache {
          }
       }
 
-      for (Object var14_o : (Iterable<?>)(Object)(var4)) {
-         Identifier var14 = (Identifier)var14_o;
+      for (Identifier var14 : var4) {
          Minecraft.getInstance().getTextureManager().release(var14);
       }
    }

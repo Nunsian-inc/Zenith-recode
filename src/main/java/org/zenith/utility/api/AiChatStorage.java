@@ -67,8 +67,7 @@ public final class AiChatStorage {
             Files.createDirectories(this.path);
 
             try (Stream<java.nio.file.Path> var1 = Files.list(this.path)) {
-               for (Object var3_o : (Iterable<?>)(Object)(var1.filter(var0 -> var0.toString().endsWith(".json")).toList())) {
-                  Path var3 = (Path)var3_o;
+               for (Path var3 : var1.filter(var0 -> var0.toString().endsWith(".json")).toList()) {
                   try {
                      JsonObject var4 = JsonParser.parseString(Files.readString(var3, StandardCharsets.UTF_8)).getAsJsonObject();
                      AiChatStorage.Entry var5 = new AiChatStorage.Entry(var4.get("id").getAsString(), var4.get("createdAt").getAsLong());
@@ -424,8 +423,7 @@ public final class AiChatStorage {
                   ArrayList var11x = new ArrayList();
                   int var12x = 6;
 
-                  for (Object var14x_o : (Iterable<?>)(Object)(var11)) {
-                     AiChatStorage.Data2 var14x = (AiChatStorage.Data2)var14x_o;
+                  for (AiChatStorage.Data2 var14x : var11) {
                      ArrayList var15x = new ArrayList();
                      var var16x = var14x.getItems().iterator();
 
@@ -532,8 +530,7 @@ public final class AiChatStorage {
             if (var5 == null) {
                String var6 = "ai-script";
 
-               for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-                  AiChatStorage.Data var8 = (AiChatStorage.Data)var8_o;
+               for (AiChatStorage.Data var8 : var3) {
                   Matcher var9 = pattern2.matcher(var8.getText2());
                   if (var8.getText().endsWith("main.js") && var9.find()) {
                      var6 = var9.group(1).strip();
@@ -558,8 +555,7 @@ public final class AiChatStorage {
 
             int var11 = 0;
 
-            for (Object var16_o : (Iterable<?>)(Object)(var3)) {
-               AiChatStorage.Data var16 = (AiChatStorage.Data)var16_o;
+            for (AiChatStorage.Data var16 : var3) {
                Path var18 = var5.getPath() == null && var16.getText().endsWith(".js") ? var5.getPath2() : var1.method1346(var5, var16.getText());
                var1.method1347(var5, var18, var16.getText2());
                var11++;
@@ -614,8 +610,7 @@ public final class AiChatStorage {
 
          List<Storage.Data2> var4 = var1.method1349(var2);
 
-         for (Object var6_o : (Iterable<?>)(Object)(var4.subList(Math.max(0, var4.size() - 15), var4.size()))) {
-            Storage.Data2 var6 = (Storage.Data2)var6_o;
+         for (Storage.Data2 var6 : var4.subList(Math.max(0, var4.size() - 15), var4.size())) {
             var3.append('[').append(var6.getText2()).append("] ").append(var6.text()).append('\n');
          }
 
@@ -670,8 +665,7 @@ public final class AiChatStorage {
       if (!var12.isEmpty()) {
          var1.append("# Точный список глобалов и их членов (из движка — используй только их)\n");
 
-         for (Object var4_o : (Iterable<?>)(Object)(var12.entrySet())) {
-            Map.Entry var4 = (Map.Entry)var4_o;
+         for (Map.Entry var4 : var12.entrySet()) {
             var1.append((String)var4.getKey()).append(": ").append(String.join(", ", (Iterable<? extends CharSequence>)var4.getValue())).append('\n');
          }
 
@@ -710,8 +704,7 @@ public final class AiChatStorage {
          if (!var15.isEmpty()) {
             var1.append("# Последние строки журнала скрипта\n");
 
-            for (Object var17_o : (Iterable<?>)(Object)(var15.subList(Math.max(0, var15.size() - 10), var15.size()))) {
-               Storage.Data2 var17 = (Storage.Data2)var17_o;
+            for (Storage.Data2 var17 : var15.subList(Math.max(0, var15.size() - 10), var15.size())) {
                var1.append('[').append(var17.getText2()).append("] ").append(var17.text()).append('\n');
             }
          }

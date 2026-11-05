@@ -156,8 +156,7 @@ public final class CloudPackets {
       FriendlyByteBuf var7 = method1820(2, 16 + var6 * 20);
       var7.writeVarInt(var6);
 
-      for (Object var5_o : (Iterable<?>)(Object)(var1)) {
-         String var5 = (String)var5_o;
+      for (String var5 : var1) {
          var7.writeUtf(var5, 32);
       }
 

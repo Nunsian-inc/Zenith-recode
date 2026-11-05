@@ -190,8 +190,7 @@ public final class CloudConnectionState {
          var2.sort(Comparator.comparingLong(CloudPackets.Data13::time).thenComparingLong(CloudPackets.Data13::getLongValue3));
          this.arrayDeque.clear();
 
-         for (Object var10_o : (Iterable<?>)(Object)(var2.subList(Math.max(0, var2.size() - 200), var2.size()))) {
-            CloudPackets.Data13 var10 = (CloudPackets.Data13)var10_o;
+         for (CloudPackets.Data13 var10 : var2.subList(Math.max(0, var2.size() - 200), var2.size())) {
             this.arrayDeque.addLast(var10);
          }
       }

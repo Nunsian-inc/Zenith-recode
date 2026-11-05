@@ -46,8 +46,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
             Util3.Entry var13 = null;
             long var14 = System.nanoTime();
 
-            for (Object var17_o : (Iterable<?>)(Object)(var8)) {
-               HoveredData var17 = (HoveredData)var17_o;
+            for (HoveredData var17 : var8) {
                if (var17.method1546() != WardrobeCategory.PET
                   && !var17.getFocusSlotEnum().method543()
                   && (var11 == null || var17 == var11 || var17.method1546() == WardrobeCategory.ACCESSORY)) {
@@ -205,8 +204,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
             if (var1.method2499(var2, FocusSlotEnum.CHARACTER) != null) {
                var0.showCape = false;
             } else {
-               for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-                  HoveredData var4 = (HoveredData)var4_o;
+               for (HoveredData var4 : var2) {
                   if (var4.method1546() == WardrobeCategory.CLOTHING
                      || var4.method1546() == WardrobeCategory.CAPE
                      || var4.method1546() == WardrobeCategory.ACCESSORY) {

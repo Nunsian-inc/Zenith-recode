@@ -136,8 +136,7 @@ public class BotsToolPanel extends ToolTab {
       String var2 = this.searchQuery();
       ArrayList<String> var3 = new ArrayList();
 
-      for (Object var5_o : (Iterable<?>)(Object)(var1)) {
-         String var5 = (String)var5_o;
+      for (String var5 : var1) {
          if (var2.isEmpty() || var5.toLowerCase(Locale.ROOT).contains(var2)) {
             var3.add(var5);
          }
@@ -157,8 +156,7 @@ public class BotsToolPanel extends ToolTab {
             this.custom(202.0F, this::renderEmptyList);
          }
       } else {
-         for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-            String var8 = (String)var8_o;
+         for (String var8 : var3) {
             this.buildBotCard(var8);
          }
       }
@@ -886,8 +884,7 @@ public class BotsToolPanel extends ToolTab {
       var1.drawText(var16, var16.clip(t("gui.tools.bots.emptyTitle"), var19), var18, var22, var8.getTextEnable().getZenithColor().method7294(var7));
       var22 += var16.height() + 4.0F;
 
-      for (Object var24_o : (Iterable<?>)(Object)(var20)) {
-         String var24 = (String)var24_o;
+      for (String var24 : var20) {
          var1.drawText(var17, var24, var18, var22, var8.getTextTertiary().getZenithColor().method7294(var7));
          var22 += var17.height() + 2.0F;
       }

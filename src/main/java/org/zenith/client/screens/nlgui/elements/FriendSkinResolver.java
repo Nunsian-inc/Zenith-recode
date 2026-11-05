@@ -122,8 +122,7 @@ public final class FriendSkinResolver implements MinecraftAccess {
    public static void clearExternalCache() {
       Set<Identifier> var0 = Set.copyOf(EXTERNAL_TEXTURES);
 
-      for (Object var2_o : (Iterable<?>)(Object)(var0)) {
-         Identifier var2 = (Identifier)var2_o;
+      for (Identifier var2 : var0) {
          try {
             mc.getTextureManager().release(var2);
          } catch (Exception var4) {

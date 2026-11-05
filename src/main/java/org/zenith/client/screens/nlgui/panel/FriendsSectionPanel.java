@@ -242,8 +242,7 @@ public class FriendsSectionPanel extends SectionPanel {
 
       var var11 = Zenith.getInstance().getFriends().getItems();
       if (var11 != null) {
-         for (Object var16_o : (Iterable<?>)(Object)(List.copyOf(var11))) {
-            String var16 = (String)var16_o;
+         for (String var16 : List.copyOf(var11)) {
             var3.append('L').append(var16).append((char)(this.isNearby(var16) ? '+' : '-')).append(';');
          }
       }
@@ -418,8 +417,7 @@ public class FriendsSectionPanel extends SectionPanel {
          } else {
             this.caption(t("gui.friends.caption.invites") + " · " + var6);
 
-            for (Object var8_o : (Iterable<?>)(Object)(var5)) {
-               PartyMember.Data13 var8 = (PartyMember.Data13)var8_o;
+            for (PartyMember.Data13 var8 : var5) {
                String var9 = ServerNameUtils.method5643(var8.server(), var8.mode());
                this.inviteCard(
                   "join:" + var8.getLongValue(),
@@ -437,8 +435,7 @@ public class FriendsSectionPanel extends SectionPanel {
                );
             }
 
-            for (Object var12_o : (Iterable<?>)(Object)(var3)) {
-               PartyMember.Data7 var12 = (PartyMember.Data7)var12_o;
+            for (PartyMember.Data7 var12 : var3) {
                this.inviteCard(
                   "party:" + var12.getLongValue(),
                   var12.getText2(),
@@ -450,8 +447,7 @@ public class FriendsSectionPanel extends SectionPanel {
                );
             }
 
-            for (Object var13_o : (Iterable<?>)(Object)(var4)) {
-               PartyMember.Data16 var13 = (PartyMember.Data16)var13_o;
+            for (PartyMember.Data16 var13 : var4) {
                this.inviteCard(
                   "room:" + var13.getText(),
                   var13.getText3(),
@@ -691,8 +687,7 @@ public class FriendsSectionPanel extends SectionPanel {
             var6x.drawText(var17, var18, var15 - var17.width(var18) / 2.0F, var10 + 22.0F, var13.getTextEnable().getZenithColor().method7294(var12));
             float var19 = var10 + 22.0F + var17.height() + 3.0F;
 
-            for (Object var21_o : (Iterable<?>)(Object)(var5)) {
-               String var21 = (String)var21_o;
+            for (String var21 : var5) {
                var6x.drawText(var4, var21, var15 - var4.width(var21) / 2.0F, var19, var13.getTextTertiary().getZenithColor().method7294(var12));
                var19 += var6;
             }
@@ -1534,8 +1529,7 @@ public class FriendsSectionPanel extends SectionPanel {
          } else {
             int var3 = 0;
 
-            for (Object var5_o : (Iterable<?>)(Object)(var2)) {
-               FriendsSectionPanel.Hint var5 = (FriendsSectionPanel.Hint)var5_o;
+            for (FriendsSectionPanel.Hint var5 : var2) {
                this.suggestionCard(var5, var1, var3++);
             }
 
@@ -1822,8 +1816,7 @@ public class FriendsSectionPanel extends SectionPanel {
          if (var3 == null) {
             return false;
          } else {
-            for (Object var5_o : (Iterable<?>)(Object)(List.copyOf(var3))) {
-               String var5 = (String)var5_o;
+            for (String var5 : List.copyOf(var3)) {
                if (var5.equalsIgnoreCase(var1)) {
                   return true;
                }
@@ -2215,8 +2208,7 @@ public class FriendsSectionPanel extends SectionPanel {
                (var1x, var2x, var3x, var4x, var5x, var6, var7, var8) -> {
                   float var9 = var4x + 8.0F;
 
-                  for (Object var11_o : (Iterable<?>)(Object)(var5)) {
-                     ItemStack var11 = (ItemStack)var11_o;
+                  for (ItemStack var11 : var5) {
                      var1x.drawRoundedRect(
                         var9 - 1.0F,
                         var5x - 1.0F,
@@ -2785,8 +2777,7 @@ public class FriendsSectionPanel extends SectionPanel {
          float var13 = wave(this.asideWave, var5);
          float var14 = var9 + GuiStyle.PADDING.intValue();
 
-         for (Object var16_o : (Iterable<?>)(Object)(var3)) {
-            String var16 = (String)var16_o;
+         for (String var16 : var3) {
             var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 6.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
             var14 += var4;
          }
@@ -2802,8 +2793,7 @@ public class FriendsSectionPanel extends SectionPanel {
          float var13 = wave(this.listWave, var5);
          float var14 = var9 + 2.0F;
 
-         for (Object var16_o : (Iterable<?>)(Object)(var3)) {
-            String var16 = (String)var16_o;
+         for (String var16 : var3) {
             var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 8.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
             var14 += var4;
          }
@@ -2840,8 +2830,7 @@ public class FriendsSectionPanel extends SectionPanel {
             );
             float var17 = var9 + 5.0F + (1.0F - var13) * 2.0F;
 
-            for (Object var19_o : (Iterable<?>)(Object)(var3)) {
-               String var19 = (String)var19_o;
+            for (String var19 : var3) {
                var5x.drawText(var2, var19, var14 + 7.0F, var17, var12.getTextSecondary().getZenithColor().method7294(var11 * var13));
                var17 += var4;
             }
@@ -3080,8 +3069,7 @@ public class FriendsSectionPanel extends SectionPanel {
          if (this.nearbyWorld != mc.level || this.nearbyCount != var2.size() || var3 - this.nearbyAt > 4000000L) {
             this.nearbyNames.clear();
 
-            for (Object var6_o : (Iterable<?>)(Object)(var2)) {
-               AbstractClientPlayer var6 = (AbstractClientPlayer)var6_o;
+            for (AbstractClientPlayer var6 : var2) {
                this.nearbyNames.add(var6.getName().getString());
             }
 

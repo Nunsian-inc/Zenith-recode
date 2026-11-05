@@ -158,8 +158,7 @@ public final class OriginUtil {
          ZipOutputStream var4 = new ZipOutputStream(var12);
 
          try {
-            for (Object var6_o : (Iterable<?>)(Object)(var1)) {
-               Path var6 = (Path)var6_o;
+            for (Path var6 : var1) {
                String var7 = var2 == null ? "main.js" : var2.relativize(var6).toString().replace('\\', '/');
                var4.putNextEntry(new ZipEntry(var7));
                Files.copy(var6, var4);
@@ -353,8 +352,7 @@ public final class OriginUtil {
                var var30 = method6929(var6);
 
                try (Stream<java.nio.file.Path> var32 = Files.walk(var6)) {
-                  for (Object var10_o : (Iterable<?>)(Object)(var32.sorted(Comparator.reverseOrder()).toList())) {
-                     Path var10 = (Path)var10_o;
+                  for (Path var10 : var32.sorted(Comparator.reverseOrder()).toList()) {
                      if (!var10.equals(var6)) {
                         String var11 = var10.getFileName().toString();
                         if (!var11.equals("storage.json") && !var11.startsWith(".")) {
@@ -396,8 +394,7 @@ public final class OriginUtil {
             ArrayList var31 = new ArrayList();
 
             try (Stream<java.nio.file.Path> var33 = Files.walk(var5)) {
-               for (Object var39_o : (Iterable<?>)(Object)(var33.sorted().toList())) {
-                  Path var39 = (Path)var39_o;
+               for (Path var39 : var33.sorted().toList()) {
                   if (!var39.equals(var5)) {
                      Path var41 = var6.resolve(var5.relativize(var39).toString());
                      if (Files.isDirectory(var39)) {
@@ -513,8 +510,7 @@ public final class OriginUtil {
    private static void method6932(Path var0) {
       if (Files.exists(var0)) {
          try (Stream<java.nio.file.Path> var1 = Files.walk(var0)) {
-            for (Object var3_o : (Iterable<?>)(Object)(var1.sorted(Comparator.reverseOrder()).toList())) {
-               Path var3 = (Path)var3_o;
+            for (Path var3 : var1.sorted(Comparator.reverseOrder()).toList()) {
                Files.deleteIfExists(var3);
             }
          } catch (IOException var6) {

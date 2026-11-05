@@ -111,8 +111,7 @@ public final class Util16 {
                var4[0][var19][var20][var21] = (float)var29 / (var18 * var18 * var18);
                double var40 = var1.getFloatValue9();
 
-               for (Object var43_o : (Iterable<?>)(Object)(var7)) {
-                  AABB var43 = (AABB)var43_o;
+               for (AABB var43 : var7) {
                   var40 = Math.min(var40, method3054(var28, var43));
                }
 

@@ -80,8 +80,7 @@ public final class RemoteUtil {
       } else {
          long var4 = 0L;
 
-         for (Object var7_o : (Iterable<?>)(Object)(var3)) {
-            RemoteUtil.Entry var7 = (RemoteUtil.Entry)var7_o;
+         for (RemoteUtil.Entry var7 : var3) {
             var4 += var7.method1849();
          }
 
@@ -256,8 +255,7 @@ public final class RemoteUtil {
       ArrayList var4 = new ArrayList();
       ArrayList var5 = new ArrayList();
 
-      for (Object var7_o : (Iterable<?>)(Object)(var3)) {
-         Object[] var7 = (Object[])var7_o;
+      for (Object[] var7 : var3) {
          var4.add((NativeImage)var7[0]);
          var5.add((Integer)var7[1]);
       }
@@ -860,8 +858,7 @@ public final class RemoteUtil {
       HashMap var3 = new HashMap();
       ArrayList<ScriptSoundLoader.Entry> var4 = new ArrayList();
       var0.method1413(() -> {
-         for (Object var2x_o : (Iterable<?>)(Object)(var4)) {
-            ScriptSoundLoader.Entry var2x = (ScriptSoundLoader.Entry)var2x_o;
+         for (ScriptSoundLoader.Entry var2x : var4) {
             var2x.stopped = true;
          }
       });
@@ -945,8 +942,7 @@ public final class RemoteUtil {
          }
       );
       var6.method6274("stopAll", var1x -> {
-         for (Object var3x_o : (Iterable<?>)(Object)(var4)) {
-            ScriptSoundLoader.Entry var3x = (ScriptSoundLoader.Entry)var3x_o;
+         for (ScriptSoundLoader.Entry var3x : var4) {
             var3x.stopped = true;
          }
 

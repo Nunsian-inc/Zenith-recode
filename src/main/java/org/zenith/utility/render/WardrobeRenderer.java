@@ -120,8 +120,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
                      method6697(var7, var10, var11, var1, var2, var3, var4, false, Util3.Data.INSTANCE);
                   }
 
-                  for (Object var15_o : (Iterable<?>)(Object)(var16)) {
-                     HoveredData var15 = (HoveredData)var15_o;
+                  for (HoveredData var15 : var16) {
                      if (var15 != var10
                         && Util3.method824(var15.getFocusSlotEnum()) >= 0
                         && method6696(var7, var15, var11)

@@ -494,8 +494,7 @@ public final class ScriptNotifyApi {
             synchronized (deque) {
                ArrayList<Object[]> var5 = new ArrayList<>(deque);
 
-               for (Object var7_o : (Iterable<?>)(Object)(var5.subList(Math.max(0, var5.size() - var2x), var5.size()))) {
-                  Object[] var7 = (Object[])var7_o;
+               for (Object[] var7 : var5.subList(Math.max(0, var5.size() - var2x), var5.size())) {
                   var3x.add(
                      ScriptValueUtils.method6247(var2)
                         .method6277("time", (double)((Long)var7[0]).longValue())

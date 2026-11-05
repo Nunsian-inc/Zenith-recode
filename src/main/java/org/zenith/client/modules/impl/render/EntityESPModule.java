@@ -746,8 +746,7 @@ public final class EntityESPModule extends Module {
          var7.addAll(ArmorSlots.method5384(var1));
          var7.add(var1.getMainHandItem());
 
-         for (Object var9_o : (Iterable<?>)(Object)(var7)) {
-            ItemStack var9 = (ItemStack)var9_o;
+         for (ItemStack var9 : var7) {
             Util14.method2637(var1, var9);
          }
 
@@ -1176,8 +1175,7 @@ public final class EntityESPModule extends Module {
 
       var18 += var14.width(var4);
 
-      for (Object var20_o : (Iterable<?>)(Object)(var17)) {
-         EntityESPModule.Type var20 = (EntityESPModule.Type)var20_o;
+      for (EntityESPModule.Type var20 : var17) {
          var18 += this.method589(var20, var16, var15, var6, var8, var9);
       }
 
@@ -1237,8 +1235,7 @@ public final class EntityESPModule extends Module {
 
       float var37 = var35;
 
-      for (Object var41_o : (Iterable<?>)(Object)(var17)) {
-         EntityESPModule.Type var41 = (EntityESPModule.Type)var41_o;
+      for (EntityESPModule.Type var41 : var17) {
          float var26 = this.method589(var41, var16, var15, var6, var8, var9);
          if (!(var26 <= 0.0F)) {
             float var27 = var35;
@@ -1375,8 +1372,7 @@ public final class EntityESPModule extends Module {
             StringBuilder var4 = new StringBuilder();
             int var5 = 0;
 
-            for (Object var7_o : (Iterable<?>)(Object)(var3)) {
-               Holder var7 = (Holder)var7_o;
+            for (Holder var7 : var3) {
                if (var5 == 4) {
                   var4.append(" +").append(var3.size() - var5);
                   break;
@@ -1533,8 +1529,7 @@ public final class EntityESPModule extends Module {
             StringBuilder var15 = new StringBuilder();
             int var16 = 0;
 
-            for (Object var18_o : (Iterable<?>)(Object)(var14)) {
-               String var18 = (String)var18_o;
+            for (String var18 : var14) {
                if (var16 == 2) {
                   var15.append(" …");
                   break;

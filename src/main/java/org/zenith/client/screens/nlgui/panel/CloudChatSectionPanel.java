@@ -508,8 +508,7 @@ public class CloudChatSectionPanel extends SectionPanel {
             CloudPackets.Data13 var6 = var5.isEmpty() ? null : (CloudPackets.Data13)var5.get(var5.size() - 1);
             LinkedHashMap var7 = new LinkedHashMap();
 
-            for (Object var9_o : (Iterable<?>)(Object)(var5)) {
-               CloudPackets.Data13 var9 = (CloudPackets.Data13)var9_o;
+            for (CloudPackets.Data13 var9 : var5) {
                if (var9.getLongValue3() > 0L) {
                   var7.put(var9.getLongValue3(), var9);
                }
@@ -588,8 +587,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       CloudChatClient.Data3 var6 = var4.isEmpty() ? null : (CloudChatClient.Data3)var4.get(var4.size() - 1);
       LinkedHashMap var7 = new LinkedHashMap();
 
-      for (Object var9_o : (Iterable<?>)(Object)(var4)) {
-         CloudChatClient.Data3 var9 = (CloudChatClient.Data3)var9_o;
+      for (CloudChatClient.Data3 var9 : var4) {
          if (var9.getLongValue() > 0L) {
             var7.put(var9.getLongValue(), var9);
          }
@@ -890,8 +888,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          long var4 = var3 == null ? 0L : var3.getLongValue();
          int var6 = 0;
 
-         for (Object var8_o : (Iterable<?>)(Object)(var2)) {
-            StoreApi.Data4 var8 = (StoreApi.Data4)var8_o;
+         for (StoreApi.Data4 var8 : var2) {
             boolean var9 = var8.uid() == var4;
             int var10 = var6++;
             this.asideCustom(24.0F, (var4x, var5, var6x, var7, var8x, var9x, var10x, var11) -> {
@@ -955,8 +952,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          StoreApi.Data3 var5 = var4.isEmpty() ? null : (StoreApi.Data3)var4.get(var4.size() - 1);
          LinkedHashMap var6 = new LinkedHashMap();
 
-         for (Object var8_o : (Iterable<?>)(Object)(var4)) {
-            StoreApi.Data3 var8 = (StoreApi.Data3)var8_o;
+         for (StoreApi.Data3 var8 : var4) {
             if (var8.getLongValue() > 0L) {
                var6.put(var8.getLongValue(), var8);
             }
@@ -1022,8 +1018,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       boolean var8 = false;
       String var9 = null;
 
-      for (Object var11_o : (Iterable<?>)(Object)(var4)) {
-         CloudDmClient.Data var11 = (CloudDmClient.Data)var11_o;
+      for (CloudDmClient.Data var11 : var4) {
          boolean var12 = var11.getLongValue2() != var2;
          String var13 = var12 ? "" : var1.getPeerName();
          boolean var14 = !var12 && (!var13.equals(var9) || var8);
@@ -1053,8 +1048,7 @@ public class CloudChatSectionPanel extends SectionPanel {
             this.asideCaption("gui.chat.caption.firstMessage");
             int var4 = 0;
 
-            for (Object var6_o : (Iterable<?>)(Object)(var3)) {
-               UserSearchClient.Data var6 = (UserSearchClient.Data)var6_o;
+            for (UserSearchClient.Data var6 : var3) {
                int var7 = var4++;
                long var8 = var6.uid();
                String var10 = var6.name();
@@ -1585,8 +1579,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          var26 = Math.max(var26, var25);
       }
 
-      for (Object var39_o : (Iterable<?>)(Object)(var17)) {
-         Coord var39 = (Coord)var39_o;
+      for (Coord var39 : var17) {
          var26 = Math.max(var26, ChatCards.width(var39));
       }
 
@@ -1605,8 +1598,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       var26 = Math.max(var26, var38);
       float var40 = var22;
 
-      for (Object var30_o : (Iterable<?>)(Object)(var17)) {
-         Coord var30 = (Coord)var30_o;
+      for (Coord var30 : var17) {
          var40 = Math.max(var40, ChatCards.width(var30) + 14.0F);
       }
 
@@ -1614,8 +1606,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       float var42 = var41 ? Math.max(ChatCards.width((Coord)var17.get(0)), var38) : Math.min(var40, var26 + 14.0F);
       float var31 = 0.0F;
 
-      for (Object var33_o : (Iterable<?>)(Object)(var17)) {
-         Coord var33 = (Coord)var33_o;
+      for (Coord var33 : var17) {
          var31 += ChatCards.height(var33) + 2.0F;
       }
 
@@ -2199,8 +2190,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.stickersPrepared = var1.revision();
          List<StickerPackService.Data> var2 = var1.getItems2();
 
-         for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-            StickerPackService.Data var4 = (StickerPackService.Data)var4_o;
+         for (StickerPackService.Data var4 : var2) {
             ChatImageCache.get(var1.method5507(var4.getText(), var4.getText3()));
          }
 

@@ -387,8 +387,7 @@ public final class StreamerModeModule extends Module {
       if (var2) {
          int var3 = 0;
 
-         for (Object var5_o : (Iterable<?>)(Object)(var1)) {
-            PlayerInfo var5 = (PlayerInfo)var5_o;
+         for (PlayerInfo var5 : var1) {
             if (!var5.getProfile().name().equals(this.items4.get(var3++))) {
                var2 = false;
                break;
@@ -399,8 +398,7 @@ public final class StreamerModeModule extends Module {
       if (!var2) {
          this.items4.clear();
 
-         for (Object var7_o : (Iterable<?>)(Object)(var1)) {
-            PlayerInfo var7 = (PlayerInfo)var7_o;
+         for (PlayerInfo var7 : var1) {
             this.items4.add(var7.getProfile().name());
          }
 

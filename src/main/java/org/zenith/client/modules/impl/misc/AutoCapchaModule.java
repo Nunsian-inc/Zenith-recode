@@ -505,8 +505,7 @@ public final class AutoCapchaModule extends Module {
             double var10 = Double.MAX_VALUE;
             double var12 = -Double.MAX_VALUE;
 
-            for (Object var15_o : (Iterable<?>)(Object)(var29)) {
-               int[] var15 = (int[])var15_o;
+            for (int[] var15 : var29) {
                double[] var16 = this.items2.get(var15[0]);
                if (var16 != null) {
                   double var17 = var32 ? var16[2] : var16[0];
@@ -527,8 +526,7 @@ public final class AutoCapchaModule extends Module {
                int var18 = 1;
                int var19 = 0;
 
-               for (Object var21_o : (Iterable<?>)(Object)(var29)) {
-                  int[] var21 = (int[])var21_o;
+               for (int[] var21 : var29) {
                   int[] var22 = this.cloneBuffer(var21[1]);
                   double[] var23 = this.items2.get(var21[0]);
                   if (var22 != null && var23 != null) {

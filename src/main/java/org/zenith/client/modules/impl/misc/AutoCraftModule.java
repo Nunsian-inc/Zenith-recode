@@ -1048,8 +1048,7 @@ public final class AutoCraftModule extends Module {
       Vec3 var11 = mc.player.getEyePosition(1.0F);
       double var12 = this.method1061();
 
-      for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-         Vec3 var8 = (Vec3)var8_o;
+      for (Vec3 var8 : var3) {
          Rotation var9 = RotationUtils.method6913(var8);
          BlockHitResult var10 = TargetUtils.method3216(var11, var9, var12, var1x -> var1x != null && var1x.getBlockPos().equals(var1));
          if (var10 != null && var10.getType() != HitResult.Type.MISS && var10.getBlockPos().equals(var1)) {
@@ -1329,8 +1328,7 @@ public final class AutoCraftModule extends Module {
                HashMap var10 = new HashMap();
                this.items3.clear();
 
-               for (Object var12_o : (Iterable<?>)(Object)(var5)) {
-                  RecipeCollection var12 = (RecipeCollection)var12_o;
+               for (RecipeCollection var12 : var5) {
                   for (RecipeDisplayEntry var14 : var12.getRecipes()) {
                      RecipeDisplay var15 = var14.display();
                      if (this.method1088(var15)) {

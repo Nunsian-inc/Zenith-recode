@@ -610,8 +610,7 @@ public final class ScriptMarketTab {
                List<String> var29 = SectionPanel.wrapText(var20, var17, var11 - 18.0F - var23, 2);
                float var30 = var12 + 11.0F + var16.height();
 
-               for (Object var34_o : (Iterable<?>)(Object)(var29)) {
-                  String var34 = (String)var34_o;
+               for (String var34 : var29) {
                   var2.drawText(
                      var17, var34, var10 + 9.0F, var30, (var21 ? new ZenithColor(247, 206, 59) : var9.getTextTertiary().getZenithColor()).method7294(var8)
                   );
@@ -702,8 +701,7 @@ public final class ScriptMarketTab {
             List<String> var15 = SectionPanel.wrapText(t(var2), var12, var8 - 48.0F, 3);
             float var16 = var13 + var11.height() + 6.0F;
 
-            for (Object var18_o : (Iterable<?>)(Object)(var15)) {
-               String var18 = (String)var18_o;
+            for (String var18 : var15) {
                var3.drawText(var12, var18, var6 + (var8 - var12.width(var18)) / 2.0F, var16, var10.getTextTertiary().getZenithColor().method7294(var9));
                var16 += var12.height() + 2.0F;
             }
@@ -1579,8 +1577,7 @@ public final class ScriptMarketTab {
          this.panel.paragraph(t("gui.scripts.market.publish.none"), true);
       }
 
-      for (Object var7_o : (Iterable<?>)(Object)(var2)) {
-         Script var7 = (Script)var7_o;
+      for (Script var7 : var2) {
          this.panel
             .asideCustom(
                24.0F,

@@ -362,8 +362,7 @@ public class InterfaceSectionPanel extends SectionPanel {
       int var10 = var9.size();
       int var11 = 0;
 
-      for (Object var13_o : (Iterable<?>)(Object)(var9)) {
-         Interface var13 = (Interface)var13_o;
+      for (Interface var13 : var9) {
          if (var13.isEnabled()) {
             var11++;
          }
@@ -405,8 +404,7 @@ public class InterfaceSectionPanel extends SectionPanel {
          var3.put(var7, new ArrayList());
       }
 
-      for (Object var14_o : (Iterable<?>)(Object)(var1)) {
-         Interface var14 = (Interface)var14_o;
+      for (Interface var14 : var1) {
          if (matches(elementName(var14), var2) || matches(var14.getName(), var2)) {
             ((List)var3.get(GROUPS.getOrDefault(var14.getName(), "gui.interface.hud.group.other"))).add(var14);
          }
@@ -420,8 +418,7 @@ public class InterfaceSectionPanel extends SectionPanel {
             var13 = true;
             this.caption(var8);
 
-            for (Object var11_o : (Iterable<?>)(Object)(var9)) {
-               Interface var11 = (Interface)var11_o;
+            for (Interface var11 : var9) {
                this.custom(
                   16.0F,
                   (var2x, var3x, var4, var5, var6, var7x, var8x, var9x) -> this.renderHudRow(var2x, var3x, var4, var5, var6, var7x, var8x, var9x, var11),
@@ -576,8 +573,7 @@ public class InterfaceSectionPanel extends SectionPanel {
          if (!var2.isEmpty()) {
             this.asideCaption(elementName(var1));
 
-            for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-               Setting var4 = (Setting)var4_o;
+            for (Setting var4 : var2) {
                this.asideSetting(var4);
             }
 

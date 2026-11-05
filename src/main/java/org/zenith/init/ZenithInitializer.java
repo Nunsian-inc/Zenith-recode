@@ -71,8 +71,7 @@ public class ZenithInitializer implements ClientModInitializer {
    private static void ensureSettingPresent(Path var0) throws IOException {
       List<String> var1 = Files.readAllLines(var0);
 
-      for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-         String var3 = (String)var3_o;
+      for (String var3 : var1) {
          if (var3.trim().equalsIgnoreCase("chunkCaching false")) {
             return;
          }

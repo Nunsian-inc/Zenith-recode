@@ -104,8 +104,7 @@ public abstract class MixinPlayerListHud {
             if (StreamerModeModule.INSTANCE.isEnabled()) {
                ArrayList var9 = new ArrayList();
 
-               for (Object var11_o : (Iterable<?>)(Object)(var3)) {
-                  PlayerInfo var11 = (PlayerInfo)var11_o;
+               for (PlayerInfo var11 : var3) {
                   if (!var11.getProfile().id().equals(var2.player.getUUID())) {
                      var9.add(var11);
                   }

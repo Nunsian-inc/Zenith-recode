@@ -513,8 +513,7 @@ public final class ConfigInfoPage {
       List<String> var10 = SectionPanel.wrapText(var7, var9, var5, 3);
       float var11 = var4;
 
-      for (Object var13_o : (Iterable<?>)(Object)(var10)) {
-         String var13 = (String)var13_o;
+      for (String var13 : var10) {
          var0.drawText(var9, var13, var3, var11, var8.method7294(var6));
          var11 += var9.height() + 2.0F;
       }

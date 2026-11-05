@@ -188,8 +188,7 @@ public final class AiImageStore {
          List<String> var1 = List.copyOf(var0);
          Minecraft var2 = Minecraft.getInstance();
          var2.execute(() -> {
-            for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-               String var3 = (String)var3_o;
+            for (String var3 : var1) {
                Identifier var4 = items.remove(var3);
                items2.remove(var3);
                items3.remove(var3);

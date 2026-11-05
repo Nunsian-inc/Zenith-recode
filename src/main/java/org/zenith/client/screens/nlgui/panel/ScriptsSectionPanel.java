@@ -479,8 +479,7 @@ public class ScriptsSectionPanel extends SectionPanel {
          );
       }
 
-      for (Object var6_o : (Iterable<?>)(Object)(var3)) {
-         Script var6 = (Script)var6_o;
+      for (Script var6 : var3) {
          ScriptsSectionPanel.RowInfo var7 = this.rowInfo(var1, var6);
          this.custom(
             40.0F,
@@ -567,8 +566,7 @@ public class ScriptsSectionPanel extends SectionPanel {
             this.paragraph(t("gui.scripts.console.empty"), true);
          }
 
-         for (Object var16_o : (Iterable<?>)(Object)(var14)) {
-            Storage.Data2 var16 = (Storage.Data2)var16_o;
+         for (Storage.Data2 var16 : var14) {
             this.asideCustom(
                12.0F,
                (var1x, var2x, var3x, var4x, var5x, var6x, var7x, var8x) -> {
@@ -598,8 +596,7 @@ public class ScriptsSectionPanel extends SectionPanel {
       SectionPanel.AsideRenderer var6 = (var2x, var3x, var4x, var5x, var6x, var7x, var8, var9) -> {
          float var10 = var6x + 3.0F;
 
-         for (Object var12_o : (Iterable<?>)(Object)(var5)) {
-            String var12 = (String)var12_o;
+         for (String var12 : var5) {
             var2x.drawText(var3, var12, var5x + 8.0F, var10, var9.getTextTertiary().getZenithColor().method7294(var8));
             var10 += var3.height() + 2.0F;
          }
@@ -767,8 +764,7 @@ public class ScriptsSectionPanel extends SectionPanel {
       var1.drawText(var7, var11, var2 + (var4 - var7.width(var11)) / 2.0F, var18, var6.getTextEnable().getZenithColor().method7294(var5));
       float var19 = var18 + var7.height() + var14;
 
-      for (Object var21_o : (Iterable<?>)(Object)(var12)) {
-         String var21 = (String)var21_o;
+      for (String var21 : var12) {
          var1.drawText(var8, var21, var2 + (var4 - var8.width(var21)) / 2.0F, var19, var6.getTextTertiary().getZenithColor().method7294(var5));
          var19 += var8.height() + 2.0F;
       }
@@ -1741,8 +1737,7 @@ public class ScriptsSectionPanel extends SectionPanel {
          );
          float var15 = var10 + 4.0F;
 
-         for (Object var17_o : (Iterable<?>)(Object)(var12)) {
-            String var17 = (String)var17_o;
+         for (String var17 : var12) {
             var1.drawText(var9, var17, var6.getFloatValue() + 6.0F, var15, ERROR.method7303(0.3F).method7294(var4));
             var15 += var9.height() + 2.0F;
          }
@@ -1808,8 +1803,7 @@ public class ScriptsSectionPanel extends SectionPanel {
             });
             InspectorRow.alignTracks(var21, var6.width());
 
-            for (Object var23_o : (Iterable<?>)(Object)(var21)) {
-               InspectorRow var23 = (InspectorRow)var23_o;
+            for (InspectorRow var23 : var21) {
                if (var23.isVisible()) {
                   float var24 = var23.height();
                   var23.render(var1, var2, var3, var6.getFloatValue(), var10, var6.width(), var4);

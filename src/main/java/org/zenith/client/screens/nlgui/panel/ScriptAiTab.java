@@ -240,8 +240,7 @@ public final class ScriptAiTab {
          float var7 = 0.0F;
          float var8 = 0.0F;
 
-         for (Object var10_o : (Iterable<?>)(Object)(var3)) {
-            String var10 = (String)var10_o;
+         for (String var10 : var3) {
             float var11 = var4.width(t(var10)) + 14.0F;
             if (var7 > 0.0F && var7 + var11 > var5) {
                var7 = 0.0F;
@@ -335,8 +334,7 @@ public final class ScriptAiTab {
                      List<String> var16 = SectionPanel.wrapText(this.readyHint(), var10, var6 - 48.0F, 3);
                      float var17 = var5 + 47.0F + var9.height();
 
-                     for (Object var19_o : (Iterable<?>)(Object)(var16)) {
-                        String var19 = (String)var19_o;
+                     for (String var19 : var16) {
                         var1x.drawText(var10, var19, var13 - var10.width(var19) / 2.0F, var17, var8.getTextTertiary().getZenithColor().method7294(var7x));
                         var17 += var10.height() + 2.0F;
                      }
@@ -517,8 +515,7 @@ public final class ScriptAiTab {
          var26 = 4.0F;
       }
 
-      for (Object var17_o : (Iterable<?>)(Object)(var8)) {
-         ScriptAiTab.Piece var17 = (ScriptAiTab.Piece)var17_o;
+      for (ScriptAiTab.Piece var17 : var8) {
          if (var17.kind == 0) {
             ArrayList var28 = new ArrayList();
 
@@ -729,8 +726,7 @@ public final class ScriptAiTab {
          ScriptAiTab.Piece var47 = var11.pieces.get(var41);
          List<String> var51 = var11.wrapped.get(var41);
          if (var47.kind == 0) {
-            for (Object var61_o : (Iterable<?>)(Object)(var51)) {
-               String var61 = (String)var61_o;
+            for (String var61 : var51) {
                var1.drawText(var14, var61, var21 + 7.0F, var35, var38.method7294(var7));
                var35 += 7.4F;
             }
@@ -763,8 +759,7 @@ public final class ScriptAiTab {
             );
             float var59 = var35 + 3.0F;
 
-            for (Object var65_o : (Iterable<?>)(Object)(var51)) {
-               String var65 = (String)var65_o;
+            for (String var65 : var51) {
                var1.drawText(
                   var16, var16.clip(var65, var11.bubble - 24.0F), var21 + 11.0F, var59, var8.getTextSecondary().getZenithColor().method7294(var7 * 0.9F)
                );
@@ -1214,8 +1209,7 @@ public final class ScriptAiTab {
       if (var8.isEmpty()) {
          this.panel.paragraph(t("gui.scripts.ai.history.empty"), true);
       } else {
-         for (Object var6_o : (Iterable<?>)(Object)(var8.subList(0, Math.min(40, var8.size())))) {
-            AiChatStorage.Entry var6 = (AiChatStorage.Entry)var6_o;
+         for (AiChatStorage.Entry var6 : var8.subList(0, Math.min(40, var8.size()))) {
             this.panel
                .asideCustom(
                   31.0F,

@@ -102,8 +102,7 @@ public final class CosmeticTextureCache implements MinecraftAccess {
          }
       }
 
-      for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-         String var8 = (String)var8_o;
+      for (String var8 : var3) {
          Identifier var6 = this.items.remove(var8);
          if (var6 != null) {
             mc.getTextureManager().release(var6);

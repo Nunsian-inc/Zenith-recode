@@ -378,8 +378,7 @@ public class BotScreen extends CustomScreen {
                String var16 = (String)var15.next();
                boolean var17 = false;
 
-               for (Object var19_o : (Iterable<?>)(Object)(var14)) {
-                  String var19 = (String)var19_o;
+               for (String var19 : var14) {
                   if (var19.equals(var16)) {
                      var17 = true;
                      break;
@@ -598,8 +597,7 @@ public class BotScreen extends CustomScreen {
                         var26.sort(net.minecraft.client.gui.Hud.SCORE_DISPLAY_ORDER);
                         var9 = new ArrayList(var26.size());
 
-                        for (Object var17_o : (Iterable<?>)(Object)(var26)) {
-                           PlayerScoreEntry var17 = (PlayerScoreEntry)var17_o;
+                        for (PlayerScoreEntry var17 : var26) {
                            var9.add(PlayerTeam.formatNameForTeam(var11.getPlayersTeam(var17.owner()), var17.ownerName()));
                         }
 
@@ -850,8 +848,7 @@ public class BotScreen extends CustomScreen {
       );
       var13 += 25.0F;
 
-      for (Object var15_o : (Iterable<?>)(Object)(var8)) {
-         String var15 = (String)var15_o;
+      for (String var15 : var8) {
          this.renderProxyPanelRow(
             var1,
             var15,
@@ -1031,8 +1028,7 @@ public class BotScreen extends CustomScreen {
       if (var1.isEmpty()) {
          return false;
       } else {
-         for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-            String var3 = (String)var3_o;
+         for (String var3 : var1) {
             if (HeadlessBots.hasProxy(var3)) {
                return false;
             }
@@ -1045,8 +1041,7 @@ public class BotScreen extends CustomScreen {
    private boolean selectionUsesProxy(String var1) {
       List<String> var2 = this.selectionNames();
       if (!var2.isEmpty() && var1 != null && !var1.isBlank()) {
-         for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-            String var4 = (String)var4_o;
+         for (String var4 : var2) {
             String var5 = HeadlessBots.getProxy(var4);
             if (var5 == null || !var5.equalsIgnoreCase(var1)) {
                return false;
@@ -1305,8 +1300,7 @@ public class BotScreen extends CustomScreen {
          );
          float var13 = var12 + 18.0F;
 
-         for (Object var15_o : (Iterable<?>)(Object)(var7)) {
-            String var15 = (String)var15_o;
+         for (String var15 : var7) {
             boolean var16 = this.isBotModuleEnabled(var6, var15);
             boolean var17 = var3 >= this.moduleMenuX + 4.0F && var3 <= this.moduleMenuX + 118.0F - 4.0F && var4 >= var13 && var4 <= var13 + 20.0F;
             ZenithColor var18 = (var16 ? var5.getPrimaryColor().getZenithColor().method7293(42) : var5.getSurfaceDisableBackground().getZenithColor())
@@ -1401,8 +1395,7 @@ public class BotScreen extends CustomScreen {
          } else {
             float var9 = this.moduleMenuY + 4.0F + 18.0F;
 
-            for (Object var11_o : (Iterable<?>)(Object)(var6)) {
-               String var11 = (String)var11_o;
+            for (String var11 : var6) {
                if (var1 >= this.moduleMenuX + 4.0F && var1 <= this.moduleMenuX + 118.0F - 4.0F && var3 >= var9 && var3 <= var9 + 20.0F) {
                   boolean var12 = this.isBotModuleEnabled(var5, var11);
                   HeadlessBots.setModuleEnabled(var5, var11, !var12);
@@ -1430,8 +1423,7 @@ public class BotScreen extends CustomScreen {
          var2.add(this.selectedName);
       }
 
-      for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-         String var4 = (String)var4_o;
+      for (String var4 : var2) {
          HeadlessBots.setProtocolVersion(var4, var1);
       }
    }

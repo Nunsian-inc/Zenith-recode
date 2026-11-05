@@ -300,8 +300,7 @@ public class BotAutoMine extends BotModule {
       ArrayList<BotAutoMine.BreakCandidate> var15 = new ArrayList();
       MutableBlockPos var16 = new MutableBlockPos();
 
-      for (Object var11_o : (Iterable<?>)(Object)(var7)) {
-         BlockPos var11 = (BlockPos)var11_o;
+      for (BlockPos var11 : var7) {
          if (this.isWithinMineRange(var11, var2, var5, var3)) {
             var15.add(new BotAutoMine.BreakCandidate(var11, this.countDrillCoverage(var11, var7, var16), MineTargetFinder.method1939(var2, var11)));
          }
@@ -309,8 +308,7 @@ public class BotAutoMine extends BotModule {
 
       var15.sort(BREAK_CANDIDATE_ORDER);
 
-      for (Object var18_o : (Iterable<?>)(Object)(var15)) {
-         BotAutoMine.BreakCandidate var18 = (BotAutoMine.BreakCandidate)var18_o;
+      for (BotAutoMine.BreakCandidate var18 : var15) {
          BlockPos var12 = var18.pos();
          Rotation var13 = this.currentRotation.method3141(this.currentRotation.method3131(Rotation.method3128(net.minecraft.world.phys.Vec3.atCenterOf(var12), var2)));
          BlockHitResult var14 = BotRaytracing.rayTracePos(

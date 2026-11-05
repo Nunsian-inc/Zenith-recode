@@ -396,8 +396,7 @@ public class WardrobeSectionPanel extends ToolTab {
       } else {
          this.caption(t("wardrobe.panel.sets") + " · " + var2.size());
 
-         for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-            WardrobeSetInfo var4 = (WardrobeSetInfo)var4_o;
+         for (WardrobeSetInfo var4 : var2) {
             this.row(var4.method7305())
                .icon(MenuGlyph.COSMETICS)
                .value(() -> var4.pieces().size() + " " + t("gui.unit.pieces"))
@@ -655,8 +654,7 @@ public class WardrobeSectionPanel extends ToolTab {
             )
          );
       } else {
-         for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-            Wardrobe.Data var4 = (Wardrobe.Data)var4_o;
+         for (Wardrobe.Data var4 : var2) {
             this.custom(
                34.0F,
                (var3, var4x, var5, var6, var7x, var8x, var9x, var10) -> this.renderPreset(var3, var1, var4, var4x, var5, var6, var7x, var8x, var9x, var10),

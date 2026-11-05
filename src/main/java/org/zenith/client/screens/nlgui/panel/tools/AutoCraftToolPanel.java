@@ -99,8 +99,7 @@ public class AutoCraftToolPanel extends ToolTab {
       List<CraftRecipe> var3 = var1.method1092(var1.method1098());
       ArrayList<CraftRecipe> var4 = new ArrayList();
 
-      for (Object var6_o : (Iterable<?>)(Object)(var3)) {
-         CraftRecipe var6 = (CraftRecipe)var6_o;
+      for (CraftRecipe var6 : var3) {
          String var7 = var6.getText3();
          if (var7 != null
             && !var7.isBlank()
@@ -137,8 +136,7 @@ public class AutoCraftToolPanel extends ToolTab {
       } else {
          int var8 = 3;
 
-         for (Object var12_o : (Iterable<?>)(Object)(var4)) {
-            CraftRecipe var12 = (CraftRecipe)var12_o;
+         for (CraftRecipe var12 : var4) {
             this.custom(
                25.0F,
                this.entering(
@@ -182,8 +180,7 @@ public class AutoCraftToolPanel extends ToolTab {
          } else {
             int var4 = 2;
 
-            for (Object var6_o : (Iterable<?>)(Object)(var3.entrySet())) {
-               Map.Entry var6 = (Map.Entry)var6_o;
+            for (Map.Entry var6 : var3.entrySet()) {
                String var7 = (String)var6.getKey();
                int var8 = Math.max(1, (Integer)var6.getValue());
                this.asideCustom(
@@ -287,8 +284,7 @@ public class AutoCraftToolPanel extends ToolTab {
          var1.drawText(var39, t("gui.tools.craft.pick"), var45, var54, var8.getTextEnable().getZenithColor().method7294(var7));
          var54 += var39.height() + 4.0F;
 
-         for (Object var59_o : (Iterable<?>)(Object)(var50)) {
-            String var59 = (String)var59_o;
+         for (String var59 : var50) {
             var1.drawText(var42, var59, var45, var54, var8.getTextTertiary().getZenithColor().method7294(var7));
             var54 += var42.height() + 2.0F;
          }
@@ -691,8 +687,7 @@ public class AutoCraftToolPanel extends ToolTab {
       } else {
          int var4 = Integer.MAX_VALUE;
 
-         for (Object var6_o : (Iterable<?>)(Object)(var3.entrySet())) {
-            Map.Entry var6 = (Map.Entry)var6_o;
+         for (Map.Entry var6 : var3.entrySet()) {
             String var7 = (String)var6.getKey();
             int var8 = Math.max(1, (Integer)var6.getValue());
             int var9 = var2.method1121(var1.method5395(var7), var1.method5396(var7));
@@ -709,8 +704,7 @@ public class AutoCraftToolPanel extends ToolTab {
    private boolean craftableNow(CraftRecipe var1) {
       var var2 = var1.method5388();
       if (!var2.isEmpty() && !this.inventory.isEmpty()) {
-         for (Object var4_o : (Iterable<?>)(Object)(var2.entrySet())) {
-            Map.Entry var4 = (Map.Entry)var4_o;
+         for (Map.Entry var4 : var2.entrySet()) {
             String var5 = var1.method5395((String)var4.getKey());
             if (this.inventory.getOrDefault(var5, 0) < Math.max(1, (Integer)var4.getValue())) {
                return false;

@@ -208,8 +208,7 @@ public final class Index {
       long var1 = 0L;
 
       try (Stream<java.nio.file.Path> var3 = Files.list(this.path)) {
-         for (Object var5_o : (Iterable<?>)(Object)(var3.toList())) {
-            Path var5 = (Path)var5_o;
+         for (Path var5 : var3.toList()) {
             var1 += Files.size(var5);
          }
       } catch (RuntimeException | IOException var8) {
@@ -222,8 +221,7 @@ public final class Index {
       long var1 = 0L;
 
       try (Stream<java.nio.file.Path> var3 = Files.list(this.path)) {
-         for (Object var5_o : (Iterable<?>)(Object)(var3.toList())) {
-            Path var5 = (Path)var5_o;
+         for (Path var5 : var3.toList()) {
             long var6 = Files.size(var5);
             if (Files.deleteIfExists(var5)) {
                var1 += var6;
@@ -254,8 +252,7 @@ public final class Index {
       List<String> var1 = this.supplier.get();
       ArrayList var2 = new ArrayList();
       if (var1 != null) {
-         for (Object var4_o : (Iterable<?>)(Object)(var1)) {
-            String var4 = (String)var4_o;
+         for (String var4 : var1) {
             if (var4 != null && !var4.isBlank()) {
                String var5 = var4.strip();
 
@@ -280,8 +277,7 @@ public final class Index {
       } else {
          IOException var4 = null;
 
-         for (Object var6_o : (Iterable<?>)(Object)(var3)) {
-            String var6 = (String)var6_o;
+         for (String var6 : var3) {
             try {
                byte[] var7 = this.method1467(var6 + var1, var2);
                this.text7 = var6;

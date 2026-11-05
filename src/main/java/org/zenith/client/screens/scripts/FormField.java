@@ -181,8 +181,7 @@ public final class FormField {
             var25 += ((String)var13.get(var26)).length();
          }
 
-         for (Object var27_o : (Iterable<?>)(Object)(var15)) {
-            String var27 = (String)var27_o;
+         for (String var27 : var15) {
             var1.drawText(var2, var27, var3 + 6.0F, var24, var11.method7294(var6));
             if (var23 && this.caret >= var25 && this.caret <= var25 + var27.length()) {
                float var28 = var3 + 6.0F + var2.width(var27.substring(0, this.caret - var25));

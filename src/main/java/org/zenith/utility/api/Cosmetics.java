@@ -654,8 +654,7 @@ public final class Cosmetics implements MinecraftAccess {
 
       this.items7.clear();
 
-      for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-         String var3 = (String)var3_o;
+      for (String var3 : var1) {
          this.method2990(var3);
       }
 

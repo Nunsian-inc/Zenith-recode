@@ -422,8 +422,7 @@ public final class ScriptTestApi {
             var9.add(String.format(Locale.ROOT, "нагрузка: %.1f мс/с · вызовов %d", var10[0] / 1000000.0 / var11, var10[1]));
             float var13 = var7.width(var4.method1403()) + 12.0F;
 
-            for (Object var15_o : (Iterable<?>)(Object)(var9)) {
-               String var15 = (String)var15_o;
+            for (String var15 : var9) {
                var13 = Math.max(var13, var8.width(var15) + 12.0F);
             }
 
@@ -433,8 +432,7 @@ public final class ScriptTestApi {
             var0.drawText(var7, var4.method1403(), 12.0F, var1 + 4.0F, new ZenithColor(ScriptDrawApi.method2603()));
             float var27 = var1 + 12.0F;
 
-            for (Object var17_o : (Iterable<?>)(Object)(var9)) {
-               String var17 = (String)var17_o;
+            for (String var17 : var9) {
                var0.drawText(var8, var8.clip(var17, var13 - 12.0F), 12.0F, var27, new ZenithColor(-419430401));
                var27 += var8.height() + 2.0F;
             }

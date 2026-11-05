@@ -418,16 +418,14 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
             double var16 = var2.getY();
             double var8 = var2.getZ();
 
-            for (Object var11_o : (Iterable<?>)(Object)(var3)) {
-               BotWorldView.Section var11 = (BotWorldView.Section)var11_o;
+            for (BotWorldView.Section var11 : var3) {
                var11.sortKey = var11.squaredDistanceTo(var15, var16, var8);
             }
 
             var3.sort(BY_SORT_KEY);
             int var17 = 0;
 
-            for (Object var12_o : (Iterable<?>)(Object)(var3)) {
-               BotWorldView.Section var12 = (BotWorldView.Section)var12_o;
+            for (BotWorldView.Section var12 : var3) {
                if (var17 >= 8 || this.pendingBuilds.get() >= 32) {
                   break;
                }
@@ -521,8 +519,7 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
          var18.clear();
          int var13 = 0;
 
-         for (Object var15_o : (Iterable<?>)(Object)(var10)) {
-            BotWorldView.Section var15 = (BotWorldView.Section)var15_o;
+         for (BotWorldView.Section var15 : var10) {
             MeshBuffer var16 = var15.buffers.get(var1);
             if (var16 != null) {
                if (var13 == this.layerMatrices.size()) {

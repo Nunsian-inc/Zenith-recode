@@ -77,8 +77,7 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
       if (!this.sodiumAdded) {
          List<SodiumOptionsReader.Data> var1 = SodiumOptionsReader.method1598();
          if (!var1.isEmpty()) {
-            for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-               SodiumOptionsReader.Data var3 = (SodiumOptionsReader.Data)var3_o;
+            for (SodiumOptionsReader.Data var3 : var1) {
                this.categories.add(new SettingsMenuPage.Category(var3.name(), MenuIcons.SPARKLE, () -> {
                   ArrayList var1x = new ArrayList();
 
@@ -290,8 +289,7 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
          VanillaOptionStyle.begin();
 
          try {
-            for (Object var12_o : (Iterable<?>)(Object)(var5)) {
-               AbstractWidget var12 = (AbstractWidget)var12_o;
+            for (AbstractWidget var12 : var5) {
                if (!(var12.getY() + var12.getHeight() < this.viewport.getFloatValue2()) && !(var12.getY() > this.viewport.getFloatValue2() + this.gridHeight)) {
                   var12.extractRenderState(var1, (int)var2, (int)var3, 0.0F);
                }

@@ -99,8 +99,7 @@ public class TaskScheduler {
    public TaskScheduler.Entry2 method5109(Class<?> var1) {
       LinkedList<TaskScheduler.Entry2> var2 = this.getLinkedList();
       synchronized (var2) {
-         for (Object var5_o : (Iterable<?>)(Object)(var2)) {
-            TaskScheduler.Entry2 var5 = (TaskScheduler.Entry2)var5_o;
+         for (TaskScheduler.Entry2 var5 : var2) {
             if (var5.getClassValue() == var1) {
                return var5;
             }
@@ -139,8 +138,7 @@ public class TaskScheduler {
       LinkedList<TaskScheduler.Entry2> var1 = this.getLinkedList();
       int var2 = Integer.MIN_VALUE;
 
-      for (Object var4_o : (Iterable<?>)(Object)(var1)) {
-         TaskScheduler.Entry2 var4 = (TaskScheduler.Entry2)var4_o;
+      for (TaskScheduler.Entry2 var4 : var1) {
          if (var4.getIntValue3() > var2) {
             var2 = var4.getIntValue3();
          }

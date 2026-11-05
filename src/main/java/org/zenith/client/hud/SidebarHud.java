@@ -120,8 +120,7 @@ public class SidebarHud extends Interface {
       int var9 = 0;
       int var10 = 0;
 
-      for (Object var12_o : (Iterable<?>)(Object)(var6)) {
-         PlayerInfo var12 = (PlayerInfo)var12_o;
+      for (PlayerInfo var12 : var6) {
          Component var13 = mc.gui.hud.getTabList().getNameForDisplay(var12);
          var9 = Math.max(var9, mc.font.width(var13));
          int var14 = 0;
@@ -178,8 +177,7 @@ public class SidebarHud extends Interface {
          Component var21 = ScoreboardParser.method7074(mc.gui.hud.getTabList().header);
          var20 = mc.font.split(var21, var2 - 50);
 
-         for (Object var23_o : (Iterable<?>)(Object)(var20)) {
-            FormattedCharSequence var23 = (FormattedCharSequence)var23_o;
+         for (FormattedCharSequence var23 : var20) {
             var55 = Math.max(var55, mc.font.width(var23));
          }
       }
@@ -189,8 +187,7 @@ public class SidebarHud extends Interface {
          Component var57 = ScoreboardParser.method7074(mc.gui.hud.getTabList().footer);
          var56 = mc.font.split(var57, var2 - 50);
 
-         for (Object var24_o : (Iterable<?>)(Object)(var56)) {
-            FormattedCharSequence var24 = (FormattedCharSequence)var24_o;
+         for (FormattedCharSequence var24 : var56) {
             var55 = Math.max(var55, mc.font.width(var24));
          }
       }
@@ -213,8 +210,7 @@ public class SidebarHud extends Interface {
       if (var20 != null) {
          var1.fill(var2 / 2 - var55 / 2 - 1, var53 - 1, var2 / 2 + var55 / 2 + 1, var53 + var20.size() * 9, Integer.MIN_VALUE);
 
-         for (Object var33_o : (Iterable<?>)(Object)(var20)) {
-            FormattedCharSequence var33 = (FormattedCharSequence)var33_o;
+         for (FormattedCharSequence var33 : var20) {
             int var34 = mc.font.width(var33);
             var1.text(mc.font, var33, var2 / 2 - var34 / 2, var53, -1);
             var53 += 9;
@@ -262,8 +258,7 @@ public class SidebarHud extends Interface {
          var53 += var47 * 9 + 1;
          var1.fill(var2 / 2 - var55 / 2 - 1, var53 - 1, var2 / 2 + var55 / 2 + 1, var53 + var56.size() * 9, Integer.MIN_VALUE);
 
-         for (Object var66_o : (Iterable<?>)(Object)(var56)) {
-            FormattedCharSequence var66 = (FormattedCharSequence)var66_o;
+         for (FormattedCharSequence var66 : var56) {
             int var67 = mc.font.width(var66);
             var1.text(mc.font, var66, var2 / 2 - var67 / 2, var53, -1);
             var53 += 9;

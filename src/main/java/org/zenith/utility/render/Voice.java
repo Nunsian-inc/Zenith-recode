@@ -504,8 +504,7 @@ public final class Voice implements MinecraftAccess {
          Vec3 var16 = new Vec3(-Math.cos(var11), 0.0, -Math.sin(var11));
          Vec3 var17 = var16.cross(var15);
 
-         for (Object var19_o : (Iterable<?>)(Object)(var2)) {
-            long var19 = (Long)var19_o;
+         for (long var19 : var2) {
             Float var21 = (Float)var4.get(var19);
             if (var21 != null && var3 != null) {
                int var22 = this.voiceState.method5368(var19);
@@ -812,8 +811,7 @@ public final class Voice implements MinecraftAccess {
          float var21 = mc.getWindow().getGuiScaledHeight() * 0.38F;
          ProxyDotRadiusData var22 = ProxyDotRadiusData.method8069(InterfaceModule.method6801() * 0.6F);
 
-         for (Object var13_o : (Iterable<?>)(Object)(var3)) {
-            Voice.Data var13 = (Voice.Data)var13_o;
+         for (Voice.Data var13 : var3) {
             String var14 = var13.flag ? var13.text + " · " + method373("gui.voice.radioTag") : var13.text;
             float var15 = var19 + 8.0F + var18.width(var14) + 5.0F + 12.0F + var19;
             var1.drawRoundedRect(var20, var21, var15, var8, var22, var2.getHudBackground().getZenithColor());
@@ -843,8 +841,7 @@ public final class Voice implements MinecraftAccess {
          float var12 = -100.0F;
          boolean var7 = false;
 
-         for (Object var9_o : (Iterable<?>)(Object)(var3)) {
-            Voice.Data var9 = (Voice.Data)var9_o;
+         for (Voice.Data var9 : var3) {
             if (!var11.isEmpty()) {
                var11.append(", ");
             }

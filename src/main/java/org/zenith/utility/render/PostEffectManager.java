@@ -56,8 +56,7 @@ public final class PostEffectManager {
                         ByteBuffer var13 = var12.data();
                         Std140Builder var14 = Std140Builder.intoBuffer(var13);
 
-                        for (Object var16_o : (Iterable<?>)(Object)(var7)) {
-                           PostEffectManager.Data var16 = (PostEffectManager.Data)var16_o;
+                        for (PostEffectManager.Data var16 : var7) {
                            method2821(var14, var16.intValue, var2.items.getOrDefault(var16.text, var16.floatValues));
                         }
                      }

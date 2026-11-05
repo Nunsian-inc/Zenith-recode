@@ -293,8 +293,7 @@ public class CommandProbeModule extends Module {
                if (var8 < (int)this.depth.getValue3()) {
                   int var9 = 0;
 
-                  for (Object var7_o : (Iterable<?>)(Object)(var3)) {
-                     String var7 = (String)var7_o;
+                  for (String var7 : var3) {
                      if (!var7.startsWith("@") && var7.length() <= 24) {
                         if (var9++ >= 12) {
                            break;

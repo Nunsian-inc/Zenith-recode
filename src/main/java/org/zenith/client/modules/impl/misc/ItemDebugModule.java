@@ -117,8 +117,7 @@ public class ItemDebugModule extends Module {
                   this.method4621(() -> {
                      String var3x = this.method4623(var12);
 
-                     for (Object var5x_o : (Iterable<?>)(Object)(var14)) {
-                        Pair var5x = (Pair)var5x_o;
+                     for (Pair var5x : var14) {
                         this.method4624("packet:equip", var3x, ((EquipmentSlot)var5x.getFirst()).getSerializedName(), (ItemStack)var5x.getSecond(), false);
                      }
                   });
@@ -156,8 +155,7 @@ public class ItemDebugModule extends Module {
 
                String var15 = "window" + var3.containerId();
                this.method4621(() -> {
-                  for (Object var4x_o : (Iterable<?>)(Object)(var5)) {
-                     Pair var4x = (Pair)var4x_o;
+                  for (Pair var4x : var5) {
                      this.method4624("packet:inv", var15, (String)var4x.getFirst(), (ItemStack)var4x.getSecond(), false);
                   }
                });

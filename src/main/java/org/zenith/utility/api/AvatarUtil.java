@@ -89,8 +89,7 @@ public final class AvatarUtil {
       List<AvatarUtil.Data> var0 = method6671();
       StringBuilder var1 = new StringBuilder(var0.size() * 16);
 
-      for (Object var3_o : (Iterable<?>)(Object)(var0)) {
-         AvatarUtil.Data var3 = (AvatarUtil.Data)var3_o;
+      for (AvatarUtil.Data var3 : var0) {
          var1.append(var3.getText2()).append('|');
       }
 
@@ -151,8 +150,7 @@ public final class AvatarUtil {
          ArrayList<Path> var4 = new ArrayList();
          method6681(var3, var4, 0);
 
-         for (Object var6_o : (Iterable<?>)(Object)(var4)) {
-            Path var6 = (Path)var6_o;
+         for (Path var6 : var4) {
             String var7 = var3.relativize(var6).toString().replace('\\', '/');
             if (var2.add(var7.toLowerCase(Locale.ROOT))) {
                Path var8 = var6.getFileName();

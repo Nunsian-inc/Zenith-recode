@@ -149,8 +149,7 @@ public class SnowCommand extends CommandAbstract {
       } else {
          ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: найдено проблем — " + var1.size());
 
-         for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-            String var3 = (String)var3_o;
+         for (String var3 : var1) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "  " + var3);
          }
       }

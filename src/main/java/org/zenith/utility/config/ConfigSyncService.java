@@ -204,8 +204,7 @@ public final class ConfigSyncService {
          this.lastError = "";
          HashSet var3 = new HashSet();
 
-         for (Object var5_o : (Iterable<?>)(Object)(var2)) {
-            StoreApi.Data2 var5 = (StoreApi.Data2)var5_o;
+         for (StoreApi.Data2 var5 : var2) {
             var3.add(var5.getUUID());
          }
 
@@ -213,8 +212,7 @@ public final class ConfigSyncService {
          this.items5.entrySet().removeIf(var3x -> !var3.contains(var3x.getKey()) || var19 - var3x.getValue().getLongValue() > 120000L);
          ArrayList var6 = new ArrayList();
 
-         for (Object var8_o : (Iterable<?>)(Object)(var2)) {
-            StoreApi.Data2 var8 = (StoreApi.Data2)var8_o;
+         for (StoreApi.Data2 var8 : var2) {
             if (var8.mine() && "config".equalsIgnoreCase(var8.kind())) {
                ConfigSyncService.Data var9 = this.items5.get(var8.getUUID());
                if (var9 != null) {

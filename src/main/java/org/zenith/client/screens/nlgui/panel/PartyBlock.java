@@ -239,8 +239,7 @@ public final class PartyBlock implements MinecraftAccess {
       float var13 = 18.0F;
       float var14 = var4.width("9999 м") + 6.0F;
 
-      for (Object var16_o : (Iterable<?>)(Object)(var9)) {
-         PartyMember.Data3 var16 = (PartyMember.Data3)var16_o;
+      for (PartyMember.Data3 var16 : var9) {
          float var17 = 20.0F + var3.width(var16.username()) + 4.0F + var14;
          if (var25 > 0.0F && var25 + var17 > var7) {
             var25 = 0.0F;
@@ -288,8 +287,7 @@ public final class PartyBlock implements MinecraftAccess {
             var8.add(new PartyBlock.Item(PartyBlock.Kind.HINT, new BoundsData(0.0F, var31, var7, 14.0F), t("gui.party.noFriendsOnline")));
             var31 += 14.0F;
          } else {
-            for (Object var44_o : (Iterable<?>)(Object)(var38)) {
-               PartyPlayerInfo var44 = (PartyPlayerInfo)var44_o;
+            for (PartyPlayerInfo var44 : var38) {
                float var46 = 17.0F + var3.width(var44.username()) + 12.0F;
                if (var25 > 0.0F && var25 + var46 > var7) {
                   var25 = 0.0F;
@@ -329,8 +327,7 @@ public final class PartyBlock implements MinecraftAccess {
       );
       int var48 = 1;
 
-      for (Object var23_o : (Iterable<?>)(Object)(var19)) {
-         PartyMember.Data12 var23 = (PartyMember.Data12)var23_o;
+      for (PartyMember.Data12 var23 : var19) {
          float var24 = 13.0F + var4.width(var23.name() + " · 9999 м") + 6.0F;
          if (var25 + var24 > var7) {
             if (var48 >= 2) {

@@ -206,8 +206,7 @@ public final class LyricsFetcher {
 
             var10.add("track_name=" + encode(var18));
 
-            for (Object var13_o : (Iterable<?>)(Object)(var10)) {
-               String var13 = (String)var13_o;
+            for (String var13 : var10) {
                JsonObject var14 = method534(method540("https://lrclib.net/api/search?" + var13), var18, var19, var3);
                if (var14 != null && (var8 == null || method538(var14, "syncedLyrics"))) {
                   var8 = var14;
@@ -339,8 +338,7 @@ public final class LyricsFetcher {
             if (!var10.isEmpty()) {
                String var24 = var23.substring(var11).trim();
 
-               for (Object var25_o : (Iterable<?>)(Object)(var10)) {
-                  double var25 = (Double)var25_o;
+               for (double var25 : var10) {
                   var19.add(new LyricsFetcher.Data3(var25, var24));
                }
             }

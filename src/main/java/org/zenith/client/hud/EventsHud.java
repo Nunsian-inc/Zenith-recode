@@ -36,8 +36,7 @@ public class EventsHud extends Interface {
       List<HolyWorldEvent> var2 = Zenith.getInstance().getHolyWorldEventsFetcher().getItems();
       this.items2.clear();
 
-      for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-         HolyWorldEvent var4 = (HolyWorldEvent)var4_o;
+      for (HolyWorldEvent var4 : var2) {
          String var5 = this.method7013(var4);
          this.items2.add(var5);
          this.items.computeIfAbsent(var5, var2x -> new EventsHud.Entry(var4)).setHolyWorldEvent(var4);

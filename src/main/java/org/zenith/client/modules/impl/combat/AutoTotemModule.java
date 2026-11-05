@@ -795,8 +795,7 @@ public final class AutoTotemModule extends Module {
                Vec3 var10 = new Vec3(var8.getX() + 0.5, var8.getY() + 1.0, var8.getZ() + 0.5);
                boolean var11 = false;
 
-               for (Object var13_o : (Iterable<?>)(Object)(var3)) {
-                  Player var13 = (Player)var13_o;
+               for (Player var13 : var3) {
                   if (var13.getEyePosition().distanceToSqr(var10) <= 36.0) {
                      var11 = true;
                      break;

@@ -387,13 +387,11 @@ public final class AutoTrapModule extends Module {
             boolean var7 = this.playerEntity.fireImmune() || this.playerEntity.hasEffect(MobEffects.FIRE_RESISTANCE);
             boolean var8 = this.playerEntity.isInLava() || this.method2435(var14);
             if (this.entry3.isEnabled() && !var7 && !var8 && this.method2460(AutoTrapModule.Type.LAVA)) {
-               for (Object var10_o : (Iterable<?>)(Object)(var6)) {
-                  BlockPos var10 = (BlockPos)var10_o;
+               for (BlockPos var10 : var6) {
                   var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.LAVA, var10));
                }
 
-               for (Object var19_o : (Iterable<?>)(Object)(var6)) {
-                  BlockPos var19 = (BlockPos)var19_o;
+               for (BlockPos var19 : var6) {
                   var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.LAVA, var19.above()));
                }
             }
@@ -404,8 +402,7 @@ public final class AutoTrapModule extends Module {
                && !this.playerEntity.isOnFire()
                && !this.playerEntity.isInWater()
                && this.method2460(AutoTrapModule.Type.FIRE)) {
-               for (Object var20_o : (Iterable<?>)(Object)(var6)) {
-                  BlockPos var20 = (BlockPos)var20_o;
+               for (BlockPos var20 : var6) {
                   var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.FIRE, var20));
                }
             }
@@ -494,8 +491,7 @@ public final class AutoTrapModule extends Module {
             var1.add(AutoTrapModule.Type.PICKUP);
          }
 
-         for (Object var3_o : (Iterable<?>)(Object)(var1)) {
-            AutoTrapModule.Type var3 = (AutoTrapModule.Type)var3_o;
+         for (AutoTrapModule.Type var3 : var1) {
             if (!this.method2460(var3) && this.class33.method5302(var1x -> method2462(var3, var1x))) {
                this.class33.method5303(var1x -> method2462(var3, var1x));
                return;
@@ -533,8 +529,7 @@ public final class AutoTrapModule extends Module {
       if (!this.method2439(var10) && !this.method2439(var11)) {
          LinkedHashSet var13 = new LinkedHashSet();
 
-         for (Object var16_o : (Iterable<?>)(Object)(var1)) {
-            List var16 = (List)var16_o;
+         for (List var16 : var1) {
             this.method2438(var13, (AABB)var16.getLast());
          }
 
@@ -558,8 +553,7 @@ public final class AutoTrapModule extends Module {
       }
 
       if (!var6) {
-         for (Object var8_o : (Iterable<?>)(Object)(var3)) {
-            BlockPos var8 = (BlockPos)var8_o;
+         for (BlockPos var8 : var3) {
             var1.add(var8.above());
          }
       }

@@ -223,8 +223,7 @@ public final class FlakeUtil {
          var0.method3244(identifier);
          var0.method3235(0.0F);
 
-         for (Object var13_o : (Iterable<?>)(Object)(var11)) {
-            Util11.Data var13 = (Util11.Data)var13_o;
+         for (Util11.Data var13 : var11) {
             float var14 = (float)(var3 - var13.getLongValue()) / 900.0F;
             if (!(var14 < 0.0F) && !(var14 >= 1.0F)) {
                double var15 = var13.getDoubleValue() + 0.5;

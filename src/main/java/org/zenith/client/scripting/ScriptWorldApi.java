@@ -70,8 +70,7 @@ public final class ScriptWorldApi {
                   var4.sort(Comparator.comparingInt(PlayerScoreEntry::value).reversed().thenComparing(PlayerScoreEntry::owner, String.CASE_INSENSITIVE_ORDER));
                   ArrayList var5 = new ArrayList();
 
-                  for (Object var7_o : (Iterable<?>)(Object)(var4.subList(0, Math.min(15, var4.size())))) {
-                     PlayerScoreEntry var7 = (PlayerScoreEntry)var7_o;
+                  for (PlayerScoreEntry var7 : var4.subList(0, Math.min(15, var4.size()))) {
                      PlayerTeam var8 = var2x.getPlayersTeam(var7.owner());
                      Object var9 = var7.display() != null ? var7.display() : PlayerTeam.formatNameForTeam(var8, Component.literal(var7.owner()));
                      var5.add(
@@ -348,8 +347,7 @@ public final class ScriptWorldApi {
                var6.add(0, method4819(var0, 3).getOpposite());
             }
 
-            for (Object var8_o : (Iterable<?>)(Object)(var6)) {
-               Direction var8 = (Direction)var8_o;
+            for (Direction var8 : var6) {
                BlockPos var9 = var2.relative(var8);
                if (method4821(var9)) {
                   var4 = var9;

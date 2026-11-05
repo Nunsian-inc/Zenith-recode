@@ -172,8 +172,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
 
       List<InspectorRow> var4 = this.cache.get(this.module);
       if (var4 != null) {
-         for (Object var3_o : (Iterable<?>)(Object)(var4)) {
-            InspectorRow var3 = (InspectorRow)var3_o;
+         for (InspectorRow var3 : var4) {
             var3.cancelBinding();
          }
       }
@@ -393,8 +392,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
          InspectorRow.alignTracks(var10, var6);
          float var11 = 0.0F;
 
-         for (Object var13_o : (Iterable<?>)(Object)(var10)) {
-            InspectorRow var13 = (InspectorRow)var13_o;
+         for (InspectorRow var13 : var10) {
             if (var13.isVisible()) {
                var11 += var13.height();
             }
@@ -407,8 +405,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
          float var19 = var5 + this.scroll;
          int var14 = 0;
 
-         for (Object var16_o : (Iterable<?>)(Object)(var10)) {
-            InspectorRow var16 = (InspectorRow)var16_o;
+         for (InspectorRow var16 : var10) {
             if (var16.isVisible()) {
                float var17;
                if ((var17 = rowEntrance(var18, var14++)) > 0.001F) {

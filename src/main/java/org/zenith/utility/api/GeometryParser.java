@@ -50,8 +50,7 @@ public final class GeometryParser {
          HashMap var11 = new HashMap();
          List<JsonObject> var12 = method2262(var10);
 
-         for (Object var14_o : (Iterable<?>)(Object)(var12)) {
-            JsonObject var14 = (JsonObject)var14_o;
+         for (JsonObject var14 : var12) {
             String var15 = method2268(var14, "name", "bone" + var11.size());
             String var16 = method2268(var14, "parent", null);
             Integer var17 = var16 == null ? null : (Integer)var11.get(var16);

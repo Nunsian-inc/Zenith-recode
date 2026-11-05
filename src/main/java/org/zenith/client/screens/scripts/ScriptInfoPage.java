@@ -247,8 +247,7 @@ public final class ScriptInfoPage {
             card(var1, var9, var13, var41, var14, var65, 0.0F, var10);
             float var67 = var41 + 5.0F;
 
-            for (Object var72_o : (Iterable<?>)(Object)(var64)) {
-               String var72 = (String)var72_o;
+            for (String var72 : var64) {
                boolean var38 = var72.startsWith("## ");
                var1.drawText(
                   var15,
@@ -771,8 +770,7 @@ public final class ScriptInfoPage {
             card(var1, var9, var55, var57, var56, var40, 0.0F, var10);
             float var41 = var57 + 5.0F;
 
-            for (Object var43_o : (Iterable<?>)(Object)(var39)) {
-               String var43 = (String)var43_o;
+            for (String var43 : var39) {
                boolean var44 = var43.startsWith("## ");
                var1.drawText(
                   var44 ? Fonts.NEW_MEDIUM.getFont(4.5F) : var23,

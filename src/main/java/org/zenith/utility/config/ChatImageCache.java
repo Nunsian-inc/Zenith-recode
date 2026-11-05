@@ -204,8 +204,7 @@ public final class ChatImageCache {
          }
       }
 
-      for (Object var14_o : (Iterable<?>)(Object)(var4)) {
-         Identifier var14 = (Identifier)var14_o;
+      for (Identifier var14 : var4) {
          items4.remove(var14);
          Minecraft.getInstance().getTextureManager().release(var14);
       }

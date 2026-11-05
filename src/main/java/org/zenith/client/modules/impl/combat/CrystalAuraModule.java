@@ -1667,8 +1667,7 @@ public final class CrystalAuraModule extends Module {
       var4.add(BlockPos.containing(var1.maxX - 0.001, var2, var1.maxZ - 0.001));
       LinkedHashSet var5 = new LinkedHashSet();
 
-      for (Object var7_o : (Iterable<?>)(Object)(var4)) {
-         BlockPos var7 = (BlockPos)var7_o;
+      for (BlockPos var7 : var4) {
          for (Direction var9 : Direction.Plane.HORIZONTAL) {
             BlockPos var10 = var7.relative(var9);
             if (!var4.contains(var10)) {
@@ -1844,8 +1843,7 @@ public final class CrystalAuraModule extends Module {
       } else {
          Set<BlockPos> var3 = this.method5772();
 
-         for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-            BlockPos var5 = (BlockPos)var5_o;
+         for (BlockPos var5 : var3) {
             boolean var16;
             label114: {
                var var10000 = this.items22;
@@ -1877,8 +1875,7 @@ public final class CrystalAuraModule extends Module {
 
          CrystalAuraModule.Data var13 = null;
 
-         for (Object var15_o : (Iterable<?>)(Object)(var3)) {
-            BlockPos var15 = (BlockPos)var15_o;
+         for (BlockPos var15 : var3) {
             Integer var7 = this.items21.get(var15.asLong());
             if (var7 != null && !mc.level.getBlockState(var15).canBeReplaced()) {
                if (var7 >= 6 && this.rotation4 == null) {
@@ -2155,8 +2152,7 @@ public final class CrystalAuraModule extends Module {
          EnumMap var44 = new EnumMap<>(CrystalAuraModule.Type.class);
          this.items13.values().removeIf(var0 -> var0 < mc.player.tickCount);
 
-         for (Object var49_o : (Iterable<?>)(Object)(var21)) {
-            CrystalAuraModule.Data13 var49 = (CrystalAuraModule.Data13)var49_o;
+         for (CrystalAuraModule.Data13 var49 : var21) {
             boolean var51;
             if (!(var51 = var49.getType() == this.type3 && var49.pos().equals(this.blockPos4) || this.method5789(var49))) {
                boolean var72;
@@ -2273,8 +2269,7 @@ public final class CrystalAuraModule extends Module {
          int var50 = 0;
          HashMap var52 = new HashMap();
 
-         for (Object var59_o : (Iterable<?>)(Object)(var42)) {
-            CrystalAuraModule.Data14 var59 = (CrystalAuraModule.Data14)var59_o;
+         for (CrystalAuraModule.Data14 var59 : var42) {
             CrystalAuraModule.Data13 var63;
             long var67;
             boolean var75;
@@ -2369,8 +2364,7 @@ public final class CrystalAuraModule extends Module {
          if (var47 == null && this.data == null && (!var43.isEmpty())) {
             var43.sort(Comparator.comparingDouble(var0 -> -var0.value()));
 
-            for (Object var60_o : (Iterable<?>)(Object)(var43)) {
-               CrystalAuraModule.Data14 var60 = (CrystalAuraModule.Data14)var60_o;
+            for (CrystalAuraModule.Data14 var60 : var43) {
                Rotation var64 = this.method5831(CrystalAuraModule.Type.DIG, var60.getData13().pos(), this.vec3d, var2);
                if (var64 != null) {
                   if (var60.getData13().pos().equals(this.blockPos3)) {
@@ -2416,8 +2410,7 @@ public final class CrystalAuraModule extends Module {
          } else {
             this.items17.add(var47);
             if (var47.isFlag() && var47.getType() != CrystalAuraModule.Type.DIG) {
-               for (Object var61_o : (Iterable<?>)(Object)(var42)) {
-                  CrystalAuraModule.Data14 var61 = (CrystalAuraModule.Data14)var61_o;
+               for (CrystalAuraModule.Data14 var61 : var42) {
                   if (this.items17.size() >= 10) {
                      break;
                   }
@@ -2447,8 +2440,7 @@ public final class CrystalAuraModule extends Module {
             }
 
             if (this.blockPos4 != null && !var47.pos().equals(this.blockPos4)) {
-               for (Object var62_o : (Iterable<?>)(Object)(var42)) {
-                  CrystalAuraModule.Data14 var62 = (CrystalAuraModule.Data14)var62_o;
+               for (CrystalAuraModule.Data14 var62 : var42) {
                   CrystalAuraModule.Data13 var66 = var62.getData13();
                   if (var66.getType() == this.type3
                      && var66.pos().equals(this.blockPos4)
@@ -2945,8 +2937,7 @@ public final class CrystalAuraModule extends Module {
          float var17 = ((CrystalAuraModule.Data10)var4.getFirst()).getFloatValue();
          float var19 = 0.0F;
 
-         for (Object var23_o : (Iterable<?>)(Object)(var4)) {
-            CrystalAuraModule.Data10 var23 = (CrystalAuraModule.Data10)var23_o;
+         for (CrystalAuraModule.Data10 var23 : var4) {
             if (var23.isFlag()) {
                var19 = Math.max(var19, var23.getFloatValue());
             }
@@ -2954,8 +2945,7 @@ public final class CrystalAuraModule extends Module {
 
          float var22 = 0.0F;
 
-         for (Object var26_o : (Iterable<?>)(Object)(var4)) {
-            CrystalAuraModule.Data10 var26 = (CrystalAuraModule.Data10)var26_o;
+         for (CrystalAuraModule.Data10 var26 : var4) {
             if (!var26.isFlag()) {
                var22 = Math.max(var22, var26.getFloatValue());
             }
@@ -2985,8 +2975,7 @@ public final class CrystalAuraModule extends Module {
       Vec3 var10 = mc.player.getEyePosition();
       LinkedHashSet<BlockPos> var11 = new LinkedHashSet();
 
-      for (Object var13_o : (Iterable<?>)(Object)(var5)) {
-         CrystalAuraModule.Data10 var13 = (CrystalAuraModule.Data10)var13_o;
+      for (CrystalAuraModule.Data10 var13 : var5) {
          if (var13.getBlockPos2() == null && (var8 || !this.method5803(var13.getBlockPos()))) {
             var11.add(var13.getBlockPos().above());
          }
@@ -3007,8 +2996,7 @@ public final class CrystalAuraModule extends Module {
       float var16 = var6;
       float var17 = 0.0F;
 
-      for (Object var19_o : (Iterable<?>)(Object)(var11)) {
-         BlockPos var19 = (BlockPos)var19_o;
+      for (BlockPos var19 : var11) {
          boolean var20;
          if (!this.method5923(var19)
             && this.method5867(var19)
@@ -3017,8 +3005,7 @@ public final class CrystalAuraModule extends Module {
             float var21 = var7;
             float var22 = 0.0F;
 
-            for (Object var24_o : (Iterable<?>)(Object)(var5)) {
-               CrystalAuraModule.Data10 var24 = (CrystalAuraModule.Data10)var24_o;
+            for (CrystalAuraModule.Data10 var24 : var5) {
                float var25;
                if (var24.getBlockPos2() == null && var19.equals(var24.getBlockPos().above())) {
                   var25 = var1.getItem() == Items.OBSIDIAN && mc.level.isEmptyBlock(var19.above()) && this.method5812(var19)
@@ -3619,8 +3606,7 @@ public final class CrystalAuraModule extends Module {
       List<AABB> var9 = var8.isEmpty() ? List.of(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)) : var8.toAabbs();
       ArrayList var10 = new ArrayList();
 
-      for (Object var12_o : (Iterable<?>)(Object)(var9)) {
-         AABB var12 = (AABB)var12_o;
+      for (AABB var12 : var9) {
          AABB var13 = var12.move(var1);
 
          for (Direction var17 : Direction.values()) {

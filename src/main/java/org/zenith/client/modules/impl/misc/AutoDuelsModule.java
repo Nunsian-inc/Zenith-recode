@@ -84,8 +84,7 @@ public final class AutoDuelsModule extends Module {
                this.method5978();
                Collections.shuffle(var4);
 
-               for (Object var6_o : (Iterable<?>)(Object)(var4)) {
-                  String var6 = (String)var6_o;
+               for (String var6 : var4) {
                   if (!this.items.contains(var6)
                      && !var6.equals(mc.getUser().getName())
                      && (!this.noFriends.isEnabled() || !Zenith.getInstance().getFriends().method7627(var6))) {

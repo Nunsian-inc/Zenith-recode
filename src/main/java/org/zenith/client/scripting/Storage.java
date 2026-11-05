@@ -210,8 +210,7 @@ public final class Storage {
 
       LinkedHashMap var11 = new LinkedHashMap();
 
-      for (Object var5_o : (Iterable<?>)(Object)(var2)) {
-         Path var5 = (Path)var5_o;
+      for (Path var5 : var2) {
          String var6 = var5.getFileName().toString();
          if (!var6.startsWith(".")) {
             if (Files.isDirectory(var5)) {

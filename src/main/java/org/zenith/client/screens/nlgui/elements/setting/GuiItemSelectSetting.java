@@ -268,8 +268,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
             ZenithColor var44 = var17.getPrimaryColor().getZenithColor().method7294(0.25F * var6);
             ZenithColor var45 = var17.getFieldBorder().method1447(var6);
 
-            for (Object var47_o : (Iterable<?>)(Object)(var31)) {
-               Block var47 = (Block)var47_o;
+            for (Block var47 : var31) {
                if (var36 + var42 * var33 < var35 - var33) {
                   var42++;
                } else {

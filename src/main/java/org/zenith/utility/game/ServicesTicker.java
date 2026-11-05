@@ -148,8 +148,7 @@ public final class ServicesTicker implements MinecraftAccess {
             List<CloudPackets.Data9> var10 = new ArrayList<>(var8.size() + 3);
             var10.addAll(ShareCodec.method6721(var3, var4, var5, var6));
 
-            for (Object var12_o : (Iterable<?>)(Object)(var8)) {
-               String var12 = (String)var12_o;
+            for (String var12 : var8) {
                CosmeticItemInfo var13 = this.cosmetics.method2971(var12);
                if (var13 != null && var13.getCosmeticType().method1682() && var12.length() <= 40) {
                   var10.add(new CloudPackets.Data9(var12, var13.getCosmeticType().ordinal(), var14));

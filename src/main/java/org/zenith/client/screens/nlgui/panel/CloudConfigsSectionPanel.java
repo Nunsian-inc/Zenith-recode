@@ -768,8 +768,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       int var3 = 0;
       int var4 = 0;
 
-      for (Object var6_o : (Iterable<?>)(Object)(var2)) {
-         CloudConfigsSectionPanel.LocalFile var6 = (CloudConfigsSectionPanel.LocalFile)var6_o;
+      for (CloudConfigsSectionPanel.LocalFile var6 : var2) {
          StoreApi.Data2 var7 = this.cloudTwin(var6.name());
          if (var7 != null) {
             var3++;
@@ -805,8 +804,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.gap(6.0F);
       }
 
-      for (Object var8_o : (Iterable<?>)(Object)(var2)) {
-         CloudConfigsSectionPanel.LocalFile var8 = (CloudConfigsSectionPanel.LocalFile)var8_o;
+      for (CloudConfigsSectionPanel.LocalFile var8 : var2) {
          CloudConfigsSectionPanel.FileRow var9 = new CloudConfigsSectionPanel.FileRow(var1, var8);
          this.custom(40.0F, var9::render, var9::apply, () -> var8.name().equals(this.selectedLocal), var9::click);
       }
@@ -827,8 +825,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.gap(GuiStyle.PADDING.intValue());
          this.caption("gui.configs.caption.shared");
 
-         for (Object var18_o : (Iterable<?>)(Object)(var15)) {
-            StoreApi.Data2 var18 = (StoreApi.Data2)var18_o;
+         for (StoreApi.Data2 var18 : var15) {
             CloudConfigsSectionPanel.EntryRow var10 = new CloudConfigsSectionPanel.EntryRow(var18);
             this.custom(40.0F, var10::render, var10::primary, () -> var18.getUUID().equals(this.selectedCloud), var10::click);
          }
@@ -1039,13 +1036,11 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          Font var11 = Fonts.NEW_MEDIUM.getFont(5.0F);
          ArrayList<String[]> var12 = new ArrayList();
 
-         for (Object var8_o : (Iterable<?>)(Object)(var2.subList(0, Math.min(5, var2.size())))) {
-            String var8 = (String)var8_o;
+         for (String var8 : var2.subList(0, Math.min(5, var2.size()))) {
             var12.add(new String[]{"+", var8});
          }
 
-         for (Object var16_o : (Iterable<?>)(Object)(var3.subList(0, Math.min(5, var3.size())))) {
-            String var16 = (String)var16_o;
+         for (String var16 : var3.subList(0, Math.min(5, var3.size()))) {
             var12.add(new String[]{"−", var16});
          }
 
@@ -1077,8 +1072,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
                );
                float var19 = var11x + var11.height() + 6.0F;
 
-               for (Object var21_o : (Iterable<?>)(Object)(var12)) {
-                  String[] var21 = (String[])var21_o;
+               for (String[] var21 : var12) {
                   boolean var22 = var21[0].equals("+");
                   var7x.drawRoundedRect(
                      var15x, var19 + 1.0F, 3.0F, var10.height() - 1.0F, ProxyDotRadiusData.method8069(1.5F), (var22 ? CHANGE_ON : CHANGE_OFF).method7294(var13)
@@ -1376,8 +1370,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.asideCustom(var5.size() * var6 + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, var6x, var7, var8, var9, var10) -> {
             float var11 = var7;
 
-            for (Object var13_o : (Iterable<?>)(Object)(var5)) {
-               String var13 = (String)var13_o;
+            for (String var13 : var5) {
                var3x.drawText(var3, var13, var6x + 8.0F, var11, var10.getTextSecondary().getZenithColor().method7294(var9));
                var11 += var6;
             }
@@ -1393,8 +1386,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       this.asideCustom(var4.size() * var5 + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, var6, var7, var8, var9, var10) -> {
          float var11 = var7;
 
-         for (Object var13_o : (Iterable<?>)(Object)(var4)) {
-            String var13 = (String)var13_o;
+         for (String var13 : var4) {
             var3x.drawText(var2, var13, var6 + 8.0F, var11, var10.getTextTertiary().getZenithColor().method7294(var9));
             var11 += var5;
          }
@@ -1413,8 +1405,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
             var6x.drawText(var3, var14, var9 + (var11 - var3.width(var14)) / 2.0F, var10 + var7, var13.getTextSecondary().getZenithColor().method7294(var12));
             float var15 = var10 + var7 + var3.height() + 6.0F;
 
-            for (Object var17_o : (Iterable<?>)(Object)(var5)) {
-               String var17 = (String)var17_o;
+            for (String var17 : var5) {
                var6x.drawText(var4, var17, var9 + (var11 - var4.width(var17)) / 2.0F, var15, var13.getTextTertiary().getZenithColor().method7294(var12));
                var15 += var6;
             }

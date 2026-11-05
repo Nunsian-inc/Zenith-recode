@@ -133,8 +133,7 @@ public final class ChestStealerModule extends Module {
          List<Integer> var8 = IntStream.range(0, var7).boxed().collect(Collectors.toList());
          Collections.shuffle(var8);
          if (!var6) {
-            for (Object var10_o : (Iterable<?>)(Object)(var8)) {
-               int var10 = (Integer)var10_o;
+            for (int var10 : var8) {
                Slot var11 = var2.getSlot(var10);
                if (var11.hasItem()) {
                   long var12 = (long)MathUtils.method2651(Math.min(this.method3072(), this.method3073()), Math.max(this.method3072(), this.method3073()));

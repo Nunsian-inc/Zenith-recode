@@ -54,8 +54,7 @@ public class BindsCommand extends CommandAbstract {
                            this.sendModuleLine(var5.getName());
                         }
 
-                        for (Object var9_o : (Iterable<?>)(Object)(var6)) {
-                           BindSetting var9 = (BindSetting)var9_o;
+                        for (BindSetting var9 : var6) {
                            this.sendBindLine(var9.getName(), KeyName.method6701(var9.getKeyCode()), true);
                            var3++;
                         }

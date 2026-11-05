@@ -47,8 +47,7 @@ public final class CloudChatClient {
       List<CloudChatClient.Data3> var1 = this.messages;
       boolean var2 = false;
 
-      for (Object var4_o : (Iterable<?>)(Object)(var1)) {
-         CloudChatClient.Data3 var4 = (CloudChatClient.Data3)var4_o;
+      for (CloudChatClient.Data3 var4 : var1) {
          if (CloudDmClient.method4858(var4.name())) {
             var2 = true;
             break;
@@ -60,8 +59,7 @@ public final class CloudChatClient {
       } else {
          List<Data3> var6 = new ArrayList<>(var1.size());
 
-         for (Object var5_o : (Iterable<?>)(Object)(var1)) {
-            CloudChatClient.Data3 var5 = (CloudChatClient.Data3)var5_o;
+         for (CloudChatClient.Data3 var5 : var1) {
             if (!CloudDmClient.method4858(var5.name())) {
                var6.add(var5);
             }
@@ -327,8 +325,7 @@ public final class CloudChatClient {
       synchronized (this.obj) {
          List<CloudChatClient.Data3> var3 = this.messages;
 
-         for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-            CloudChatClient.Data3 var5 = (CloudChatClient.Data3)var5_o;
+         for (CloudChatClient.Data3 var5 : var3) {
             if (var5.getLongValue() == var1.getLongValue()) {
                return;
             }

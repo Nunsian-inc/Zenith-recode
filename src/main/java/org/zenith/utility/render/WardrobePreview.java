@@ -122,8 +122,7 @@ public final class WardrobePreview implements MinecraftAccess {
          if (!var10.isEmpty()) {
             PoseStack var28 = var1.getMatrixStack();
             OutlineVertexProvider.method1542(var3x -> {
-                  for (Object var5x_o : (Iterable<?>)(Object)(var10)) {
-                     WardrobePreview.Data var5x = (WardrobePreview.Data)var5x_o;
+                  for (WardrobePreview.Data var5x : var10) {
                      var28.pushPose();
 
                      try {

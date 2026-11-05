@@ -789,8 +789,7 @@ public class VoiceSectionPanel extends SectionPanel {
       List<PartyPlayerInfo> var2 = var1.method365();
       this.asideCaption(t("gui.voice.caption.friends") + " · " + var2.size());
 
-      for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-         PartyPlayerInfo var4 = (PartyPlayerInfo)var4_o;
+      for (PartyPlayerInfo var4 : var2) {
          this.friendRow(var1, var4);
       }
 
@@ -889,8 +888,7 @@ public class VoiceSectionPanel extends SectionPanel {
                );
                float var18 = var10 + 1.0F + (var15 - var4.height()) / 2.0F;
 
-               for (Object var20_o : (Iterable<?>)(Object)(var5)) {
-                  String var20 = (String)var20_o;
+               for (String var20 : var5) {
                   var6x.drawText(var4, var20, var9 + 8.0F + var15 + 4.0F, var18, var13.getTextSecondary().getZenithColor().method7294(var12));
                   var18 += var6;
                }
@@ -963,8 +961,7 @@ public class VoiceSectionPanel extends SectionPanel {
          float var13 = wave(this.enterWave, var5);
          float var14 = var9 + 2.0F;
 
-         for (Object var16_o : (Iterable<?>)(Object)(var3)) {
-            String var16 = (String)var16_o;
+         for (String var16 : var3) {
             var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 8.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
             var14 += var4;
          }
@@ -980,8 +977,7 @@ public class VoiceSectionPanel extends SectionPanel {
          float var13 = wave(this.asideWave, var5);
          float var14 = var9 + 2.0F;
 
-         for (Object var16_o : (Iterable<?>)(Object)(var3)) {
-            String var16 = (String)var16_o;
+         for (String var16 : var3) {
             var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 6.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
             var14 += var4;
          }

@@ -222,8 +222,7 @@ public final class TextUtils implements MinecraftAccess {
          if (!var5.isEmpty()) {
             StringBuilder var4x = new StringBuilder();
 
-            for (Object var6x_o : (Iterable<?>)(Object)(var5)) {
-               TextUtils.Data var6x = (TextUtils.Data)var6x_o;
+            for (TextUtils.Data var6x : var5) {
                var4x.append(var6x.text());
             }
 
@@ -231,8 +230,7 @@ public final class TextUtils implements MinecraftAccess {
             if (var8.equals(var1)) {
                var4.append((Component)var2.apply(var5));
             } else {
-               for (Object var7_o : (Iterable<?>)(Object)(var5)) {
-                  TextUtils.Data var7 = (TextUtils.Data)var7_o;
+               for (TextUtils.Data var7 : var5) {
                   var4.append(Component.literal(var7.text()).setStyle(var7.style()));
                }
             }

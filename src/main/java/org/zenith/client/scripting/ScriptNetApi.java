@@ -402,8 +402,7 @@ public final class ScriptNetApi {
                                     .method6277("name", var7.username())
                                     .getScriptableObject();
 
-                                 for (Object var9x_o : (Iterable<?>)(Object)(var11)) {
-                                    Function var9x = (Function)var9x_o;
+                                 for (Function var9x : var11) {
                                     var1.method1321(var0, var9x, var6xx, var7x);
                                  }
                               }

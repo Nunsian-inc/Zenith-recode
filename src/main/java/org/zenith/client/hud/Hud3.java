@@ -66,8 +66,7 @@ public class Hud3 extends Interface {
       ArrayList<Hud3.Data> var7 = new ArrayList();
       ArrayList<Hud3.Data> var8 = new ArrayList();
 
-      for (Object var10_o : (Iterable<?>)(Object)(var5)) {
-         Hud3.Data var10 = (Hud3.Data)var10_o;
+      for (Hud3.Data var10 : var5) {
          (this.items2.containsKey(var10.getText()) ? var8 : var7).add(var10);
       }
 
@@ -90,8 +89,7 @@ public class Hud3 extends Interface {
             this.method2272(var1, var19, var11, var18, var2);
             float var12 = var19 + 7.0F;
 
-            for (Object var14_o : (Iterable<?>)(Object)(var7)) {
-               Hud3.Data var14 = (Hud3.Data)var14_o;
+            for (Hud3.Data var14 : var7) {
                float var15 = this.method2274(var14, var3);
                this.method2273(var1, var14, var12, var11, var3, var2);
                this.items3.put(var14.getText(), new float[]{var12, var11, var15});
@@ -99,8 +97,7 @@ public class Hud3 extends Interface {
             }
          }
 
-         for (Object var21_o : (Iterable<?>)(Object)(var8)) {
-            Hud3.Data var21 = (Hud3.Data)var21_o;
+         for (Hud3.Data var21 : var8) {
             Vector2f var22 = this.method2278(var21);
             float var23 = 14.0F + this.method2274(var21, var3);
             float var16 = var19 + var22.x();

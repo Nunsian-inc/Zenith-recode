@@ -1126,8 +1126,7 @@ public final class CodeArea {
                } else {
                   LinkedHashSet var11 = new LinkedHashSet();
 
-                  for (Object var10_o : (Iterable<?>)(Object)(var7.keySet())) {
-                     String var10 = (String)var10_o;
+                  for (String var10 : var7.keySet()) {
                      if (!var10.contains(".")) {
                         var11.add(var10);
                      }

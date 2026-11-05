@@ -78,8 +78,7 @@ public class HolyWorldEvent {
          ArrayList var6 = new ArrayList();
          ArrayList var7 = new ArrayList();
 
-         for (Object var9_o : (Iterable<?>)(Object)(var1)) {
-            HolyWorldEvent.Data var9 = (HolyWorldEvent.Data)var9_o;
+         for (HolyWorldEvent.Data var9 : var1) {
             if (var9.intValue >= 1 && var9.intValue <= 14) {
                var15.add(var9);
             } else if (var9.intValue >= 15 && var9.intValue <= 32) {
@@ -94,8 +93,7 @@ public class HolyWorldEvent {
          ArrayList var17 = new ArrayList();
          byte var18 = 4;
          if (var14 <= 4) {
-            for (Object var11_o : (Iterable<?>)(Object)(var1)) {
-               HolyWorldEvent.Data var11 = (HolyWorldEvent.Data)var11_o;
+            for (HolyWorldEvent.Data var11 : var1) {
                var17.add(this.method7745(var11));
             }
          } else {

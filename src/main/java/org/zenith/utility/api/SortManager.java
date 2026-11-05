@@ -80,8 +80,7 @@ public final class SortManager {
                return;
             }
 
-            for (Object var4_o : (Iterable<?>)(Object)(var2)) {
-               SortManager.Entry2 var4 = (SortManager.Entry2)var4_o;
+            for (SortManager.Entry2 var4 : var2) {
                if (var4 != null && var4.method7010()) {
                   this.items.add(var4);
                }
