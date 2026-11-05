@@ -2,8 +2,6 @@ package org.zenith.client.modules.impl.movement;
 
 import com.darkmagician6.eventapi.EventTarget;
 import lombok.Generated;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.KeyEvent;
@@ -63,7 +61,7 @@ public final class ElytraMotionModule extends Module {
             if (UseItemUtils.method6517() != null) {
                this.flag = true;
             } else if (this.stopWatch.method7546(300L) && !this.flag) {
-               InventoryUtils.method929(Items.FIREWORK_ROCKET, InteractionHand.OFF_HAND);
+               InventoryUtils.useFireworkInFlight();
                this.stopWatch.reset();
             }
          } else {

@@ -5,10 +5,8 @@ import java.util.Comparator;
 import lombok.Generated;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.ModuleCategory;
@@ -117,7 +115,7 @@ public final class ElytraTargetModule extends Module {
             && !ElytraMotionModule.INSTANCE.isFlag10()
             && !AutoTotemModule.INSTANCE.method725()
             && this.stopWatch.method7546(400L)) {
-            InventoryUtils.method930(Items.FIREWORK_ROCKET, var0 -> true, InteractionHand.OFF_HAND);
+            InventoryUtils.useFireworkInFlight();
             this.stopWatch.reset();
          }
       } else {
