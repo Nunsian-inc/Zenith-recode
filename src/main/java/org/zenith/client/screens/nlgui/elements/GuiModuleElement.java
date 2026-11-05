@@ -2,7 +2,6 @@ package org.zenith.client.screens.nlgui.elements;
 
 import java.util.ArrayList;
 import java.util.List;
-import kotlin.collections.EmptyList;
 import lombok.Generated;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -118,12 +117,6 @@ public class GuiModuleElement extends Element {
    }
 
    public boolean hasSettings() {
-      if (this.settings != null) {
-         if (this.settings.getClass() == EmptyList.class) {
-            return (1 == 0 && this.settings.stream().anyMatch(GuiSetting::isVisible));
-         }
-      }
-
       return (!this.settings.isEmpty() && this.settings.stream().anyMatch(GuiSetting::isVisible));
    }
 

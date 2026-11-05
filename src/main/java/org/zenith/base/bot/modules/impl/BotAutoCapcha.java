@@ -22,8 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.imageio.ImageIO;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -237,17 +235,7 @@ public final class BotAutoCapcha extends BotModule {
    private void tryTrigger(BotAutoCapcha.SolveTarget var1) {
       if (var1 != null) {
          if (this.lastMapId < 0) {
-            boolean var10000;
-            label51: {
-               if (this.frameItems != null) {
-                  if (this.frameItems.getClass() == EmptyMap.class) {
-                     var10000 = true;
-                     break label51;
-                  }
-               }
-
-               var10000 = this.frameItems.isEmpty();
-            }
+            boolean var10000 = this.frameItems.isEmpty();
 
             if (var10000) {
                return;

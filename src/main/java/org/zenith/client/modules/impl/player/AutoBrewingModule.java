@@ -7,8 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -290,7 +288,7 @@ public final class AutoBrewingModule extends Module {
 
    private void method4278() {
       this.method4286();
-      if (this.items2 != null && this.items2.getClass() == EmptyList.class ? true : this.items2.isEmpty()) {
+      if (this.items2.isEmpty()) {
          this.method4277();
          this.setToggled(false);
       } else {
@@ -299,7 +297,7 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4279() {
-      if (this.items2 != null && this.items2.getClass() == EmptyList.class ? true : this.items2.isEmpty()) {
+      if (this.items2.isEmpty()) {
          this.method4272();
          if (!this.flag2) {
             this.method4277();
@@ -407,7 +405,7 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4287() {
-      if (this.items2 != null && this.items2.getClass() == EmptyList.class ? true : this.items2.isEmpty()) {
+      if (this.items2.isEmpty()) {
          this.method4292();
       } else {
          this.blockPos2 = this.items2.removeFirst();
@@ -500,7 +498,7 @@ public final class AutoBrewingModule extends Module {
       }
 
       this.items.sort(Comparator.comparingDouble(var0 -> net.minecraft.world.phys.Vec3.atCenterOf(var0).distanceToSqr(mc.player.getEyePosition())));
-      if (this.items != null && this.items.getClass() == EmptyList.class ? true : this.items.isEmpty()) {
+      if (this.items.isEmpty()) {
          ChatLogger.method2021("Рядом нет доступных зельеварок");
          this.setToggled(false);
       } else {

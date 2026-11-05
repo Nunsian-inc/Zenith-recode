@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import kotlin.collections.EmptyMap;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -127,17 +126,7 @@ public final class AutoDodgeModule extends Module {
             }
          }
 
-         boolean var10000;
-         label78: {
-            if (this.items != null) {
-               if (this.items.getClass() == EmptyMap.class) {
-                  var10000 = true;
-                  break label78;
-               }
-            }
-
-            var10000 = this.items.isEmpty();
-         }
+         boolean var10000 = this.items.isEmpty();
 
          if (var10000) {
             this.intValue++;

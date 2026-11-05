@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import kotlin.collections.EmptyList;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -220,7 +219,7 @@ public class InspectorRow implements MouseBindTarget {
    }
 
    private boolean expandable() {
-      return (this.children != null && this.children.getClass() == EmptyList.class ? false : !this.children.isEmpty())
+      return !this.children.isEmpty()
          || this.picker != null
          || this.modeOptions != null;
    }
@@ -239,7 +238,7 @@ public class InspectorRow implements MouseBindTarget {
          return var1 + this.modeOptions.height() * this.expandAnimation.getValue() * this.visibleAnimation.getValue();
       } else if (this.picker != null) {
          return var1 + this.pickerHeight * this.expandAnimation.getValue() * this.visibleAnimation.getValue();
-      } else if (this.children != null && this.children.getClass() == EmptyList.class ? true : this.children.isEmpty()) {
+      } else if (this.children.isEmpty()) {
          return var1;
       } else {
          float var2 = 0.0F;
@@ -345,7 +344,7 @@ public class InspectorRow implements MouseBindTarget {
                   var1.enableScissor(var39, var46, var39 + var6, var46 + var43);
                   this.picker.render(var1, var2, var3, var39 + 8.0F + this.depth * 8.0F, var46, var40, var12);
                   var1.disableScissor();
-               } else if (this.children != null && this.children.getClass() == EmptyList.class ? false : !this.children.isEmpty()) {
+               } else if (!this.children.isEmpty()) {
                   float var26 = 0.0F;
 
                   for (InspectorRow var28 : this.children) {
@@ -1213,7 +1212,7 @@ public class InspectorRow implements MouseBindTarget {
                   this.typedAt = -1L;
                   Zenith.getInstance().getClientSounds().method1570(false);
                   return true;
-               } else if (this.children != null && this.children.getClass() == EmptyList.class ? false : !this.children.isEmpty()) {
+               } else if (!this.children.isEmpty()) {
                   this.expanded = !this.expanded;
                   Zenith.getInstance().getClientSounds().method1570(false);
                   return true;

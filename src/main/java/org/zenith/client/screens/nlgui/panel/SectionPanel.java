@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-import kotlin.collections.EmptyList;
 import net.minecraft.util.Mth;
 import org.zenith.Animation;
 import org.zenith.Easing;
@@ -189,7 +188,7 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    private float inlineTabsHeight() {
-      return this.embedded && (this.tabs != null && this.tabs.getClass() == EmptyList.class ? false : !this.tabs.isEmpty()) ? 19.0F : 0.0F;
+      return this.embedded && !this.tabs.isEmpty() ? 19.0F : 0.0F;
    }
 
    public String searchQuery() {
@@ -213,7 +212,7 @@ public abstract class SectionPanel extends ElementPanel {
          .add(
             SectionPanel.Entry.caption(
                var1,
-               (this.mainEntries != null && this.mainEntries.getClass() == EmptyList.class ? true : this.mainEntries.isEmpty())
+               this.mainEntries.isEmpty()
                   && this.mainHeaderHeight() <= 0.0F
             )
          );
@@ -281,7 +280,7 @@ public abstract class SectionPanel extends ElementPanel {
    public void asideCaption(String var1) {
       this.asideEntries
          .add(
-            SectionPanel.Entry.caption(var1, this.asideEntries != null && this.asideEntries.getClass() == EmptyList.class ? true : this.asideEntries.isEmpty())
+            SectionPanel.Entry.caption(var1, this.asideEntries.isEmpty())
          );
    }
 
@@ -350,7 +349,7 @@ public abstract class SectionPanel extends ElementPanel {
    @Override
    public float getButtonWidth() {
       this.ensureBuilt();
-      if ((this.tabs != null && this.tabs.getClass() == EmptyList.class ? false : !this.tabs.isEmpty()) && !this.embedded) {
+      if (!this.tabs.isEmpty() && !this.embedded) {
          Font var1 = Fonts.NEW_MEDIUM.getFont(5.0F);
          float var2 = 0.0F;
 
@@ -369,7 +368,7 @@ public abstract class SectionPanel extends ElementPanel {
       if (!this.embedded) {
          this.ensureBuilt();
          ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var9 != null && (this.tabs != null && this.tabs.getClass() == EmptyList.class ? false : !this.tabs.isEmpty())) {
+         if (var9 != null && !this.tabs.isEmpty()) {
             this.renderTabStrip(var1, var2, var3, var4, var5, var6, 23.0F, var7, var9, false);
          }
       }
@@ -380,7 +379,7 @@ public abstract class SectionPanel extends ElementPanel {
    ) {
       Font var11 = Fonts.NEW_MEDIUM.getFont(5.0F);
       this.tabBounds.clear();
-      boolean var12 = this.tabIcons != null && this.tabIcons.getClass() == EmptyList.class ? false : !this.tabIcons.isEmpty();
+      boolean var12 = !this.tabIcons.isEmpty();
       float var13 = 8.0F;
       boolean var14 = false;
       float var15 = var10 ? var5 + 8.0F - 2.0F : var5;
@@ -638,7 +637,7 @@ public abstract class SectionPanel extends ElementPanel {
       float var24 = var12 > 0.0F ? var13 - GuiStyle.PADDING.intValue() * 2.0F : var13;
       this.clampScroll(var14, var24);
       this.scroll = this.mainScrollbar.isDragging() ? this.scrollTarget : this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-      if (this.mainEntries != null && this.mainEntries.getClass() == EmptyList.class ? true : this.mainEntries.isEmpty()) {
+      if (this.mainEntries.isEmpty()) {
          Font var26 = Fonts.NEW_REGULAR.getFont(5.0F);
          float var27 = var5 + 40.0F;
 

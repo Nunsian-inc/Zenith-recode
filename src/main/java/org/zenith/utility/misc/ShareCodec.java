@@ -11,8 +11,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import org.zenith.utility.api.AvatarUtil;
 import org.zenith.utility.network.CloudPackets;
 

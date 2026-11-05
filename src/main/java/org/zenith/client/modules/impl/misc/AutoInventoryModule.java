@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import kotlin.collections.EmptyList;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.core.component.DataComponents;
@@ -128,7 +127,7 @@ public class AutoInventoryModule extends Module {
       this.method160();
       this.method163();
       this.intValue4 = this.items.size();
-      if (this.items != null && this.items.getClass() == EmptyList.class ? true : this.items.isEmpty()) {
+      if (this.items.isEmpty()) {
          if (this.method207().isEmpty()) {
             ChatLogger.method2021("АвтоСбор: набор пуст, добавьте предметы через меню");
          } else {
@@ -265,7 +264,7 @@ public class AutoInventoryModule extends Module {
    }
 
    private void method164() {
-      for (this.entry2 = null; this.items != null && this.items.getClass() == EmptyList.class ? false : !this.items.isEmpty(); this.intValue5++) {
+      for (this.entry2 = null; !this.items.isEmpty(); this.intValue5++) {
          AutoInventoryModule.Entry2 var1 = this.items.removeFirst();
          if (this.method202(var1.itemMatcher, var1.floatValue) < var1.intValue2) {
             this.intValue3 = 0;
@@ -760,7 +759,7 @@ public class AutoInventoryModule extends Module {
       this.data = null;
       this.items2.clear();
 
-      while (this.items != null && this.items.getClass() == EmptyList.class ? false : !this.items.isEmpty()) {
+      while (!this.items.isEmpty()) {
          AutoInventoryModule.Entry2 var1 = this.items.removeFirst();
          if (this.method202(var1.itemMatcher, var1.floatValue) < var1.intValue2) {
             this.entry2 = var1;

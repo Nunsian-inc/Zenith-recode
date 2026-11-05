@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import kotlin.collections.EmptyMap;
 import net.minecraft.client.particle.ExplodeParticle.Provider;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.BlockPos;
@@ -712,7 +711,7 @@ public final class ServerHelperModule extends Module {
             this.method5191(var4, var2);
          }
       } else {
-         if (this.items4 != null && this.items4.getClass() == EmptyMap.class ? false : !this.items4.isEmpty()) {
+         if (!this.items4.isEmpty()) {
             this.items4.clear();
          }
       }
@@ -1029,20 +1028,8 @@ public final class ServerHelperModule extends Module {
    }
 
    private boolean method5209(BlockPos var1) {
-      long var2;
-      boolean var10000;
-      label20: {
-         var2 = System.currentTimeMillis();
-         if (this.items7 != null) {
-            if (this.items7.getClass() == EmptyMap.class) {
-               var10000 = false;
-               break label20;
-            }
-         }
-
-         var10000 = this.items7.containsKey(var1);
-      }
-
+      long var2 = System.currentTimeMillis();
+      boolean var10000 = this.items7.containsKey(var1);
       if (var10000 && var2 - this.items7.get(var1) < 1000L) {
          return this.items5.get(var1);
       } else {
@@ -1081,20 +1068,8 @@ public final class ServerHelperModule extends Module {
    }
 
    private boolean method5211(BlockPos var1) {
-      long var2;
-      boolean var10000;
-      label20: {
-         var2 = System.currentTimeMillis();
-         if (this.items8 != null) {
-            if (this.items8.getClass() == EmptyMap.class) {
-               var10000 = false;
-               break label20;
-            }
-         }
-
-         var10000 = this.items8.containsKey(var1);
-      }
-
+      long var2 = System.currentTimeMillis();
+      boolean var10000 = this.items8.containsKey(var1);
       if (var10000 && var2 - this.items8.get(var1) < 1000L) {
          return this.items6.get(var1);
       } else {

@@ -13,8 +13,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -302,7 +300,7 @@ public final class AutoTrapModule extends Module {
       this.method2469(var1);
       this.placementQueue.method2816(var1);
       this.method2470(var1);
-      this.flag = this.items != null && this.items.getClass() == EmptyMap.class ? false : !this.items.isEmpty();
+      this.flag = !this.items.isEmpty();
       this.items2.keySet().removeIf(var1x -> !this.method2458(var1x));
       if (!this.method2464()) {
          this.class33.cancel();
@@ -333,7 +331,7 @@ public final class AutoTrapModule extends Module {
 
          this.items6 = this.method2432(var1);
          this.method2436();
-         if ((this.items6 != null && this.items6.getClass() == EmptyList.class ? false : !this.items6.isEmpty())
+         if (!this.items6.isEmpty()
             && !(var1 - this.intValue3 <= this.delay.getValue3())) {
             this.data2 = this.method2451();
             if (this.data2 != null && this.data2.getData6().getType().flag2) {
@@ -465,7 +463,7 @@ public final class AutoTrapModule extends Module {
    private void method2436() {
       if (this.swap.isSelected(1)
          && !this.class33.pending()
-         && (this.playerEntity != null || (this.items2 != null && this.items2.getClass() == EmptyMap.class ? false : !this.items2.isEmpty()))) {
+         && (this.playerEntity != null || !this.items2.isEmpty())) {
          ArrayList<AutoTrapModule.Type> var1 = new ArrayList();
          if (this.playerEntity != null) {
             if (this.entry.isEnabled()) {
@@ -487,7 +485,7 @@ public final class AutoTrapModule extends Module {
             }
          }
 
-         if ((this.items2 != null && this.items2.getClass() == EmptyMap.class ? false : !this.items2.isEmpty()) && this.lavaPickup.isEnabled()) {
+         if (!this.items2.isEmpty() && this.lavaPickup.isEnabled()) {
             var1.add(AutoTrapModule.Type.PICKUP);
          }
 
@@ -850,17 +848,7 @@ public final class AutoTrapModule extends Module {
       } else if (var1.getType() == AutoTrapModule.Type.PICKUP) {
          return this.method2458(var2);
       } else {
-         boolean var10000;
-         label63: {
-            if (this.items != null) {
-               if (this.items.getClass() == EmptyMap.class) {
-                  var10000 = false;
-                  break label63;
-               }
-            }
-
-            var10000 = this.items.containsKey(var2);
-         }
+         boolean var10000 = this.items.containsKey(var2);
 
          if (var10000) {
             return false;

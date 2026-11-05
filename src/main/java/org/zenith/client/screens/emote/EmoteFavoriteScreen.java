@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import kotlin.collections.EmptyList;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
@@ -336,17 +335,7 @@ public final class EmoteFavoriteScreen extends Screen {
          this.updatePreviewEmote(var18);
       }
 
-      boolean var54;
-      label67: {
-         if (this.filteredEmotes != null) {
-            if (this.filteredEmotes.getClass() == EmptyList.class) {
-               var54 = true;
-               break label67;
-            }
-         }
-
-         var54 = this.filteredEmotes.isEmpty();
-      }
+      boolean var54 = this.filteredEmotes.isEmpty();
 
       if (var54) {
          Font var46 = Fonts.NEW_MEDIUM.getFont(5.5F);
@@ -617,13 +606,6 @@ public final class EmoteFavoriteScreen extends Screen {
    }
 
    private float contentHeight() {
-      if (this.filteredEmotes != null) {
-         if (this.filteredEmotes.getClass() == EmptyList.class) {
-            int var1;
-            return 1 != 0 ? 0.0F : (var1 = (this.filteredEmotes.size() + 3 - 1) / 3) * 72.0F + Math.max(0, var1 - 1) * 5.0F;
-         }
-      }
-
       int var2;
       return this.filteredEmotes.isEmpty() ? 0.0F : (var2 = (this.filteredEmotes.size() + 3 - 1) / 3) * 72.0F + Math.max(0, var2 - 1) * 5.0F;
    }

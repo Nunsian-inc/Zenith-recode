@@ -3,7 +3,6 @@ package org.zenith.client.modules.impl.combat;
 import com.darkmagician6.eventapi.EventTarget;
 import java.util.List;
 import java.util.Optional;
-import kotlin.collections.EmptyList;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;

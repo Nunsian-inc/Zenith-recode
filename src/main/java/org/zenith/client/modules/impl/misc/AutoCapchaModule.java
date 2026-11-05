@@ -19,8 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.imageio.ImageIO;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.component.DataComponents;
@@ -208,7 +206,7 @@ public final class AutoCapchaModule extends Module {
    }
 
    private void method151(AutoCapchaModule.Data var1) {
-      if (var1 != null && (this.lastMapId >= 0 || (this.items3 != null && this.items3.getClass() == EmptyMap.class ? false : !this.items3.isEmpty()))) {
+      if (var1 != null && (this.lastMapId >= 0 || !this.items3.isEmpty())) {
          long var2 = System.currentTimeMillis();
          boolean var4 = this.joinTime != 0L && var2 - this.joinTime <= 15000L;
          boolean var5 = this.keywordTime != 0L && var2 - this.keywordTime <= 10000L;

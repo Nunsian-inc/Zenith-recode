@@ -4,7 +4,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
-import kotlin.collections.EmptyList;
 import lombok.Generated;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;

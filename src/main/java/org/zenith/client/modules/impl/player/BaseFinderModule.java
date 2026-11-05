@@ -20,8 +20,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptySet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
@@ -164,7 +162,7 @@ public final class BaseFinderModule extends Module {
          }
 
          if (this.mods.method5227(2)) {
-            for (int var2 = 0; var2 < 5 && (this.items3 != null && this.items3.getClass() == EmptyList.class ? false : !this.items3.isEmpty()); var2++) {
+            for (int var2 = 0; var2 < 5 && !this.items3.isEmpty(); var2++) {
                BlockPos var3 = this.items3.getFirst();
                UseItemUtils.method6514(new BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(var3), Direction.UP, var3, false), InteractionHand.OFF_HAND);
                this.items3.removeFirst();

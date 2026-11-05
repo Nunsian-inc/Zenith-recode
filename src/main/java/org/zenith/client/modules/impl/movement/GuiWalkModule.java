@@ -4,7 +4,6 @@ import com.darkmagician6.eventapi.EventTarget;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import kotlin.collections.EmptyList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
@@ -69,7 +68,7 @@ public final class GuiWalkModule extends Module {
 
                this.flag = false;
                if (Objects.requireNonNull(var1.getPacket3()) instanceof ServerboundContainerClickPacket var2
-                  && ((this.items != null && this.items.getClass() == EmptyList.class ? false : !this.items.isEmpty()) || MovementInputUtils.method7418())
+                  && (!this.items.isEmpty() || MovementInputUtils.method7418())
                   && KeyBindUtils.method2635()) {
                   this.items.add(var2);
                   this.slotActionType = var2.containerInput();
@@ -89,7 +88,7 @@ public final class GuiWalkModule extends Module {
             && (!this.entry.isSelected() || !this.flag2)
             && !this.flag3
             && (
-               (this.items != null && this.items.getClass() == EmptyList.class ? false : !this.items.isEmpty())
+               !this.items.isEmpty()
                   || mc.player.containerMenu.getCarried().isEmpty()
             )) {
             KeyBindUtils.method2634();
@@ -120,7 +119,7 @@ public final class GuiWalkModule extends Module {
                }
             }
 
-            if ((this.items != null && this.items.getClass() == EmptyList.class ? true : this.items.isEmpty()) && !MovementInputUtils.method7418()) {
+            if (this.items.isEmpty() && !MovementInputUtils.method7418()) {
                this.flag3 = true;
             } else if ((var1.getIntValue3() != 1 || !var4.equals(ContainerInput.PICKUP))
                && (this.slotActionType != ContainerInput.PICKUP || var1.getSlotActionType() != ContainerInput.QUICK_MOVE)
@@ -145,15 +144,15 @@ public final class GuiWalkModule extends Module {
                }
 
                this.flag2 = false;
-            } else if (this.flag3 && (this.items != null && this.items.getClass() == EmptyList.class ? true : this.items.isEmpty())) {
+            } else if (this.flag3 && this.items.isEmpty()) {
                this.flag3 = false;
             } else {
                this.flag3 = false;
-               if (MovementInputUtils.method7418() || (this.items != null && this.items.getClass() == EmptyList.class ? false : !this.items.isEmpty())) {
+               if (MovementInputUtils.method7418() || !this.items.isEmpty()) {
                   var1.setCancelled(true);
                }
 
-               if (this.items != null && this.items.getClass() == EmptyList.class ? false : !this.items.isEmpty()) {
+               if (!this.items.isEmpty()) {
                   this.slotActionType = null;
                   this.flag = false;
                   var var2 = new ArrayList<>(this.items);

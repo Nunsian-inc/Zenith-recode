@@ -22,9 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
-import kotlin.collections.EmptySet;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
@@ -447,7 +444,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    public float method5742() {
-      if (this.items18 != null && this.items18.getClass() == EmptyList.class ? true : this.items18.isEmpty()) {
+      if (this.items18.isEmpty()) {
          return 0.0F;
       } else {
          float var1 = this.data == null ? 0.0F : this.data.getFloatValue2();
@@ -569,7 +566,7 @@ public final class CrystalAuraModule extends Module {
 
             return true;
          });
-         this.data = (this.items16 != null && this.items16.getClass() == EmptyList.class ? true : this.items16.isEmpty()) ? null : this.items16.getFirst();
+         this.data = this.items16.isEmpty() ? null : this.items16.getFirst();
          this.items17.clear();
          this.data4 = this.method5771(var2, var3);
          Rotation var4 = this.method5758(var2, var3);
@@ -711,7 +708,7 @@ public final class CrystalAuraModule extends Module {
          }
 
          if (this.data3.isFlag2()
-            && (this.items18 != null && this.items18.getClass() == EmptyList.class ? false : !this.items18.isEmpty())
+            && !this.items18.isEmpty()
             && this.intValue7 != mc.player.tickCount
             && !this.method5870()
             && this.method5917()
@@ -875,15 +872,15 @@ public final class CrystalAuraModule extends Module {
          if (this.entry20.isEnabled()) {
             this.combatLogger
                .method4611(
-                  this.items18 != null && this.items18.getClass() == EmptyList.class ? false : !this.items18.isEmpty(),
-                  (this.items18 != null && this.items18.getClass() == EmptyList.class ? true : this.items18.isEmpty()) ? "" : this.method5757()
+                  !this.items18.isEmpty(),
+                  this.items18.isEmpty() ? "" : this.method5757()
                );
          } else if (this.combatLogger.active()) {
             this.combatLogger.method4616("журнал выключен");
          }
 
          this.method5932();
-         if (this.items18 != null && this.items18.getClass() == EmptyList.class ? true : this.items18.isEmpty()) {
+         if (this.items18.isEmpty()) {
             this.class33.cancel();
             this.method5863();
             this.method5955();
@@ -930,7 +927,7 @@ public final class CrystalAuraModule extends Module {
             if (this.data == null
                && this.data4 == null
                && this.data2 == null
-               && (this.items != null && this.items.getClass() == EmptyMap.class ? true : this.items.isEmpty())) {
+               && this.items.isEmpty()) {
                this.method5862();
             } else {
                this.intValue10 = 0;
@@ -1003,7 +1000,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    private Rotation method5759(Vec3 var1) {
-      if (this.rotation3 != null && (this.items != null && this.items.getClass() == EmptyMap.class ? false : !this.items.isEmpty())) {
+      if (this.rotation3 != null && !this.items.isEmpty()) {
          if (this.data4 != null && this.data4.isFlag()) {
             Rotation var2 = this.method5897();
             var var3 = this.items.keySet().iterator();
@@ -1338,7 +1335,7 @@ public final class CrystalAuraModule extends Module {
 
       this.items12.keySet().removeIf(var0 -> mc.level.getEntity(var0) == null);
       this.items16.sort(Comparator.comparingDouble(var0 -> -var0.getFloatValue3()));
-      this.data = (this.items16 != null && this.items16.getClass() == EmptyList.class ? true : this.items16.isEmpty()) ? null : this.items16.getFirst();
+      this.data = this.items16.isEmpty() ? null : this.items16.getFirst();
    }
 
    private CrystalAuraModule.Data method5764(Rotation var1) {
@@ -1380,7 +1377,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    private CrystalAuraModule.Data method5765(Vec3 var1, Rotation var2, CrystalAuraModule.Data var3) {
-      if (this.method5921() && (this.items18 != null && this.items18.getClass() == EmptyList.class ? false : !this.items18.isEmpty())) {
+      if (this.method5921() && !this.items18.isEmpty()) {
          Item var4 = this.method5767();
          if (var4 == null) {
             return null;
@@ -1777,7 +1774,7 @@ public final class CrystalAuraModule extends Module {
                   if (!var10 && !new AABB(var6).intersects(mc.player.getBoundingBox().expandTowards(mc.player.getDeltaMovement().scale(2.0)))) {
                      BlockPos var7 = var6;
                      if (!this.method5867(var6)) {
-                        if ((this.items18 != null && this.items18.getClass() == EmptyList.class ? false : !this.items18.isEmpty()) && this.data == null) {
+                        if (!this.items18.isEmpty() && this.data == null) {
                            this.method5780(var6, var1);
                         }
 
@@ -1801,7 +1798,7 @@ public final class CrystalAuraModule extends Module {
                            0.0F,
                            200.0F,
                            true,
-                           (this.items18 != null && this.items18.getClass() == EmptyList.class ? true : this.items18.isEmpty())
+                           this.items18.isEmpty()
                               ? null
                               : this.items18.getFirst().getPlayerEntity()
                         );
@@ -4589,7 +4586,7 @@ public final class CrystalAuraModule extends Module {
                   if (this.floatValue5 > 0.0F) {
                      EndCrystal var2 = this.endCrystalEntity;
                      this.items16.removeIf(var1x -> var1x.getEndCrystalEntity() == var2);
-                     this.data = (this.items16 != null && this.items16.getClass() == EmptyList.class ? true : this.items16.isEmpty())
+                     this.data = this.items16.isEmpty()
                         ? null
                         : this.items16.getFirst();
                      if (this.method5925()) {
@@ -4646,7 +4643,7 @@ public final class CrystalAuraModule extends Module {
       boolean var1 = this.data != null
          || this.data4 != null && this.data4.isFlag()
          || this.data2 != null
-         || (this.items != null && this.items.getClass() == EmptyMap.class ? false : !this.items.isEmpty());
+         || !this.items.isEmpty();
       double var2 = this.method5877();
       float var4 = this.method5893(1.0F);
       int var5 = mc.player.tickCount + this.method5818();
@@ -4747,7 +4744,7 @@ public final class CrystalAuraModule extends Module {
    private void method5890(Vec3 var1, Rotation var2) {
       Player var3 = this.playerEntity3;
       if (var3 != null && this.method5919() && var3.isAlive() && !(mc.player.getAttackStrengthScale(0.5F) < 0.9F)) {
-         if ((this.items16 != null && this.items16.getClass() == EmptyList.class ? true : this.items16.isEmpty()) && this.method5891()) {
+         if (this.items16.isEmpty() && this.method5891()) {
             AABB var4 = var3.getBoundingBox().inflate(var3.getPickRadius());
             double var5 = this.method5877();
             if (!var4.clip(var1, var1.add(var2.method3135().scale(var5))).isEmpty() && (this.data3.isFlag5() || !this.method5874(var1, var4.getCenter()))
@@ -5237,7 +5234,7 @@ public final class CrystalAuraModule extends Module {
 
             if (!var11
                && method5956(var6)
-               && (this.items18 != null && this.items18.getClass() == EmptyList.class ? false : !this.items18.isEmpty())
+               && !this.items18.isEmpty()
                && BlockPos.of(var4).closerThan(mc.player.blockPosition(), 5.0)) {
                var3.add(var4);
             }

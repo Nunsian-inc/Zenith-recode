@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptySet;
 import lombok.Generated;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.BlockPos;

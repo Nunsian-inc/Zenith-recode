@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import kotlin.collections.EmptyMap;
 import lombok.Generated;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -78,7 +77,7 @@ public class FiguraManager implements MinecraftAccess {
          this.path2 = null;
          this.path4 = null;
          this.items.clear();
-         if (this.items2 != null && this.items2.getClass() == EmptyMap.class ? false : !this.items2.isEmpty()) {
+         if (!this.items2.isEmpty()) {
             this.method7676(null);
          }
       }
@@ -137,7 +136,7 @@ public class FiguraManager implements MinecraftAccess {
    }
 
    private void method7671(UUID var1) {
-      if (var1 != null && (this.items != null && this.items.getClass() == EmptyMap.class ? false : !this.items.isEmpty())) {
+      if (var1 != null && !this.items.isEmpty()) {
          this.items.remove(new FiguraManager.Data2(var1, AvatarLayer.BODY));
          this.items.remove(new FiguraManager.Data2(var1, AvatarLayer.WEAPON));
       }

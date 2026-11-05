@@ -16,8 +16,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptySet;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
@@ -283,7 +281,7 @@ public final class AncientFarmModule extends Module {
    }
 
    private void method4223() {
-      if (this.items != null && this.items.getClass() == EmptySet.class ? false : !this.items.isEmpty()) {
+      if (!this.items.isEmpty()) {
          ChatLogger.method2019("AncientFarm: вскапываем обломки, найденные по пути");
          this.entry22.method4263();
          this.type2 = AncientFarmModule.Type2.MINE;

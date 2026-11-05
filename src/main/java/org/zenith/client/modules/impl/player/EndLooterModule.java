@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
-import kotlin.collections.EmptyList;
-import kotlin.collections.EmptyMap;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -539,17 +537,7 @@ public class EndLooterModule extends Module {
 
    private BlockPos method3905() {
       if (this.blockPos != null && this.method3910(this.blockPos)) {
-         boolean var10000;
-         label64: {
-            if (this.items2 != null) {
-               if (this.items2.getClass() == EmptyMap.class) {
-                  var10000 = false;
-                  break label64;
-               }
-            }
-
-            var10000 = this.items2.containsKey(this.blockPos);
-         }
+         boolean var10000 = this.items2.containsKey(this.blockPos);
 
          if (!var10000 && !this.stopWatch2.method7546(6000L)) {
             return this.blockPos;
@@ -564,17 +552,7 @@ public class EndLooterModule extends Module {
       double var2 = Double.MAX_VALUE;
 
       for (BlockPos var5 : this.items3) {
-         boolean var8;
-         label56: {
-            if (this.items2 != null) {
-               if (this.items2.getClass() == EmptyMap.class) {
-                  var8 = false;
-                  break label56;
-               }
-            }
-
-            var8 = this.items2.containsKey(var5);
-         }
+         boolean var8 = this.items2.containsKey(var5);
 
          double var6;
          if (!var8
@@ -665,20 +643,8 @@ public class EndLooterModule extends Module {
                   var3.set(var2.getX() + var24, var2.getY() + var25, var2.getZ() + var26);
                   if (var13[(((var3.getX() >> 4) - var7) * var11 + ((var3.getY() >> 4) - var8)) * var12 + ((var3.getZ() >> 4) - var9)]
                      && mc.level.getBlockState(var3).is(Blocks.SUSPICIOUS_SAND)) {
-                     BlockPos var27;
-                     boolean var29;
-                     label83: {
-                        var27 = var3.immutable();
-                        if (this.items2 != null) {
-                           if (this.items2.getClass() == EmptyMap.class) {
-                              var29 = false;
-                              break label83;
-                           }
-                        }
-
-                        var29 = this.items2.containsKey(var27);
-                     }
-
+                     BlockPos var27 = var3.immutable();
+                     boolean var29 = this.items2.containsKey(var27);
                      double var28;
                      if (!var29 && !this.method3943(var27, this.playerRadius.getValue3()) && (var28 = mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(var27))) < var5) {
                         var5 = var28;

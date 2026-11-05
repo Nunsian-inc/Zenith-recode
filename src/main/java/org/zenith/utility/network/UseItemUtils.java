@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import kotlin.collections.EmptyMap;
 import lombok.Generated;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;

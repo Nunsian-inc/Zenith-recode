@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import kotlin.collections.EmptyList;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -188,7 +187,7 @@ public class AutoWardenModule extends Module {
    }
 
    public void method3951() {
-      String var1 = (this.items != null && this.items.getClass() == EmptyList.class ? true : this.items.isEmpty()) ? "" : String.valueOf(this.items.getFirst());
+      String var1 = this.items.isEmpty() ? "" : String.valueOf(this.items.getFirst());
       String var2 = this.items.stream().skip(1L).map(String::valueOf).collect(Collectors.joining(", "));
       this.homeAnarchy.setValue(var1);
       this.wardenAnarchies.setValue(var2);
