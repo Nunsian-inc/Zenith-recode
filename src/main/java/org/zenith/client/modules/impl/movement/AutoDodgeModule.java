@@ -65,7 +65,7 @@ public final class AutoDodgeModule extends Module {
    private AutoDodgeModule() {
    }
 
-   private static boolean method4690(AbstractThrownPotion entity, AABB inflate) {
+   private static boolean predictsPotionTrajectoryIntersect(AbstractThrownPotion entity, AABB inflate) {
       Vec3 deltaMovement = entity.getDeltaMovement();
       Vec3 position = entity.position();
 
@@ -78,10 +78,10 @@ public final class AutoDodgeModule extends Module {
          Vec3 to = position.add(deltaMovement);
          BlockHitResult clip = mc.level.clip(new ClipContext(position, to, Block.COLLIDER, Fluid.NONE, entity));
          if (clip.getType() == Type.BLOCK) {
-            return method4691(inflate, position, clip.getLocation());
+            return segmentIntersectsBounds(inflate, position, clip.getLocation());
          }
 
-         if (method4691(inflate, position, to)) {
+         if (segmentIntersectsBounds(inflate, position, to)) {
             return true;
          }
 
@@ -91,7 +91,7 @@ public final class AutoDodgeModule extends Module {
       return false;
    }
 
-   private static boolean method4691(AABB inflate, Vec3 position, Vec3 location) {
+   private static boolean segmentIntersectsBounds(AABB inflate, Vec3 position, Vec3 location) {
       return new AABB(
             Math.min(position.x, location.x),
             Math.min(position.y, location.y),
@@ -104,7 +104,7 @@ public final class AutoDodgeModule extends Module {
          .intersects(inflate);
    }
 
-   private static int method4692(ItemStack mainHandItem) {
+   private static int getPotionColor(ItemStack mainHandItem) {
       PotionContents potionContents = mainHandItem.get(DataComponents.POTION_CONTENTS);
       return potionContents != null ? potionContents.getColor() & 16777215 : 0;
    }
@@ -137,7 +137,7 @@ public final class AutoDodgeModule extends Module {
             for (AbstractThrownPotion entity : mc.level.getEntitiesOfClass(AbstractThrownPotion.class, mc.player.getBoundingBox().inflate(amountToAddInAllDirections), abstractThrownPotion -> true)) {
                AutoDodgeModule.Data2 data2 = this.items.get(entity.getId());
                if (data2 != null) {
-                  boolean flag = method4690(entity, inflate);
+                  boolean flag = predictsPotionTrajectoryIntersect(entity, inflate);
                   int n = 0xFF000000 | data2.color() & 16777215;
                   if (!flag || Zenith.getInstance().getFriends().method7627(data2.getText())) {
                      return;
@@ -161,7 +161,7 @@ public final class AutoDodgeModule extends Module {
                      }
 
                      Rotation rotation = Rotation.lookingAt(entity.getEyePosition(), mc.player.getEyePosition());
-                     this.method4694(rotation.add((float)MathUtils.method2651(-3.0, 3.0), (float)MathUtils.method2651(-3.0, 3.0)));
+                     this.requestRotation(rotation.add((float)MathUtils.method2651(-3.0, 3.0), (float)MathUtils.method2651(-3.0, 3.0)));
                      break;
                   }
                }
@@ -183,7 +183,7 @@ public final class AutoDodgeModule extends Module {
    }
 
    @EventTarget
-   public void method4693(EntityAddEvent event) {
+   public void onPotionAdded(EntityAddEvent event) {
       if (mc.player != null && mc.level != null) {
          if (event.getEntity() instanceof AbstractThrownPotion abstractThrownPotion) {
             Vec3 position = abstractThrownPotion.position();
@@ -192,7 +192,7 @@ public final class AutoDodgeModule extends Module {
             String key = null;
             int color = 0;
 
-            for (Entry entry : this.method4695().entrySet()) {
+            for (Entry entry : this.findNearbyPotionThrowers().entrySet()) {
                AutoDodgeModule.Data data = (AutoDodgeModule.Data)entry.getValue();
                double d2;
                if (!((d2 = position.distanceTo(data.getVec3d())) > 25.0) && !(d2 >= d)) {
@@ -223,19 +223,19 @@ public final class AutoDodgeModule extends Module {
       }
    }
 
-   private void method4694(Rotation rotation) {
+   private void requestRotation(Rotation rotation) {
       Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig2(), rotation);
       Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig2()), 20, this);
    }
 
-   private Map<String, AutoDodgeModule.Data> method4695() {
+   private Map<String, AutoDodgeModule.Data> findNearbyPotionThrowers() {
       HashMap map = new HashMap();
 
       for (AbstractClientPlayer player : mc.level.players()) {
          ItemStack mainHandItem = player.getMainHandItem();
          ItemStack offhandItem = player.getOffhandItem();
          int intValue;
-         if ((intValue = mainHandItem.getItem() == Items.SPLASH_POTION ? method4692(mainHandItem) : (offhandItem.getItem() == Items.SPLASH_POTION ? method4692(offhandItem) : -1)) >= 0
+         if ((intValue = mainHandItem.getItem() == Items.SPLASH_POTION ? getPotionColor(mainHandItem) : (offhandItem.getItem() == Items.SPLASH_POTION ? getPotionColor(offhandItem) : -1)) >= 0
             && player != mc.player
             && mc.player.distanceToSqr(player) <= 400.0) {
             map.put(player.getName().getString(), new AutoDodgeModule.Data(intValue, player.position(), player.getViewVector(1.0F)));
