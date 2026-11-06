@@ -72,7 +72,7 @@ public class ThemeManager {
    @EventTarget
    public void eventRender(ScreenRenderEvent event) {
       this.colorCycleIcon.update();
-      this.animation.method2808(1.0F);
+      this.animation.animateTo(1.0F);
    }
 
    private void method4457(List<ZenithColor> zenithColors, ZenithColor zenithColor, ZenithColor zenithColor2, ZenithColor zenithColor3, ZenithColor zenithColor4) {

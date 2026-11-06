@@ -204,13 +204,13 @@ public class StatusBarsHud extends Interface {
       this.animation.setDuration(200L);
       this.animation.setEasing(Easing.INSTANCE10);
       if (mc.gui.hud.toolHighlightTimer > 0 && !mc.gui.hud.lastToolHighlight.isEmpty()) {
-         this.animation.method2808(1.0F);
+         this.animation.animateTo(1.0F);
          this.mutableText = Component.empty().append(mc.gui.hud.lastToolHighlight.getHoverName()).withStyle(mc.gui.hud.lastToolHighlight.getRarity().color());
          if (mc.gui.hud.lastToolHighlight.has(DataComponents.CUSTOM_NAME)) {
             this.mutableText.withStyle(ChatFormatting.ITALIC);
          }
       } else {
-         this.animation.method2808(0.0F);
+         this.animation.animateTo(0.0F);
       }
 
       if (this.mutableText != null && this.animation.getValue() > 0.0F) {
@@ -524,19 +524,19 @@ public class StatusBarsHud extends Interface {
          Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
          boolean flag = this.intValue == MinecraftAccess.mc.player.getInventory().getSelectedSlot();
          if (flag && !this.flag) {
-            this.animation.method2809(0.0F);
+            this.animation.snapTo(0.0F);
          }
 
          if (!flag) {
-            this.animation.method2809(1.0F);
+            this.animation.snapTo(1.0F);
          }
 
          this.flag = flag;
-         float f = flag ? this.animation.method2808(1.0F) : 1.0F;
+         float f = flag ? this.animation.animateTo(1.0F) : 1.0F;
          ZenithColor zenithColor = currentStyle.getHeaderHudBackground().method1447(flag ? 1.0F : 0.0F);
          ZenithColor zenithColor2 = flag ? currentStyle.getTextEnable().getZenithColor() : currentStyle.getTextSecondary().getZenithColor();
          ItemStack nonEquipmentItem = MinecraftAccess.mc.player.getInventory().getNonEquipmentItems().get(this.intValue);
-         this.animation2.method2807(nonEquipmentItem.isEmpty());
+         this.animation2.updateVisibility(nonEquipmentItem.isEmpty());
          customDrawContext.drawRoundedRect(floatValue, y, 22.0F, 22.0F, headerRadius, zenithColor);
          if (flag) {
             customDrawContext.drawRoundedRect(floatValue, y, 22.0F, 22.0F, headerRadius, currentStyle.getPrimaryColor().getZenithColor().method7293(100));

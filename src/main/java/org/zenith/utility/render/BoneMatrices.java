@@ -18,7 +18,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 
 public final class BoneMatrices {
    private static final int CONST_intValue = 15728880;
@@ -52,7 +52,7 @@ public final class BoneMatrices {
    }
 
    public static void method4787(
-      Class15 key, float[] floatValues, int intValue, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, int overlayCoords, boolean flag, boolean flag2, int n
+      WardrobeModel key, float[] floatValues, int intValue, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, int overlayCoords, boolean flag, boolean flag2, int n
    ) {
       if (key != null && key.intValue3 != 0 && orderedRenderCommandQueue != null && key.identifier != null) {
          if (key.method2033(intValue)) {
@@ -62,7 +62,7 @@ public final class BoneMatrices {
    }
 
    public static void method4788(
-      Class15 key, float[] floats, int intValue, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, int overlayCoords, boolean flag, boolean flag2, int n
+      WardrobeModel key, float[] floats, int intValue, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, int overlayCoords, boolean flag, boolean flag2, int n
    ) {
       if (key != null && key.intValue3 != 0 && orderedRenderCommandQueue != null && key.identifier != null) {
          if (key.method2033(intValue)) {
@@ -82,12 +82,12 @@ public final class BoneMatrices {
       }
    }
 
-   private static boolean method4789(Class15 key) {
+   private static boolean method4789(WardrobeModel key) {
       return key.method2034(8) || key.method2034(16);
    }
 
    public static void method4790(
-      Class15 key,
+      WardrobeModel key,
       float[] floats,
       int ordinal,
       PoseStack poseStack,
@@ -102,7 +102,7 @@ public final class BoneMatrices {
    }
 
    public static void method4791(
-      Class15 key,
+      WardrobeModel key,
       float[] floats,
       int ordinal,
       PoseStack poseStack,
@@ -132,7 +132,7 @@ public final class BoneMatrices {
    }
 
    private static void method4792(
-      Class15 key,
+      WardrobeModel key,
       float[] floats,
       int ordinal,
       PoseStack poseStack,
@@ -165,7 +165,7 @@ public final class BoneMatrices {
       });
    }
 
-   private static RenderType method4795(Class15 key, BoneMatrices.Type type, int n) {
+   private static RenderType method4795(WardrobeModel key, BoneMatrices.Type type, int n) {
       return switch (type) {
          case SOLID -> n >>> 24 < 255 ? RenderTypes.entityTranslucent(key.identifier) : RenderTypes.entityCutout(key.identifier);
          case TRANSLUCENT -> RenderTypes.entityTranslucent(key.identifier);
@@ -175,7 +175,7 @@ public final class BoneMatrices {
    }
 
    private static void method4796(
-      Class15 key,
+      WardrobeModel key,
       float[] floats,
       int intValue,
       PoseStack poseStack,
@@ -191,13 +191,13 @@ public final class BoneMatrices {
    }
 
    private static void method4797(
-      Class15 key, float[] floats, int intValue, Pose pose, VertexConsumer consumer, int lightCoords, int overlayCoords, boolean flag, BoneMatrices.Type type, int n
+      WardrobeModel key, float[] floats, int intValue, Pose pose, VertexConsumer consumer, int lightCoords, int overlayCoords, boolean flag, BoneMatrices.Type type, int n
    ) {
       method4798(key, floats, intValue, pose, consumer, lightCoords, overlayCoords, flag, type, n, false);
    }
 
    private static void method4798(
-      Class15 key, float[] floats, int ordinal, Pose pose, VertexConsumer consumer, int lightCoords, int overlayCoords, boolean flag, BoneMatrices.Type type, int n, boolean flag2
+      WardrobeModel key, float[] floats, int ordinal, Pose pose, VertexConsumer consumer, int lightCoords, int overlayCoords, boolean flag, BoneMatrices.Type type, int n, boolean flag2
    ) {
       int n2 = key.method2030();
       method4809(n2);
@@ -510,7 +510,7 @@ public final class BoneMatrices {
       return f3 + (f4 - f3) * f2;
    }
 
-   public static void method4808(Class15 key, float[] floats, int intValue, Matrix4f matrix4f) {
+   public static void method4808(WardrobeModel key, float[] floats, int intValue, Matrix4f matrix4f) {
       int[] ints = new int[key.method2030()];
       int n = 0;
 

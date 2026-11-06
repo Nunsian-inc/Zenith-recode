@@ -109,9 +109,9 @@ public class WatermarkIslandHud extends Interface {
       this.method5671();
       Island.Entry entry = this.island.isEnabled() ? Island.method2875(now) : null;
       if (!this.island.isEnabled()) {
-         this.animation2.method2809(0.0F);
-         this.animation.method2809(0.0F);
-         this.animation3.method2809(1.0F);
+         this.animation2.snapTo(0.0F);
+         this.animation.snapTo(0.0F);
+         this.animation3.snapTo(1.0F);
          this.text3 = null;
          this.entry = null;
       }
@@ -125,15 +125,15 @@ public class WatermarkIslandHud extends Interface {
          this.animation2.setDuration(240L);
       }
 
-      float f = this.animation2.method2808(floatValue);
+      float f = this.animation2.animateTo(floatValue);
       if (entry != null) {
          if (!entry.text.equals(this.text3)) {
             if (this.text3 != null) {
-               this.animation3.method2809(0.0F);
+               this.animation3.snapTo(0.0F);
             }
 
             float f2 = entry.method2884(now);
-            this.animation.method2809(f2 < 0.0F ? 0.0F : f2);
+            this.animation.snapTo(f2 < 0.0F ? 0.0F : f2);
             this.text3 = entry.text;
          }
 
@@ -144,7 +144,7 @@ public class WatermarkIslandHud extends Interface {
       }
 
       Island.Entry entry2 = entry != null ? entry : this.entry;
-      float f2 = entry != null ? this.animation3.method2808(1.0F) : 1.0F;
+      float f2 = entry != null ? this.animation3.animateTo(1.0F) : 1.0F;
       this.width = 16.5F
          + this.dividerWidth()
          + font3.width(text)
@@ -301,7 +301,7 @@ public class WatermarkIslandHud extends Interface {
                float width2 = f5 - 14.0F;
                ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(1.25F);
                customDrawContext.drawRoundedRect(floatValue2, y, width2, 2.5F, headerRadius, currentStyle.getHeaderHudBackground().getZenithColor().method7294(previewAlpha));
-               float f8 = Math.clamp(this.animation.method2808(floatValue), 0.0F, 1.0F);
+               float f8 = Math.clamp(this.animation.animateTo(floatValue), 0.0F, 1.0F);
                if (f8 > 0.001F) {
                   ZenithColor zenithColor = currentStyle.getPrimaryColor()
                      .getZenithColor()

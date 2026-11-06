@@ -51,13 +51,13 @@ import org.zenith.PacketEvent;
 import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.HealthUpdateEvent;
 import org.zenith.client.modules.impl.misc.InventorySettingModule;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.MultiSelectSetting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.game.Class35;
+import org.zenith.utility.game.CombatDamageCalculator;
 import org.zenith.utility.network.InventoryUtils;
 import org.zenith.utility.network.UseItemUtils;
 import org.zenith.utility.render.KeyBindUtils;
@@ -151,7 +151,7 @@ public final class AutoTotemModule extends Module {
    private final Deque<AutoTotemModule.Entry> deque = new ArrayDeque<>();
    private float floatValue = Float.NaN;
    private int intValue8 = -1;
-   private final Class35 class35 = new Class35();
+   private final CombatDamageCalculator class35 = new CombatDamageCalculator();
    private volatile boolean flag3;
    private volatile int intValue9 = Integer.MIN_VALUE;
    private int intValue10 = Integer.MIN_VALUE;
@@ -186,19 +186,19 @@ public final class AutoTotemModule extends Module {
 
    @EventTarget
    public void method700(PacketEvent event) {
-      if (event.method7100() && mc.player != null) {
-         if (event.getPacket3() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35 && entityEventPacket.entityId == mc.player.getId()) {
+      if (event.isIncoming() && mc.player != null) {
+         if (event.getPacket() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35 && entityEventPacket.entityId == mc.player.getId()) {
             this.booleanValue = Boolean.FALSE;
             this.flag3 = true;
             this.intValue9 = mc.player.tickCount;
             this.log("поп: левая рука на сервере пуста");
-         } else if (event.getPacket3() instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket && containerSetSlotPacket.getContainerId() == 0 && containerSetSlotPacket.getSlot() == 45) {
+         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket && containerSetSlotPacket.getContainerId() == 0 && containerSetSlotPacket.getSlot() == 45) {
             this.method701(containerSetSlotPacket.getItem(), "слот 45");
-         } else if (event.getPacket3() instanceof ClientboundContainerSetContentPacket setContentPacket && setContentPacket.containerId() == 0 && setContentPacket.items().size() > 45) {
+         } else if (event.getPacket() instanceof ClientboundContainerSetContentPacket setContentPacket && setContentPacket.containerId() == 0 && setContentPacket.items().size() > 45) {
             this.method701(setContentPacket.items().get(45), "весь инвентарь");
-         } else if (event.getPacket3() instanceof ClientboundSetPlayerInventoryPacket playerInventoryPacket && playerInventoryPacket.slot() == 40) {
+         } else if (event.getPacket() instanceof ClientboundSetPlayerInventoryPacket playerInventoryPacket && playerInventoryPacket.slot() == 40) {
             this.method701(playerInventoryPacket.contents(), "слот 40");
-         } else if (event.getPacket3() instanceof ClientboundPlayerCombatKillPacket playerCombatKillPacket && playerCombatKillPacket.playerId() == mc.player.getId() && !CrystalAuraModule.INSTANCE.isEnabled()) {
+         } else if (event.getPacket() instanceof ClientboundPlayerCombatKillPacket playerCombatKillPacket && playerCombatKillPacket.playerId() == mc.player.getId() && !CrystalAuraModule.INSTANCE.isEnabled()) {
             this.log("СМЕРТЬ: " + playerCombatKillPacket.message().getString() + ", тотемов в инвентаре " + this.method723());
          }
       }
@@ -269,7 +269,7 @@ public final class AutoTotemModule extends Module {
    }
 
    @EventTarget
-   public void method709(Event5 event) {
+   public void method709(PreRotationEvent event) {
       this.method710();
    }
 
@@ -1058,7 +1058,7 @@ public final class AutoTotemModule extends Module {
    }
 
    @Generated
-   public Class35 getClass35() {
+   public CombatDamageCalculator getClass35() {
       return this.class35;
    }
 

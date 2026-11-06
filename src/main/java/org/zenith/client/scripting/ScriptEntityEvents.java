@@ -34,45 +34,45 @@ public final class ScriptEntityEvents {
    private ScriptEntityEvents() {
    }
 
-   public static String method7557(Packet<?> packet3) {
-      return packet3 == null ? "" : packet3.type().id().getPath();
+   public static String method7557(Packet<?> packet) {
+      return packet == null ? "" : packet.type().id().getPath();
    }
 
-   public static Object method7558(Scriptable scope, Packet<?> packet3) {
-      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+   public static Object method7558(Scriptable scope, Packet<?> packet) {
+      ScriptValueUtils.Entry2 eventData = ScriptValueUtils.method6247(scope);
       Minecraft minecraft = ScriptEntityApi.method6575();
-      switch (packet3) {
+      switch (packet) {
          case ClientboundSetEntityMotionPacket setEntityMotionPacket:
             Vec3 movement = setEntityMotionPacket.movement();
-            entry2.method6277("entityId", (double)setEntityMotionPacket.id()).method6277("velocity", ScriptValueUtils.method6270(scope, movement.x, movement.y, movement.z));
-            method7559(scope, entry2, setEntityMotionPacket.id());
+            eventData.method6277("entityId", (double)setEntityMotionPacket.id()).method6277("velocity", ScriptValueUtils.method6270(scope, movement.x, movement.y, movement.z));
+            addEntityData(scope, eventData, setEntityMotionPacket.id());
             break;
          case ClientboundSetHealthPacket setHealthPacket:
-            entry2.method6277("health", (double)setHealthPacket.getHealth())
+            eventData.method6277("health", (double)setHealthPacket.getHealth())
                .method6277("food", (double)setHealthPacket.getFood())
                .method6277("saturation", (double)setHealthPacket.getSaturation());
             break;
          case ClientboundEntityEventPacket entityEventPacket:
-            entry2.method6277("status", (double)entityEventPacket.getEventId());
+            eventData.method6277("status", (double)entityEventPacket.getEventId());
             if (minecraft.level != null) {
                Entity entity = entityEventPacket.getEntity(minecraft.level);
                if (entity != null) {
-                  entry2.method6277("entityId", (double)entity.getId()).method6277("entity", ScriptEntityApi.method6576(scope, entity));
+                  eventData.method6277("entityId", (double)entity.getId()).method6277("entity", ScriptEntityApi.method6576(scope, entity));
                }
             }
             break;
          case ClientboundSystemChatPacket systemChatPacket:
-            entry2.method6277("text", systemChatPacket.content().getString()).method6277("overlay", systemChatPacket.overlay());
+            eventData.method6277("text", systemChatPacket.content().getString()).method6277("overlay", systemChatPacket.overlay());
             break;
          case ClientboundSetTitleTextPacket setTitleTextPacket:
-            entry2.method6277("text", setTitleTextPacket.text().getString());
+            eventData.method6277("text", setTitleTextPacket.text().getString());
             break;
          case ClientboundSetSubtitleTextPacket setSubtitleTextPacket:
-            entry2.method6277("text", setSubtitleTextPacket.text().getString());
+            eventData.method6277("text", setSubtitleTextPacket.text().getString());
             break;
          case ClientboundPlayerPositionPacket playerPositionPacket:
             Vec3 position = playerPositionPacket.change().position();
-            entry2.method6277("teleportId", (double)playerPositionPacket.id())
+            eventData.method6277("teleportId", (double)playerPositionPacket.id())
                .method6277("x", position.x)
                .method6277("y", position.y)
                .method6277("z", position.z)
@@ -80,18 +80,18 @@ public final class ScriptEntityEvents {
                .method6277("pitch", (double)playerPositionPacket.change().xRot());
             break;
          case ClientboundSetHeldSlotPacket setHeldSlotPacket:
-            entry2.method6277("slot", (double)setHeldSlotPacket.slot());
+            eventData.method6277("slot", (double)setHeldSlotPacket.slot());
             break;
          case ClientboundContainerSetSlotPacket containerSetSlotPacket:
-            entry2.method6277("syncId", (double)containerSetSlotPacket.getContainerId())
+            eventData.method6277("syncId", (double)containerSetSlotPacket.getContainerId())
                .method6277("slot", (double)containerSetSlotPacket.getSlot())
                .method6277("item", ScriptEntityApi.method6579(scope, containerSetSlotPacket.getItem()));
             break;
          case ClientboundOpenScreenPacket openScreenPacket:
-            entry2.method6277("syncId", (double)openScreenPacket.getContainerId()).method6277("title", openScreenPacket.getTitle().getString());
+            eventData.method6277("syncId", (double)openScreenPacket.getContainerId()).method6277("title", openScreenPacket.getTitle().getString());
             break;
          case ClientboundSoundPacket clientboundSoundPacket:
-            entry2.method6277("sound", clientboundSoundPacket.getSound().getRegisteredName())
+            eventData.method6277("sound", clientboundSoundPacket.getSound().getRegisteredName())
                .method6277("x", clientboundSoundPacket.getX())
                .method6277("y", clientboundSoundPacket.getY())
                .method6277("z", clientboundSoundPacket.getZ())
@@ -100,25 +100,25 @@ public final class ScriptEntityEvents {
             break;
          case ClientboundAnimatePacket animatePacket:
             // scripts keep the 1.21.11 ids (2 wake up, 4 crit, 5 magic crit); 26.3 renumbered them to 0..2
-            entry2.method6277("entityId", (double)animatePacket.getId()).method6277("animation", (double)(animatePacket.getAction() == 0 ? 2 : animatePacket.getAction() + 3));
-            method7559(scope, entry2, animatePacket.getId());
+            eventData.method6277("entityId", (double)animatePacket.getId()).method6277("animation", (double)(animatePacket.getAction() == 0 ? 2 : animatePacket.getAction() + 3));
+            addEntityData(scope, eventData, animatePacket.getId());
             break;
          case net.minecraft.network.protocol.game.ClientboundSwingAnimationPacket swingAnimationPacket:
             // 26.3 moved swings out of ClientboundAnimatePacket; report them with the old ids (0 main hand, 3 off hand)
-            entry2.method6277("entityId", (double)swingAnimationPacket.entityId())
+            eventData.method6277("entityId", (double)swingAnimationPacket.entityId())
                .method6277("animation", (double)(swingAnimationPacket.hand() == net.minecraft.world.InteractionHand.MAIN_HAND ? 0 : 3));
-            method7559(scope, entry2, swingAnimationPacket.entityId());
+            addEntityData(scope, eventData, swingAnimationPacket.entityId());
             break;
          case ClientboundBlockUpdatePacket blockUpdatePacket:
-            entry2.method6277("x", (double)blockUpdatePacket.getPos().getX())
+            eventData.method6277("x", (double)blockUpdatePacket.getPos().getX())
                .method6277("y", (double)blockUpdatePacket.getPos().getY())
                .method6277("z", (double)blockUpdatePacket.getPos().getZ())
                .method6277("block", BuiltInRegistries.BLOCK.getKey(blockUpdatePacket.getBlockState().getBlock()).toString());
             break;
          case ClientboundExplodePacket explodePacket:
             Vec3 center = explodePacket.center();
-            entry2.method6277("x", center.x).method6277("y", center.y).method6277("z", center.z).method6277("radius", (double)explodePacket.radius());
-            explodePacket.playerKnockback().ifPresent(var2x -> entry2.method6277("knockback", ScriptValueUtils.method6270(scope, var2x.x, var2x.y, var2x.z)));
+            eventData.method6277("x", center.x).method6277("y", center.y).method6277("z", center.z).method6277("radius", (double)explodePacket.radius());
+            explodePacket.playerKnockback().ifPresent(knockback -> eventData.method6277("knockback", ScriptValueUtils.method6270(scope, knockback.x, knockback.y, knockback.z)));
             break;
          case ServerboundMovePlayerPacket movePlayerPacket:
             LocalPlayer player = minecraft.player;
@@ -127,7 +127,7 @@ public final class ScriptEntityEvents {
             double z = player == null ? 0.0 : player.getZ();
             float yRot = player == null ? 0.0F : player.getYRot();
             float xRot = player == null ? 0.0F : player.getXRot();
-            entry2.method6277("x", movePlayerPacket.getX(x))
+            eventData.method6277("x", movePlayerPacket.getX(x))
                .method6277("y", movePlayerPacket.getY(y))
                .method6277("z", movePlayerPacket.getZ(z))
                .method6277("yaw", (double)movePlayerPacket.getYRot(yRot))
@@ -137,25 +137,25 @@ public final class ScriptEntityEvents {
                .method6277("changesLook", movePlayerPacket.hasRotation());
             break;
          case ServerboundContainerClickPacket containerClickPacket:
-            entry2.method6277("syncId", (double)containerClickPacket.containerId())
+            eventData.method6277("syncId", (double)containerClickPacket.containerId())
                .method6277("slot", (double)containerClickPacket.slotNum())
                .method6277("button", (double)containerClickPacket.buttonNum())
                .method6277("action", containerClickPacket.containerInput().name().toLowerCase(Locale.ROOT));
             break;
          case ServerboundSetCarriedItemPacket setCarriedItemPacket:
-            entry2.method6277("slot", (double)setCarriedItemPacket.getSlot());
+            eventData.method6277("slot", (double)setCarriedItemPacket.getSlot());
             break;
          case ServerboundChatPacket serverboundChatPacket:
-            entry2.method6277("text", serverboundChatPacket.message());
+            eventData.method6277("text", serverboundChatPacket.message());
             break;
          case ServerboundChatCommandPacket chatCommandPacket:
-            entry2.method6277("command", chatCommandPacket.command());
+            eventData.method6277("command", chatCommandPacket.command());
             break;
          case ServerboundPunchPacket serverboundPunchPacket:
-            entry2.method6277("hand", "main_hand"); // 26.3 punch packet has no hand
+            eventData.method6277("hand", "main_hand"); // 26.3 punch packet has no hand
             break;
          case ServerboundPlayerActionPacket playerActionPacket:
-            entry2.method6277("action", playerActionPacket.getAction().name().toLowerCase(Locale.ROOT))
+            eventData.method6277("action", playerActionPacket.getAction().name().toLowerCase(Locale.ROOT))
                .method6277("x", (double)playerActionPacket.getPos().getX())
                .method6277("y", (double)playerActionPacket.getPos().getY())
                .method6277("z", (double)playerActionPacket.getPos().getZ())
@@ -165,14 +165,14 @@ public final class ScriptEntityEvents {
             return null;
       }
 
-      return entry2.getScriptableObject();
+      return eventData.getScriptableObject();
    }
 
-   private static void method7559(Scriptable scope, ScriptValueUtils.Entry2 entry2, int id) {
+   private static void addEntityData(Scriptable scope, ScriptValueUtils.Entry2 eventData, int id) {
       if (ScriptEntityApi.method6575().level != null) {
          Entity entity = ScriptEntityApi.method6575().level.getEntity(id);
          if (entity != null) {
-            entry2.method6277("entity", ScriptEntityApi.method6576(scope, entity));
+            eventData.method6277("entity", ScriptEntityApi.method6576(scope, entity));
          }
       }
    }

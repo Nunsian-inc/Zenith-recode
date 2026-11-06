@@ -10,13 +10,13 @@ import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.modules.impl.combat.AuraModule;
 import org.zenith.utility.api.AimPolicy;
 import org.zenith.utility.game.PlayerSimulation;
-import org.zenith.utility.misc.Class36;
-import org.zenith.utility.misc.Class6;
+import org.zenith.utility.misc.AimPolicySampler;
+import org.zenith.utility.misc.GownoRotationConfig;
 import org.zenith.utility.misc.Resettable;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 import org.zenith.utility.misc.Vec2f;
 
-public final class TargetDeltaFeatures extends Util22 {
+public final class TargetDeltaFeatures extends RotationContext {
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static final int CONST_intValue2 = 59;
    private static final int CONST_intValue3 = 0;
@@ -116,22 +116,22 @@ public final class TargetDeltaFeatures extends Util22 {
    private static Resettable method3840() {
       AimPolicy aimPolicy = AimPolicy.method5432();
       if (aimPolicy != null) {
-         return new Class36(aimPolicy);
+         return new AimPolicySampler(aimPolicy);
       } else {
          System.err.println("[AimPolicy] artifact not found; TestRotationMode disabled");
          return null;
       }
    }
 
-   public Rotation method3841(Class6 class2, Rotation rotation) {
+   public Rotation method3841(GownoRotationConfig class2, Rotation rotation) {
       return this.method3842(class2, rotation, this.method3852());
    }
 
-   private Rotation method3842(Class6 class2, Rotation rotation, LivingEntity livingEntity) {
-      Rotation rotation2 = rotationManager.method7844();
+   private Rotation method3842(GownoRotationConfig class2, Rotation rotation, LivingEntity livingEntity) {
+      Rotation rotation2 = rotationManager.getEffectiveRotation();
       if (this.resettable == null) {
          return rotation2;
-      } else if (rotation == null || rotation.method3137()) {
+      } else if (rotation == null || rotation.isInvalid()) {
          this.method3864();
          return rotation2;
       } else if (livingEntity == null) {
@@ -182,7 +182,7 @@ public final class TargetDeltaFeatures extends Util22 {
                      }
 
                      int[] ints2 = new int[]{(int)(this.method3843(ints[0], floats[0], 1.0F, 0.9F) * this.offset), ints[1]};
-                     return rotation2.method3140(ints2[0] * y, ints2[1] * y);
+                     return rotation2.add(ints2[0] * y, ints2[1] * y);
                   } else {
                      this.floatValues = null;
                      this.resettable.reset();
@@ -232,13 +232,13 @@ public final class TargetDeltaFeatures extends Util22 {
       };
       Vec3 vec3 = this.method3855(boundingBox);
       Rotation rotation2 = this.method3849(eyePosition, vec3);
-      Vec2f vec2f = rotation.method3131(rotation2);
+      Vec2f vec2f = rotation.wrappedDeltaTo(rotation2);
       float floatValue = vec2f.getFloatValue();
       float y2 = vec2f.getFloatValue2();
       if (this.isFinite(floatValue) && this.isFinite(y2)) {
          Vec3 eyePosition2 = this.method3850(rotation, eyePosition);
          AABB aabb = this.method3851(livingEntity, boundingBox, vec);
-         Vec2f vec2f2 = rotation.method3131(this.method3849(eyePosition2, this.method3855(aabb)));
+         Vec2f vec2f2 = rotation.wrappedDeltaTo(this.method3849(eyePosition2, this.method3855(aabb)));
          float floatValue2 = vec2f2.getFloatValue();
          float y3 = vec2f2.getFloatValue2();
          if (this.isFinite(floatValue2) && this.isFinite(y3)) {
@@ -249,7 +249,7 @@ public final class TargetDeltaFeatures extends Util22 {
 
             for (Vec3 vec4 : vecs) {
                Rotation rotation3 = this.method3849(eyePosition, vec4);
-               Vec2f vec2f3 = rotation.method3131(rotation3);
+               Vec2f vec2f3 = rotation.wrappedDeltaTo(rotation3);
                float floatValue7 = vec2f3.getFloatValue();
                float y4 = vec2f3.getFloatValue2();
                if (this.isFinite(floatValue7) && this.isFinite(y4)) {

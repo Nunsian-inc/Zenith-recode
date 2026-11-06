@@ -3,7 +3,7 @@ package org.zenith.utility.render.display.base;
 import lombok.Generated;
 import net.minecraft.client.input.CharacterEvent;
 import org.zenith.MinecraftAccess;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 
 public abstract class Widget implements MinecraftAccess {
    public float floatValue;
@@ -35,10 +35,10 @@ public abstract class Widget implements MinecraftAccess {
    public void method8084(MenuDrawContext menuDrawContext) {
    }
 
-   public void onMouseClicked(double d, double d2, Enum3 enum2) {
+   public void onMouseClicked(double d, double d2, MouseButton enum2) {
    }
 
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
    }
 
    public void method8085(int n, int n2, int n3) {

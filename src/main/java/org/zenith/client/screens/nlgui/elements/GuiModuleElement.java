@@ -38,7 +38,7 @@ import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.BlockListSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.KeyName;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -66,7 +66,7 @@ public class GuiModuleElement extends Element {
    public GuiModuleElement(Module moduleValue) {
       this.module = moduleValue;
       if (moduleValue.isEnabled()) {
-         this.animationEnable.method2809(1.0F);
+         this.animationEnable.snapTo(1.0F);
       }
 
       if (moduleValue.isRenderSetting()) {
@@ -135,11 +135,11 @@ public class GuiModuleElement extends Element {
 
    public void resetSearchVisible(boolean searchVisible) {
       this.searchVisible = searchVisible;
-      this.searchVisibleAnimation.method2809(searchVisible ? 1.0F : 0.0F);
+      this.searchVisibleAnimation.snapTo(searchVisible ? 1.0F : 0.0F);
    }
 
    public float updateSearchVisible() {
-      return this.searchVisibleAnimation.method2808(this.searchVisible ? 1.0F : 0.0F);
+      return this.searchVisibleAnimation.animateTo(this.searchVisible ? 1.0F : 0.0F);
    }
 
    public float getSearchVisibleProgress() {
@@ -203,9 +203,9 @@ public class GuiModuleElement extends Element {
          float width = this.bounds.width();
          float height = this.getHeight();
          boolean enable = this.isEnable();
-         this.animationEnable.method2807(enable);
+         this.animationEnable.updateVisibility(enable);
          int n = !this.bounds.contains(lastClickX, lastClickY) || boundsData != null && !boundsData.contains(lastClickX, lastClickY) ? 0 : 1;
-         this.animationHovered.method2808(enable ? 1.0F : (n != 0 ? 0.6F : 0.0F));
+         this.animationHovered.animateTo(enable ? 1.0F : (n != 0 ? 0.6F : 0.0F));
          float hover = this.animationHovered.getValue();
          float f = animationPosY + GuiStyle.PADDING * 2;
          float lerpInt = Mth.lerpInt(this.animationEnable.getValue(), 0, 5 + GuiStyle.PADDING);
@@ -267,7 +267,7 @@ public class GuiModuleElement extends Element {
             currentStyle.getTextTertiary().getZenithColor().method7295(zenithColor3, hover).method7294(previewAlpha)
          );
          String bindText = this.getBindText();
-         this.bindAnimation.method2807(!(!this.binding && this.module.getKeyCode() == -1));
+         this.bindAnimation.updateVisibility(!(!this.binding && this.module.getKeyCode() == -1));
          Font font3 = Fonts.NEW_MEDIUM.getFont(4.5F);
          Font font4 = Fonts.NEW_ICONS.getFont(4.2F);
          float width4 = font3.width(bindText);
@@ -316,7 +316,7 @@ public class GuiModuleElement extends Element {
       }
    }
 
-   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       byte b = 0;
 
       for (GuiSetting setting : this.settings) {
@@ -329,18 +329,18 @@ public class GuiModuleElement extends Element {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.bindBounds != null && this.bindBounds.contains(lastClickX, lastClickY)) {
          this.binding = true;
          return true;
-      } else if (this.binding && enum2.getIntValue() > 2) {
-         this.module.setKeyCode(enum2.getIntValue());
+      } else if (this.binding && enum2.getGlfwButton() > 2) {
+         this.module.setKeyCode(enum2.getGlfwButton());
          this.binding = false;
          return true;
       } else if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
-         if (enum2 == Enum3.LEFT || enum2 == Enum3.RIGHT) {
+         if (enum2 == MouseButton.LEFT || enum2 == MouseButton.RIGHT) {
             this.module.toggle();
-         } else if (enum2 == Enum3.MIDDLE) {
+         } else if (enum2 == MouseButton.MIDDLE) {
             this.binding = true;
          }
 
@@ -369,7 +369,7 @@ public class GuiModuleElement extends Element {
    }
 
    @Override
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
       for (GuiSetting setting : this.settings) {
          setting.onMouseReleased(d, d2, enum2);
       }

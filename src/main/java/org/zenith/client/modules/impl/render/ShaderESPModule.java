@@ -27,7 +27,7 @@ import org.zenith.client.settings.ColorSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.MultiSelectSetting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.misc.Util2;
+import org.zenith.utility.misc.ArgbColors;
 import org.zenith.utility.network.UseItemUtils;
 
 @ModuleInfo(
@@ -182,7 +182,7 @@ public final class ShaderESPModule extends Module {
       return switch (this.colorMode.getIndex()) {
          case 1 -> this.colorSetting.method1445();
          case 2 -> this.method4596(entity);
-         case 3 -> Util2.method814(entity == null ? 0 : entity.getId() * 150, 0.7F, 1.0F);
+         case 3 -> ArgbColors.rainbow(entity == null ? 0 : entity.getId() * 150, 0.7F, 1.0F);
          default -> Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287();
       };
    }
@@ -190,7 +190,7 @@ public final class ShaderESPModule extends Module {
    private int method4596(Entity entity) {
       if (entity instanceof LivingEntity livingEntity) {
          float f = Math.max(livingEntity.getMaxHealth(), 1.0F);
-         return Util2.method813(-50384, -13316008, Math.clamp(livingEntity.getHealth() / f, 0.0F, 1.0F));
+         return ArgbColors.lerpArgb(-50384, -13316008, Math.clamp(livingEntity.getHealth() / f, 0.0F, 1.0F));
       } else {
          return this.colorSetting.method1445();
       }

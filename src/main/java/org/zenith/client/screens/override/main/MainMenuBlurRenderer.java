@@ -44,7 +44,7 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
       return this.backgroundFbo == null ? null : this.backgroundFbo.getColorTextureView();
    }
 
-   public void render(Matrix4f pose, float floatValue, float y, float width, float height, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
+   public void render(Matrix4f pose, float x, float y, float width, float height, ProxyDotRadiusData cornerRadii, ZenithColor color) {
       if (this.backgroundFbo != null && mc.getShaderManager() != null) {
          if (this.maskShaderKey == null) {
             this.maskShaderKey = new KawaseShaderKey(ResourceProvider.getShaderIdentifier("wtf/data"), DefaultVertexFormat.POSITION_COLOR);
@@ -61,13 +61,13 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
                KawaseShaderKey kawaseShaderKey = this.maskShaderKey.method5165();
                if (kawaseShaderKey != null) {
                   kawaseShaderKey.method5166("Size").method7413(width, height);
-                  kawaseShaderKey.method5166("Radius").method7415(headerRadius.getFloatValue(), headerRadius.getFloatValue4(), headerRadius.getFloatValue2(), headerRadius.getFloatValue3());
+                  kawaseShaderKey.method5166("Radius").method7415(cornerRadii.getFloatValue(), cornerRadii.getFloatValue4(), cornerRadii.getFloatValue2(), cornerRadii.getFloatValue3());
                   kawaseShaderKey.method5166("Smoothness").method7412(0.01F);
                   BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                  begin.addVertex(pose, floatValue, y, 0.0F).setColor(zenithColor.method7287());
-                  begin.addVertex(pose, floatValue, y + height, 0.0F).setColor(zenithColor.method7287());
-                  begin.addVertex(pose, floatValue + width, y + height, 0.0F).setColor(zenithColor.method7287());
-                  begin.addVertex(pose, floatValue + width, y, 0.0F).setColor(zenithColor.method7287());
+                  begin.addVertex(pose, x, y, 0.0F).setColor(color.method7287());
+                  begin.addVertex(pose, x, y + height, 0.0F).setColor(color.method7287());
+                  begin.addVertex(pose, x + width, y + height, 0.0F).setColor(color.method7287());
+                  begin.addVertex(pose, x + width, y, 0.0F).setColor(color.method7287());
                   ImmediateRenderer.method8015(begin.buildOrThrow());
                   return;
                }
@@ -86,9 +86,9 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
       }
 
       if (this.isShaderReady(this.kawaseShaderKey)) {
-         float width = 1.0F / this.backgroundFbo.width;
-         float height = 1.0F / this.backgroundFbo.height;
-         RenderState.Data2 data2 = RenderState.method1904();
+         float inverseWidth = 1.0F / this.backgroundFbo.width;
+         float inverseHeight = 1.0F / this.backgroundFbo.height;
+         RenderState.Data2 savedRenderState = RenderState.method1904();
          RenderState.method1872();
          RenderState.method1877();
 
@@ -97,19 +97,19 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
             TextureTarget backgroundFbo = this.backgroundFbo;
             TextureTarget tempFbo = this.tempFbo;
 
-            for (float f : KAWASE_OFFSETS) {
-               float batchRange = f * px / 10.0F;
-               if (!this.kawasePass(BlitUtils.method6450(backgroundFbo), tempFbo, pose, width, height, batchRange)) {
+            for (float kawaseOffset : KAWASE_OFFSETS) {
+               float blurOffset = kawaseOffset * px / 10.0F;
+               if (!this.kawasePass(BlitUtils.method6450(backgroundFbo), tempFbo, pose, inverseWidth, inverseHeight, blurOffset)) {
                   return;
                }
 
-               TextureTarget textureTarget = backgroundFbo;
+               TextureTarget swapTarget = backgroundFbo;
                backgroundFbo = tempFbo;
-               tempFbo = textureTarget;
+               tempFbo = swapTarget;
             }
          } finally {
             RenderState.method1893(0);
-            RenderState.method1905(data2);
+            RenderState.method1905(savedRenderState);
          }
       }
    }
@@ -118,7 +118,7 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
       BlitUtils.method6455(BlitUtils.method6450(mainRenderTarget), backgroundFbo);
    }
 
-   private boolean kawasePass(GpuTextureView colorTextureView, RenderTarget tempFbo, Matrix4f pose, float width, float height, float batchRange) {
+   private boolean kawasePass(GpuTextureView colorTextureView, RenderTarget tempFbo, Matrix4f pose, float inverseWidth, float inverseHeight, float blurOffset) {
       ImmediateRenderer.method8013(tempFbo);
       RenderState.method1889(0, colorTextureView);
       KawaseShaderKey kawaseShaderKey = this.kawaseShaderKey.method5165();
@@ -127,8 +127,8 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
          RenderState.method1893(0);
          return false;
       } else {
-         kawaseShaderKey.method5166("Resolution").method7413(width, height);
-         kawaseShaderKey.method5166("Offset").method7412(batchRange);
+         kawaseShaderKey.method5166("Resolution").method7413(inverseWidth, inverseHeight);
+         kawaseShaderKey.method5166("Offset").method7412(blurOffset);
          BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
          ShapeRenderer.method7161(pose, begin, 0.0F, 0.0F, tempFbo.width, tempFbo.height, -1);
          ImmediateRenderer.method8010(tempFbo.width, tempFbo.height);

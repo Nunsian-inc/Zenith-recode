@@ -55,7 +55,7 @@ import org.zenith.client.events.ChatReceiveEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.misc.SettingsBackup;
-import org.zenith.utility.misc.Util17;
+import org.zenith.utility.misc.PlayerAimUtils;
 
 @ModuleInfo(
    name = "AutoZamok",
@@ -202,13 +202,13 @@ public class AutoZamokModule extends Module {
       this.blockPos7 = null;
       this.items2.clear();
       this.method4199();
-      Util17.method3334(true);
+      PlayerAimUtils.setRotationLock(true);
    }
 
    @Override
    public void onDisable() {
       super.onDisable();
-      Util17.method3334(false);
+      PlayerAimUtils.setRotationLock(false);
       this.method4204();
       this.method4200();
       this.method4210();
@@ -363,7 +363,7 @@ public class AutoZamokModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && event.getPacket3() instanceof ClientboundExplodePacket explodePacket) {
+      if (event.isIncoming() && event.getPacket() instanceof ClientboundExplodePacket explodePacket) {
          BlockPos containing = BlockPos.containing(explodePacket.center());
          if (method4128(containing)) {
             this.blockPos6 = containing;
@@ -703,7 +703,7 @@ public class AutoZamokModule extends Module {
          }
 
          if (now - this.longValue5 <= 20000L) {
-            Util17.method3336(this.vec3d2);
+            PlayerAimUtils.setMovementToward(this.vec3d2);
             mc.options.keyJump.setDown(true);
             return true;
          } else {
@@ -723,7 +723,7 @@ public class AutoZamokModule extends Module {
    private void method4140() {
       if (this.vec3d2 != null) {
          this.vec3d2 = null;
-         Util17.method3337();
+         PlayerAimUtils.clearMovementKeys();
          mc.options.keyJump.setDown(false);
       }
    }
@@ -933,7 +933,7 @@ public class AutoZamokModule extends Module {
          this.method4203(this.intValue2, this.intValue3, now);
          if (!this.method4205()) {
             this.flag3 = true;
-            Util17.method3336(new Vec3(this.intValue2 + 0.5, mc.player.getY(), this.intValue3 + 0.5));
+            PlayerAimUtils.setMovementToward(new Vec3(this.intValue2 + 0.5, mc.player.getY(), this.intValue3 + 0.5));
          } else if (this.flag3) {
             this.method4165();
          }
@@ -1045,7 +1045,7 @@ public class AutoZamokModule extends Module {
    }
 
    private void method4162(Vec3 atCenterOf) {
-      Util17.method3329(atCenterOf);
+      PlayerAimUtils.aimAt(atCenterOf);
    }
 
    private Direction method4163(BlockPos blockPos5) {
@@ -1077,7 +1077,7 @@ public class AutoZamokModule extends Module {
          double d2 = this.vec3d.z - mc.player.getZ();
          if (d * d + d2 * d2 > 0.64) {
             this.flag3 = true;
-            Util17.method3336(this.vec3d);
+            PlayerAimUtils.setMovementToward(this.vec3d);
          } else {
             this.method4165();
          }
@@ -1087,7 +1087,7 @@ public class AutoZamokModule extends Module {
    private void method4165() {
       if (this.flag3) {
          this.flag3 = false;
-         Util17.method3337();
+         PlayerAimUtils.clearMovementKeys();
       }
    }
 
@@ -1706,7 +1706,7 @@ public class AutoZamokModule extends Module {
    }
 
    private void method4212(Vec3 atCenterOf) {
-      Util17.method3329(atCenterOf);
+      PlayerAimUtils.aimAt(atCenterOf);
    }
 
    private void log(String str) {

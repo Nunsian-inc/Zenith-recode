@@ -6,41 +6,41 @@ import org.zenith.ZenithAccess;
 import org.zenith.base.rotation.mods.Agent;
 import org.zenith.base.rotation.mods.BcCamera;
 import org.zenith.base.rotation.mods.BcHand;
-import org.zenith.base.rotation.mods.Class21;
-import org.zenith.base.rotation.mods.Class22;
-import org.zenith.base.rotation.mods.Class23;
-import org.zenith.base.rotation.mods.Class24;
-import org.zenith.base.rotation.mods.Class25;
-import org.zenith.base.rotation.mods.Class26;
+import org.zenith.base.rotation.mods.HolyWorldRotation;
+import org.zenith.base.rotation.mods.IntentReplayRotation;
+import org.zenith.base.rotation.mods.InstantRotation;
+import org.zenith.base.rotation.mods.TargetBoxRotation;
+import org.zenith.base.rotation.mods.HumanRotation;
+import org.zenith.base.rotation.mods.ExperimentalRotationModes;
 import org.zenith.base.rotation.mods.HandRotationLogger;
 import org.zenith.base.rotation.mods.Motor;
 import org.zenith.base.rotation.mods.MotorClaude;
 import org.zenith.base.rotation.mods.MotorHand2;
 import org.zenith.base.rotation.mods.SlewRotationMod;
 import org.zenith.base.rotation.mods.TokenMotor;
-import org.zenith.utility.misc.Class10;
-import org.zenith.utility.misc.Class14;
-import org.zenith.utility.misc.Class17;
-import org.zenith.utility.misc.Class18;
-import org.zenith.utility.misc.Class19;
-import org.zenith.utility.misc.Class20;
-import org.zenith.utility.misc.Class29;
-import org.zenith.utility.misc.Class34;
-import org.zenith.utility.misc.Class38;
-import org.zenith.utility.misc.Class39;
-import org.zenith.utility.misc.Class40;
-import org.zenith.utility.misc.Class41;
-import org.zenith.utility.misc.Class43;
-import org.zenith.utility.misc.Class44;
-import org.zenith.utility.misc.Class6;
-import org.zenith.utility.misc.Class7;
-import org.zenith.utility.misc.Class8;
+import org.zenith.utility.misc.HumanRotationConfig;
+import org.zenith.utility.misc.HandRotationConfig;
+import org.zenith.utility.misc.BcCamera2RotationConfig;
+import org.zenith.utility.misc.GownoV3RotationConfig;
+import org.zenith.utility.misc.MotorRotationConfig;
+import org.zenith.utility.misc.GownoV2RotationConfig;
+import org.zenith.utility.misc.InstantRotationConfig;
+import org.zenith.utility.misc.BcCameraRotationConfig;
+import org.zenith.utility.misc.AgentRotationConfig;
+import org.zenith.utility.misc.BcTestNervRotationConfig;
+import org.zenith.utility.misc.BcHandRotationConfig;
+import org.zenith.utility.misc.HolyWorldRotationConfig;
+import org.zenith.utility.misc.TokenRotationConfig;
+import org.zenith.utility.misc.FunTimeRotationConfig;
+import org.zenith.utility.misc.GownoRotationConfig;
+import org.zenith.utility.misc.GownoV4RotationConfig;
+import org.zenith.utility.misc.MotorClaudeRotationConfig;
 import org.zenith.utility.misc.RotationConfig;
 
 public class BcCameraTestnerv implements ZenithAccess {
-   private final Class23 class23 = new Class23();
-   private final Class24 class24 = new Class24();
-   private Class22 class22;
+   private final InstantRotation class23 = new InstantRotation();
+   private final TargetBoxRotation class24 = new TargetBoxRotation();
+   private IntentReplayRotation class22;
    private final SlewRotationMod slewRotationMod = new SlewRotationMod();
    private final Motor motor = new Motor();
    private final TokenMotor tokenMotor = new TokenMotor();
@@ -52,30 +52,30 @@ public class BcCameraTestnerv implements ZenithAccess {
    private final BcCamera bcCamera2 = new BcCamera("bc_camera_2.json", 2, 1.0);
    private final BcCamera bcCamera3 = new BcCamera("bc_camera_testnerv.json", 4, 1.0);
    private final BcHand bcHand = new BcHand();
-   private final Class25 class25 = new Class25();
-   private final Class26 class26 = new Class26();
-   private final Class21 class21 = new Class21();
-   private final RotationConfig rotationConfig = new Class29();
-   private final RotationConfig rotationConfig2 = new Class44();
-   private final RotationConfig rotationConfig3 = new Class41();
-   private final RotationConfig rotationConfig4 = Class6.method861().method869();
-   private final RotationConfig rotationConfig5 = Class20.method3287().method3288();
-   private final RotationConfig rotationConfig6 = Class18.method2737().method2738();
-   private final RotationConfig rotationConfig7 = Class7.method1437().method1438();
-   private final RotationConfig rotationConfig8 = Class43.method7548().method7549();
-   private final RotationConfig rotationConfig9 = Class14.method2017().method2018();
-   private final RotationConfig rotationConfig10 = Class38.method6490().method6491();
-   private final RotationConfig rotationConfig11 = Class19.method2781().method2782();
-   private final RotationConfig rotationConfig12 = Class8.method1450().method1451();
-   private final RotationConfig rotationConfig13 = Class34.method5354().method5355();
-   private final RotationConfig rotationConfig14 = Class17.method2520().method2521();
-   private final RotationConfig rotationConfig15 = Class39.method6610().method6611();
-   private final RotationConfig rotationConfig16 = Class40.method6647().method6648();
-   private final RotationConfig rotationConfig17 = new Class10();
+   private final HumanRotation class25 = new HumanRotation();
+   private final ExperimentalRotationModes class26 = new ExperimentalRotationModes();
+   private final HolyWorldRotation class21 = new HolyWorldRotation();
+   private final RotationConfig rotationConfig = new InstantRotationConfig();
+   private final RotationConfig rotationConfig2 = new FunTimeRotationConfig();
+   private final RotationConfig rotationConfig3 = new HolyWorldRotationConfig();
+   private final RotationConfig rotationConfig4 = GownoRotationConfig.method861().method869();
+   private final RotationConfig rotationConfig5 = GownoV2RotationConfig.method3287().method3288();
+   private final RotationConfig rotationConfig6 = GownoV3RotationConfig.method2737().method2738();
+   private final RotationConfig rotationConfig7 = GownoV4RotationConfig.method1437().method1438();
+   private final RotationConfig rotationConfig8 = TokenRotationConfig.method7548().method7549();
+   private final RotationConfig rotationConfig9 = HandRotationConfig.method2017().method2018();
+   private final RotationConfig rotationConfig10 = AgentRotationConfig.method6490().method6491();
+   private final RotationConfig rotationConfig11 = MotorRotationConfig.method2781().method2782();
+   private final RotationConfig rotationConfig12 = MotorClaudeRotationConfig.method1450().method1451();
+   private final RotationConfig rotationConfig13 = BcCameraRotationConfig.method5354().method5355();
+   private final RotationConfig rotationConfig14 = BcCamera2RotationConfig.method2520().method2521();
+   private final RotationConfig rotationConfig15 = BcTestNervRotationConfig.method6610().method6611();
+   private final RotationConfig rotationConfig16 = BcHandRotationConfig.method6647().method6648();
+   private final RotationConfig rotationConfig17 = new HumanRotationConfig();
 
-   public Class22 method1850() {
+   public IntentReplayRotation method1850() {
       if (this.class22 == null) {
-         this.class22 = new Class22();
+         this.class22 = new IntentReplayRotation();
       }
 
       return this.class22;
@@ -127,16 +127,16 @@ public class BcCameraTestnerv implements ZenithAccess {
          case TOKEN:
             return this.tokenMotor.method3467();
          default:
-            rotation2 = zenith.getRotationManager().method7844();
+            rotation2 = zenith.getRotationManager().getEffectiveRotation();
       }
 
-      return rotationManager.method7844().equals(rotation2)
+      return rotationManager.getEffectiveRotation().equals(rotation2)
          ? rotation2
-         : rotationManager.method7844().method3141(rotationManager.method7844().method3131(rotation2)).method3139(rotationManager.method7844());
+         : rotationManager.getEffectiveRotation().add(rotationManager.getEffectiveRotation().wrappedDeltaTo(rotation2)).quantizeRelativeTo(rotationManager.getEffectiveRotation());
    }
 
    @Generated
-   public Class24 getClass24() {
+   public TargetBoxRotation getClass24() {
       return this.class24;
    }
 
@@ -196,7 +196,7 @@ public class BcCameraTestnerv implements ZenithAccess {
    }
 
    @Generated
-   public Class25 getClass25() {
+   public HumanRotation getClass25() {
       return this.class25;
    }
 

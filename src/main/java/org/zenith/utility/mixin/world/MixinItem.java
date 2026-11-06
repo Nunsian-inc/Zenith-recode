@@ -23,6 +23,6 @@ public class MixinItem {
    )
    private static Vec3 hookFixRotation(Vec3 vec, Level level, Player player, Fluid fluid) {
       Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      return player == Minecraft.getInstance().player && currentRotation != null ? currentRotation.method3135() : vec;
+      return player == Minecraft.getInstance().player && currentRotation != null ? currentRotation.toDirection() : vec;
    }
 }

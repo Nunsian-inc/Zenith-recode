@@ -37,7 +37,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.Zenith;
 import org.zenith.ZenithAccess;
-import org.zenith.utility.misc.Handler6;
+import org.zenith.utility.misc.ServerPositionTracker;
 import org.zenith.utility.misc.MovementInputUtils;
 
 public class PlayerSimulation implements ZenithAccess {
@@ -145,8 +145,8 @@ public class PlayerSimulation implements ZenithAccess {
          player.position(),
          player.getDeltaMovement(),
          player.getBoundingBox(),
-         Zenith.getInstance().getRotationManager().method7844().getFloatValue(),
-         Zenith.getInstance().getRotationManager().method7844().getFloatValue2(),
+         Zenith.getInstance().getRotationManager().getEffectiveRotation().getFloatValue(),
+         Zenith.getInstance().getRotationManager().getEffectiveRotation().getFloatValue2(),
          player.isSprinting(),
          (float)player.fallDistance,
          player.noJumpDelay,
@@ -192,7 +192,7 @@ public class PlayerSimulation implements ZenithAccess {
 
    public static PlayerSimulation method6034(Player player, PlayerSimulation.Entry entry) {
       Vec3 base = player.getPositionCodec().getBase();
-      Vec3 zenithDLC$getServerDelta = ((Handler6)player).zenithDLC$getServerDelta();
+      Vec3 zenithDLC$getServerDelta = ((ServerPositionTracker)player).zenithDLC$getServerDelta();
       return new PlayerSimulation(
          player,
          entry,

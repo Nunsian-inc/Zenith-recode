@@ -10,8 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Generated;
 import net.minecraft.client.Minecraft;
-import org.zenith.client.events.Event1;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.SchedulerPulseEvent;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.HandleInputEvent;
 import org.zenith.client.events.HandleInputPostEvent;
 import org.zenith.client.events.MoveInputEvent;
@@ -67,12 +67,12 @@ public class TaskScheduler {
    }
 
    @EventTarget
-   public void method5103(Event1 event) {
+   public void method5103(SchedulerPulseEvent event) {
       this.method5102(event);
    }
 
    @EventTarget
-   public void method5104(Event5 event) {
+   public void method5104(PreRotationEvent event) {
       this.method5102(event);
    }
 
@@ -215,7 +215,7 @@ public class TaskScheduler {
                   try {
                      try {
                         if (Minecraft.getInstance().player != null) {
-                           Minecraft.getInstance().execute(() -> EventManager.call(new Event1()));
+                           Minecraft.getInstance().execute(() -> EventManager.call(new SchedulerPulseEvent()));
                         }
                      } catch (Exception e) {
                         e.printStackTrace();

@@ -108,9 +108,9 @@ public class PartyHud extends Interface {
          f = Math.max(f, 26.0F + nameFont.width(data.name()) + 34.0F + 6.0F);
       }
 
-      float width = this.animation2.method2808(Math.max(118.0F, f));
+      float width = this.animation2.animateTo(Math.max(118.0F, f));
       float height = 20.0F + GuiStyle.PADDING.intValue() / 2.0F + datas.size() * 24.0F + (datas.isEmpty() ? 0.0F : 2.0F);
-      float x = this.animation.method2808(datas.isEmpty() && (!(mc.gui.screen() instanceof ChatScreen) || data6 == null) ? 0.0F : 1.0F);
+      float x = this.animation.animateTo(datas.isEmpty() && (!(mc.gui.screen() instanceof ChatScreen) || data6 == null) ? 0.0F : 1.0F);
       if (!(x <= 0.01F)) {
          this.width = width;
          this.height = height;
@@ -190,7 +190,7 @@ public class PartyHud extends Interface {
       float f5 = partyPlayerInfo == null ? 0.0F : method6110(partyPlayerInfo.getFloatValue5(), 0.0F);
       float f6 = this.items
          .computeIfAbsent(data.uid(), l -> new Animation(260L, 0.0F, Easing.INSTANCE12))
-         .method2808(Mth.clamp(f3 / f4, 0.0F, 1.0F));
+         .animateTo(Mth.clamp(f3 / f4, 0.0F, 1.0F));
       customDrawContext.drawRoundedRect(floatValue3, y2, width3, 3.0F, ProxyDotRadiusData.method8069(1.5F), style.getHeaderHudBackground().getZenithColor().method7294(previewAlpha));
       customDrawContext.drawRoundedRect(floatValue3, y2, width3 * f6, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor.method7294(previewAlpha));
       if (f5 > 0.0F) {

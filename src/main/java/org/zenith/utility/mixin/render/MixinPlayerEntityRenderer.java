@@ -17,7 +17,7 @@ import org.zenith.client.modules.impl.misc.StreamerModeModule;
 import org.zenith.client.modules.impl.movement.SpeedModule;
 import org.zenith.client.modules.impl.render.EntityESPModule;
 import org.zenith.utility.api.PetManager;
-import org.zenith.utility.misc.Handler4;
+import org.zenith.utility.misc.PlayerRenderStateAccess;
 import org.zenith.utility.render.WardrobeFeatureRenderer;
 
 @Mixin({AvatarRenderer.class})
@@ -50,7 +50,7 @@ public class MixinPlayerEntityRenderer {
       at = {@At("TAIL")}
    )
    private void zenith$hideCosmeticParts(Avatar avatar, AvatarRenderState state, float f, CallbackInfo callbackInfo) {
-      ((Handler4)state).zenith$setProfileName(avatar instanceof Player player ? player.getGameProfile().name() : null);
+      ((PlayerRenderStateAccess)state).zenith$setProfileName(avatar instanceof Player player ? player.getGameProfile().name() : null);
       WardrobeFeatureRenderer.method4446(state);
       state.nameTag = StreamerModeModule.INSTANCE.method6293(state.nameTag);
       state.scoreText = StreamerModeModule.INSTANCE.method6293(state.scoreText);

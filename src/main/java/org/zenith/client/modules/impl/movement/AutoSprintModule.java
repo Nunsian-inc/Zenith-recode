@@ -18,7 +18,7 @@ import org.zenith.utility.network.UseItemUtils;
 public final class AutoSprintModule extends Module {
    public static final AutoSprintModule INSTANCE = new AutoSprintModule();
    private final BooleanSetting keepSwing = new BooleanSetting("module.autoSprint.keepSwing", "module.autoSprint.keepSwing.desc", false);
-   private boolean sprint = false;
+   private boolean wasSprintingBeforeAttack = false;
 
    public boolean method6417() {
       return this.keepSwing.isEnabled();
@@ -49,11 +49,11 @@ public final class AutoSprintModule extends Module {
    }
 
    @EventTarget
-   public void method6418(AttackEvent event) {
+   public void onAttack(AttackEvent event) {
       if (this.keepSwing.isEnabled()) {
          if (event.getType4() == AttackEvent.Type.PRE) {
-            this.sprint = mc.player.isSprinting();
-         } else if (this.sprint) {
+            this.wasSprintingBeforeAttack = mc.player.isSprinting();
+         } else if (this.wasSprintingBeforeAttack) {
             mc.player.setSprinting(true);
          }
       }

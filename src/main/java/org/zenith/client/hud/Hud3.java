@@ -72,9 +72,9 @@ public class Hud3 extends Interface {
 
       float width = this.method2275(datas, font);
       this.method2279(items, width, flag);
-      this.width = this.animation2.method2808(this.method2276(datas, datas2, font, width));
+      this.width = this.animation2.animateTo(this.method2276(datas, datas2, font, width));
       this.height = this.method2277(datas2);
-      this.animation.method2807(visible);
+      this.animation.updateVisibility(visible);
       if (this.animation.getValue() <= 0.01F) {
          this.items.clear();
       } else {

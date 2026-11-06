@@ -24,33 +24,33 @@ import org.zenith.utility.network.UseItemUtils;
 public final class NoWebModule extends Module {
    public static final NoWebModule INSTANCE = new NoWebModule();
    private final ModeSetting mode = new ModeSetting("module.noweb.mode", "module.noweb.mode.desc");
-   private final ModeSetting.Entry entry = new ModeSetting.Entry(this.mode, "module.noweb.mode.default");
-   private final ModeSetting.Entry entry2 = new ModeSetting.Entry(this.mode, "module.noweb.mode.rw116");
-   private final ModeSetting.Entry entry3 = new ModeSetting.Entry(this.mode, "module.noweb.mode.rw121");
+   private final ModeSetting.Entry defaultMode = new ModeSetting.Entry(this.mode, "module.noweb.mode.default");
+   private final ModeSetting.Entry rw116Mode = new ModeSetting.Entry(this.mode, "module.noweb.mode.rw116");
+   private final ModeSetting.Entry rw121Mode = new ModeSetting.Entry(this.mode, "module.noweb.mode.rw121");
 
    private NoWebModule() {
    }
 
    @EventTarget
-   public void method266(BlockCollisionEvent event) {
+   public void onBlockCollision(BlockCollisionEvent event) {
       if (event.getBlock() == Blocks.COBWEB) {
-         if (this.entry3.isSelected()) {
+         if (this.rw121Mode.isSelected()) {
             mc.gameMode
-               .startPrediction(mc.level, var1x -> new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, event.getBlockPos(), Direction.UP, var1x));
+               .startPrediction(mc.level, sequence -> new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, event.getBlockPos(), Direction.UP, sequence));
             event.setCancelled(true);
-         } else if (this.entry2.isSelected()) {
-            double y = 0.0;
+         } else if (this.rw116Mode.isSelected()) {
+            double verticalVelocity = 0.0;
             if (UseItemUtils.method6520(KeyMappingHelper.getBoundKeyOf(mc.options.keyJump))) {
-               y = 0.8;
+               verticalVelocity = 0.8;
             } else if (UseItemUtils.method6520(KeyMappingHelper.getBoundKeyOf(mc.options.keyShift))) {
-               y = -0.8;
+               verticalVelocity = -0.8;
             }
 
             if (MovementInputUtils.method7418()) {
-               double[] doubles = MovementInputUtils.method7421(0.22F);
-               mc.player.setDeltaMovement(new Vec3(doubles[0], y, doubles[1]));
+               double[] horizontalVelocity = MovementInputUtils.method7421(0.22F);
+               mc.player.setDeltaMovement(new Vec3(horizontalVelocity[0], verticalVelocity, horizontalVelocity[1]));
             } else {
-               mc.player.setDeltaMovement(new Vec3(0.0, y, 0.0));
+               mc.player.setDeltaMovement(new Vec3(0.0, verticalVelocity, 0.0));
             }
          } else {
             if (UseItemUtils.method6520(KeyMappingHelper.getBoundKeyOf(mc.options.keyJump))) {
@@ -60,8 +60,8 @@ public final class NoWebModule extends Module {
             }
 
             if (ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F) {
-               double[] doubles = MovementInputUtils.method7421(0.62F);
-               mc.player.setDeltaMovement(new Vec3(doubles[0], mc.player.getDeltaMovement().y, doubles[1]));
+               double[] horizontalVelocity = MovementInputUtils.method7421(0.62F);
+               mc.player.setDeltaMovement(new Vec3(horizontalVelocity[0], mc.player.getDeltaMovement().y, horizontalVelocity[1]));
             }
          }
       }

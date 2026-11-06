@@ -45,7 +45,7 @@ public abstract class MenuWidget {
    public final void render(MenuDrawContext graphics, float mouseX, float mouseY) {
       if (this.visible) {
          this.hovered = this.enabled && this.contains(mouseX, mouseY);
-         this.hoverAnimation.method2807(this.hovered);
+         this.hoverAnimation.updateVisibility(this.hovered);
          this.draw(graphics, mouseX, mouseY);
       }
    }

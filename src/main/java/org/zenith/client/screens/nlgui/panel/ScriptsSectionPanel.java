@@ -43,7 +43,7 @@ import org.zenith.utility.api.OriginUtil;
 import org.zenith.utility.api.RegionUtil;
 import org.zenith.utility.api.Server;
 import org.zenith.utility.api.StoreApi;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.ScriptPermissions;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.GlowColor;
@@ -427,7 +427,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    public void toggleCreator() {
       this.creatorOpen = !this.creatorOpen;
       this.creatorAnimation.reset(0.0F);
-      this.creatorAnimation.method2810(1.0F);
+      this.creatorAnimation.setTarget(1.0F);
       this.invalidate();
    }
 
@@ -648,7 +648,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    public float hot(String key, boolean contains) {
-      return this.hoverAnimations.computeIfAbsent(key, hoverAnimation -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.hoverAnimations.computeIfAbsent(key, hoverAnimation -> new Animation(160L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    private void renderHero(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle currentStyle, Storage storage) {
@@ -689,7 +689,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    private void renderTemplate(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float f4, ZenithStyle currentStyle, int n) {
-      float f5 = this.creatorAnimation.method2808(1.0F);
+      float f5 = this.creatorAnimation.animateTo(1.0F);
       float f6 = Mth.clamp(f5 * 1.8F - n * 0.15F, 0.0F, 1.0F);
       float previewAlpha = f4 * f6;
       float f7 = (1.0F - f6) * -4.0F;
@@ -915,7 +915,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    public void drawSwitch(MenuDrawContext menuDrawContext, String key, float floatValue, float y, float width, float height, boolean enabled, float previewAlpha, ZenithStyle currentStyle) {
       float hover = this.switchAnimations
          .computeIfAbsent(key, var1x -> new Animation(220L, enabled ? 1.0F : 0.0F, Easing.INSTANCE15))
-         .method2808(enabled ? 1.0F : 0.0F);
+         .animateTo(enabled ? 1.0F : 0.0F);
       ZenithColor zenithColor = currentStyle.getFieldBorder().getZenithColor().method7294(3.0F);
       menuDrawContext.drawRoundedRect(
          floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7295(currentStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha)
@@ -961,7 +961,7 @@ public class ScriptsSectionPanel extends SectionPanel {
             case "new":
                this.creatorOpen = !this.creatorOpen;
                this.creatorAnimation.reset(0.0F);
-               this.creatorAnimation.method2810(1.0F);
+               this.creatorAnimation.setTarget(1.0F);
                this.invalidate();
                break;
             case "reload":
@@ -1050,7 +1050,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onFooterClicked(double lastMouseX, double lastMouseY, Enum3 enum2) {
+   public boolean onFooterClicked(double lastMouseX, double lastMouseY, MouseButton enum2) {
       return this.getActiveTab() == 3 && this.ai.clickFooter(lastMouseX, lastMouseY);
    }
 
@@ -1107,7 +1107,7 @@ public class ScriptsSectionPanel extends SectionPanel {
             this.openFile(workspace.getPath2());
             this.infoPage = false;
             this.workspaceAnimation.reset(0.0F);
-            this.workspaceAnimation.method2810(1.0F);
+            this.workspaceAnimation.setTarget(1.0F);
             Zenith.getInstance().getClientSounds().method1562();
          }
       }
@@ -1248,13 +1248,13 @@ public class ScriptsSectionPanel extends SectionPanel {
          if (this.shownTab >= 0 && (this.shownTab == 1 || activeTab == 1)) {
             this.tabDirection = activeTab > this.shownTab ? 1.0F : -1.0F;
             this.tabSwitch.reset(0.0F);
-            this.tabSwitch.method2810(1.0F);
+            this.tabSwitch.setTarget(1.0F);
          }
 
          this.shownTab = activeTab;
       }
 
-      float f3 = this.tabSwitch.method2808(1.0F);
+      float f3 = this.tabSwitch.animateTo(1.0F);
       float x = 14.0F * this.tabDirection * (1.0F - f3);
       menuDrawContext.pose().pushMatrix();
       menuDrawContext.pose().translate(x, 0.0F);
@@ -1442,7 +1442,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.workspace == null) {
          return super.onHeaderButtonsClicked(lastClickX, lastClickY, enum2);
       } else if ((this.headerBack == null || !this.headerBack.contains(lastClickX, lastClickY)) && (this.headerRoot == null || !this.headerRoot.contains(lastClickX, lastClickY))) {
@@ -1555,7 +1555,7 @@ public class ScriptsSectionPanel extends SectionPanel {
                this.filePlateReady = true;
             }
 
-            float y2 = this.filePlate.method2808(floatValue2);
+            float y2 = this.filePlate.animateTo(floatValue2);
             menuDrawContext.drawRoundedRect(
                floatValue + 6.0F, y2, width - 12.0F, 14.0F, ProxyDotRadiusData.method8069(4.0F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.2F)
             );
@@ -1652,7 +1652,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    private void renderWorkspace(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float y) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         float f3 = this.workspaceAnimation.method2808(1.0F);
+         float f3 = this.workspaceAnimation.animateTo(1.0F);
          float previewAlpha = f * f3;
          float f4 = (1.0F - f3) * 8.0F;
          float f5 = 380.0F + NLMenuScreen.extraWidth;
@@ -1931,11 +1931,11 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       return this.handleClick(lastClickX, lastClickY, enum2);
    }
 
-   private boolean handleClick(double lastClickX, double lastClickY, Enum3 enum2) {
+   private boolean handleClick(double lastClickX, double lastClickY, MouseButton enum2) {
       this.lastClickX = lastClickX;
       this.lastClickY = lastClickY;
       if (this.configsTab()) {
@@ -1971,7 +1971,7 @@ public class ScriptsSectionPanel extends SectionPanel {
             }
          }
 
-         if (this.storeTab() && enum2 == Enum3.RIGHT) {
+         if (this.storeTab() && enum2 == MouseButton.RIGHT) {
             BoundsData mainViewport = this.mainViewport();
             if (mainViewport == null || mainViewport.contains(lastClickX, lastClickY)) {
                for (Object[] objects : new ArrayList<>(this.homeHits)) {
@@ -1983,7 +1983,7 @@ public class ScriptsSectionPanel extends SectionPanel {
             }
          }
 
-         if (this.storeTab() && enum2 == Enum3.LEFT) {
+         if (this.storeTab() && enum2 == MouseButton.LEFT) {
             BoundsData mainViewport = this.mainViewport();
             if (mainViewport == null || mainViewport.contains(lastClickX, lastClickY)) {
                for (Object[] objects : new ArrayList<>(this.homeHits)) {
@@ -2069,7 +2069,7 @@ public class ScriptsSectionPanel extends SectionPanel {
 
             return true;
          } else if (this.codeBounds != null && this.codeBounds.contains(lastClickX, lastClickY)) {
-            return this.code.mouseClicked(lastClickX, lastClickY, enum2 == Enum3.LEFT ? 0 : 1);
+            return this.code.mouseClicked(lastClickX, lastClickY, enum2 == MouseButton.LEFT ? 0 : 1);
          } else {
             this.code.setFocused(false);
             return this.consoleBounds != null && this.consoleBounds.contains(lastClickX, lastClickY);
@@ -2078,7 +2078,7 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       if (this.configsTab()) {
          return this.configs.onMouseReleased(x, y, enum2);
       } else if (this.workspace == null) {

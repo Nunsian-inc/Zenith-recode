@@ -24,10 +24,10 @@ import org.zenith.client.settings.SliderSetting;
 )
 public final class BoatFlyModule extends Module {
    public static final BoatFlyModule INSTANCE = new BoatFlyModule();
-   private static final int CONST_intValue = 40;
-   private static final double CONST_doubleValue = 0.04;
-   private static final int CONST_intValue2 = 20;
-   private static final double CONST_doubleValue2 = 20.25;
+   private static final int ANTI_KICK_INTERVAL_TICKS = 40;
+   private static final double ANTI_KICK_VERTICAL_OFFSET = 0.04;
+   private static final int REMOUNT_WINDOW_TICKS = 20;
+   private static final double MAX_REMOUNT_DISTANCE_SQUARED = 20.25;
    private final ModeSetting mode = new ModeSetting(
       "module.boatfly.mode", "module.boatfly.mode.desc", "module.boatfly.mode.grim", "module.boatfly.mode.vanilla"
    );
@@ -39,13 +39,13 @@ public final class BoatFlyModule extends Module {
    private final BooleanSetting remount = new BooleanSetting("module.boatfly.remount", "module.boatfly.remount.desc", true, () -> this.mode.isSelected(0));
    private final BooleanSetting antiKick = new BooleanSetting("module.boatfly.antiKick", "module.boatfly.antiKick.desc", true);
    private final BooleanSetting debug = new BooleanSetting("module.boatfly.debug", "module.boatfly.debug.desc", false);
-   private volatile boolean flag;
-   private final AtomicInteger atomicInteger = new AtomicInteger();
-   private AbstractBoat abstractBoatEntity;
-   private int intValue;
-   private int intValue2;
-   private boolean flag2;
-   private int intValue3;
+   private volatile boolean controllingBoat;
+   private final AtomicInteger ignoredCorrectionCount = new AtomicInteger();
+   private AbstractBoat lastControlledBoat;
+   private int remountTicksRemaining;
+   private int flightTicks;
+   private boolean restoreAntiKickOffset;
+   private int debugTicks;
 
    private BoatFlyModule() {
    }
@@ -63,42 +63,42 @@ public final class BoatFlyModule extends Module {
    }
 
    private void resetState() {
-      this.flag = false;
-      this.atomicInteger.set(0);
-      this.abstractBoatEntity = null;
-      this.intValue = 0;
-      this.intValue2 = 0;
-      this.flag2 = false;
-      this.intValue3 = 0;
+      this.controllingBoat = false;
+      this.ignoredCorrectionCount.set(0);
+      this.lastControlledBoat = null;
+      this.remountTicksRemaining = 0;
+      this.flightTicks = 0;
+      this.restoreAntiKickOffset = false;
+      this.debugTicks = 0;
    }
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (mc.player.getVehicle() instanceof AbstractBoat abstractBoatEntity && abstractBoatEntity.getControllingPassenger() == mc.player) {
-            this.abstractBoatEntity = abstractBoatEntity;
-            this.intValue = 0;
+         if (mc.player.getVehicle() instanceof AbstractBoat boat && boat.getControllingPassenger() == mc.player) {
+            this.lastControlledBoat = boat;
+            this.remountTicksRemaining = 0;
          } else {
-            this.flag = false;
-            if (this.abstractBoatEntity != null) {
-               if (mc.options.keyShift.isDown() || !this.abstractBoatEntity.isAlive()) {
-                  this.abstractBoatEntity = null;
-               } else if (this.intValue == 0) {
-                  this.intValue = 20;
+            this.controllingBoat = false;
+            if (this.lastControlledBoat != null) {
+               if (mc.options.keyShift.isDown() || !this.lastControlledBoat.isAlive()) {
+                  this.lastControlledBoat = null;
+               } else if (this.remountTicksRemaining == 0) {
+                  this.remountTicksRemaining = 20;
                   if (this.debug.isEnabled()) {
                      ChatLogger.method2021("BoatFly: сервер ссадил с лодки");
                   }
                }
             }
 
-            this.method1931();
+            this.tryRemount();
          }
 
-         if (this.debug.isEnabled() && ++this.intValue3 >= 20) {
-            this.intValue3 = 0;
-            int andSet;
-            if ((andSet = this.atomicInteger.getAndSet(0)) > 0) {
-               ChatLogger.method2019("BoatFly: проигнорировано откатов за секунду: " + andSet);
+         if (this.debug.isEnabled() && ++this.debugTicks >= 20) {
+            this.debugTicks = 0;
+            int ignoredCorrections = this.ignoredCorrectionCount.getAndSet(0);
+            if (ignoredCorrections > 0) {
+               ChatLogger.method2019("BoatFly: проигнорировано откатов за секунду: " + ignoredCorrections);
             }
          }
       } else {
@@ -106,78 +106,74 @@ public final class BoatFlyModule extends Module {
       }
    }
 
-   private void method1931() {
-      if (this.intValue > 0 && this.abstractBoatEntity != null) {
-         this.intValue--;
+   private void tryRemount() {
+      if (this.remountTicksRemaining > 0 && this.lastControlledBoat != null) {
+         this.remountTicksRemaining--;
          if (this.mode.isSelected(0)
             && this.remount.isEnabled()
-            && this.abstractBoatEntity.isAlive()
-            && !this.abstractBoatEntity.isVehicle()
-            && !(mc.player.distanceToSqr(this.abstractBoatEntity) > 20.25)) {
-            if (this.intValue % 2 == 0) {
-               mc.gameMode.interact(mc.player, this.abstractBoatEntity, new net.minecraft.world.phys.EntityHitResult(this.abstractBoatEntity), InteractionHand.MAIN_HAND);
+            && this.lastControlledBoat.isAlive()
+            && !this.lastControlledBoat.isVehicle()
+            && !(mc.player.distanceToSqr(this.lastControlledBoat) > 20.25)) {
+            if (this.remountTicksRemaining % 2 == 0) {
+               mc.gameMode.interact(mc.player, this.lastControlledBoat, new net.minecraft.world.phys.EntityHitResult(this.lastControlledBoat), InteractionHand.MAIN_HAND);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             }
+         }
 
-            if (this.intValue == 0) {
-               this.abstractBoatEntity = null;
-            }
-         } else {
-            if (this.intValue == 0) {
-               this.abstractBoatEntity = null;
-            }
+         if (this.remountTicksRemaining == 0) {
+            this.lastControlledBoat = null;
          }
       }
    }
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && this.flag && this.mode.isSelected(0) && event.getPacket3() instanceof ClientboundMoveVehiclePacket) {
+      if (event.isIncoming() && this.controllingBoat && this.mode.isSelected(0) && event.getPacket() instanceof ClientboundMoveVehiclePacket) {
          event.cancel();
-         this.atomicInteger.incrementAndGet();
+         this.ignoredCorrectionCount.incrementAndGet();
       }
    }
 
-   public Vec3 method1932(AbstractBoat abstractBoat, Vec3 vec) {
-      if (this.isEnabled() && mc.player != null && abstractBoat.getControllingPassenger() == mc.player) {
-         this.flag = true;
-         float yRot = mc.player.getYRot();
-         abstractBoat.setYRot(yRot);
-         Input keyPresses = mc.player.input.keyPresses;
-         double d = (keyPresses.forward() ? 1.0 : 0.0) - (keyPresses.backward() ? 1.0 : 0.0);
-         double d2 = (keyPresses.left() ? 1.0 : 0.0) - (keyPresses.right() ? 1.0 : 0.0);
-         double x = 0.0;
-         double z = 0.0;
-         double d3;
-         if ((d3 = Math.sqrt(d * d + d2 * d2)) > 0.0) {
-            double d4 = this.speed.getValue3() / 20.0 / d3;
-            double d5;
-            double d6 = Math.sin(d5 = Math.toRadians(yRot));
-            double d7 = Math.cos(d5);
-            x = (d2 * d7 - d * d6) * d4;
-            z = (d * d7 + d2 * d6) * d4;
+   public Vec3 method1932(AbstractBoat boat, Vec3 originalMovement) {
+      if (this.isEnabled() && mc.player != null && boat.getControllingPassenger() == mc.player) {
+         this.controllingBoat = true;
+         float yaw = mc.player.getYRot();
+         boat.setYRot(yaw);
+         Input input = mc.player.input.keyPresses;
+         double forwardInput = (input.forward() ? 1.0 : 0.0) - (input.backward() ? 1.0 : 0.0);
+         double sidewaysInput = (input.left() ? 1.0 : 0.0) - (input.right() ? 1.0 : 0.0);
+         double velocityX = 0.0;
+         double velocityZ = 0.0;
+         double inputLength = Math.sqrt(forwardInput * forwardInput + sidewaysInput * sidewaysInput);
+         if (inputLength > 0.0) {
+            double speedScale = this.speed.getValue3() / 20.0 / inputLength;
+            double yawRadians = Math.toRadians(yaw);
+            double sinYaw = Math.sin(yawRadians);
+            double cosYaw = Math.cos(yawRadians);
+            velocityX = (sidewaysInput * cosYaw - forwardInput * sinYaw) * speedScale;
+            velocityZ = (forwardInput * cosYaw + sidewaysInput * sinYaw) * speedScale;
          }
 
-         double y = 0.0;
+         double velocityY = 0.0;
          if (this.vertical.isEnabled()) {
-            y = ((keyPresses.jump() ? 1.0 : 0.0) - (keyPresses.sprint() ? 1.0 : 0.0)) * this.verticalSpeed.getValue3() / 20.0;
+            velocityY = ((input.jump() ? 1.0 : 0.0) - (input.sprint() ? 1.0 : 0.0)) * this.verticalSpeed.getValue3() / 20.0;
          }
 
-         this.intValue2++;
-         if (this.flag2) {
-            y += 0.04;
-            this.flag2 = false;
-         } else if (this.antiKick.isEnabled() && y >= 0.0 && this.intValue2 % 40 == 0 && !abstractBoat.onGround()) {
-            y -= 0.04;
-            this.flag2 = true;
+         this.flightTicks++;
+         if (this.restoreAntiKickOffset) {
+            velocityY += 0.04;
+            this.restoreAntiKickOffset = false;
+         } else if (this.antiKick.isEnabled() && velocityY >= 0.0 && this.flightTicks % 40 == 0 && !boat.onGround()) {
+            velocityY -= 0.04;
+            this.restoreAntiKickOffset = true;
          }
 
-         Vec3 deltaMovement = new Vec3(x, y, z);
-         abstractBoat.setDeltaMovement(deltaMovement);
-         abstractBoat.fallDistance = 0.0;
+         Vec3 deltaMovement = new Vec3(velocityX, velocityY, velocityZ);
+         boat.setDeltaMovement(deltaMovement);
+         boat.fallDistance = 0.0;
          return deltaMovement;
       } else {
-         return vec;
+         return originalMovement;
       }
    }
 }

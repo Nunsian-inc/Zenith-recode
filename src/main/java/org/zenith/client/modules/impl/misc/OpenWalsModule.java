@@ -29,7 +29,7 @@ public final class OpenWalsModule extends Module {
    @EventTarget
    public void method950(CrosshairTargetEvent event) {
       if (mc.player != null && mc.level != null) {
-         Rotation rotation = Zenith.getInstance().getRotationManager().method7844();
+         Rotation rotation = Zenith.getInstance().getRotationManager().getEffectiveRotation();
          BlockHitResult hitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotation, mc.player.blockInteractionRange(), this::method951);
          if (hitResult != null && hitResult.getType() == Type.BLOCK) {
             mc.hitResult = hitResult;

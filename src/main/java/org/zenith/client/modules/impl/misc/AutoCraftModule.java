@@ -68,14 +68,14 @@ import org.zenith.base.font.Font;
 import org.zenith.base.font.Fonts;
 import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.events.DrawEvent;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MouseButtonEvent;
 import org.zenith.client.events.TickEvent;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ButtonSetting;
 import org.zenith.client.settings.Setting;
-import org.zenith.utility.api.Class1;
+import org.zenith.utility.api.BlockPosReference;
 import org.zenith.utility.game.CraftBindingController;
 import org.zenith.utility.game.CraftPresetSaver;
 import org.zenith.utility.game.CraftRecipe;
@@ -208,10 +208,10 @@ public final class AutoCraftModule extends Module {
    }
 
    @EventTarget
-   public void method1012(Event5 event) {
+   public void method1012(PreRotationEvent event) {
       if (this.rotation != null) {
          Rotation rotation = this.rotation;
-         rotationManager.method7849(
+         rotationManager.requestRotation(
             new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
             5,
             this
@@ -680,7 +680,7 @@ public final class AutoCraftModule extends Module {
          var optionalPos = this.method1053(craftRecipe);
          if (!optionalPos.isEmpty()) {
             this.blockPos4 = (BlockPos)optionalPos.get();
-            craftRecipe.method5407(Class1.method55(this.blockPos4));
+            craftRecipe.method5407(BlockPosReference.fromBlockPos(this.blockPos4));
             this.statusText = flag ? "Инвентарь полон, складываю..." : "Открываю сундук-склад";
             if (this.method1054(this.blockPos4, AutoCraftModule.Type.OPENING_OUTPUT) == AutoCraftModule.Type3.FAILED) {
                this.items4.remove(this.blockPos4);
@@ -710,7 +710,7 @@ public final class AutoCraftModule extends Module {
                var optionalPos = this.method1052(craftRecipe, key);
                if (optionalPos.isPresent()) {
                   this.blockPos3 = (BlockPos)optionalPos.get();
-                  craftRecipe.getItems3().put(key, Class1.method55(this.blockPos3));
+                  craftRecipe.getItems3().put(key, BlockPosReference.fromBlockPos(this.blockPos3));
                   this.statusText = "Открываю сундук с ресурсами";
                   this.text3 = key;
                   if (this.method1054(this.blockPos3, AutoCraftModule.Type.OPENING_SOURCE) == AutoCraftModule.Type3.FAILED) {
@@ -726,7 +726,7 @@ public final class AutoCraftModule extends Module {
             this.method1076("Не хватает ингредиентов");
          }
       } else if (this.blockPos != null) {
-         craftRecipe.method5408(Class1.method55(this.blockPos));
+         craftRecipe.method5408(BlockPosReference.fromBlockPos(this.blockPos));
          this.statusText = "Открываю верстак";
          if (this.method1054(this.blockPos, AutoCraftModule.Type.OPENING_WORKBENCH) == AutoCraftModule.Type3.FAILED) {
             this.blockPos = null;
@@ -842,14 +842,14 @@ public final class AutoCraftModule extends Module {
    private void method1041(CraftRecipe craftRecipe) {
       if (craftRecipe != null) {
          if (this.blockPos != null) {
-            craftRecipe.method5408(Class1.method55(this.blockPos));
+            craftRecipe.method5408(BlockPosReference.fromBlockPos(this.blockPos));
          }
 
          for (String key : craftRecipe.method5388().keySet()) {
-            this.method1052(craftRecipe, key).ifPresent(blockPos -> craftRecipe.getItems3().put(key, Class1.method55(blockPos)));
+            this.method1052(craftRecipe, key).ifPresent(blockPos -> craftRecipe.getItems3().put(key, BlockPosReference.fromBlockPos(blockPos)));
          }
 
-         this.method1053(craftRecipe).ifPresent(var1x -> craftRecipe.method5407(Class1.method55(var1x)));
+         this.method1053(craftRecipe).ifPresent(var1x -> craftRecipe.method5407(BlockPosReference.fromBlockPos(var1x)));
       }
    }
 
@@ -1029,7 +1029,7 @@ public final class AutoCraftModule extends Module {
    }
 
    private boolean method1055(BlockPos blockPos4) {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       BlockHitResult blockHitResult = TargetUtils.method3216(
          mc.player.getEyePosition(1.0F), rotation, this.method1061(), var1x -> var1x != null && var1x.getBlockPos().equals(blockPos4)
       );
@@ -1761,7 +1761,7 @@ public final class AutoCraftModule extends Module {
             JsonObject json3 = new JsonObject();
 
             for (Map.Entry entry : craftRecipe.getItems3().entrySet()) {
-               json3.add((String)entry.getKey(), ((Class1)entry.getValue()).toJson());
+               json3.add((String)entry.getKey(), ((BlockPosReference)entry.getValue()).toJson());
             }
 
             json2.add("sources", json3);
@@ -1806,16 +1806,16 @@ public final class AutoCraftModule extends Module {
                      craftRecipe.getItems3().clear();
 
                      for (Map.Entry entry : jsonObject3.entrySet()) {
-                        craftRecipe.getItems3().put((String)entry.getKey(), Class1.method58(((JsonElement)entry.getValue()).getAsJsonObject()));
+                        craftRecipe.getItems3().put((String)entry.getKey(), BlockPosReference.fromJson(((JsonElement)entry.getValue()).getAsJsonObject()));
                      }
                   }
 
                   if (jsonObject2.has("output") && jsonObject2.get("output").isJsonObject()) {
-                     craftRecipe.method5407(Class1.method58(jsonObject2.getAsJsonObject("output")));
+                     craftRecipe.method5407(BlockPosReference.fromJson(jsonObject2.getAsJsonObject("output")));
                   }
 
                   if (jsonObject2.has("workbench") && jsonObject2.get("workbench").isJsonObject()) {
-                     craftRecipe.method5408(Class1.method58(jsonObject2.getAsJsonObject("workbench")));
+                     craftRecipe.method5408(BlockPosReference.fromJson(jsonObject2.getAsJsonObject("workbench")));
                   }
                }
             }
@@ -1826,7 +1826,7 @@ public final class AutoCraftModule extends Module {
    }
 
    private boolean method1125(CraftRecipe craftRecipe) {
-      return craftRecipe != null && (!craftRecipe.getItems3().isEmpty() || craftRecipe.getClass1().method56() || craftRecipe.getClass12().method56());
+      return craftRecipe != null && (!craftRecipe.getItems3().isEmpty() || craftRecipe.getClass1().isPresent() || craftRecipe.getClass12().isPresent());
    }
 
    private void method1126(String statusText) {

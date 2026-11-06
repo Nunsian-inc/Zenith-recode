@@ -19,7 +19,7 @@ import org.zenith.client.modules.impl.render.ShaderHandModule;
 import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
 import org.zenith.utility.misc.AnimationCache;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.WardrobeCategory;
 
@@ -33,7 +33,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
       Wardrobe wardrobe = Wardrobe.method2488();
       HoveredData hoveredData = WardrobeFeatureRenderer.method4445(state);
       if (wardrobe != null && hoveredData != null) {
-         Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+         WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData);
          if (class2 == null) {
             return false;
          } else {
@@ -79,7 +79,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
          if (hoveredData == null) {
             return false;
          } else {
-            Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+            WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData);
             return class2 != null && (class2.data == null || class2.data.isFlag());
          }
       } else {
@@ -105,7 +105,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
          if (avatarRenderer.getModel() instanceof PlayerModel playerModel) {
             List<HoveredData> hoveredDatas = List.copyOf(wardrobe.method2498(mc.player.getGameProfile().name(), true));
             HoveredData hoveredData = wardrobe.method2499(hoveredDatas, FocusSlotEnum.CHARACTER);
-            int ordinal = modelPart == playerModel.rightArm ? Class15.Type.RIGHT_ARM.ordinal() : Class15.Type.LEFT_ARM.ordinal();
+            int ordinal = modelPart == playerModel.rightArm ? WardrobeModel.Type.RIGHT_ARM.ordinal() : WardrobeModel.Type.LEFT_ARM.ordinal();
             if (!flag2 || hoveredData != null && method6696(wardrobe, hoveredData, ordinal)) {
                if (!flag2 && hoveredData != null) {
                   return false;
@@ -216,14 +216,14 @@ public final class WardrobeRenderer implements MinecraftAccess {
    }
 
    private static boolean method6696(Wardrobe wardrobe, HoveredData hoveredData, int ordinal) {
-      Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+      WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData);
       return class2 != null && class2.method2033(ordinal);
    }
 
    private static void method6697(
       Wardrobe wardrobe, HoveredData hoveredData, int ordinal, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, ModelPart modelPart, boolean flag, Util3.Data data
    ) {
-      Class15 key = wardrobe.getRegistry().method1427(hoveredData);
+      WardrobeModel key = wardrobe.getRegistry().method1427(hoveredData);
       AnimationCache.Entry entry = AnimationCache.method7621(mc.player.getId(), hoveredData, false);
       float floatValue = (mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)) / 20.0F;
       entry.animationState.method6539(key, "idle", floatValue);
@@ -267,7 +267,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
    }
 
    private static final class Data {
-      private final Class15 class15;
+      private final WardrobeModel class15;
       private final float[] floatValues;
       private final int intValue;
       private final Matrix4f matrix4f;
@@ -279,7 +279,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
       private final ModelPart modelPart;
       private final Util3.Data data;
 
-      public Class15 class15() {
+      public WardrobeModel class15() {
          return this.class15;
       }
 
@@ -341,7 +341,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
       }
 
       private Data(
-         Class15 key,
+         WardrobeModel key,
          float[] floatValues,
          int intValue,
          Matrix4f matrix4f,
@@ -366,7 +366,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
          this.data = data;
       }
 
-      public Class15 getClass15() {
+      public WardrobeModel getClass15() {
          return this.class15;
       }
 

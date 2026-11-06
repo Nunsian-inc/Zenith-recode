@@ -19,7 +19,7 @@ public class MenuScroll {
       this.content = content;
       this.target = Math.min(this.target, Math.max(0.0F, content - viewport));
       this.target = Math.max(0.0F, this.target);
-      this.smooth.method2808(this.target);
+      this.smooth.animateTo(this.target);
    }
 
    public float offset() {
@@ -41,7 +41,7 @@ public class MenuScroll {
 
    public void reset() {
       this.target = 0.0F;
-      this.smooth.method2809(0.0F);
+      this.smooth.snapTo(0.0F);
    }
 
    public void renderRail(MenuDrawContext graphics, float floatValue, float y, float height) {

@@ -200,9 +200,9 @@ public final class PotionThrowerModule extends Module {
 
    private void method2683(MenuDrawContext menuDrawContext) {
       float previewAlpha;
-      if ((previewAlpha = this.animation.method2808(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
+      if ((previewAlpha = this.animation.animateTo(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
          for (Animation animation : this.animations) {
-            animation.method2809(0.0F);
+            animation.snapTo(0.0F);
          }
 
          this.intValue = -1;
@@ -283,7 +283,7 @@ public final class PotionThrowerModule extends Module {
       float f4 = (f3 = 360.0F / types.length) - 2.4F;
 
       for (int i = 0; i < types.length; i++) {
-         float hover = this.animations[i].method2808(i == n ? 1.0F : 0.0F);
+         float hover = this.animations[i].animateTo(i == n ? 1.0F : 0.0F);
          boolean flag = this.slots[i] == null;
          float f5 = f2 + hover * 6.0F;
          ZenithColor zenithColor;

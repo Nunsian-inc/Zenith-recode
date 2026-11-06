@@ -38,8 +38,8 @@ public final class AnimationCache {
 
    public static final class Entry {
       public final AnimationState animationState = new AnimationState();
-      public final Class16 class16 = new Class16();
-      public final Class2 class2 = new Class2();
+      public final ModelPoseEvaluator class16 = new ModelPoseEvaluator();
+      public final AnimationInput class2 = new AnimationInput();
       public float[] floatValues = new float[0];
       public float floatValue;
       public long longValue;

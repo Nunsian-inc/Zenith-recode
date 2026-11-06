@@ -25,8 +25,8 @@ public final class AutoAcceptModule extends Module {
    @EventTarget
    public void onPacket(PacketEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (event.method7100()) {
-            if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+         if (event.isIncoming()) {
+            if (event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket) {
                String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
                if (lowerCase.contains("телепортироваться") || lowerCase.contains("has requested teleport") || lowerCase.contains("просит к вам телепортироваться")) {
                   mc.execute(() -> this.method7736(lowerCase));

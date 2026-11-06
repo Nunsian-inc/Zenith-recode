@@ -26,10 +26,10 @@ import org.zenith.client.modules.impl.movement.ElytraBoosterModule;
 import org.zenith.client.modules.impl.movement.ElytraTargetModule;
 import org.zenith.client.modules.impl.movement.GrimGlideModule;
 import org.zenith.client.modules.impl.render.SwingAnimationModule;
-import org.zenith.utility.misc.Handler6;
+import org.zenith.utility.misc.ServerPositionTracker;
 
 @Mixin({LivingEntity.class})
-public class MixinLivingEntity implements MinecraftAccess, Handler6 {
+public class MixinLivingEntity implements MinecraftAccess, ServerPositionTracker {
    @Unique
    public float safeYaw = 0.0F;
    @Unique
@@ -123,9 +123,9 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       if ((Object)this == Minecraft.getInstance().player) {
          RotationManager rotationManager = Zenith.getInstance().getRotationManager();
          Rotation currentRotation = rotationManager.getCurrentRotation();
-         Vec3 lookAngle = currentRotation == null ? Minecraft.getInstance().player.getLookAngle() : currentRotation.method3135();
+         Vec3 lookAngle = currentRotation == null ? Minecraft.getInstance().player.getLookAngle() : currentRotation.toDirection();
          Rotation rotation2 = rotationManager.getRotation2();
-         Vec3 vec2 = rotation2 == null ? lookAngle : rotation2.method3135();
+         Vec3 vec2 = rotation2 == null ? lookAngle : rotation2.toDirection();
          Vec3 returnValue = ElytraBoosterModule.INSTANCE.method1770(vec, (Vec3)callbackInfoReturnable.getReturnValue(), lookAngle, vec2);
          returnValue = GrimGlideModule.INSTANCE.method5976(vec, returnValue, lookAngle);
          returnValue = ElytraTargetModule.INSTANCE.method5249(vec, returnValue, lookAngle);
@@ -161,7 +161,7 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
          return vec;
       } else {
          Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return currentRotation == null ? vec : currentRotation.method3135();
+         return currentRotation == null ? vec : currentRotation.toDirection();
       }
    }
 

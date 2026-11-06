@@ -85,11 +85,11 @@ public class AntiCheatProbeModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      Packet packet3 = event.getPacket3();
+      Packet packet3 = event.getPacket();
       if (packet3 != null) {
          long now = System.currentTimeMillis();
          long l = now - this.longValue;
-         if (!event.method7100()) {
+         if (!event.isIncoming()) {
             String text = this.method6975(packet3);
             if (text != null) {
                this.items3.add(new AntiCheatProbeModule.Entry(text, now));

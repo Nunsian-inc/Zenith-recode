@@ -226,8 +226,8 @@ public class ExchangeCommand extends CommandAbstract {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && this.waitingPurchase) {
-         String packetText = this.packetText(event.getPacket3());
+      if (event.isIncoming() && this.waitingPurchase) {
+         String packetText = this.packetText(event.getPacket());
          if (packetText != null) {
             Matcher matcher = PURCHASED.matcher(packetText);
             if (matcher.find()) {

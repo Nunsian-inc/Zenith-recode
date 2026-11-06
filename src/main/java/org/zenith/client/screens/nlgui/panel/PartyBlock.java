@@ -136,7 +136,7 @@ public final class PartyBlock implements MinecraftAccess {
          .custom(
             36.0F,
             (var3x, var4x, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
-               previewAlpha *= this.appear.method2808(1.0F);
+               previewAlpha *= this.appear.animateTo(1.0F);
                float floatValue = f + 8.0F;
                float width = f3 - 16.0F;
                float y = f2 + 2.0F;
@@ -357,7 +357,7 @@ public final class PartyBlock implements MinecraftAccess {
          .custom(
             height3 + 6.0F,
             (var11x, var12x, var13x, var14x, f5, var16x, var17x, var18x) -> {
-               var17x *= this.appear.method2808(1.0F);
+               var17x *= this.appear.animateTo(1.0F);
                float var19x = var14x + 8.0F;
                float var20x = f5 + 3.0F;
                float width3 = var16x - 16.0F;
@@ -815,7 +815,7 @@ public final class PartyBlock implements MinecraftAccess {
          .custom(
             24.0F,
             (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
-               previewAlpha *= this.appear.method2808(1.0F);
+               previewAlpha *= this.appear.animateTo(1.0F);
                float floatValue = f + 8.0F;
                float width = f3 - 16.0F;
                BoundsData boundsData = new BoundsData(floatValue, f2 + 3.0F, width, 18.0F);
@@ -1126,7 +1126,7 @@ public final class PartyBlock implements MinecraftAccess {
       Identifier texture = uid > 0L ? CloudAvatarCache.get(Long.toString(uid)) : null;
       ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
       if (texture != null) {
-         float f = this.avatarFade.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+         float f = this.avatarFade.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
          menuDrawContext.drawRoundedTexture(texture, floatValue, cardAvatarY, height, height, headerRadius, ZenithColor.INSTANCE.method7294(previewAlpha * f));
       } else {
          menuDrawContext.drawRoundedRect(floatValue, cardAvatarY, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F));
@@ -1198,7 +1198,7 @@ public final class PartyBlock implements MinecraftAccess {
    }
 
    private float hover(String key, boolean contains) {
-      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    private static String fit(Font font, String text, float width) {

@@ -118,7 +118,7 @@ public final class RouteCommand extends CommandAbstract {
    private float yawTo(LocalPlayer player, BlockPos nextBlock) {
       Vec3 vec = Pathfinder.method761(nextBlock);
       Vec3 vec2 = new Vec3(vec.x, player.getEyeY(), vec.z);
-      return Rotation.method3128(vec2, player.getEyePosition()).getFloatValue();
+      return Rotation.lookingAt(vec2, player.getEyePosition()).getFloatValue();
    }
 
    private void updateStuckState(LocalPlayer player) {

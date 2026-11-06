@@ -4,7 +4,7 @@ import lombok.Generated;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.ZenithColor;
 
-public abstract class Particle implements Handler7 {
+public abstract class Particle implements RenderableParticle {
    public Vec3 vec3d;
    public Vec3 vec3d2;
    public Vec3 vec3d3;
@@ -32,7 +32,7 @@ public abstract class Particle implements Handler7 {
    }
 
    @Override
-   public boolean method1555() {
+   public boolean isExpired() {
       return this.intValue <= 0;
    }
 
@@ -52,13 +52,13 @@ public abstract class Particle implements Handler7 {
 
    @Generated
    @Override
-   public Vec3 method1556() {
+   public Vec3 getPosition() {
       return this.vec3d;
    }
 
    @Generated
    @Override
-   public Vec3 method1557() {
+   public Vec3 getPreviousPosition() {
       return this.vec3d2;
    }
 
@@ -90,19 +90,19 @@ public abstract class Particle implements Handler7 {
 
    @Generated
    @Override
-   public ZenithColor method1558() {
+   public ZenithColor getColor() {
       return this.zenithColor;
    }
 
    @Generated
    @Override
-   public String method1559() {
+   public String getTextureKey() {
       return this.text;
    }
 
    @Generated
    @Override
-   public float method1560() {
+   public float getRotationDegrees() {
       return this.floatValue2;
    }
 

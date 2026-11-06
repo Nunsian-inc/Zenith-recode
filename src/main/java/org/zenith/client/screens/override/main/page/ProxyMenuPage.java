@@ -91,7 +91,7 @@ public final class ProxyMenuPage implements MainMenuPage {
       this.viewport = new BoundsData(listArea.getFloatValue(), listArea.getFloatValue2(), width, listArea.height());
       this.rowBounds = new BoundsData[proxyConfigs.size()];
       this.removeBounds = new BoundsData[proxyConfigs.size()];
-      float f = this.entrance.method2808(1.0F);
+      float f = this.entrance.animateTo(1.0F);
       graphics.enableScissor(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.getFloatValue() + width, listArea.getFloatValue2() + listArea.height());
       float y = listArea.getFloatValue2() - this.scroll.offset();
 

@@ -23,7 +23,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.utility.api.BlockListSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.ScrollHandler;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.RenderShaders;
@@ -59,7 +59,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, MouseButton enum2) {
       if (this.bounds != null && this.bounds.method8092(anchorMouseX, lastClickY, 2.0F)) {
          this.expanded = (!this.expanded);
          return true;
@@ -75,7 +75,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
@@ -117,7 +117,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
 
    @Override
    public void renderPriority(MenuDrawContext menuDrawContext, float x, float y, float f, float f2, float previewAlpha, float f3) {
-      this.animationExpanded.method2807(this.expanded);
+      this.animationExpanded.updateVisibility(this.expanded);
       if (!(this.animationExpanded.getValue() <= 0.0F) && this.bounds != null) {
          if (this.searchBox == null) {
             this.searchBox = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.3F), "Search...", 0.0F);
@@ -377,7 +377,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
    }
 
    @Override
-   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (!this.expanded || this.rectBounds == null) {
          return false;
       } else if (!this.rectBounds.contains(lastClickX, lastClickY)) {
@@ -410,7 +410,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
             this.scrollHandler.setDoubleValue2(0.0);
             return true;
          } else {
-            if (this.listScissorBounds != null && this.listScissorBounds.contains(lastClickX, lastClickY) && enum2.getIntValue() == 0) {
+            if (this.listScissorBounds != null && this.listScissorBounds.contains(lastClickX, lastClickY) && enum2.getGlfwButton() == 0) {
                for (Entry entry : this.itemBounds.entrySet()) {
                   if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
                      if (this.setting.method1621((Block)entry.getKey())) {

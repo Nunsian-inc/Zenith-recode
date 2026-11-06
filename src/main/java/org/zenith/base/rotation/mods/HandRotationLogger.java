@@ -15,9 +15,9 @@ import net.minecraft.world.phys.Vec3;
 import org.zenith.Rotation;
 import org.zenith.client.modules.impl.combat.AuraModule;
 import org.zenith.utility.game.PlayerSimulation;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public final class HandRotationLogger extends Util22 {
+public final class HandRotationLogger extends RotationContext {
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static final boolean CONST_flag = false;
    private static final boolean CONST_flag2 = true;
@@ -38,7 +38,7 @@ public final class HandRotationLogger extends Util22 {
    private static final String text = "\n";
 
    public Rotation method3727() {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
       if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
          int tickCount = mc.player.tickCount;
@@ -63,7 +63,7 @@ public final class HandRotationLogger extends Util22 {
             double attackStrengthScale = mc.player.getAttackStrengthScale(0.0F);
             int[] ints = this.entry.method3745(doubles, this::predict, this.random, attackStrengthScale);
             double doubleValue = this.entry2.doubleValue;
-            Rotation rotation2 = rotation.method3140((float)(ints[0] * doubleValue), (float)(ints[1] * doubleValue));
+            Rotation rotation2 = rotation.add((float)(ints[0] * doubleValue), (float)(ints[1] * doubleValue));
             this.method3729(tickCount, doubles, ints, size);
             this.method3731(tickCount, rotation2);
             return rotation2;

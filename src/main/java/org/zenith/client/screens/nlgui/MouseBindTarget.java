@@ -1,11 +1,11 @@
 package org.zenith.client.screens.nlgui;
 
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 
 public interface MouseBindTarget {
-   boolean bindMouse(Enum3 enum2);
+   boolean bindMouse(MouseButton enum2);
 
-   static boolean bindable(Enum3 enum2) {
-      return enum2 != null && enum2.getIntValue() >= Enum3.MIDDLE.getIntValue();
+   static boolean bindable(MouseButton enum2) {
+      return enum2 != null && enum2.getGlfwButton() >= MouseButton.MIDDLE.getGlfwButton();
    }
 }

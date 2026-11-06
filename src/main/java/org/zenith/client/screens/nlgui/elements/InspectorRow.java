@@ -35,7 +35,7 @@ import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.BlockListSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.KeyName;
 import org.zenith.utility.misc.Localization;
 import org.zenith.utility.misc.ModuleHeaderSetting;
@@ -262,7 +262,7 @@ public class InspectorRow implements MouseBindTarget {
          this.modeOptions.clearBounds();
       }
 
-      this.visibleAnimation.method2808(this.setting.isVisible() ? 1.0F : 0.0F);
+      this.visibleAnimation.animateTo(this.setting.isVisible() ? 1.0F : 0.0F);
       float f;
       if (!((f = this.visibleAnimation.getValue()) <= 0.001F)) {
          ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
@@ -275,7 +275,7 @@ public class InspectorRow implements MouseBindTarget {
             this.bounds = new BoundsData(floatValue, y, width, height);
             boolean contains = this.bounds.contains(mouseX, mouseY);
             float f2;
-            if ((f2 = this.hoverAnimation.method2808(contains ? 1.0F : 0.0F)) > 0.01F) {
+            if ((f2 = this.hoverAnimation.animateTo(contains ? 1.0F : 0.0F)) > 0.01F) {
                menuDrawContext.drawRect(floatValue, y, width, height, currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(2.0F).method7294(previewAlpha2 * f2));
             }
 
@@ -312,7 +312,7 @@ public class InspectorRow implements MouseBindTarget {
             }
 
             float f4;
-            if (!((f4 = this.expandAnimation.method2808(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
+            if (!((f4 = this.expandAnimation.animateTo(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
                if (this.modeOptions != null) {
                   float width2 = Math.max(0.0F, width - 16.0F - this.depth * 8.0F);
                   float y2 = y + height;
@@ -470,7 +470,7 @@ public class InspectorRow implements MouseBindTarget {
                booleanSetting.isEnabled() ? 1 : -1
             );
          float floatValue = f3 - draw - GuiStyle.PADDING.intValue() - 9.0F;
-         this.renderSwitch(menuDrawContext, floatValue, y + (height - 5.0F) / 2.0F, this.toggleAnimation.method2808(booleanSetting.isEnabled() ? 1.0F : 0.0F), previewAlpha, currentStyle);
+         this.renderSwitch(menuDrawContext, floatValue, y + (height - 5.0F) / 2.0F, this.toggleAnimation.animateTo(booleanSetting.isEnabled() ? 1.0F : 0.0F), previewAlpha, currentStyle);
          this.valueBounds = new BoundsData(floatValue, y, f3 - floatValue, height);
       } else if (this.bindSetting == null) {
          if (this.setting instanceof ModeSetting modeSetting) {
@@ -601,17 +601,17 @@ public class InspectorRow implements MouseBindTarget {
       float floatValue = this.binding ? 17.0F : Math.max(font.width(valueText) + 6.0F, 10.0F);
       if (!this.keyCapKnown) {
          this.keyCapKnown = true;
-         this.keyCapWidth.method2809(floatValue);
+         this.keyCapWidth.snapTo(floatValue);
       }
 
-      float width = this.keyCapWidth.method2808(floatValue);
+      float width = this.keyCapWidth.animateTo(floatValue);
       float height2 = 8.0F;
       float f2 = 1.1F;
       float floatValue2 = f - width + this.shakeOffset();
       float f3 = y + (height - height2 - f2) / 2.0F;
       BoundsData boundsData = new BoundsData(floatValue2, y, width, height);
       boolean contains = boundsData.contains(lastClickX, lastClickY);
-      float f4 = this.keyHover.method2808(contains && !this.binding ? 1.0F : 0.0F);
+      float f4 = this.keyHover.animateTo(contains && !this.binding ? 1.0F : 0.0F);
       long l;
       if ((l = this.keyAnim == 0 ? Long.MAX_VALUE : now - this.keyAnimAt) >= 720L) {
          this.keyAnim = 0;
@@ -799,7 +799,7 @@ public class InspectorRow implements MouseBindTarget {
       ZenithStyle currentStyle
    ) {
       ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
-      float f3 = this.dragAnimation.method2808(this.dragging ? 1.0F : 0.0F);
+      float f3 = this.dragAnimation.animateTo(this.dragging ? 1.0F : 0.0F);
       ZenithColor zenithColor2 = currentStyle.getTextEnable().getZenithColor().method7295(zenithColor, f3 * 0.6F);
       this.valueRoll.draw(menuDrawContext, font, numberText, f, centeredTextY, zenithColor2.method7294(previewAlpha), this.numberDirection);
       float f4 = f - 30.0F;
@@ -1089,13 +1089,13 @@ public class InspectorRow implements MouseBindTarget {
    }
 
    @Override
-   public boolean bindMouse(Enum3 enum2) {
+   public boolean bindMouse(MouseButton enum2) {
       if (this.binding && BindCapture.owner() != this) {
          this.binding = false;
       }
 
       if (this.binding && this.bindSetting != null && this.setting.isVisible() && MouseBindTarget.bindable(enum2)) {
-         this.bindSetting.setBind(enum2.getIntValue(), 0);
+         this.bindSetting.setBind(enum2.getGlfwButton(), 0);
          this.binding = false;
          BindCapture.end(this);
          this.bindLabel.set();
@@ -1127,7 +1127,7 @@ public class InspectorRow implements MouseBindTarget {
       }
    }
 
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (!this.setting.isVisible()) {
          this.cancelBinding();
          return false;
@@ -1190,7 +1190,7 @@ public class InspectorRow implements MouseBindTarget {
                playToggleSound(booleanSetting.isEnabled());
                return true;
             } else if (this.modeOptions != null) {
-               if (enum2 != Enum3.LEFT && enum2 != Enum3.RIGHT) {
+               if (enum2 != MouseButton.LEFT && enum2 != MouseButton.RIGHT) {
                   return false;
                } else {
                   this.expanded = !this.expanded;
@@ -1222,7 +1222,7 @@ public class InspectorRow implements MouseBindTarget {
             } else if (this.bindMouse(enum2)) {
                return true;
             } else {
-               if (enum2 == Enum3.RIGHT) {
+               if (enum2 == MouseButton.RIGHT) {
                   this.cancelBinding();
                   this.bindSetting.setBind(-1, 0);
                   this.bindLabel.cleared();
@@ -1261,7 +1261,7 @@ public class InspectorRow implements MouseBindTarget {
       this.editing = false;
    }
 
-   public void onMouseReleased(double x, double y, Enum3 enum2) {
+   public void onMouseReleased(double x, double y, MouseButton enum2) {
       this.dragging = false;
       this.dragOffset = 0.0F;
       this.edgePinned = false;

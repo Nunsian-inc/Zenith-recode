@@ -38,7 +38,7 @@ import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.BlockListSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.GlowColor;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -97,7 +97,7 @@ public class GuiStyleElement extends Element {
 
    @Override
    public float getHeight() {
-      this.expandedAnimation.method2807(this.expanded);
+      this.expandedAnimation.updateVisibility(this.expanded);
       float f = this.expandedAnimation.getValue();
       return 23.0F + this.getExpandedSettingsHeight() * f;
    }
@@ -120,7 +120,7 @@ public class GuiStyleElement extends Element {
    }
 
    public void renderPriority(MenuDrawContext menuDrawContext, float x, float y, float f, float f2, float previewAlpha) {
-      this.expandedAnimation.method2807(this.expanded);
+      this.expandedAnimation.updateVisibility(this.expanded);
       float f3 = this.expandedAnimation.getValue();
       this.renderHeaderSettingsPriority(menuDrawContext, x, y, f, f2, previewAlpha);
       if (!(f3 <= 0.01F)) {
@@ -154,15 +154,15 @@ public class GuiStyleElement extends Element {
          this.lastIndex = lastIndex;
       } else if ((lastX != this.lastX || lastY != this.lastY) && lastIndex != this.lastIndex) {
          this.animated = true;
-         this.animationPosX.method2810(lastX);
-         this.animationPosY.method2810(lastY);
+         this.animationPosX.setTarget(lastX);
+         this.animationPosY.setTarget(lastY);
          this.lastX = lastX;
          this.lastY = lastY;
       }
 
       if (this.animated) {
-         lastX = this.animationPosX.method2808(lastX);
-         lastY = this.animationPosY.method2808(lastY);
+         lastX = this.animationPosX.animateTo(lastX);
+         lastY = this.animationPosY.animateTo(lastY);
          if (this.animationPosX.isDone() && this.animationPosY.isDone()) {
             this.animated = false;
          }
@@ -174,10 +174,10 @@ public class GuiStyleElement extends Element {
       this.lastIndex = lastIndex;
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.expandedAnimation.method2807(this.expanded);
+         this.expandedAnimation.updateVisibility(this.expanded);
          float f = this.expandedAnimation.getValue();
          this.bounds = new BoundsData(lastX, lastY, this.getWidth(), 23.0F);
-         this.animationEnable.method2807((this.style == currentStyle));
+         this.animationEnable.updateVisibility((this.style == currentStyle));
          float width = this.bounds.width();
          float height = this.getHeight();
          menuDrawContext.drawRoundedRectBatched(
@@ -272,7 +272,7 @@ public class GuiStyleElement extends Element {
       }
    }
 
-   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       byte b = 0;
 
       for (int i = 0; i < this.settings.size(); i++) {
@@ -286,7 +286,7 @@ public class GuiStyleElement extends Element {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       for (int i = Math.min(2, this.settings.size()) - 1; i >= 0; i--) {
          GuiSetting setting = this.settings.get(i);
          if (setting.isVisible() && setting.onMouseClicked(lastClickX, lastClickY, enum2)) {
@@ -295,9 +295,9 @@ public class GuiStyleElement extends Element {
       }
 
       if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
-         if (enum2 == Enum3.LEFT) {
+         if (enum2 == MouseButton.LEFT) {
             Zenith.getInstance().getStyleManager().setCurrentStyle(this.style);
-         } else if (enum2 == Enum3.RIGHT) {
+         } else if (enum2 == MouseButton.RIGHT) {
             this.expanded = (!this.expanded);
          }
 
@@ -341,7 +341,7 @@ public class GuiStyleElement extends Element {
    }
 
    @Override
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
       for (int i = 0; i < Math.min(2, this.settings.size()); i++) {
          this.settings.get(i).onMouseReleased(d, d2, enum2);
       }

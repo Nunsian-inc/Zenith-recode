@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
-import org.zenith.utility.misc.Class12;
+import org.zenith.utility.misc.ScriptHook;
 import org.zenith.utility.misc.ModuleHookDefinitions;
 
 public final class ScriptHooks {
@@ -17,103 +17,103 @@ public final class ScriptHooks {
    }
 
    public static List<String> method5049() {
-      ArrayList<String> strings = new ArrayList<>();
+      ArrayList<String> hookDescriptions = new ArrayList<>();
 
       for (Entry entry : ModuleHookDefinitions.method6117().entrySet()) {
-         strings.add("`" + (String)entry.getKey() + "` — " + ((Class12)entry.getValue()).getText2());
+         hookDescriptions.add("`" + (String)entry.getKey() + "` — " + ((ScriptHook)entry.getValue()).getText2());
       }
 
-      return strings;
+      return hookDescriptions;
    }
 
    public static Scriptable method5050(Storage storage, Script workspace, Scriptable scope) {
-      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
-      entry2.method6274("on", var3x -> {
-         String str = ScriptValueUtils.method6254(var3x, 0, "");
-         Class12 class2 = ModuleHookDefinitions.method6117().get(str);
-         if (class2 == null) {
-            throw ScriptValueUtils.method6251("неизвестный хук: " + str + " (список — hooks.names())");
+      ScriptValueUtils.Entry2 hooksApi = ScriptValueUtils.method6247(scope);
+      hooksApi.method6274("on", args -> {
+         String hookName = ScriptValueUtils.method6254(args, 0, "");
+         ScriptHook hookDefinition = ModuleHookDefinitions.method6117().get(hookName);
+         if (hookDefinition == null) {
+            throw ScriptValueUtils.method6251("неизвестный хук: " + hookName + " (список — hooks.names())");
          } else {
-            var function = ScriptValueUtils.method6260(var3x, 1);
-            String lowerCase = ScriptValueUtils.method6254(var3x, 2, "late").toLowerCase(Locale.ROOT);
+            var callback = ScriptValueUtils.method6260(args, 1);
+            String order = ScriptValueUtils.method6254(args, 2, "late").toLowerCase(Locale.ROOT);
 
-            byte intValue = switch (lowerCase) {
+            byte priority = switch (order) {
                case "early", "before" -> -100;
                case "late", "after" -> 100;
                default -> throw ScriptValueUtils.method6251("порядок хука: early или late");
             };
-            Runnable runnable = method5051(class2, intValue, storage, workspace, scope, function);
-            workspace.method1413(runnable::run);
+            Runnable unregisterHook = registerHook(hookDefinition, priority, storage, workspace, scope, callback);
+            workspace.method1413(unregisterHook::run);
             return null;
          }
       });
-      entry2.method6274("names", var1x -> ScriptValueUtils.method6267(scope, new ArrayList<>(ModuleHookDefinitions.method6117().keySet())));
-      return entry2.getScriptableObject();
+      hooksApi.method6274("names", args -> ScriptValueUtils.method6267(scope, new ArrayList<>(ModuleHookDefinitions.method6117().keySet())));
+      return hooksApi.getScriptableObject();
    }
 
-   private static Runnable method5051(Class12<?> class2, int intValue, Storage storage, Script workspace, Scriptable scope, Function function) {
-      Class classValue = class2.getClassValue();
-      if (classValue == ModuleHookDefinitions.Entry6.class) {
-         return ((Class12<ModuleHookDefinitions.Entry6>)(Class12)class2).method1646(
-            intValue,
-            var4x -> method5052(
+   private static Runnable registerHook(ScriptHook<?> hookDefinition, int priority, Storage storage, Script workspace, Scriptable scope, Function callback) {
+      Class hookType = hookDefinition.getClassValue();
+      if (hookType == ModuleHookDefinitions.Entry6.class) {
+         return ((ScriptHook<ModuleHookDefinitions.Entry6>)(ScriptHook)hookDefinition).subscribe(
+            priority,
+            event -> invokeHook(
                storage,
                workspace,
-               function,
-               () -> ScriptValueUtils.method6247(scope).method6277("value", var4x.value).method6277("vanilla", var4x.doubleValue).method6274("set", var1xxx -> {
-                  var4x.value = ScriptValueUtils.method6256(var1xxx, 0, var4x.value);
+               callback,
+               () -> ScriptValueUtils.method6247(scope).method6277("value", event.value).method6277("vanilla", event.doubleValue).method6274("set", args -> {
+                  event.value = ScriptValueUtils.method6256(args, 0, event.value);
                   return null;
                }).getScriptableObject(),
                null
             )
          );
-      } else if (classValue == ModuleHookDefinitions.Entry.class) {
-         return ((Class12<ModuleHookDefinitions.Entry>)(Class12)class2).method1646(intValue, var4x -> method5052(storage, workspace, function, () -> ScriptValueUtils.method6247(scope).method6274("cancel", var1xxx -> {
-            var4x.cancelled = !ScriptValueUtils.method6252(var1xxx, 0) || ScriptValueUtils.method6259(var1xxx, 0, true);
+      } else if (hookType == ModuleHookDefinitions.Entry.class) {
+         return ((ScriptHook<ModuleHookDefinitions.Entry>)(ScriptHook)hookDefinition).subscribe(priority, event -> invokeHook(storage, workspace, callback, () -> ScriptValueUtils.method6247(scope).method6274("cancel", args -> {
+            event.cancelled = !ScriptValueUtils.method6252(args, 0) || ScriptValueUtils.method6259(args, 0, true);
             return null;
-         }).method6274("cancelled", var1xxx -> var4x.cancelled).getScriptableObject(), () -> var4x.cancelled = true));
-      } else if (classValue == ModuleHookDefinitions.Entry3.class) {
-         return ((Class12<ModuleHookDefinitions.Entry3>)(Class12)class2).method1646(
-            intValue,
-            var4x -> method5052(storage, workspace, function, () -> ScriptValueUtils.method6247(scope).method6277("kind", var4x.text).method6274("cancel", var1xxx -> {
-               var4x.cancelled = !ScriptValueUtils.method6252(var1xxx, 0) || ScriptValueUtils.method6259(var1xxx, 0, true);
+         }).method6274("cancelled", args -> event.cancelled).getScriptableObject(), () -> event.cancelled = true));
+      } else if (hookType == ModuleHookDefinitions.Entry3.class) {
+         return ((ScriptHook<ModuleHookDefinitions.Entry3>)(ScriptHook)hookDefinition).subscribe(
+            priority,
+            event -> invokeHook(storage, workspace, callback, () -> ScriptValueUtils.method6247(scope).method6277("kind", event.text).method6274("cancel", args -> {
+               event.cancelled = !ScriptValueUtils.method6252(args, 0) || ScriptValueUtils.method6259(args, 0, true);
                return null;
-            }).method6274("cancelled", var1xxx -> var4x.cancelled).getScriptableObject(), () -> var4x.cancelled = true)
+            }).method6274("cancelled", args -> event.cancelled).getScriptableObject(), () -> event.cancelled = true)
          );
-      } else if (classValue == ModuleHookDefinitions.Entry5.class) {
-         return ((Class12<ModuleHookDefinitions.Entry5>)(Class12)class2).method1646(
-            intValue,
-            var4x -> method5052(storage, workspace, function, () -> ScriptValueUtils.method6247(scope).method6277("text", var4x.text).method6274("setText", var1xxx -> {
-               var4x.text = ScriptValueUtils.method6254(var1xxx, 0, "");
+      } else if (hookType == ModuleHookDefinitions.Entry5.class) {
+         return ((ScriptHook<ModuleHookDefinitions.Entry5>)(ScriptHook)hookDefinition).subscribe(
+            priority,
+            event -> invokeHook(storage, workspace, callback, () -> ScriptValueUtils.method6247(scope).method6277("text", event.text).method6274("setText", args -> {
+               event.text = ScriptValueUtils.method6254(args, 0, "");
                return null;
-            }).method6274("replace", var1xxx -> {
-               String var2xx = ScriptValueUtils.method6254(var1xxx, 0, "");
-               if (!var2xx.isEmpty()) {
-                  var4x.text = var4x.text.replace(var2xx, ScriptValueUtils.method6254(var1xxx, 1, ""));
+            }).method6274("replace", args -> {
+               String searchText = ScriptValueUtils.method6254(args, 0, "");
+               if (!searchText.isEmpty()) {
+                  event.text = event.text.replace(searchText, ScriptValueUtils.method6254(args, 1, ""));
                }
 
                return null;
             }).getScriptableObject(), null)
          );
-      } else if (classValue == ModuleHookDefinitions.Entry4.class) {
-         return ((Class12<ModuleHookDefinitions.Entry4>)(Class12)class2).method1646(
-            intValue,
-            var4x -> method5052(
+      } else if (hookType == ModuleHookDefinitions.Entry4.class) {
+         return ((ScriptHook<ModuleHookDefinitions.Entry4>)(ScriptHook)hookDefinition).subscribe(
+            priority,
+            event -> invokeHook(
                storage,
                workspace,
-               function,
+               callback,
                () -> ScriptValueUtils.method6247(scope)
-                  .method6277("velocity", ScriptValueUtils.method6270(scope, var4x.vec3d.x, var4x.vec3d.y, var4x.vec3d.z))
-                  .method6277("player", ScriptValueUtils.method6270(scope, var4x.vec3d3.x, var4x.vec3d3.y, var4x.vec3d3.z))
-                  .method6277("look", ScriptValueUtils.method6270(scope, var4x.vec3d4.x, var4x.vec3d4.y, var4x.vec3d4.z))
-                  .method6277("life", (double)var4x.intValue)
+                  .method6277("velocity", ScriptValueUtils.method6270(scope, event.vec3d.x, event.vec3d.y, event.vec3d.z))
+                  .method6277("player", ScriptValueUtils.method6270(scope, event.vec3d3.x, event.vec3d3.y, event.vec3d3.z))
+                  .method6277("look", ScriptValueUtils.method6270(scope, event.vec3d4.x, event.vec3d4.y, event.vec3d4.z))
+                  .method6277("life", (double)event.intValue)
                   .method6274(
                      "set",
-                     var1xxx -> {
-                        var4x.vec3d = new Vec3(
-                           ScriptValueUtils.method6256(var1xxx, 0, var4x.vec3d.x),
-                           ScriptValueUtils.method6256(var1xxx, 1, var4x.vec3d.y),
-                           ScriptValueUtils.method6256(var1xxx, 2, var4x.vec3d.z)
+                     args -> {
+                        event.vec3d = new Vec3(
+                           ScriptValueUtils.method6256(args, 0, event.vec3d.x),
+                           ScriptValueUtils.method6256(args, 1, event.vec3d.y),
+                           ScriptValueUtils.method6256(args, 2, event.vec3d.z)
                         );
                         return null;
                      }
@@ -122,49 +122,49 @@ public final class ScriptHooks {
                null
             )
          );
-      } else if (classValue == ModuleHookDefinitions.Entry2.class) {
-         return ((Class12<ModuleHookDefinitions.Entry2>)(Class12)class2).method1646(
-            intValue,
-            var4x -> method5052(
+      } else if (hookType == ModuleHookDefinitions.Entry2.class) {
+         return ((ScriptHook<ModuleHookDefinitions.Entry2>)(ScriptHook)hookDefinition).subscribe(
+            priority,
+            event -> invokeHook(
                storage,
                workspace,
-               function,
+               callback,
                () -> ScriptValueUtils.method6247(scope)
-                  .method6277("id", var4x.text)
-                  .method6277("category", var4x.text2)
-                  .method6277("x", var4x.doubleValue)
-                  .method6277("y", var4x.doubleValue2)
-                  .method6277("z", var4x.doubleValue3)
-                  .method6277("volume", (double)var4x.floatValue)
-                  .method6277("pitch", (double)var4x.floatValue2)
-                  .method6274("cancel", var1xxx -> {
-                     var4x.cancelled = !ScriptValueUtils.method6252(var1xxx, 0) || ScriptValueUtils.method6259(var1xxx, 0, true);
+                  .method6277("id", event.text)
+                  .method6277("category", event.text2)
+                  .method6277("x", event.doubleValue)
+                  .method6277("y", event.doubleValue2)
+                  .method6277("z", event.doubleValue3)
+                  .method6277("volume", (double)event.floatValue)
+                  .method6277("pitch", (double)event.floatValue2)
+                  .method6274("cancel", args -> {
+                     event.cancelled = !ScriptValueUtils.method6252(args, 0) || ScriptValueUtils.method6259(args, 0, true);
                      return null;
                   })
-                  .method6274("cancelled", var1xxx -> var4x.cancelled)
+                  .method6274("cancelled", args -> event.cancelled)
                   .getScriptableObject(),
-               () -> var4x.cancelled = true
+               () -> event.cancelled = true
             )
          );
       } else {
-         throw ScriptValueUtils.method6251("хук " + class2.name() + " не поддерживается");
+         throw ScriptValueUtils.method6251("хук " + hookDefinition.name() + " не поддерживается");
       }
    }
 
-   private static void method5052(Storage storage, Script workspace, Function function, Supplier<Scriptable> supplier, Runnable runnable) {
+   private static void invokeHook(Storage storage, Script workspace, Function callback, Supplier<Scriptable> eventDataFactory, Runnable cancelAction) {
       if (workspace.isRunning() && ScriptEntityApi.method6575().isSameThread()) {
          ScriptContextFactory.method7409();
 
-         Scriptable scriptableObject;
+         Scriptable eventData;
          try {
-            scriptableObject = (Scriptable)supplier.get();
+            eventData = (Scriptable)eventDataFactory.get();
          } finally {
             Context.exit();
          }
 
-         Object id = storage.method1321(workspace, function, scriptableObject);
-         if (runnable != null && id != null && !ScriptValueUtils.method6253(id) && Context.toBoolean(id)) {
-            runnable.run();
+         Object result = storage.method1321(workspace, callback, eventData);
+         if (cancelAction != null && result != null && !ScriptValueUtils.method6253(result) && Context.toBoolean(result)) {
+            cancelAction.run();
          }
       }
    }

@@ -56,7 +56,7 @@ public final class FastBreakModule extends Module {
    @EventTarget
    public void method5661(PacketEvent event) {
       if (this.bypass.isEnabled()) {
-         if (event.getPacket3() instanceof ServerboundPlayerActionPacket playerActionPacket && playerActionPacket.getAction() == Action.STOP_DESTROY_BLOCK) {
+         if (event.getPacket() instanceof ServerboundPlayerActionPacket playerActionPacket && playerActionPacket.getAction() == Action.STOP_DESTROY_BLOCK) {
             BlockPos pos = playerActionPacket.getPos();
             if (pos != null) {
                mc.getConnection().send(new ServerboundPlayerActionPacket(Action.ABORT_DESTROY_BLOCK, pos.above(), playerActionPacket.getDirection()));

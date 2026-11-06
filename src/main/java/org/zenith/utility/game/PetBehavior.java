@@ -13,11 +13,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.utility.misc.AnimationState;
-import org.zenith.utility.misc.Class15;
-import org.zenith.utility.misc.Class16;
-import org.zenith.utility.misc.Class3;
+import org.zenith.utility.misc.WardrobeModel;
+import org.zenith.utility.misc.ModelPoseEvaluator;
+import org.zenith.utility.misc.PetMotionState;
 import org.zenith.utility.misc.HoveredData;
-import org.zenith.utility.render.Util19;
+import org.zenith.utility.render.WardrobeParticleEmitter;
 import org.zenith.utility.render.WardrobePreview;
 
 public final class PetBehavior {
@@ -25,14 +25,14 @@ public final class PetBehavior {
    private static final int CONST_intValue = 600;
    private static final double CONST_doubleValue = 12.0;
    public final HoveredData hoveredData;
-   public final Class15 class15;
-   public final Class15.Data3 data3;
-   public final Class3 class3;
+   public final WardrobeModel class15;
+   public final WardrobeModel.Data3 data3;
+   public final PetMotionState class3;
    public final AnimationState animationState = new AnimationState();
    private double doubleValue;
    private boolean flag;
    private boolean running;
-   public final Class16 class16 = new Class16();
+   public final ModelPoseEvaluator class16 = new ModelPoseEvaluator();
    public final RandomSource random = RandomSource.create();
    private int ticks;
    private int intValue;
@@ -68,12 +68,12 @@ public final class PetBehavior {
    private Vec3 vec3d4;
    public long longValue;
 
-   public PetBehavior(HoveredData hoveredData, Class15 class2) {
+   public PetBehavior(HoveredData hoveredData, WardrobeModel class2) {
       this.hoveredData = hoveredData;
       this.class15 = class2;
       this.data3 = class2.data3;
       double d = Math.max(0.2, (double)this.data3.getFloatValue());
-      this.class3 = new Class3(this.data3.getType4(), 0.18 * d, 0.6 * d);
+      this.class3 = new PetMotionState(this.data3.getType4(), 0.18 * d, 0.6 * d);
       this.intValue2 = this.random.nextBoolean() ? 1 : -1;
       this.intValue5 = 200 + this.random.nextInt(200);
       this.intValue6 = 160 + this.random.nextInt(160);
@@ -203,7 +203,7 @@ public final class PetBehavior {
                this.method7932();
             }
 
-            if (this.data3.getType4() == Class15.Type4.HOPPER && this.class3.flag && d5 > 0.6 && this.intValue10 == 0) {
+            if (this.data3.getType4() == WardrobeModel.Type4.HOPPER && this.class3.flag && d5 > 0.6 && this.intValue10 == 0) {
                this.class3.method427(0.42);
                this.intValue10 = 7;
                this.floatValue3 = 1.0F;
@@ -731,7 +731,7 @@ public final class PetBehavior {
    }
 
    public void method7945(float f, float[] floats) {
-      if (Util19.enabled()
+      if (WardrobeParticleEmitter.enabled()
          && mc.player != null
          && !(mc.player.distanceToSqr(this.class3.doubleValue3, this.class3.doubleValue4, this.class3.doubleValue5) > 1600.0)) {
          if (this.data3.getParticleEffect() != null && this.class3.doubleValue13 > 1.2) {
@@ -757,7 +757,7 @@ public final class PetBehavior {
             }
 
             for (int i = 0; i < this.class15.items2.size(); i++) {
-               Class15.Data4 data4 = this.class15.items2.get(i);
+               WardrobeModel.Data4 data4 = this.class15.items2.get(i);
 
                boolean flag = switch (data4.getType3()) {
                   case MOVING -> this.class3.doubleValue13 > 0.6;
@@ -849,8 +849,8 @@ public final class PetBehavior {
    }
 
    private void method7950(ParticleOptions particleEffect, double x, double y, double z, double xd, double yd, double zd) {
-      if (Util19.enabled()) {
-         Util19.method5043(particleEffect, x, y, z, xd, yd, zd);
+      if (WardrobeParticleEmitter.enabled()) {
+         WardrobeParticleEmitter.spawnParticle(particleEffect, x, y, z, xd, yd, zd);
       }
    }
 

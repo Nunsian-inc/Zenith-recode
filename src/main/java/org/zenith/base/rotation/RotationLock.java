@@ -5,9 +5,9 @@ import org.zenith.Rotation;
 import org.zenith.client.modules.impl.player.AutoWardenModule;
 
 public final class RotationLock implements MinecraftAccess {
-   private static final int CONST_intValue = 2;
-   private static Rotation rotation;
-   private static int intValue = Integer.MIN_VALUE;
+   private static final int MAX_LOCK_AGE_TICKS = 2;
+   private static Rotation lockedRotation;
+   private static int lockTick = Integer.MIN_VALUE;
 
    private RotationLock() {
    }
@@ -18,22 +18,22 @@ public final class RotationLock implements MinecraftAccess {
 
    public static void method2707(float yaw, float pitch) {
       if (mc.player != null) {
-         rotation = new Rotation(yaw, pitch);
-         intValue = mc.player.tickCount;
+         lockedRotation = new Rotation(yaw, pitch);
+         lockTick = mc.player.tickCount;
       }
    }
 
    public static Rotation method2708() {
-      if (mc.player != null && rotation != null) {
-         int n = mc.player.tickCount - intValue;
-         return n >= 0 && n <= 2 ? rotation : null;
+      if (mc.player != null && lockedRotation != null) {
+         int elapsedTicks = mc.player.tickCount - lockTick;
+         return elapsedTicks >= 0 && elapsedTicks <= 2 ? lockedRotation : null;
       } else {
          return null;
       }
    }
 
    public static void reset() {
-      rotation = null;
-      intValue = Integer.MIN_VALUE;
+      lockedRotation = null;
+      lockTick = Integer.MIN_VALUE;
    }
 }

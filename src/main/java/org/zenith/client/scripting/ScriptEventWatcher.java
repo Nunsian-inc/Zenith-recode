@@ -11,9 +11,9 @@ import org.mozilla.javascript.ScriptableObject;
 public final class ScriptEventWatcher {
    private final Storage storage;
    private Level world;
-   private float floatValue = -1.0F;
-   private boolean flag;
-   private String text = "";
+   private float previousHealth = -1.0F;
+   private boolean wasDead;
+   private String serverAddress = "";
    private Screen screen;
 
    public ScriptEventWatcher(Storage storage) {
@@ -25,83 +25,83 @@ public final class ScriptEventWatcher {
       Minecraft minecraft = Minecraft.getInstance();
       ClientLevel level = minecraft.level;
       if (level != this.world) {
-         boolean flag = this.world == null && level != null;
-         boolean flag2 = this.world != null && level == null;
+         boolean joinedWorld = this.world == null && level != null;
+         boolean leftWorld = this.world != null && level == null;
          this.world = level;
-         if (flag) {
-            String ip = minecraft.getCurrentServer() == null ? "" : minecraft.getCurrentServer().ip;
-            this.text = ip;
-            this.storage.method1332(Script.Type.SERVER_JOIN, var1x -> new Object[]{method6415(var1x, "address", ip)});
+         if (joinedWorld) {
+            String address = minecraft.getCurrentServer() == null ? "" : minecraft.getCurrentServer().ip;
+            this.serverAddress = address;
+            this.storage.method1332(Script.Type.SERVER_JOIN, script -> new Object[]{createEventData(script, "address", address)});
          }
 
-         if (flag2) {
-            String text = this.text;
-            this.storage.method1332(Script.Type.SERVER_LEAVE, var1x -> new Object[]{method6415(var1x, "address", text)});
+         if (leftWorld) {
+            String address = this.serverAddress;
+            this.storage.method1332(Script.Type.SERVER_LEAVE, script -> new Object[]{createEventData(script, "address", address)});
          }
 
          if (level != null) {
             this.storage
-               .method1332(Script.Type.WORLD_CHANGE, var1x -> new Object[]{method6415(var1x, "dimension", level.dimension().identifier().toString())});
+               .method1332(Script.Type.WORLD_CHANGE, script -> new Object[]{createEventData(script, "dimension", level.dimension().identifier().toString())});
          }
       }
 
       if (minecraft.player != null) {
          float health = minecraft.player.getHealth();
-         if (this.floatValue >= 0.0F && health != this.floatValue) {
-            float floatValue = this.floatValue;
-            this.storage.method1332(Script.Type.HEALTH_CHANGE, var2x -> new Object[]{method6416(var2x, floatValue, health)});
+         if (this.previousHealth >= 0.0F && health != this.previousHealth) {
+            float oldHealth = this.previousHealth;
+            this.storage.method1332(Script.Type.HEALTH_CHANGE, script -> new Object[]{createHealthChangeData(script, oldHealth, health)});
          }
 
-         this.floatValue = health;
-         boolean flag = minecraft.player.isDeadOrDying() || health <= 0.0F;
-         if (flag && !this.flag) {
-            this.storage.method1332(Script.Type.DEATH, script -> new Object[]{method6415(script, "health", 0.0)});
+         this.previousHealth = health;
+         boolean dead = minecraft.player.isDeadOrDying() || health <= 0.0F;
+         if (dead && !this.wasDead) {
+            this.storage.method1332(Script.Type.DEATH, script -> new Object[]{createEventData(script, "health", 0.0)});
          }
 
-         this.flag = flag;
+         this.wasDead = dead;
       } else {
-         this.floatValue = -1.0F;
-         this.flag = false;
+         this.previousHealth = -1.0F;
+         this.wasDead = false;
       }
 
-      Screen screen = minecraft.gui.screen();
-      if (screen != this.screen) {
-         String str = ScriptScreenApi.method7047(this.screen);
-         String anObject = ScriptScreenApi.method7047(screen);
-         this.screen = screen;
-         if (!str.equals(anObject)) {
-            this.storage.method1332(Script.Type.SCREEN, var2x -> {
-               Object var3x = method6415(var2x, "screen", anObject);
-               ((Scriptable)var3x).put("previous", (Scriptable)var3x, str);
-               return new Object[]{var3x};
+      Screen currentScreen = minecraft.gui.screen();
+      if (currentScreen != this.screen) {
+         String previousScreenName = ScriptScreenApi.method7047(this.screen);
+         String screenName = ScriptScreenApi.method7047(currentScreen);
+         this.screen = currentScreen;
+         if (!previousScreenName.equals(screenName)) {
+            this.storage.method1332(Script.Type.SCREEN, script -> {
+               Object eventData = createEventData(script, "screen", screenName);
+               ((Scriptable)eventData).put("previous", (Scriptable)eventData, previousScreenName);
+               return new Object[]{eventData};
             });
          }
       }
    }
 
-   private static Object method6415(Script script, String name, Object ip) {
+   private static Object createEventData(Script script, String name, Object value) {
       ScriptContextFactory.method7409();
 
-      ScriptableObject scriptableObject;
+      ScriptableObject eventData;
       try {
-         scriptableObject = ScriptValueUtils.method6247(script.scope).method6277(name, ip).getScriptableObject();
+         eventData = ScriptValueUtils.method6247(script.scope).method6277(name, value).getScriptableObject();
       } finally {
          Context.exit();
       }
 
-      return scriptableObject;
+      return eventData;
    }
 
-   private static Object method6416(Script script, double floatValue, double health) {
+   private static Object createHealthChangeData(Script script, double previousHealth, double health) {
       ScriptContextFactory.method7409();
 
-      ScriptableObject scriptableObject;
+      ScriptableObject eventData;
       try {
-         scriptableObject = ScriptValueUtils.method6247(script.scope).method6277("from", floatValue).method6277("to", health).getScriptableObject();
+         eventData = ScriptValueUtils.method6247(script.scope).method6277("from", previousHealth).method6277("to", health).getScriptableObject();
       } finally {
          Context.exit();
       }
 
-      return scriptableObject;
+      return eventData;
    }
 }

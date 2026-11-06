@@ -19,7 +19,7 @@ import org.zenith.client.modules.impl.render.AntiInvisibleModule;
 import org.zenith.client.modules.impl.render.PredictionsModule;
 import org.zenith.client.modules.impl.render.ShaderESPModule;
 import org.zenith.utility.game.Util4;
-import org.zenith.utility.misc.Handler6;
+import org.zenith.utility.misc.ServerPositionTracker;
 
 @Mixin({Entity.class})
 public abstract class MixinEntity implements MinecraftAccess {
@@ -50,7 +50,7 @@ public abstract class MixinEntity implements MinecraftAccess {
       at = {@At("HEAD")}
    )
    private void zenith$trackServerPos(net.minecraft.world.entity.PositionPath positionPath, float f, float f2, boolean flag, CallbackInfo callbackInfo) {
-      if (positionPath != null && (Object)this instanceof Handler6 handler6) {
+      if (positionPath != null && (Object)this instanceof ServerPositionTracker handler6) {
          Vec3 endPosition = positionPath.endPosition();
          handler6.zenithDLC$trackServerPos(endPosition.x, endPosition.y, endPosition.z);
       }

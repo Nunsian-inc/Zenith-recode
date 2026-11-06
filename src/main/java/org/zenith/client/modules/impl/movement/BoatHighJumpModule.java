@@ -16,32 +16,30 @@ import org.zenith.client.events.UpdateEvent;
 )
 public final class BoatHighJumpModule extends Module {
    public static final BoatHighJumpModule INSTANCE = new BoatHighJumpModule();
-   private boolean flag = false;
+   private boolean jumpTriggered = false;
 
    private BoatHighJumpModule() {
    }
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
-      if (mc.player != null && mc.level != null) {
-         if (mc.player.getVehicle() == null) {
-            if (mc.player.onGround()) {
-               if (mc.options.keyJump.isDown() && !this.flag && this.method2736() != null) {
-                  mc.player.setDeltaMovement(mc.player.getDeltaMovement().x, 0.82, mc.player.getDeltaMovement().z);
-                  this.flag = true;
-               }
-            } else {
-               this.flag = false;
+      if (mc.player != null && mc.level != null && mc.player.getVehicle() == null) {
+         if (mc.player.onGround()) {
+            if (mc.options.keyJump.isDown() && !this.jumpTriggered && this.findNearbyBoat() != null) {
+               mc.player.setDeltaMovement(mc.player.getDeltaMovement().x, 0.82, mc.player.getDeltaMovement().z);
+               this.jumpTriggered = true;
             }
+         } else {
+            this.jumpTriggered = false;
          }
       }
    }
 
-   private Entity method2736() {
-      AABB inflate = mc.player.getBoundingBox().inflate(1.0);
+   private Entity findNearbyBoat() {
+      AABB searchBounds = mc.player.getBoundingBox().inflate(1.0);
 
       for (Entity entity : mc.level.entitiesForRendering()) {
-         if (entity instanceof Boat boat && !boat.hasPassenger(mc.player) && boat.getBoundingBox().intersects(inflate)) {
+         if (entity instanceof Boat boat && !boat.hasPassenger(mc.player) && boat.getBoundingBox().intersects(searchBounds)) {
             return boat;
          }
       }
@@ -51,7 +49,7 @@ public final class BoatHighJumpModule extends Module {
 
    @Override
    public void onDisable() {
-      this.flag = false;
+      this.jumpTriggered = false;
       super.onDisable();
    }
 }

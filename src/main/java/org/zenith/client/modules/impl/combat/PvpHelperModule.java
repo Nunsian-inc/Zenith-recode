@@ -190,8 +190,8 @@ public final class PvpHelperModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         if (this.flag2 && event.getPacket3() instanceof ClientboundMoveEntityPacket moveEntityPacket) {
+      if (event.isIncoming()) {
+         if (this.flag2 && event.getPacket() instanceof ClientboundMoveEntityPacket moveEntityPacket) {
             mc.execute(() -> {
                if (mc.level != null && moveEntityPacket.getEntity(mc.level) != null && moveEntityPacket.getEntity(mc.level).getId() == this.intValue2) {
                   this.stopWatch2.reset();

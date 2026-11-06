@@ -18,7 +18,7 @@ import org.zenith.client.screens.nlgui.MenuGlyph;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.ColorSetting;
 import org.zenith.utility.misc.ColorUtils;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.GlowColor;
@@ -274,7 +274,7 @@ public final class ColorPicker {
       menuDrawContext.drawRect(floatValue + width - 1.0F, y, 1.0F, height, zenithColor);
    }
 
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.bounds != null && this.bounds.contains(x, y)) {
          this.ensureField();
          this.hexField.setSelected(false);

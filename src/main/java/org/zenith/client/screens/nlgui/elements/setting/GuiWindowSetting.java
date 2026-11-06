@@ -25,7 +25,7 @@ import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.BlockListSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -78,7 +78,7 @@ public class GuiWindowSetting extends GuiSetting<GroupSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
          if (this.animationExpanded.getFloatValue2() == 0.0F) {
             this.expanded = true;
@@ -96,7 +96,7 @@ public class GuiWindowSetting extends GuiSetting<GroupSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
@@ -138,7 +138,7 @@ public class GuiWindowSetting extends GuiSetting<GroupSetting> {
 
    @Override
    public void renderPriority(MenuDrawContext menuDrawContext, float x, float y, float f, float f2, float previewAlpha, float f3) {
-      this.animationExpanded.method2807(this.expanded);
+      this.animationExpanded.updateVisibility(this.expanded);
       if (!(this.animationExpanded.getValue() <= 0.0F)) {
          float height = GuiStyle.PADDING * 4 + this.getHeight();
          float intValue = GuiStyle.PADDING.intValue();
@@ -244,7 +244,7 @@ public class GuiWindowSetting extends GuiSetting<GroupSetting> {
    }
 
    @Override
-   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.expanded && this.rectBounds != null) {
          byte b = 0;
 
@@ -297,7 +297,7 @@ public class GuiWindowSetting extends GuiSetting<GroupSetting> {
    }
 
    @Override
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
       for (GuiSetting renderableSetting : this.renderableSettings) {
          if (renderableSetting.isVisible()) {
             renderableSetting.onMouseReleased(d, d2, enum2);

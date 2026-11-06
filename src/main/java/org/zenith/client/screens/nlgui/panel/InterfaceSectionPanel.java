@@ -23,7 +23,7 @@ import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.BindSetting;
 import org.zenith.client.settings.Setting;
 import org.zenith.utility.misc.ClientSounds;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.KeyName;
 import org.zenith.utility.render.Interface;
 import org.zenith.utility.render.display.base.BoundsData;
@@ -122,9 +122,9 @@ public class InterfaceSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       BoundsData mainViewport = this.mainViewport();
-      if (enum2 == Enum3.LEFT && mainViewport != null && mainViewport.contains(lastClickX, lastClickY)) {
+      if (enum2 == MouseButton.LEFT && mainViewport != null && mainViewport.contains(lastClickX, lastClickY)) {
          for (Map.Entry entry : this.switchBounds.entrySet()) {
             if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
                this.toggleElement((Interface)entry.getKey());
@@ -251,7 +251,7 @@ public class InterfaceSectionPanel extends SectionPanel {
       BoundsData boundsData = new BoundsData(floatValue, y, width, 41.0F);
       this.cardBounds.put(style, boundsData);
       boolean contains = boundsData.contains(lastClickX, lastClickY);
-      float f = this.cardHover.computeIfAbsent(style, zenithStyle2 -> new Animation(140L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      float f = this.cardHover.computeIfAbsent(style, zenithStyle2 -> new Animation(140L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
       if (contains) {
          HoverInfo.request(styleName(style), t("gui.interface.style.desc"));
       }
@@ -378,7 +378,7 @@ public class InterfaceSectionPanel extends SectionPanel {
       float width = f3 - 16.0F;
       float y = centeredTextY + font.height() + 5.0F;
       menuDrawContext.drawRoundedRect(f + 8.0F, y, width, 2.0F, ProxyDotRadiusData.method8069(1.0F), zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha));
-      float f4 = this.countBar.method2808(size == 0 ? 0.0F : (float)n3 / size);
+      float f4 = this.countBar.animateTo(size == 0 ? 0.0F : (float)n3 / size);
       if (f4 > 0.001F) {
          menuDrawContext.drawRoundedRect(
             f + 8.0F,
@@ -450,10 +450,10 @@ public class InterfaceSectionPanel extends SectionPanel {
    private void renderHudRow(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float width, float previewAlpha, ZenithStyle zenithStyle, Interface selectedElement) {
       BoundsData boundsData = new BoundsData(floatValue, y, width, 16.0F);
       boolean contains = boundsData.contains(lastClickX, lastClickY);
-      float f = this.rowHover.computeIfAbsent(selectedElement, interfaceValue -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      float f = this.rowHover.computeIfAbsent(selectedElement, interfaceValue -> new Animation(120L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
       float f2 = this.rowSelect
          .computeIfAbsent(selectedElement, interfaceValue -> new Animation(140L, 0.0F, Easing.INSTANCE12))
-         .method2808(selectedElement == this.selectedElement ? 1.0F : 0.0F);
+         .animateTo(selectedElement == this.selectedElement ? 1.0F : 0.0F);
       float f3 = Math.max(f2, f * 0.45F);
       if (f3 > 0.002F) {
          menuDrawContext.drawRect(floatValue, y, width, 16.0F, zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f3));
@@ -514,7 +514,7 @@ public class InterfaceSectionPanel extends SectionPanel {
          y + (16.0F - font.height()) / 2.0F,
          (enabled ? zenithStyle.getTextEnable() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
-      float hover = this.switchKnob.computeIfAbsent(selectedElement, interfaceValue -> new Animation(140L, 0.0F, Easing.INSTANCE10)).method2808(enabled ? 1.0F : 0.0F);
+      float hover = this.switchKnob.computeIfAbsent(selectedElement, interfaceValue -> new Animation(140L, 0.0F, Easing.INSTANCE10)).animateTo(enabled ? 1.0F : 0.0F);
       this.drawSwitch(menuDrawContext, floatValue2, y + 5.5F, hover, flag, previewAlpha, zenithStyle);
    }
 

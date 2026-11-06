@@ -22,9 +22,9 @@ import org.zenith.Rotation;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.TickEvent;
 import org.zenith.client.modules.impl.combat.AuraModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public class BcCamera extends Util22 {
+public class BcCamera extends RotationContext {
    private final String text;
    private final int intValue;
    private final double doubleValue;
@@ -181,7 +181,7 @@ public class BcCamera extends Util22 {
             }
 
             this.obj = mc.level;
-            Rotation rotation = zenith.getRotationManager().method7844();
+            Rotation rotation = zenith.getRotationManager().getEffectiveRotation();
             double floatValue = rotation.getFloatValue();
             double d = rotation.getFloatValue2();
             BcCameraNet.Entry4 entry4 = new BcCameraNet.Entry4();
@@ -257,7 +257,7 @@ public class BcCamera extends Util22 {
 
             doubles2 = bcCameraNet.method3352(doubleValues, doubles2[0], doubles2[1]);
             double[] doubles3 = BcCameraNet.method3384(this.entry2, doubles2[0], doubles2[1], d2, d);
-            this.rotation = rotation.method3140((float)doubles3[0], (float)doubles3[1]);
+            this.rotation = rotation.add((float)doubles3[0], (float)doubles3[1]);
             this.method3553(entry4, doubles, doubles2, doubles3, d2, attackStrengthScale);
             this.longValue2 = this.longValue;
             this.intValue5 = 0;
@@ -388,9 +388,9 @@ public class BcCamera extends Util22 {
    }
 
    public Rotation method3554(Rotation rotation) {
-      Rotation rotation2 = zenith.getRotationManager().method7844();
+      Rotation rotation2 = zenith.getRotationManager().getEffectiveRotation();
       this.intValue5++;
-      Rotation rotation3 = zenith.getRotationManager().method7844();
+      Rotation rotation3 = zenith.getRotationManager().getEffectiveRotation();
       if (this.rotation != null && this.longValue2 == this.longValue) {
          this.longValue3 = this.longValue;
          return this.rotation;

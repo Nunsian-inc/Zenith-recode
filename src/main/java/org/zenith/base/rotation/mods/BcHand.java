@@ -20,9 +20,9 @@ import org.zenith.Rotation;
 import org.zenith.client.events.TickEvent;
 import org.zenith.client.modules.impl.combat.AuraModule;
 import org.zenith.client.modules.impl.player.AutoMineModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public class BcHand extends Util22 {
+public class BcHand extends RotationContext {
    public static final String text = "bc_hand.json";
    private volatile HandAnchorNet handAnchorNet;
    private CompletableFuture<Void> completableFuture;
@@ -146,7 +146,7 @@ public class BcHand extends Util22 {
             }
 
             this.obj = mc.level;
-            Rotation rotation2 = zenith.getRotationManager().method7844();
+            Rotation rotation2 = zenith.getRotationManager().getEffectiveRotation();
             double floatValue = rotation2.getFloatValue();
             double d = rotation2.getFloatValue2();
             BcCameraNet.Entry4 entry4 = new BcCameraNet.Entry4();
@@ -230,7 +230,7 @@ public class BcHand extends Util22 {
          double[] doubles2 = entry4.flag5 ? new double[]{entry4.doubleValue9, entry4.doubleValue10} : new double[2];
          double[] doubles3 = handAnchorNet.method3414(this.entry, doubles2, doubles, entry4.doubleValue7, entry4.doubleValue8, d, this.random);
          double[] doubles4 = HandAnchorNet.method3415(this.entry, doubles3[0], doubles3[1], d, entry4.doubleValue8);
-         this.rotation = this.rotation2.method3140((float)doubles4[0], (float)doubles4[1]);
+         this.rotation = this.rotation2.add((float)doubles4[0], (float)doubles4[1]);
          this.method3873(this.longValue4, entry4, doubles, doubles3, doubles4, d);
          this.longValue2 = this.longValue4;
       }
@@ -327,7 +327,7 @@ public class BcHand extends Util22 {
          );
       }
 
-      Rotation rotation2 = zenith.getRotationManager().method7844();
+      Rotation rotation2 = zenith.getRotationManager().getEffectiveRotation();
       if (this.rotation != null && this.longValue2 == this.longValue) {
          this.longValue3 = this.longValue;
          return this.rotation;

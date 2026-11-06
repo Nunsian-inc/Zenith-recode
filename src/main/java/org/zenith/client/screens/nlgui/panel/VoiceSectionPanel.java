@@ -296,13 +296,13 @@ public class VoiceSectionPanel extends SectionPanel {
    }
 
    private static float wave(Animation enterWave, int n) {
-      float f = enterWave.method2808(1.0F);
+      float f = enterWave.animateTo(1.0F);
       return Mth.clamp((f - n * 0.07F) / 0.5F, 0.0F, 1.0F);
    }
 
    private static void restart(Animation listWave) {
       listWave.reset(0.0F);
-      listWave.method2810(1.0F);
+      listWave.setTarget(1.0F);
    }
 
    private void hero(Voice voice) {
@@ -320,7 +320,7 @@ public class VoiceSectionPanel extends SectionPanel {
                float height = 34.0F;
                boolean contains = new BoundsData(floatValue, y, f4 - floatValue, height).contains(lastClickX, lastClickY);
                boolean enabled = voice.isEnabled();
-               float hover = this.heroOn.method2808(enabled ? 1.0F : 0.0F);
+               float hover = this.heroOn.animateTo(enabled ? 1.0F : 0.0F);
                plate(menuDrawContext, floatValue, y, f4 - floatValue, height, this.hover("hero", contains), 0.0F, previewAlpha, zenithStyle);
                menuDrawContext.drawRoundedRect(
                   floatValue,
@@ -399,7 +399,7 @@ public class VoiceSectionPanel extends SectionPanel {
 
    private void drawToggle(MenuDrawContext menuDrawContext, float floatValue, float y, float width, boolean enabled, float previewAlpha, ZenithStyle zenithStyle) {
       float height = 10.0F;
-      float hover = this.toggleKnob.method2808(enabled ? 1.0F : 0.0F);
+      float hover = this.toggleKnob.animateTo(enabled ? 1.0F : 0.0F);
       ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7294(0.35F).method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover);
       menuDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7294(previewAlpha));
       float f = height - 3.0F;
@@ -583,7 +583,7 @@ public class VoiceSectionPanel extends SectionPanel {
                float y = f2 + 3.0F;
                float height = 44.0F;
                boolean flag = voice.isFlag3();
-               float hover = this.testOn.method2808(flag ? 1.0F : 0.0F);
+               float hover = this.testOn.animateTo(flag ? 1.0F : 0.0F);
                boolean contains = new BoundsData(floatValue, y, f4 - floatValue, height).contains(lastClickX, lastClickY);
                if (contains) {
                   HoverInfo.request(t("gui.voice.micTest"), t("gui.voice.micTest.desc"));
@@ -645,7 +645,7 @@ public class VoiceSectionPanel extends SectionPanel {
 
    private void drawMeter(MenuDrawContext menuDrawContext, Voice voice, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
       float f4 = voice.getVoiceState().getFloatValue2();
-      float meterPeak = this.meterFill.method2808(Mth.clamp((f4 + 70.0F) / 60.0F, 0.0F, 1.0F));
+      float meterPeak = this.meterFill.animateTo(Mth.clamp((f4 + 70.0F) / 60.0F, 0.0F, 1.0F));
       long now = System.currentTimeMillis();
       if (meterPeak >= this.meterPeak) {
          this.meterPeak = meterPeak;
@@ -945,11 +945,11 @@ public class VoiceSectionPanel extends SectionPanel {
    }
 
    private float hover(String key, boolean contains) {
-      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    private float pick(String key, boolean flag) {
-      return this.pick.computeIfAbsent(key, str -> new Animation(180L, 0.0F, Easing.INSTANCE12)).method2808(flag ? 1.0F : 0.0F);
+      return this.pick.computeIfAbsent(key, str -> new Animation(180L, 0.0F, Easing.INSTANCE12)).animateTo(flag ? 1.0F : 0.0F);
    }
 
    private void hint(String description) {

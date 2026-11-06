@@ -5,13 +5,13 @@ public interface ModuleHandle {
 
    boolean enabled();
 
-   void enabled(boolean flag);
+   void enabled(boolean enabled);
 
    int keyCode();
 
-   void keyCode(int n);
+   void keyCode(int keyCode);
 
-   Object setting(String str);
+   Object setting(String settingId);
 
-   void setting(String str, Object obj);
+   void setting(String settingId, Object value);
 }

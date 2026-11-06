@@ -33,7 +33,7 @@ import org.zenith.client.events.WorldRenderEvent;
 import org.zenith.client.modules.impl.render.ShaderHandModule;
 import org.zenith.client.screens.media.NowPlayingScreen;
 import org.zenith.utility.misc.FrameTimer;
-import org.zenith.utility.misc.Util15;
+import org.zenith.utility.misc.CameraFov;
 import org.zenith.utility.render.GlowUtil;
 import org.zenith.utility.render.HandShaders;
 import org.zenith.utility.render.ProjectionUtils;

@@ -26,24 +26,24 @@ import org.zenith.utility.render.KeyBindUtils;
 )
 public final class AutoToolModule extends Module {
    public static final AutoToolModule INSTANCE = new AutoToolModule();
-   private final StopWatch stopWatch = new StopWatch();
+   private final StopWatch toolSwitchTimer = new StopWatch();
    private Slot slot = null;
 
    private AutoToolModule() {
    }
 
    @EventTarget
-   public void method261(MouseScrollEvent event) {
+   public void onMouseScroll(MouseScrollEvent event) {
       if (this.slot != null) {
          event.setCancelled(true);
       }
    }
 
    @EventTarget
-   public void method262(BlockBreakingEvent event) {
-      this.stopWatch.reset();
+   public void onBlockBreaking(BlockBreakingEvent event) {
+      this.toolSwitchTimer.reset();
       if (!Objects.requireNonNull(mc.player).isCreative()) {
-         Slot slot = this.method264(event.getBlockPos());
+         Slot slot = this.findBestToolSlot(event.getBlockPos());
          if (slot != null && slot != InventoryUtils.method924()) {
             if (this.slot == null) {
                this.slot = slot;
@@ -63,8 +63,8 @@ public final class AutoToolModule extends Module {
    }
 
    @EventTarget
-   public void method263(UpdateEvent event) {
-      if (KeyBindUtils.method2630(AutoToolModule.class) && this.slot != null && this.stopWatch.method317(400.0) && !mc.options.keyAttack.isDown()) {
+   public void onUpdate(UpdateEvent event) {
+      if (KeyBindUtils.method2630(AutoToolModule.class) && this.slot != null && this.toolSwitchTimer.method317(400.0) && !mc.options.keyAttack.isDown()) {
          Slot slot = this.slot;
          KeyBindUtils.method2627(AutoToolModule.class, () -> {
             if (!(mc.player.containerMenu instanceof InventoryMenu)) {
@@ -94,7 +94,7 @@ public final class AutoToolModule extends Module {
       super.onDisable();
    }
 
-   private Slot method264(BlockPos blockPos) {
+   private Slot findBestToolSlot(BlockPos blockPos) {
       BlockState blockState = mc.level.getBlockState(blockPos);
       return UseItemUtils.method6524(blockState)
          ? InventoryUtils.method924()
@@ -103,8 +103,8 @@ public final class AutoToolModule extends Module {
             .slots
             .stream()
             .sorted(Comparator.comparing(slot -> slot.equals(InventoryUtils.method924())))
-            .filter(var1x -> var1x.getItem().getDestroySpeed(blockState) != 1.0F)
-            .max(Comparator.comparingDouble(var1x -> var1x.getItem().getDestroySpeed(blockState)))
+            .filter(candidateSlot -> candidateSlot.getItem().getDestroySpeed(blockState) != 1.0F)
+            .max(Comparator.comparingDouble(candidateSlot -> candidateSlot.getItem().getDestroySpeed(blockState)))
             .orElse(null);
    }
 }

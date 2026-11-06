@@ -93,7 +93,7 @@ public class DebugModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      Packet packet3 = event.getPacket3();
+      Packet packet3 = event.getPacket();
       if (mc.player != null) {
          if (packet3 instanceof ServerboundContainerClickPacket containerClickPacket) {
             short slotNum = containerClickPacket.slotNum();

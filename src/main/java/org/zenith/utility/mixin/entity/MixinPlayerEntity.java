@@ -46,7 +46,7 @@ public abstract class MixinPlayerEntity {
       )
    )
    public Vec3 fixSwing(Player player) {
-      return (Object)this != Minecraft.getInstance().player ? player.getLookAngle() : Zenith.getInstance().getRotationManager().method7844().method3135();
+      return (Object)this != Minecraft.getInstance().player ? player.getLookAngle() : Zenith.getInstance().getRotationManager().getEffectiveRotation().toDirection();
    }
 
    @Redirect(

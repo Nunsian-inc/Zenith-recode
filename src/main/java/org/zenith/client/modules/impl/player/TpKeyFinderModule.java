@@ -202,8 +202,8 @@ public final class TpKeyFinderModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         if (this.autoHeal.isEnabled() && event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+      if (event.isIncoming()) {
+         if (this.autoHeal.isEnabled() && event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket) {
             int n = method4339(systemChatPacket.content().getString());
             if (n > 0) {
                this.longValue = Math.max(this.longValue, System.currentTimeMillis() + n * 1000L + 500L);
@@ -211,9 +211,9 @@ public final class TpKeyFinderModule extends Module {
          }
       } else if (mc.isSameThread() && !this.flag3) {
          if (this.genericContainerScreenHandler == null
-            || !(event.getPacket3() instanceof ServerboundContainerClickPacket containerClickPacket && containerClickPacket.containerId() != this.genericContainerScreenHandler.containerId)
-               && !(event.getPacket3() instanceof ServerboundContainerClosePacket)) {
-            if (this.flag && (event.getPacket3() instanceof ServerboundUseItemOnPacket || event.getPacket3() instanceof ServerboundInteractPacket || event.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket)) {
+            || !(event.getPacket() instanceof ServerboundContainerClickPacket containerClickPacket && containerClickPacket.containerId() != this.genericContainerScreenHandler.containerId)
+               && !(event.getPacket() instanceof ServerboundContainerClosePacket)) {
+            if (this.flag && (event.getPacket() instanceof ServerboundUseItemOnPacket || event.getPacket() instanceof ServerboundInteractPacket || event.getPacket() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket)) {
                this.method4331(true, false);
             }
          } else {

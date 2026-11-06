@@ -9,7 +9,7 @@ public class Vec2f {
       this.floatValue2 = f;
    }
 
-   public float method5327() {
+   public float length() {
       return (float)Math.sqrt(this.floatValue * this.floatValue + this.floatValue2 * this.floatValue2);
    }
 
@@ -21,15 +21,15 @@ public class Vec2f {
       return this.floatValue2;
    }
 
-   public net.minecraft.world.phys.Vec2 method5328() {
+   public net.minecraft.world.phys.Vec2 toMinecraftVec2() {
       return new net.minecraft.world.phys.Vec2(this.floatValue, this.floatValue2);
    }
 
-   public boolean method5329(float f) {
-      return this.method5330(f, f);
+   public boolean isWithinBounds(float f) {
+      return this.isWithinBounds(f, f);
    }
 
-   public boolean method5330(float f, float f2) {
+   public boolean isWithinBounds(float f, float f2) {
       return Math.abs(this.floatValue) <= f && Math.abs(this.floatValue2) <= f2;
    }
 }

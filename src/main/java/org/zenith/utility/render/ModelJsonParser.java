@@ -22,8 +22,8 @@ import net.minecraft.resources.Identifier;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.zenith.utility.misc.Class15;
-import org.zenith.utility.misc.Class37;
+import org.zenith.utility.misc.WardrobeModel;
+import org.zenith.utility.misc.AnimationCurve;
 
 public final class ModelJsonParser {
    private static final float[][] CONST_floatValues = new float[][]{
@@ -40,7 +40,7 @@ public final class ModelJsonParser {
    private ModelJsonParser() {
    }
 
-   public static Class15 method107(String text, JsonObject jsonObject, Identifier identifier) {
+   public static WardrobeModel method107(String text, JsonObject jsonObject, Identifier identifier) {
       JsonObject json = method124(jsonObject, "texture");
       float[] floats = method129(json == null ? null : json.get("size"), 2, 64.0F);
       int intValue = Math.max(1, (int)floats[0]);
@@ -54,7 +54,7 @@ public final class ModelJsonParser {
       float[] floatValues2 = new float[n2 * 3];
       int[] intValues2 = new int[n2];
       int[] intValues3 = new int[n2];
-      Class15.Type2[] type2s = new Class15.Type2[n2];
+      WardrobeModel.Type2[] type2s = new WardrobeModel.Type2[n2];
       float[] floatValues3 = new float[n2 * 4];
       HashMap map = new HashMap();
       if (jsons.isEmpty()) {
@@ -62,7 +62,7 @@ public final class ModelJsonParser {
          intValues[0] = -1;
          intValues2[0] = -1;
          intValues3[0] = 6;
-         type2s[0] = Class15.Type2.NONE;
+         type2s[0] = WardrobeModel.Type2.NONE;
       }
 
       for (int i = 0; i < jsons.size(); i++) {
@@ -82,7 +82,7 @@ public final class ModelJsonParser {
          intValues2[i] = intValues[i] < 0 ? method121(method126(jsonObject2, "anchor", null)) : -1;
          intValues3[i] = intValues[i] >= 0 ? intValues3[intValues[i]] : (intValues2[i] >= 0 ? intValues2[i] : 6);
          JsonObject jsonObject3 = method124(jsonObject2, "driver");
-         type2s[i] = jsonObject3 == null ? Class15.Type2.NONE : method122(method126(jsonObject3, "type", "none"));
+         type2s[i] = jsonObject3 == null ? WardrobeModel.Type2.NONE : method122(method126(jsonObject3, "type", "none"));
          float[] floats4 = method129(jsonObject3 == null ? null : jsonObject3.get("args"), 4, 0.0F);
          System.arraycopy(floats4, 0, floatValues3, i * 4, 4);
          map.put(key, i);
@@ -93,9 +93,9 @@ public final class ModelJsonParser {
       for (int i = 0; i < jsons.size(); i++) {
          JsonArray jsonArray2 = method125((JsonObject)jsons.get(i), "cubes");
          float f = Float.NaN;
-         if (intValues[i] < 0 && intValues2[i] == Class15.Type.RIGHT_ARM.ordinal()) {
+         if (intValues[i] < 0 && intValues2[i] == WardrobeModel.Type.RIGHT_ARM.ordinal()) {
             f = -1.0F;
-         } else if (intValues[i] < 0 && intValues2[i] == Class15.Type.LEFT_ARM.ordinal()) {
+         } else if (intValues[i] < 0 && intValues2[i] == WardrobeModel.Type.LEFT_ARM.ordinal()) {
             f = 1.0F;
          }
 
@@ -132,9 +132,9 @@ public final class ModelJsonParser {
 
       var items = method113(method124(jsonObject, "clips"), map, n2);
       var list = method115(method125(jsonObject, "effects"), map);
-      Class15.Data3 data3 = method117(method124(jsonObject, "pet"));
-      Class15.Data2 data2 = method118(method124(jsonObject, "weapon"), map);
-      Class15.Data data = method119(method124(jsonObject, "skin"), map);
+      WardrobeModel.Data3 data3 = method117(method124(jsonObject, "pet"));
+      WardrobeModel.Data2 data2 = method118(method124(jsonObject, "weapon"), map);
+      WardrobeModel.Data data = method119(method124(jsonObject, "skin"), map);
       float floatValue = method127(jsonObject, "lod", 24.0F);
       float[] floatValues7 = method112(floatValues4, intValues4, intValues, floatValues, floatValues2, intValues2);
       byte b = 0;
@@ -152,7 +152,7 @@ public final class ModelJsonParser {
          };
       }
 
-      return new Class15(
+      return new WardrobeModel(
          text,
          identifier,
          intValue,
@@ -182,8 +182,8 @@ public final class ModelJsonParser {
    }
 
    private static void method108(float[] floatValues4, int[] intValues4, int[] intValues, int[] intValues2) {
-      int ordinal = Class15.Type.RIGHT_ARM.ordinal();
-      int n = Class15.Type.LEFT_ARM.ordinal();
+      int ordinal = WardrobeModel.Type.RIGHT_ARM.ordinal();
+      int n = WardrobeModel.Type.LEFT_ARM.ordinal();
 
       for (int i = 0; i < intValues4.length; i++) {
          int n2 = intValues4[i];
@@ -388,7 +388,7 @@ public final class ModelJsonParser {
       return intValues4.length == 0 ? new float[6] : floats;
    }
 
-   private static Map<String, Class37> method113(JsonObject json, Map<String, Integer> map, int n) {
+   private static Map<String, AnimationCurve> method113(JsonObject json, Map<String, Integer> map, int n) {
       if (json == null) {
          return Collections.emptyMap();
       } else {
@@ -406,13 +406,13 @@ public final class ModelJsonParser {
                      if (key != null && ((JsonElement)entry2.getValue()).isJsonObject()) {
                         JsonObject jsonObject2 = ((JsonElement)entry2.getValue()).getAsJsonObject();
                         boolean flag = !method128(jsonObject2, "linear");
-                        Class37.Entry[] entries = new Class37.Entry[]{
+                        AnimationCurve.Entry[] entries = new AnimationCurve.Entry[]{
                            method114(jsonObject2.get("rotation"), flag, 0.0F),
                            method114(jsonObject2.get("position"), flag, 0.0F),
                            method114(jsonObject2.get("scale"), flag, 1.0F)
                         };
 
-                        for (Class37.Entry entry3 : entries) {
+                        for (AnimationCurve.Entry entry3 : entries) {
                            if (entry3 != null) {
                               f = Math.max(f, entry3.floatValues[entry3.floatValues.length - 1]);
                            }
@@ -425,7 +425,7 @@ public final class ModelJsonParser {
 
                float f2 = method127(jsonObject, "length", f);
                boolean flag = !jsonObject.has("loop") || method128(jsonObject, "loop");
-               map2.put((String)entry.getKey(), new Class37((String)entry.getKey(), f2 <= 0.0F ? f : f2, flag, map3, n));
+               map2.put((String)entry.getKey(), new AnimationCurve((String)entry.getKey(), f2 <= 0.0F ? f : f2, flag, map3, n));
             }
          }
 
@@ -433,7 +433,7 @@ public final class ModelJsonParser {
       }
    }
 
-   private static Class37.Entry method114(JsonElement jsonElement, boolean flag, float f) {
+   private static AnimationCurve.Entry method114(JsonElement jsonElement, boolean flag, float f) {
       if (jsonElement != null && jsonElement.isJsonArray()) {
          JsonArray jsonArray = jsonElement.getAsJsonArray();
          ArrayList<float[]> floatses = new ArrayList<>(jsonArray.size());
@@ -464,19 +464,19 @@ public final class ModelJsonParser {
                floatValues2[i * 3 + 2] = floats[3];
             }
 
-            return new Class37.Entry(floatValues, floatValues2, flag);
+            return new AnimationCurve.Entry(floatValues, floatValues2, flag);
          }
       } else {
          return null;
       }
    }
 
-   private static List<Class15.Data4> method115(JsonArray jsonArray, Map<String, Integer> map) {
-      ArrayList<Class15.Data4> data4s = new ArrayList<>();
+   private static List<WardrobeModel.Data4> method115(JsonArray jsonArray, Map<String, Integer> map) {
+      ArrayList<WardrobeModel.Data4> data4s = new ArrayList<>();
 
       for (JsonElement jsonElement : jsonArray) {
          if (jsonElement.isJsonObject()) {
-            Class15.Data4 data4 = method116(jsonElement.getAsJsonObject(), map);
+            WardrobeModel.Data4 data4 = method116(jsonElement.getAsJsonObject(), map);
             if (data4 != null) {
                data4s.add(data4);
             }
@@ -486,7 +486,7 @@ public final class ModelJsonParser {
       return data4s;
    }
 
-   private static Class15.Data4 method116(JsonObject jsonObject, Map<String, Integer> map) {
+   private static WardrobeModel.Data4 method116(JsonObject jsonObject, Map<String, Integer> map) {
       ParticleOptions particleEffect = method120(method126(jsonObject, "particle", null));
       if (particleEffect == null) {
          return null;
@@ -495,14 +495,14 @@ public final class ModelJsonParser {
          float[] floats = method129(jsonObject.get("offset"), 3, 0.0F);
          float[] floats2 = method129(jsonObject.get("velocity"), 3, 0.0F);
 
-         Class15.Type3 type3;
+         WardrobeModel.Type3 type3;
          try {
-            type3 = Class15.Type3.valueOf(method126(jsonObject, "when", "always").toUpperCase(Locale.ROOT));
+            type3 = WardrobeModel.Type3.valueOf(method126(jsonObject, "when", "always").toUpperCase(Locale.ROOT));
          } catch (IllegalArgumentException e) {
-            type3 = Class15.Type3.ALWAYS;
+            type3 = WardrobeModel.Type3.ALWAYS;
          }
 
-         return new Class15.Data4(
+         return new WardrobeModel.Data4(
             particleEffect,
             n == null ? -1 : n,
             floats[0],
@@ -518,15 +518,15 @@ public final class ModelJsonParser {
       }
    }
 
-   private static Class15.Data3 method117(JsonObject jsonObject) {
+   private static WardrobeModel.Data3 method117(JsonObject jsonObject) {
       if (jsonObject == null) {
          return null;
       } else {
-         Class15.Type4 type4;
+         WardrobeModel.Type4 type4;
          try {
-            type4 = Class15.Type4.valueOf(method126(jsonObject, "kind", "walker").toUpperCase(Locale.ROOT));
+            type4 = WardrobeModel.Type4.valueOf(method126(jsonObject, "kind", "walker").toUpperCase(Locale.ROOT));
          } catch (IllegalArgumentException e) {
-            type4 = Class15.Type4.WALKER;
+            type4 = WardrobeModel.Type4.WALKER;
          }
 
          ArrayList coll = new ArrayList();
@@ -535,7 +535,7 @@ public final class ModelJsonParser {
             coll.add(jsonElement.getAsString().toLowerCase(Locale.ROOT));
          }
 
-         return new Class15.Data3(
+         return new WardrobeModel.Data3(
             type4,
             method127(jsonObject, "scale", 1.0F),
             method127(jsonObject, "speed", 1.0F),
@@ -547,13 +547,13 @@ public final class ModelJsonParser {
       }
    }
 
-   private static Class15.Data2 method118(JsonObject jsonObject, Map<String, Integer> map) {
+   private static WardrobeModel.Data2 method118(JsonObject jsonObject, Map<String, Integer> map) {
       if (jsonObject == null) {
          return null;
       } else {
          float[] floats = method129(jsonObject.get("grip"), 3, 0.0F);
          Integer n = (Integer)map.get(method126(jsonObject, "arrowBone", ""));
-         return new Class15.Data2(
+         return new WardrobeModel.Data2(
             floats[0],
             floats[1],
             floats[2],
@@ -567,7 +567,7 @@ public final class ModelJsonParser {
       }
    }
 
-   private static Class15.Data method119(JsonObject jsonObject, Map<String, Integer> map) {
+   private static WardrobeModel.Data method119(JsonObject jsonObject, Map<String, Integer> map) {
       if (jsonObject == null) {
          return null;
       } else {
@@ -590,7 +590,7 @@ public final class ModelJsonParser {
             }
          }
 
-         return new Class15.Data(flag ? floats : null, !jsonObject.has("hideArmor") || method128(jsonObject, "hideArmor"), method115(method125(jsonObject, "aura"), map));
+         return new WardrobeModel.Data(flag ? floats : null, !jsonObject.has("hideArmor") || method128(jsonObject, "hideArmor"), method115(method125(jsonObject, "aura"), map));
       }
    }
 
@@ -626,18 +626,18 @@ public final class ModelJsonParser {
          return -1;
       } else {
          try {
-            return Class15.Type.valueOf(str.strip().toUpperCase(Locale.ROOT)).ordinal();
+            return WardrobeModel.Type.valueOf(str.strip().toUpperCase(Locale.ROOT)).ordinal();
          } catch (IllegalArgumentException e) {
             return -1;
          }
       }
    }
 
-   private static Class15.Type2 method122(String str) {
+   private static WardrobeModel.Type2 method122(String str) {
       try {
-         return Class15.Type2.valueOf(str.strip().toUpperCase(Locale.ROOT));
+         return WardrobeModel.Type2.valueOf(str.strip().toUpperCase(Locale.ROOT));
       } catch (IllegalArgumentException e) {
-         return Class15.Type2.NONE;
+         return WardrobeModel.Type2.NONE;
       }
    }
 

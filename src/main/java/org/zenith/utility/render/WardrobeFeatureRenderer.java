@@ -17,9 +17,9 @@ import org.zenith.MinecraftAccess;
 import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
 import org.zenith.utility.misc.AnimationCache;
-import org.zenith.utility.misc.Class15;
-import org.zenith.utility.misc.Class2;
-import org.zenith.utility.misc.Handler4;
+import org.zenith.utility.misc.WardrobeModel;
+import org.zenith.utility.misc.AnimationInput;
+import org.zenith.utility.misc.PlayerRenderStateAccess;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.WardrobeCategory;
 import org.zenith.utility.misc.WardrobeSetInfo;
@@ -50,7 +50,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
                if (hoveredData2.method1546() != WardrobeCategory.PET
                   && !hoveredData2.getFocusSlotEnum().method543()
                   && (hoveredData == null || hoveredData2 == hoveredData || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
-                  Class15 key = wardrobe.getRegistry().method1427(hoveredData2);
+                  WardrobeModel key = wardrobe.getRegistry().method1427(hoveredData2);
                   if (key != null) {
                      AnimationCache.Entry entry2 = AnimationCache.method7621(state.id, hoveredData2, wardrobe.isFlag());
                      float f = entry2.method7624(nanoTime);
@@ -69,7 +69,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
                               floats2 = (float[])floats.clone();
                            }
 
-                           ModelPart modelPart = Util19.method5047(parentModel, i);
+                           ModelPart modelPart = WardrobeParticleEmitter.getPlayerModelPart(parentModel, i);
                            poseStack.pushPose();
 
                            try {
@@ -90,14 +90,14 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
                         }
                      }
 
-                     Util19.method5044(key, entry2, state, parentModel, floats, f, entry2.class2.flag3, entry2.class2.flag2, wardrobeSetInfo, key.items3);
+                     WardrobeParticleEmitter.emitModelParticles(key, entry2, state, parentModel, floats, f, entry2.class2.walking, entry2.class2.airborne, wardrobeSetInfo, key.items3);
                   }
                }
             }
 
             if (wardrobeSetInfo != null) {
                AnimationCache.Entry entry2 = AnimationCache.method7622(state.id, method4439(wardrobeSetInfo), wardrobe.isFlag());
-               Util19.method5045(wardrobeSetInfo, state, entry2, entry2.method7624(nanoTime), method4440(wardrobeSetInfo));
+               WardrobeParticleEmitter.emitSetBonusParticles(wardrobeSetInfo, state, entry2, entry2.method7624(nanoTime), method4440(wardrobeSetInfo));
             }
          }
       }
@@ -120,18 +120,18 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
       }
    }
 
-   private static float[] method4441(Class15 key, AnimationCache.Entry entry, AvatarRenderState state, PlayerModel parentModel, float f) {
-      Class2 class2 = entry.class2;
-      class2.floatValue = state.capeFlap;
-      class2.floatValue2 = state.capeLean;
-      class2.floatValue3 = state.capeLean2;
-      class2.floatValue4 = parentModel.leftLeg.xRot;
-      class2.floatValue5 = parentModel.rightLeg.xRot;
-      class2.floatValue6 = state.walkAnimationSpeed;
-      class2.floatValue8 = f;
-      class2.flag = state.isCrouching;
-      class2.flag3 = state.walkAnimationSpeed > 0.15F;
-      class2.flag2 = method4442(state);
+   private static float[] method4441(WardrobeModel key, AnimationCache.Entry entry, AvatarRenderState state, PlayerModel parentModel, float f) {
+      AnimationInput class2 = entry.class2;
+      class2.capeFlap = state.capeFlap;
+      class2.capeLean = state.capeLean;
+      class2.capeLeanSideways = state.capeLean2;
+      class2.leftLegPitch = parentModel.leftLeg.xRot;
+      class2.rightLegPitch = parentModel.rightLeg.xRot;
+      class2.walkSpeed = state.walkAnimationSpeed;
+      class2.deltaSeconds = f;
+      class2.crouching = state.isCrouching;
+      class2.walking = state.walkAnimationSpeed > 0.15F;
+      class2.airborne = method4442(state);
       float bodyRot = state.bodyRot;
       if (!Float.isNaN(entry.floatValue2) && !(f <= 0.0F)) {
          float f2 = bodyRot - entry.floatValue2;
@@ -144,16 +144,16 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
             f2 += 360.0F;
          }
 
-         class2.floatValue7 = f2 / f;
+         class2.bodyYawVelocity = f2 / f;
       } else {
-         class2.floatValue7 = 0.0F;
+         class2.bodyYawVelocity = 0.0F;
       }
 
       entry.floatValue2 = bodyRot;
       float floatValue = state.ageInTicks / 20.0F;
       String text = state.isFallFlying
          ? "glide"
-         : (class2.flag2 ? "fly" : (state.isCrouching ? "sneak" : (state.walkAnimationSpeed > 0.6F ? "run" : (class2.flag3 ? "walk" : "idle"))));
+         : (class2.airborne ? "fly" : (state.isCrouching ? "sneak" : (state.walkAnimationSpeed > 0.6F ? "run" : (class2.walking ? "walk" : "idle"))));
       entry.animationState.method6539(key, text, floatValue);
       entry.animationState.setFloatValue6(!text.equals("walk") && !text.equals("run") ? 1.0F : 0.6F + Math.min(1.2F, state.walkAnimationSpeed));
       return entry.class16.method2139(key, entry.animationState, floatValue, class2);
@@ -175,7 +175,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
    }
 
    public static List<HoveredData> method4444(AvatarRenderState state) {
-      List zenith$wardrobeLoadout = ((Handler4)state).zenith$wardrobeLoadout();
+      List zenith$wardrobeLoadout = ((PlayerRenderStateAccess)state).zenith$wardrobeLoadout();
       if (zenith$wardrobeLoadout != null) {
          return zenith$wardrobeLoadout;
       } else {
@@ -184,7 +184,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
             return List.of();
          } else {
             boolean flag = method4443(state);
-            return (flag ? wardrobe.showSelf.isEnabled() : wardrobe.showOthers.isEnabled()) ? List.copyOf(wardrobe.method2498(Handler4.method3142(state), flag)) : List.of();
+            return (flag ? wardrobe.showSelf.isEnabled() : wardrobe.showOthers.isEnabled()) ? List.copyOf(wardrobe.method2498(PlayerRenderStateAccess.getProfileName(state), flag)) : List.of();
          }
       }
    }
@@ -195,11 +195,11 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
    }
 
    public static void method4446(AvatarRenderState state) {
-      ((Handler4)state).zenith$setWardrobeLoadout(null);
+      ((PlayerRenderStateAccess)state).zenith$setWardrobeLoadout(null);
       Wardrobe wardrobe = Wardrobe.method2488();
       if (wardrobe != null) {
          List<HoveredData> hoveredDatas = method4444(state);
-         ((Handler4)state).zenith$setWardrobeLoadout(hoveredDatas);
+         ((PlayerRenderStateAccess)state).zenith$setWardrobeLoadout(hoveredDatas);
          if (!hoveredDatas.isEmpty()) {
             if (wardrobe.method2499(hoveredDatas, FocusSlotEnum.CHARACTER) != null) {
                state.showCape = false;
@@ -208,7 +208,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
                   if (hoveredData.method1546() == WardrobeCategory.CLOTHING
                      || hoveredData.method1546() == WardrobeCategory.CAPE
                      || hoveredData.method1546() == WardrobeCategory.ACCESSORY) {
-                     Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+                     WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData);
                      if (class2 != null) {
                         int n = class2.intValue4;
                         if ((n & 1) != 0) {

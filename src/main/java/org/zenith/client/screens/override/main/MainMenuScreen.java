@@ -71,7 +71,7 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
          this.pages.get(this.activeIndex).onHide();
          this.activeIndex = activeIndex;
          this.pages.get(this.activeIndex).onShow();
-         this.pageTransition.method2809(0.0F);
+         this.pageTransition.snapTo(0.0F);
       }
    }
 
@@ -82,16 +82,16 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
    @Override
    public void init() {
       Zenith.getInstance().getMenuParticleRenderer().init();
-      this.openTransition.method2809(0.0F);
-      this.pageTransition.method2809(0.0F);
+      this.openTransition.snapTo(0.0F);
+      this.pageTransition.snapTo(0.0F);
       super.init();
    }
 
    @Override
    public void added() {
       super.added();
-      this.openTransition.method2809(0.0F);
-      this.pageTransition.method2809(0.0F);
+      this.openTransition.snapTo(0.0F);
+      this.pageTransition.snapTo(0.0F);
       this.page().onShow();
    }
 
@@ -110,8 +110,8 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       MenuParticleRenderer.renderBackgroundAndParticles(graphics);
       this.backdrop.capture(graphics, MenuTheme.px(36.0F));
       MenuSurface.setMenuSource(this.backdrop.texture());
-      this.openTransition.method2808(1.0F);
-      this.pageTransition.method2808(1.0F);
+      this.openTransition.animateTo(1.0F);
+      this.pageTransition.animateTo(1.0F);
       MainMenuPage page = this.page();
       page.update();
       float footerHeight = page.footerHeight();

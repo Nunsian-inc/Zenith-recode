@@ -29,16 +29,16 @@ import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.FlakeUtil;
 import org.zenith.utility.misc.FoliageSprites;
 import org.zenith.utility.misc.SnowVisibility;
-import org.zenith.utility.misc.Util21;
-import org.zenith.utility.misc.Util32;
-import org.zenith.utility.misc.Util8;
+import org.zenith.utility.misc.GroundMistRenderer;
+import org.zenith.utility.misc.WeatherReflectionRenderer;
+import org.zenith.utility.misc.WeatherTimeProfile;
 import org.zenith.utility.misc.WeatherFlakeChannel;
 import org.zenith.utility.misc.WeatherPresets;
 import org.zenith.utility.render.Glowboost;
 import org.zenith.utility.render.ImmediateRenderer;
 import org.zenith.utility.render.RippleUtil;
 import org.zenith.utility.render.SnowShader;
-import org.zenith.utility.render.Util25;
+import org.zenith.utility.render.WeatherPreviewTerrainRenderer;
 import org.zenith.utility.render.WeatherPreviewUtil;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -154,7 +154,7 @@ public final class WeatherModule extends Module {
          || !this.method3086(this.data)
          || weatherPresets != this.weatherPresets) {
          WeatherFlakeChannel.Data data = this.method3093();
-         this.weatherFlakeChannel = weatherFlakeChannel2.method7458(Util8.method1722(floatValue), data, weatherPresets);
+         this.weatherFlakeChannel = weatherFlakeChannel2.method7458(WeatherTimeProfile.atTime(floatValue), data, weatherPresets);
          this.weatherFlakeChannel2 = weatherFlakeChannel2;
          this.floatValue = floatValue;
          this.data = data;
@@ -429,7 +429,7 @@ public final class WeatherModule extends Module {
 
             this.print.method5444(this.glowboost, weatherFlakeChannel, f, now, position.x, position.y, position.z);
             if (flakeState2 != null && !this.method3103()) {
-               Util21.method5356(this.glowboost, flakeState2, weatherFlakeChannel, f, f2, position.x, position.y, position.z);
+               GroundMistRenderer.renderGroundMist(this.glowboost, flakeState2, weatherFlakeChannel, f, f2, position.x, position.y, position.z);
             }
 
             if (flakeState2 != null) {
@@ -510,13 +510,13 @@ public final class WeatherModule extends Module {
 
       float xScale = width / 11.0F * 1.15F;
       float yo = y + height * 0.82F;
-      PoseStack matrixStack = Util25.method6477(customDrawContext, floatValue + width / 2.0F, yo, xScale);
-      this.glowboost.method3233(Util25.method6478(), Util25.method6479(), 0.0F);
-      Util25.method6480(this.glowboost, this.flakeState2, Util25.Data.method6483(weatherFlakeChannel, f), previewAlpha);
-      Util32.method7994(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
+      PoseStack matrixStack = WeatherPreviewTerrainRenderer.createPreviewPose(customDrawContext, floatValue + width / 2.0F, yo, xScale);
+      this.glowboost.method3233(WeatherPreviewTerrainRenderer.getPreviewPitch(), WeatherPreviewTerrainRenderer.getPreviewYaw(), 0.0F);
+      WeatherPreviewTerrainRenderer.renderTerrain(this.glowboost, this.flakeState2, WeatherPreviewTerrainRenderer.Data.fromWeather(weatherFlakeChannel, f), previewAlpha);
+      WeatherReflectionRenderer.drawReflections(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
       FlakeUtil.method7508(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, 0.0, 2.0, 0.0);
       Print.method5446(this.glowboost, weatherFlakeChannel, previewAlpha);
-      Util21.method5356(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
+      GroundMistRenderer.renderGroundMist(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
       RippleUtil.method7827(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
       this.glowboost.method3253(matrixStack);
    }

@@ -18,7 +18,7 @@ import org.zenith.client.screens.nlgui.elements.ChipStrip;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.utility.game.CraftRecipe;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -725,9 +725,9 @@ public class AutoCraftToolPanel extends ToolTab {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       BoundsData mainViewport = this.mainViewport();
-      if (mainViewport != null && mainViewport.contains(lastClickX, lastClickY) && enum2 == Enum3.LEFT) {
+      if (mainViewport != null && mainViewport.contains(lastClickX, lastClickY) && enum2 == MouseButton.LEFT) {
          if (this.buttonBounds != null && this.buttonBounds.contains(lastClickX, lastClickY)) {
             this.pressButton("start", lastClickX, lastClickY);
             module().toggle();

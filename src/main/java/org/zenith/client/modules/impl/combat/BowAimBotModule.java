@@ -23,7 +23,7 @@ import org.zenith.Rotation;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.modules.impl.render.PredictionsModule;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.SliderSetting;
@@ -54,7 +54,7 @@ public final class BowAimBotModule extends Module {
    );
 
    @EventTarget
-   public void method5721(Event5 event) {
+   public void method5721(PreRotationEvent event) {
       if (this.flag) {
          this.flag = false;
          this.method5722();
@@ -69,7 +69,7 @@ public final class BowAimBotModule extends Module {
          }
 
          Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
-         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig3()), 20, this);
+         Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig3()), 20, this);
       } else {
          this.intValue = 0;
       }
@@ -91,7 +91,7 @@ public final class BowAimBotModule extends Module {
             return null;
          } else {
             AABB aabb = this.method5731(livingEntity);
-            Rotation rotation2 = Rotation.method3128(this.method5727(aabb), eyePosition);
+            Rotation rotation2 = Rotation.lookingAt(this.method5727(aabb), eyePosition);
             return this.autoShoot.isEnabled() && this.method5733(useItem, playerSimulation, aabb) ? null : this.method5732(useItem, playerSimulation, rotation2, aabb);
          }
       } catch (Exception e) {
@@ -229,12 +229,12 @@ public final class BowAimBotModule extends Module {
       for (int i = 1; i <= 50; i++) {
          Rotation rotation = new Rotation(yRot + i, xRot);
          if (this.method5738(rotation, vec, vec3d2, aabb, arrow, d)) {
-            return rotation.method3140(3.0F, 0.0F);
+            return rotation.add(3.0F, 0.0F);
          }
 
          Rotation rotation2 = new Rotation(yRot - i, xRot);
          if (this.method5738(rotation2, vec, vec3d2, aabb, arrow, d)) {
-            return rotation2.method3140(-3.0F, 0.0F);
+            return rotation2.add(-3.0F, 0.0F);
          }
       }
 
@@ -243,7 +243,7 @@ public final class BowAimBotModule extends Module {
 
    private boolean method5737(int yRot, int xRot, Vec3 vec, Vec3 vec3d2, AABB aabb, Arrow arrow, double d) {
       Rotation rotation = new Rotation(yRot, xRot);
-      Vec3 vec2 = rotation.method3135();
+      Vec3 vec2 = rotation.toDirection();
       double length;
       if ((length = vec2.length()) <= 1.0E-6) {
          return false;
@@ -298,7 +298,7 @@ public final class BowAimBotModule extends Module {
    }
 
    private boolean method5738(Rotation rotation, Vec3 vec, Vec3 vec3d2, AABB aabb, Arrow arrow, double d) {
-      Vec3 vec2 = rotation.method3135();
+      Vec3 vec2 = rotation.toDirection();
       double length;
       if ((length = vec2.length()) <= 1.0E-6) {
          return false;

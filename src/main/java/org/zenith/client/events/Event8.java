@@ -21,7 +21,7 @@ public class Event8 extends CancellableEvent {
    }
 
    @Generated
-   public BlockPos getBlockPos2() {
+   public BlockPos getBlockPos() {
       return this.blockPos;
    }
 }

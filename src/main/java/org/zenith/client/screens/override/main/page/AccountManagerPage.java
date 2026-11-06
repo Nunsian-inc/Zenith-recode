@@ -237,7 +237,7 @@ public final class AccountManagerPage implements MainMenuPage {
       this.cardRemove = new BoundsData[accounts.size()];
       BoundsData listArea = MenuSkin.listArea(graphics, boundsData, STRIP_HEIGHT);
       this.viewport = new BoundsData(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.width(), listArea.height());
-      float f = this.entrance.method2808(1.0F);
+      float f = this.entrance.animateTo(1.0F);
       graphics.enableScissor(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.getFloatValue() + listArea.width(), listArea.getFloatValue2() + listArea.height());
       float floatValue = listArea.getFloatValue() + Math.max(0.0F, (listArea.width() - content) / 2.0F) - this.scroll.offset();
 

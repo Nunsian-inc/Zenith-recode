@@ -112,8 +112,8 @@ public final class AutoCapchaModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         Packet packet3 = event.getPacket3();
+      if (event.isIncoming()) {
+         Packet packet3 = event.getPacket();
          AutoCapchaModule.Data data = this.method157();
          if (packet3 instanceof ClientboundLoginPacket || packet3 instanceof ClientboundRespawnPacket) {
             this.resetState(true);

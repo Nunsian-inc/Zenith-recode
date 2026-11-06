@@ -8,8 +8,8 @@ import org.zenith.MatrixUtils;
 import org.zenith.MinecraftAccess;
 import org.zenith.RenderState;
 import org.zenith.utility.misc.AnimationState;
-import org.zenith.utility.misc.Class15;
-import org.zenith.utility.misc.Class16;
+import org.zenith.utility.misc.WardrobeModel;
+import org.zenith.utility.misc.ModelPoseEvaluator;
 import org.zenith.utility.misc.HoveredData;
 
 public final class Stage implements MinecraftAccess {
@@ -35,8 +35,8 @@ public final class Stage implements MinecraftAccess {
       new Stage.Data("happy", 1.8F, true)
    };
    private final AnimationState animationState = new AnimationState();
-   private final Class16 class16 = new Class16();
-   private Class15 class15;
+   private final ModelPoseEvaluator class16 = new ModelPoseEvaluator();
+   private WardrobeModel class15;
    private int intValue = -1;
    private float floatValue;
 
@@ -45,7 +45,7 @@ public final class Stage implements MinecraftAccess {
       this.intValue = -1;
    }
 
-   public void method893(GuiGraphicsExtractor context, HoveredData hoveredData, Class15 key, float stageX0, float stageY0, float stageX1, float stageY1, float stageYaw, float angdeg) {
+   public void method893(GuiGraphicsExtractor context, HoveredData hoveredData, WardrobeModel key, float stageX0, float stageY0, float stageX1, float stageY1, float stageYaw, float angdeg) {
       if (key != null && key.intValue3 != 0) {
          float floatValue = (float)(System.nanoTime() - CONST_longValue) / 1.0E9F;
          if (key != this.class15) {
@@ -53,7 +53,7 @@ public final class Stage implements MinecraftAccess {
             this.intValue = -1;
          }
 
-         Stage.Data[] datas3 = key.data3 == null || key.data3.getType4() != Class15.Type4.FLYER && key.data3.getType4() != Class15.Type4.FLOATER
+         Stage.Data[] datas3 = key.data3 == null || key.data3.getType4() != WardrobeModel.Type4.FLYER && key.data3.getType4() != WardrobeModel.Type4.FLOATER
             ? datas
             : datas2;
          if (this.intValue < 0 || floatValue - this.floatValue >= datas3[this.intValue].getFloatValue()) {

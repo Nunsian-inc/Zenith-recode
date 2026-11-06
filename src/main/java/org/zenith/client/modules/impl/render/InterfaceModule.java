@@ -49,7 +49,7 @@ import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.MultiSelectSetting;
 import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.misc.Class31;
+import org.zenith.utility.misc.HudDragController;
 import org.zenith.utility.render.Interface;
 import org.zenith.utility.render.Jebriksheet;
 import org.zenith.utility.render.MathUtils;
@@ -68,7 +68,7 @@ public final class InterfaceModule extends Module {
    private final List<Interface> items = new ArrayList<>();
    private final Map<String, Interface> items2 = new HashMap<>();
    private final Jebriksheet jebriksheet = new Jebriksheet();
-   private final Class31 class31 = new Class31();
+   private final HudDragController class31 = new HudDragController();
    public static final InterfaceModule INSTANCE = new InterfaceModule();
    private Interface interfaceValue = null;
    private float floatValue;

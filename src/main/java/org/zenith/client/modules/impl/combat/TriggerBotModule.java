@@ -16,9 +16,9 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.client.events.EntityAddEvent;
-import org.zenith.client.events.Event2;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PostRotationEvent;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.SprintUpdateEvent;
 import org.zenith.client.events.UpdateEvent;
@@ -118,7 +118,7 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget
-   public void method5575(Event2 event) {
+   public void method5575(PostRotationEvent event) {
       if (this.livingEntity != null) {
          if (this.flag2 && this.method5580() && (!this.method5577() || this.neuroClicks.method451(this.method5591(), this.method5578()))) {
             this.flag = false;
@@ -169,7 +169,7 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget
-   public void method5579(Event5 event) {
+   public void method5579(PreRotationEvent event) {
       this.flag3 = false;
       if (mc.player.isDeadOrDying()) {
          this.livingEntity = null;
@@ -238,7 +238,7 @@ public final class TriggerBotModule extends Module {
    }
 
    public boolean method5580() {
-      return this.method5582(rotationManager.method7844());
+      return this.method5582(rotationManager.getEffectiveRotation());
    }
 
    private void method5581() {
@@ -278,7 +278,7 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget(0)
-   public void method5588(Event9 event) {
+   public void method5588(InteractionInputEvent event) {
       if (this.flag3) {
          event.cancel();
       }

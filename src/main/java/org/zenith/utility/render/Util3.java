@@ -16,19 +16,19 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.WardrobeCategory;
 
 public final class Util3 {
    private static final float CONST_floatValue = 0.0625F;
    private static final int CONST_intValue = 6;
-   private static final int CONST_intValue2 = Class15.Type.HEAD.ordinal();
-   private static final int CONST_intValue3 = Class15.Type.BODY.ordinal();
-   private static final int CONST_intValue4 = Class15.Type.RIGHT_ARM.ordinal();
-   private static final int CONST_intValue5 = Class15.Type.LEFT_ARM.ordinal();
-   private static final int CONST_intValue6 = Class15.Type.RIGHT_LEG.ordinal();
-   private static final int CONST_intValue7 = Class15.Type.LEFT_LEG.ordinal();
+   private static final int CONST_intValue2 = WardrobeModel.Type.HEAD.ordinal();
+   private static final int CONST_intValue3 = WardrobeModel.Type.BODY.ordinal();
+   private static final int CONST_intValue4 = WardrobeModel.Type.RIGHT_ARM.ordinal();
+   private static final int CONST_intValue5 = WardrobeModel.Type.LEFT_ARM.ordinal();
+   private static final int CONST_intValue6 = WardrobeModel.Type.RIGHT_LEG.ordinal();
+   private static final int CONST_intValue7 = WardrobeModel.Type.LEFT_LEG.ordinal();
    private static final float[] CONST_floatValues = new float[]{0.0F, 0.0F, -0.0625F, 0.0625F, 0.0F, 0.0F};
    private static final float[] CONST_floatValues2 = new float[]{0.25F, 0.25F, 0.125F, 0.125F, 0.125F, 0.125F};
    private static final float[] CONST_floatValues3 = new float[]{0.25F, 0.125F, 0.125F, 0.125F, 0.125F, 0.125F};
@@ -110,7 +110,7 @@ public final class Util3 {
       if (hoveredData == null && flag2 && method825(ordinal)) {
          boolean flag3 = false;
 
-         for (Class15 class2 : entry.class15s) {
+         for (WardrobeModel class2 : entry.class15s) {
             flag3 |= (class2.intValue4 & 4) != 0;
          }
 
@@ -149,7 +149,7 @@ public final class Util3 {
       return f * 0.85F;
    }
 
-   public static float method831(Class15 class2, int ordinal, int n, float floatValue) {
+   public static float method831(WardrobeModel class2, int ordinal, int n, float floatValue) {
       Util3.Data3 data3 = new Util3.Data3(ordinal, n, floatValue);
       float[] floats = class2.items4.get(data3);
       if (floats != null) {
@@ -174,7 +174,7 @@ public final class Util3 {
       }
    }
 
-   private static float[] method832(Class15 class2, Class15 class3, int ordinal, int n, float floatValue, float f) {
+   private static float[] method832(WardrobeModel class2, WardrobeModel class3, int ordinal, int n, float floatValue, float f) {
       Util3.Data2 data2 = new Util3.Data2(class2, ordinal, n, floatValue, f);
       float[] floats = class3.items4.get(data2);
       if (floats != null) {
@@ -282,7 +282,7 @@ public final class Util3 {
       return toIndex;
    }
 
-   private static int method837(Class15 class2, int ordinal, int n, float floatValue, float f, int n2, int n3, boolean flag, float[] floats) {
+   private static int method837(WardrobeModel class2, int ordinal, int n, float floatValue, float f, int n2, int n3, boolean flag, float[] floats) {
       float[] floats2 = method841(class2, obj);
       float[] floats3 = method841(class2, obj2);
       boolean flag2 = flag && method840(class2, ordinal);
@@ -350,7 +350,7 @@ public final class Util3 {
       return f3;
    }
 
-   private static boolean method840(Class15 class2, int ordinal) {
+   private static boolean method840(WardrobeModel class2, int ordinal) {
       for (int i = 0; i < class2.method2030(); i++) {
          if (class2.intValues[i] < 0 && class2.intValues2[i] == ordinal) {
             return true;
@@ -360,7 +360,7 @@ public final class Util3 {
       return false;
    }
 
-   private static float[] method841(Class15 key, Object obj3) {
+   private static float[] method841(WardrobeModel key, Object obj3) {
       float[] floats = key.items4.get(obj3);
       if (floats != null) {
          return floats;
@@ -509,13 +509,13 @@ public final class Util3 {
    }
 
    private static final class Data2 {
-      private final Class15 class15;
+      private final WardrobeModel class15;
       private final int intValue;
       private final int intValue2;
       private final float floatValue;
       private final float floatValue2;
 
-      public Class15 class15() {
+      public WardrobeModel class15() {
          return this.class15;
       }
 
@@ -552,7 +552,7 @@ public final class Util3 {
          return "Data2[" + "class15=" + this.class15 + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + "]";
       }
 
-      private Data2(Class15 class2, int intValue, int n, float floatValue, float f) {
+      private Data2(WardrobeModel class2, int intValue, int n, float floatValue, float f) {
          this.class15 = class2;
          this.intValue = intValue;
          this.intValue2 = n;
@@ -560,7 +560,7 @@ public final class Util3 {
          this.floatValue2 = f;
       }
 
-      public Class15 getClass15() {
+      public WardrobeModel getClass15() {
          return this.class15;
       }
 
@@ -636,17 +636,17 @@ public final class Util3 {
 
    public static final class Entry {
       private final HoveredData[] hoveredDatas;
-      private final Class15[] class15s;
+      private final WardrobeModel[] class15s;
       private final int[] intValues;
       private final boolean flag;
       private final float[] floatValues = new float[6];
       private final float[] floatValues2 = new float[6];
       private Util3.Data[] datas;
 
-      public Entry(List<HoveredData> hoveredDatas, List<Class15> classes, boolean flag) {
+      public Entry(List<HoveredData> hoveredDatas, List<WardrobeModel> classes, boolean flag) {
          int size = hoveredDatas.size();
          this.hoveredDatas = hoveredDatas.toArray(new HoveredData[0]);
-         this.class15s = classes.toArray(new Class15[0]);
+         this.class15s = classes.toArray(new WardrobeModel[0]);
          this.intValues = new int[size];
          boolean flag2 = false;
 
@@ -661,11 +661,11 @@ public final class Util3 {
 
       private static Util3.Entry method843(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag) {
          List<HoveredData> hoveredDatas2 = new ArrayList<>(hoveredDatas.size());
-         List<Class15> classes = new ArrayList<>(hoveredDatas.size());
+         List<WardrobeModel> classes = new ArrayList<>(hoveredDatas.size());
 
          for (HoveredData hoveredData2 : hoveredDatas) {
             if (Util3.method824(hoveredData2.getFocusSlotEnum()) >= 0 && (hoveredData == null || hoveredData2 == hoveredData || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
-               Class15 class2 = wardrobe.getRegistry().method1427(hoveredData2);
+               WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData2);
                if (class2 != null) {
                   hoveredDatas2.add(hoveredData2);
                   classes.add(class2);
@@ -728,7 +728,7 @@ public final class Util3 {
       }
 
       private float[] method849(int n, int ordinal, int n2, float f, float f2) {
-         Class15 class2 = this.class15s[n];
+         WardrobeModel class2 = this.class15s[n];
          boolean flag = this.hoveredDatas[n].method1546() == WardrobeCategory.ACCESSORY;
          float[][] floatses = new float[2][];
          int[] ints = new int[2];
@@ -869,7 +869,7 @@ public final class Util3 {
    }
 
    private static final class Entry2 {
-      private final Class15[] class15s;
+      private final WardrobeModel[] class15s;
       private final FocusSlotEnum[] focusSlotEnums;
       private final boolean flag;
       private final float[] floatValues;

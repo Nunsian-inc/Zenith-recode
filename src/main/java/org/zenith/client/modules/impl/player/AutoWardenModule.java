@@ -67,7 +67,7 @@ import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationLock;
 import org.zenith.client.events.ChatReceiveEvent;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.BooleanSetting;
@@ -79,7 +79,7 @@ import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.game.TargetUtils;
 import org.zenith.utility.misc.RotationConfig;
 import org.zenith.utility.misc.RotationRequest;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 import org.zenith.utility.network.InventoryUtils;
 import org.zenith.utility.render.PvpDetector;
 
@@ -408,11 +408,11 @@ public class AutoWardenModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && mc.player != null) {
+      if (event.isIncoming() && mc.player != null) {
          String str = null;
-         if (event.getPacket3() instanceof ClientboundSoundPacket clientboundSoundPacket) {
+         if (event.getPacket() instanceof ClientboundSoundPacket clientboundSoundPacket) {
             str = this.method3958(clientboundSoundPacket.getSound());
-         } else if (event.getPacket3() instanceof ClientboundSoundEntityPacket soundEntityPacket) {
+         } else if (event.getPacket() instanceof ClientboundSoundEntityPacket soundEntityPacket) {
             str = this.method3958(soundEntityPacket.getSound());
          }
 
@@ -988,7 +988,7 @@ public class AutoWardenModule extends Module {
                double d4;
                if (!((d4 = eyePosition.distanceToSqr(vec2)) >= d3)
                   && !(d4 > d2)
-                  && this.method3996(eyePosition, Rotation.method3128(vec2, eyePosition), key) != null) {
+                  && this.method3996(eyePosition, Rotation.lookingAt(vec2, eyePosition), key) != null) {
                   d3 = d4;
                   vec = vec2;
                }
@@ -1010,7 +1010,7 @@ public class AutoWardenModule extends Module {
    }
 
    @EventTarget
-   public void method3997(Event5 event) {
+   public void method3997(PreRotationEvent event) {
       Rotation rotation = this.rotation;
       boolean enabled = this.humanLook.isEnabled();
       if (rotation == null && enabled) {
@@ -1020,14 +1020,14 @@ public class AutoWardenModule extends Module {
       if (rotation != null) {
          Rotation rotation2 = rotation;
          RotationConfig rotationConfig17 = enabled ? bcCameraTestnerv.getRotationConfig17() : bcCameraTestnerv.getRotationConfig();
-         rotationManager.method7849(new RotationRequest(rotation2, () -> bcCameraTestnerv.method1851(rotationConfig17, rotation2), rotationConfig17), 4, this);
+         rotationManager.requestRotation(new RotationRequest(rotation2, () -> bcCameraTestnerv.method1851(rotationConfig17, rotation2), rotationConfig17), 4, this);
       }
    }
 
    private float method3998() {
       Rotation rotation = RotationLock.method2708();
       return rotation != null && this.rotation == null
-         ? Math.abs(Mth.wrapDegrees(rotation.getFloatValue() - rotationManager.method7844().getFloatValue()))
+         ? Math.abs(Mth.wrapDegrees(rotation.getFloatValue() - rotationManager.getEffectiveRotation().getFloatValue()))
          : 0.0F;
    }
 
@@ -1040,14 +1040,14 @@ public class AutoWardenModule extends Module {
             this.method4000("interact: точку прицела не нашёл");
             return false;
          } else {
-            Rotation rotation = Rotation.method3128(vec, eyePosition);
+            Rotation rotation = Rotation.lookingAt(vec, eyePosition);
             this.rotation = rotation;
             if (mc.player.tickCount % n != 0) {
                return false;
             } else {
                Rotation rotation2 = rotationManager.getRotation2();
                float f;
-               if ((f = rotation2.method3130(rotation)) > 5.0F) {
+               if ((f = rotation2.angularDistanceTo(rotation)) > 5.0F) {
                   this.method4000(
                      String.format(
                         "interact: ротация не доведена, промах %.1f (надо %.1f/%.1f, сервер %.1f/%.1f, current %s)",
@@ -1373,7 +1373,7 @@ public class AutoWardenModule extends Module {
    private boolean method4022(ItemStack stack) {
       Item item = stack.getItem();
       return item instanceof ArrowItem
-         || Util10.method2177(item.getDefaultInstance())
+         || ItemStackTags.isPickaxe(item.getDefaultInstance())
          || item.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.AXES)
          || stack.is(Items.CHORUS_FRUIT)
          || stack.is(Items.DISC_FRAGMENT_5)
@@ -1590,7 +1590,7 @@ public class AutoWardenModule extends Module {
          if (player != mc.player
             && !(player.position().distanceToSqr(Vec3.atCenterOf(pos)) >= 20.0)
             && Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
-               .anyMatch(var1x -> Util10.method2181(player.getItemBySlot(var1x)))) {
+               .anyMatch(var1x -> ItemStackTags.isArmor(player.getItemBySlot(var1x)))) {
             return true;
          }
       }
@@ -1662,8 +1662,8 @@ public class AutoWardenModule extends Module {
          Vec3 vec = this.method3995(eyePosition, blockPos);
          String str = "-";
          if (vec != null) {
-            Rotation rotation = Rotation.method3128(vec, eyePosition);
-            str = String.format("%.1f", rotationManager.getRotation2().method3130(rotation));
+            Rotation rotation = Rotation.lookingAt(vec, eyePosition);
+            str = String.format("%.1f", rotationManager.getRotation2().angularDistanceTo(rotation));
          }
 
          return "вижу "

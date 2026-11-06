@@ -13,7 +13,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.ColorSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.GlowColor;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -49,7 +49,7 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.expanded && this.picker.onMouseClicked(x, y, enum2)) {
          return true;
       } else if (this.rowBounds != null && this.rowBounds.contains(x, y)) {
@@ -66,7 +66,7 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
    }
 
    @Override
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
       this.picker.onMouseReleased();
       super.onMouseReleased(d, d2, enum2);
    }
@@ -95,7 +95,7 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float f, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          float rowHeight = this.rowHeight();
          this.rowBounds = new BoundsData(floatValue, f, this.width, rowHeight);
@@ -128,7 +128,7 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
             GlowColor.method8096(clientColor, zenithColor4, zenithColor4, clientColor)
          );
          float f3;
-         if (!((f3 = this.animationExpanded.method2808(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
+         if (!((f3 = this.animationExpanded.animateTo(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
             float y2 = f + rowHeight;
             this.pickerHeight = this.picker.height(this.width);
             float f4 = this.pickerHeight * f3;

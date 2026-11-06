@@ -77,9 +77,9 @@ public class TargetHud extends Interface {
       float f = Mth.clamp(UseItemUtils.method6527(livingEntity), 0.0F, 999.0F);
       float f2 = Math.max(1.0F, livingEntity.getMaxHealth());
       float floatValue = Mth.clamp(f / f2, 0.0F, 1.0F);
-      float f3 = Mth.clamp(this.animation.method2808(floatValue), 0.0F, 1.0F);
+      float f3 = Mth.clamp(this.animation.animateTo(floatValue), 0.0F, 1.0F);
       float f4 = Math.max(0.0F, f - f2);
-      float f5 = Mth.clamp(this.animation2.method2808(f4 / f2), 0.0F, 1.0F);
+      float f5 = Mth.clamp(this.animation2.animateTo(f4 / f2), 0.0F, 1.0F);
       String text = String.valueOf(Math.round(f));
       Font nameFont = HudListLayout.nameFont();
       Font font = Fonts.NEW_SEMIBOLD.getFont(7.5F);
@@ -103,11 +103,11 @@ public class TargetHud extends Interface {
          && (mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud())
          && this.bounds.contains(uvPair.u(), uvPair.v());
       if (flag2 || !str.equals(this.text)) {
-         this.animation4.method2809(0.0F);
+         this.animation4.snapTo(0.0F);
          this.text = str;
       }
 
-      float previewAlpha = this.animation4.method2808(flag3 ? 1.0F : 0.0F);
+      float previewAlpha = this.animation4.animateTo(flag3 ? 1.0F : 0.0F);
       String clip = nameFont.clip(str, width);
       String clip2 = nameFont.clip(method7236("hud.target.copy"), width);
       ZenithColor zenithColor = style.getPrimaryColor().getZenithColor();
@@ -222,17 +222,17 @@ public class TargetHud extends Interface {
 
    public void method7235(LivingEntity livingEntity) {
       if (livingEntity == null) {
-         this.animation3.method2808(0.0F);
+         this.animation3.animateTo(0.0F);
          if (this.animation3.getValue() == 0.0F) {
             this.livingEntity = null;
          }
       } else if (livingEntity != this.livingEntity) {
-         this.animation3.method2808(0.0F);
+         this.animation3.animateTo(0.0F);
          if (this.animation3.getValue() == 0.0F) {
             this.livingEntity = livingEntity;
          }
       } else {
-         this.animation3.method2808(1.0F);
+         this.animation3.animateTo(1.0F);
       }
    }
 

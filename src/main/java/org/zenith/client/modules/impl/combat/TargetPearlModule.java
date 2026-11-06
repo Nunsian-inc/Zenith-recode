@@ -24,7 +24,7 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.client.events.EntityAddEvent;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.InteractItemEvent;
 import org.zenith.client.modules.impl.render.PredictionsModule;
 import org.zenith.client.settings.BindSetting;
@@ -85,7 +85,7 @@ public final class TargetPearlModule extends Module {
    }
 
    @EventTarget
-   public void method4830(Event5 event) {
+   public void method4830(PreRotationEvent event) {
       if (mc.player == null || mc.level == null) {
          this.method4843();
       } else if (this.flag) {
@@ -148,7 +148,7 @@ public final class TargetPearlModule extends Module {
    private void method4833() {
       PredictionsModule predictionsModule = PredictionsModule.INSTANCE;
       Vec3 position = mc.player.position();
-      Rotation rotation = Zenith.getInstance().getRotationManager().method7844();
+      Rotation rotation = Zenith.getInstance().getRotationManager().getEffectiveRotation();
       this.rotation = null;
       this.vec3d = null;
       UseItemUtils.method6510()
@@ -161,7 +161,7 @@ public final class TargetPearlModule extends Module {
          .filter(var2x -> var2x.distanceTo(position) >= this.distanceSetting.getValue3())
          .map(var1x -> new TargetPearlModule.Data(var1x, this.method4835(var1x)))
          .filter(data -> data.rotation() != null)
-         .min(Comparator.comparingDouble(var1x -> rotation.method3131(var1x.rotation()).method5327()))
+         .min(Comparator.comparingDouble(var1x -> rotation.wrappedDeltaTo(var1x.rotation()).length()))
          .ifPresent(var1x -> {
             this.rotation = var1x.rotation();
             this.vec3d = var1x.getVec3d();
@@ -232,7 +232,7 @@ public final class TargetPearlModule extends Module {
 
    private Vec3 method4838(Rotation rotation, Vec3 vec, Vec3 vec2, MutableBlockPos mutablePos) {
       Vec3 from = vec;
-      Vec3 vec3 = rotation.method3135().scale(1.5).add(vec2);
+      Vec3 vec3 = rotation.toDirection().scale(1.5).add(vec2);
 
       for (int i = 0; i < 200; i++) {
          Vec3 to = from.add(vec3);
@@ -266,7 +266,7 @@ public final class TargetPearlModule extends Module {
       if (rotation != null) {
          Zenith.getInstance()
             .getRotationManager()
-            .method7848(
+            .requestRotation(
                new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                20,
                this,

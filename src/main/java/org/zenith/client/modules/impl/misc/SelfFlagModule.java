@@ -83,8 +83,8 @@ public class SelfFlagModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (!event.method7100() && mc.player != null) {
-         Packet packet3 = event.getPacket3();
+      if (!event.isIncoming() && mc.player != null) {
+         Packet packet3 = event.getPacket();
          if (packet3 instanceof ServerboundInteractPacket || packet3 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
             long now = System.currentTimeMillis();
             float f = this.flag ? Math.abs(this.method7982(mc.player.getYRot() - this.floatValue)) : 0.0F;

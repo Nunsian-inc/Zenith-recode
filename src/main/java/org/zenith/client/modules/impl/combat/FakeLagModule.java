@@ -143,9 +143,9 @@ public final class FakeLagModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.getPacket3() != null) {
-         if (event.method7100()) {
-            this.method6938(event.getPacket3());
+      if (event.getPacket() != null) {
+         if (event.isIncoming()) {
+            this.method6938(event.getPacket());
          }
       }
    }

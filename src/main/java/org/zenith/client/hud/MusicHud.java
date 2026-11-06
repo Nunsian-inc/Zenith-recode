@@ -219,7 +219,7 @@ public class MusicHud extends Interface {
          }
 
          this.flag3 = visible;
-         this.animation.method2807(visible);
+         this.animation.updateVisibility(visible);
          if (this.animation.getValue() <= 0.001F) {
             this.flag = false;
             this.clearBounds();
@@ -229,7 +229,7 @@ public class MusicHud extends Interface {
             float lastClickY = uvPair.v();
             boolean flag3 = flag || this.method2074();
             boolean visible2 = flag3 && active && (this.inside(lastClickX, lastClickY, this.floatValue, this.floatValue2, this.animWidth, this.height) || this.flag);
-            this.animation2.method2807(visible2);
+            this.animation2.updateVisibility(visible2);
             float previewAlpha = this.animation2.getValue();
             double d = mediaSessionManager.method6009();
             double d2 = mediaSessionManager.method6008();
@@ -587,7 +587,7 @@ public class MusicHud extends Interface {
          float width = this.width - 8.0F - 4.0F;
          float y = this.floatValue2 + 25.0F + 3.0F - f;
          boolean inside = this.inside(lastClickX, lastClickY, floatValue, y - 3.0F, width, 8.0F);
-         this.animation3.method2807(inside || this.flag);
+         this.animation3.updateVisibility(inside || this.flag);
          float height = 1.6F + 1.2F * this.animation3.getValue();
          this.boundsData3 = new BoundsData(floatValue, y, width, height);
          float seekPreview = this.flag ? this.seekPreview : (d2 > 0.0 ? clamp01((float)(d / d2)) : 0.0F);

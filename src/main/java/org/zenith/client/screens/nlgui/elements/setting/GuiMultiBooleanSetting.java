@@ -15,7 +15,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.MultiSelectSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -52,7 +52,7 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
          this.expanded = (!this.expanded);
          return true;
@@ -68,7 +68,7 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
@@ -101,13 +101,13 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
          String currentValueText = this.collectCurrentValueText();
          if (this.displayedValueText.isEmpty()) {
             this.displayedValueText = currentValueText;
-            this.textFadeAnimation.method2809(1.0F);
+            this.textFadeAnimation.snapTo(1.0F);
          }
 
          if (!this.textSwitchPending && !currentValueText.equals(this.displayedValueText)) {
             this.pendingValueText = currentValueText;
             this.textSwitchPending = true;
-            this.textFadeAnimation.method2810(0.0F);
+            this.textFadeAnimation.setTarget(0.0F);
          } else if (this.textSwitchPending && !currentValueText.equals(this.pendingValueText)) {
             this.pendingValueText = currentValueText;
          }
@@ -115,10 +115,10 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
          if (this.textSwitchPending && this.textFadeAnimation.update() <= 0.02F) {
             this.displayedValueText = this.pendingValueText;
             this.textSwitchPending = false;
-            this.textFadeAnimation.method2809(0.0F);
-            this.textFadeAnimation.method2810(1.0F);
+            this.textFadeAnimation.snapTo(0.0F);
+            this.textFadeAnimation.setTarget(1.0F);
          } else if (!this.textSwitchPending) {
-            this.textFadeAnimation.method2808(1.0F);
+            this.textFadeAnimation.animateTo(1.0F);
          }
 
          Font font3 = Fonts.NEW_MEDIUM.getFont(5.3F);
@@ -148,7 +148,7 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
       float width = this.width / 2.0F;
       float height = this.getHeight();
       this.bounds = new BoundsData(f + this.width - width, f2 + (this.getHeight() - height) / 2.0F, width, height);
-      this.animationExpanded.method2807(this.expanded);
+      this.animationExpanded.updateVisibility(this.expanded);
       if (this.animationExpanded.getValue() > 0.0F) {
          this.getWidth();
          float height2 = GuiStyle.PADDING.intValue() / 2.0F + this.renderValues.size() * (10.0F + GuiStyle.PADDING.intValue() / 2.0F);
@@ -212,8 +212,8 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
    }
 
    @Override
-   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
-      if (this.expanded && this.rectBounds != null && this.rectBounds.contains(lastClickX, lastClickY) && enum2.getIntValue() == 0) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, MouseButton enum2) {
+      if (this.expanded && this.rectBounds != null && this.rectBounds.contains(lastClickX, lastClickY) && enum2.getGlfwButton() == 0) {
          for (GuiMultiBooleanSetting.RenderValue renderValue : this.renderValues) {
             if (renderValue.onMouseClicked(lastClickX, lastClickY, enum2)) {
                return true;
@@ -265,7 +265,7 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
          if (currentStyle != null) {
             float width = GuiMultiBooleanSetting.this.width / 2.0F - GuiStyle.PADDING.intValue();
             this.bounds = new BoundsData(floatValue + GuiStyle.PADDING.intValue() / 2.0F, y, width, this.getHeight());
-            this.animationEnable.method2808(this.value.isEnabled() ? 1.0F : (this.bounds.contains(lastClickX, lastClickY) ? 0.5F : 0.0F));
+            this.animationEnable.animateTo(this.value.isEnabled() ? 1.0F : (this.bounds.contains(lastClickX, lastClickY) ? 0.5F : 0.0F));
             menuDrawContext.drawRoundedRectBatched(
                this.bounds.getFloatValue(),
                this.bounds.getFloatValue2(),
@@ -304,7 +304,7 @@ public class GuiMultiBooleanSetting extends GuiSetting<MultiSelectSetting> {
          return 10.0F;
       }
 
-      public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
          if (this.bounds != null && this.bounds.method8092(lastClickX, lastClickY, GuiStyle.PADDING.intValue() / 2.0F)) {
             this.value.toggle();
             return true;

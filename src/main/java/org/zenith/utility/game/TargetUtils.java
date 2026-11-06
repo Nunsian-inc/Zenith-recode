@@ -30,57 +30,57 @@ import org.zenith.ZenithAccess;
 import org.zenith.client.modules.impl.combat.AuraModule;
 
 public final class TargetUtils implements ZenithAccess {
-   public static BlockHitResult method3204(double blockInteractionRange, Rotation rotation, boolean flag) {
-      return method3205(Objects.requireNonNull(mc.player).getEyePosition(1.0F), blockInteractionRange, rotation, flag);
+   public static BlockHitResult method3204(double blockInteractionRange, Rotation rotation, boolean includeFluids) {
+      return method3205(Objects.requireNonNull(mc.player).getEyePosition(1.0F), blockInteractionRange, rotation, includeFluids);
    }
 
-   public static BlockHitResult method3205(Vec3 eyePosition, double blockInteractionRange, Rotation rotation, boolean flag) {
+   public static BlockHitResult method3205(Vec3 eyePosition, double blockInteractionRange, Rotation rotation, boolean includeFluids) {
       Entity cameraEntity = mc.getCameraEntity();
       if (cameraEntity == null) {
          return null;
       } else {
-         Vec3 vec = rotation.method3135();
-         Vec3 to = eyePosition.add(vec.x * blockInteractionRange, vec.y * blockInteractionRange, vec.z * blockInteractionRange);
+         Vec3 direction = rotation.toDirection();
+         Vec3 to = eyePosition.add(direction.x * blockInteractionRange, direction.y * blockInteractionRange, direction.z * blockInteractionRange);
          ClientLevel level = mc.level;
          if (level == null) {
             return null;
          } else {
-            Fluid fluid = flag ? Fluid.ANY : Fluid.NONE;
+            Fluid fluid = includeFluids ? Fluid.ANY : Fluid.NONE;
             ClipContext clipContext = new ClipContext(eyePosition, to, Block.OUTLINE, fluid, cameraEntity);
             return level.clip(clipContext);
          }
       }
    }
 
-   public static HitResult method3206(double d, Rotation rotation, float partialTickTime, boolean flag) {
+   public static HitResult method3206(double range, Rotation rotation, float partialTickTime, boolean includeFluids) {
       Vec3 eyePosition = mc.getCameraEntity().getEyePosition(partialTickTime);
-      Vec3 vec = rotation.method3135();
-      Vec3 to = eyePosition.add(vec.x * d, vec.y * d, vec.z * d);
-      return mc.level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, flag ? Fluid.ANY : Fluid.NONE, mc.getCameraEntity()));
+      Vec3 direction = rotation.toDirection();
+      Vec3 to = eyePosition.add(direction.x * range, direction.y * range, direction.z * range);
+      return mc.level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, includeFluids ? Fluid.ANY : Fluid.NONE, mc.getCameraEntity()));
    }
 
    public static BlockHitResult method3207(Vec3 from, Vec3 to, Block block) {
       return method3208(from, to, block, mc.player);
    }
 
-   public static BlockHitResult method3208(Vec3 from, Vec3 to, Block block, Entity thrownTrident) {
-      return mc.level.clip(new ClipContext(from, to, block, Fluid.NONE, thrownTrident));
+   public static BlockHitResult method3208(Vec3 from, Vec3 to, Block block, Entity sourceEntity) {
+      return mc.level.clip(new ClipContext(from, to, block, Fluid.NONE, sourceEntity));
    }
 
-   public static boolean method3209(double scale, Rotation rotation, LivingEntity livingEntity) {
-      return method3210(scale, rotation, entity -> entity == livingEntity) != null;
+   public static boolean method3209(double range, Rotation rotation, LivingEntity target) {
+      return method3210(range, rotation, entity -> entity == target) != null;
    }
 
-   public static EntityHitResult method3210(double scale, Rotation rotation, Predicate<Entity> predicate) {
+   public static EntityHitResult method3210(double range, Rotation rotation, Predicate<Entity> predicate) {
       Entity cameraEntity = mc.getCameraEntity();
       if (cameraEntity == null) {
          return null;
       } else {
          Vec3 eyePosition = cameraEntity.getEyePosition(1.0F);
-         Vec3 vec = rotation.method3135();
-         Vec3 to = eyePosition.add(vec.x * scale, vec.y * scale, vec.z * scale);
-         AABB inflate = cameraEntity.getBoundingBox().expandTowards(vec.scale(scale)).inflate(1.0, 1.0, 1.0);
-         return ProjectileUtil.getEntityHitResult(cameraEntity, eyePosition, to, inflate, entity -> !entity.isSpectator() && predicate.test(entity), scale * scale);
+         Vec3 direction = rotation.toDirection();
+         Vec3 to = eyePosition.add(direction.x * range, direction.y * range, direction.z * range);
+         AABB searchBox = cameraEntity.getBoundingBox().expandTowards(direction.scale(range)).inflate(1.0, 1.0, 1.0);
+         return ProjectileUtil.getEntityHitResult(cameraEntity, eyePosition, to, searchBox, entity -> !entity.isSpectator() && predicate.test(entity), range * range);
       }
    }
 
@@ -88,138 +88,138 @@ public final class TargetUtils implements ZenithAccess {
       Entity cameraEntity = mc.getCameraEntity();
       if (cameraEntity != null && mc.level != null) {
          Vec3 eyePosition = cameraEntity.getEyePosition(1.0F);
-         Vec3 vec = rotation.method3135();
-         Entity entity = null;
-         Vec3 location = null;
-         double d = Double.MAX_VALUE;
+         Vec3 direction = rotation.toDirection();
+         Entity closestEntity = null;
+         Vec3 closestHitPosition = null;
+         double closestDistanceSquared = Double.MAX_VALUE;
 
-         for (Entity entity2 : mc.level.entitiesForRendering()) {
-            if (entity2 != cameraEntity && !entity2.isSpectator() && predicate.test(entity2)) {
-               AABB inflate = entity2.getBoundingBox().inflate(entity2.getPickRadius());
-               Vec3 eyePosition2;
-               if (inflate.contains(eyePosition)) {
-                  eyePosition2 = eyePosition;
+         for (Entity candidate : mc.level.entitiesForRendering()) {
+            if (candidate != cameraEntity && !candidate.isSpectator() && predicate.test(candidate)) {
+               AABB pickBox = candidate.getBoundingBox().inflate(candidate.getPickRadius());
+               Vec3 hitPosition;
+               if (pickBox.contains(eyePosition)) {
+                  hitPosition = eyePosition;
                } else {
-                  double scale = eyePosition.distanceTo(inflate.getCenter()) + inflate.getXsize() + inflate.getYsize() + inflate.getZsize();
-                  var clip = inflate.clip(eyePosition, eyePosition.add(vec.scale(scale)));
-                  if (clip.isEmpty()) {
+                  double rayLength = eyePosition.distanceTo(pickBox.getCenter()) + pickBox.getXsize() + pickBox.getYsize() + pickBox.getZsize();
+                  var intersection = pickBox.clip(eyePosition, eyePosition.add(direction.scale(rayLength)));
+                  if (intersection.isEmpty()) {
                      continue;
                   }
 
-                  eyePosition2 = (Vec3)clip.get();
+                  hitPosition = (Vec3)intersection.get();
                }
 
-               double d2 = eyePosition.distanceToSqr(eyePosition2);
-               if (d2 < d) {
-                  entity = entity2;
-                  location = eyePosition2;
-                  d = d2;
+               double distanceSquared = eyePosition.distanceToSqr(hitPosition);
+               if (distanceSquared < closestDistanceSquared) {
+                  closestEntity = candidate;
+                  closestHitPosition = hitPosition;
+                  closestDistanceSquared = distanceSquared;
                }
             }
          }
 
-         return entity == null ? null : new EntityHitResult(entity, location);
+         return closestEntity == null ? null : new EntityHitResult(closestEntity, closestHitPosition);
       } else {
          return null;
       }
    }
 
-   public static boolean method3212(Rotation rotation, Vec3 eyePosition, AABB boundingBox, double distance, boolean flag) {
-      double x = Math.max(mc.player.blockInteractionRange(), distance);
-      double square = Mth.square(x);
-      BlockHitResult blockHitResult = method3216(eyePosition, rotation, x, AuraModule.INSTANCE::method6362);
-      double d = blockHitResult.getLocation().distanceToSqr(eyePosition);
-      if (flag && blockHitResult.getType() != Type.MISS) {
-         square = d;
-         x = Math.sqrt(d);
+   public static boolean method3212(Rotation rotation, Vec3 eyePosition, AABB boundingBox, double distance, boolean checkBlockOcclusion) {
+      double rayLength = Math.max(mc.player.blockInteractionRange(), distance);
+      double rayLengthSquared = Mth.square(rayLength);
+      BlockHitResult blockHitResult = method3216(eyePosition, rotation, rayLength, AuraModule.INSTANCE::method6362);
+      double blockDistanceSquared = blockHitResult.getLocation().distanceToSqr(eyePosition);
+      if (checkBlockOcclusion && blockHitResult.getType() != Type.MISS) {
+         rayLengthSquared = blockDistanceSquared;
+         rayLength = Math.sqrt(blockDistanceSquared);
       }
 
-      Vec3 vec = rotation.method3135();
-      Vec3 to = eyePosition.add(vec.x * x, vec.y * x, vec.z * x);
-      Vec3 vec2 = method3214(eyePosition, to, boundingBox, square);
-      return vec2 != null && (vec2.distanceToSqr(eyePosition) < d || !flag) && vec2.closerThan(eyePosition, distance);
+      Vec3 direction = rotation.toDirection();
+      Vec3 to = eyePosition.add(direction.x * rayLength, direction.y * rayLength, direction.z * rayLength);
+      Vec3 entityHitPosition = method3214(eyePosition, to, boundingBox, rayLengthSquared);
+      return entityHitPosition != null && (entityHitPosition.distanceToSqr(eyePosition) < blockDistanceSquared || !checkBlockOcclusion) && entityHitPosition.closerThan(eyePosition, distance);
    }
 
-   public static HitResult method3213(Vec3 from, Rotation rotation, double d) {
-      Vec3 vec = rotation.method3135();
-      Vec3 to = from.add(vec.x * d, vec.y * d, vec.z * d);
+   public static HitResult method3213(Vec3 from, Rotation rotation, double range) {
+      Vec3 direction = rotation.toDirection();
+      Vec3 to = from.add(direction.x * range, direction.y * range, direction.z * range);
       return mc.level.clip(new ClipContext(from, to, Block.OUTLINE, Fluid.NONE, mc.player));
    }
 
    @Nullable
-   public static Vec3 method3214(Vec3 eyePosition, Vec3 to, AABB boundingBox, double square) {
-      Vec3 vec = null;
-      var clip = boundingBox.clip(eyePosition, to);
+   public static Vec3 method3214(Vec3 eyePosition, Vec3 to, AABB boundingBox, double maxDistanceSquared) {
+      Vec3 hitPosition = null;
+      var intersection = boundingBox.clip(eyePosition, to);
       if (boundingBox.contains(eyePosition)) {
-         if (square >= 0.0) {
-            vec = clip.orElse(eyePosition);
+         if (maxDistanceSquared >= 0.0) {
+            hitPosition = intersection.orElse(eyePosition);
          }
-      } else if (clip.isPresent()) {
-         Vec3 vec2 = (Vec3)clip.get();
-         double d = eyePosition.distanceToSqr(vec2);
-         if (d < square || square == 0.0) {
-            vec = vec2;
+      } else if (intersection.isPresent()) {
+         Vec3 intersectionPosition = (Vec3)intersection.get();
+         double distanceSquared = eyePosition.distanceToSqr(intersectionPosition);
+         if (distanceSquared < maxDistanceSquared || maxDistanceSquared == 0.0) {
+            hitPosition = intersectionPosition;
          }
       }
 
-      return vec;
+      return hitPosition;
    }
 
    private static HitResult ensureTargetInRange(HitResult hitResult, Vec3 pos, double distance) {
       Vec3 location = hitResult.getLocation();
       if (!location.closerThan(pos, distance)) {
-         Vec3 vec = hitResult.getLocation();
-         Direction approximateNearest = Direction.getApproximateNearest(vec.x - pos.x, vec.y - pos.y, vec.z - pos.z);
-         return BlockHitResult.miss(vec, approximateNearest, BlockPos.containing(vec));
+         Vec3 hitPosition = hitResult.getLocation();
+         Direction missDirection = Direction.getApproximateNearest(hitPosition.x - pos.x, hitPosition.y - pos.y, hitPosition.z - pos.z);
+         return BlockHitResult.miss(hitPosition, missDirection, BlockPos.containing(hitPosition));
       } else {
          return hitResult;
       }
    }
 
-   public static boolean method3215(Vec3 vec, double scale, AABB aabb) {
+   public static boolean method3215(Vec3 direction, double range, AABB aabb) {
       Vec3 eyePosition = Objects.requireNonNull(mc.player).getEyePosition();
-      return aabb.contains(eyePosition) || aabb.clip(eyePosition, eyePosition.add(vec.scale(scale))).isPresent();
+      return aabb.contains(eyePosition) || aabb.clip(eyePosition, eyePosition.add(direction.scale(range))).isPresent();
    }
 
    public static BlockHitResult method3216(Vec3 eyePosition, Rotation rotation, double blockInteractionRange, Predicate<BlockHitResult> predicate) {
-      Vec3 vec = rotation.method3135();
-      Vec3 to = eyePosition.add(vec.x * blockInteractionRange, vec.y * blockInteractionRange, vec.z * blockInteractionRange);
+      Vec3 direction = rotation.toDirection();
+      Vec3 to = eyePosition.add(direction.x * blockInteractionRange, direction.y * blockInteractionRange, direction.z * blockInteractionRange);
       return method3217(new ClipContext(eyePosition, to, Block.OUTLINE, Fluid.NONE, mc.player), predicate);
    }
 
    public static BlockHitResult method3217(ClipContext clipContext, Predicate<BlockHitResult> predicate) {
-      return BlockGetter.traverseBlocks(clipContext.getFrom(), clipContext.getTo(), clipContext, (var1x, pos) -> {
+      return BlockGetter.traverseBlocks(clipContext.getFrom(), clipContext.getTo(), clipContext, (context, pos) -> {
          BlockState blockState = mc.level.getBlockState(pos);
          FluidState fluidState = mc.level.getFluidState(pos);
-         Vec3 from = var1x.getFrom();
-         Vec3 to = var1x.getTo();
-         VoxelShape blockShape = var1x.getBlockShape(blockState, mc.level, pos);
-         BlockHitResult clipWithInteractionOverride = mc.level.clipWithInteractionOverride(from, to, pos, blockShape, blockState);
-         VoxelShape fluidShape = var1x.getFluidShape(fluidState, mc.level, pos);
-         BlockHitResult clip = fluidShape.clip(from, to, pos);
-         double d = clipWithInteractionOverride == null ? Double.MAX_VALUE : var1x.getFrom().distanceToSqr(clipWithInteractionOverride.getLocation());
-         double d2 = clip == null ? Double.MAX_VALUE : var1x.getFrom().distanceToSqr(clip.getLocation());
-         if (!predicate.test(d <= d2 ? clipWithInteractionOverride : clip)) {
+         Vec3 from = context.getFrom();
+         Vec3 to = context.getTo();
+         VoxelShape blockShape = context.getBlockShape(blockState, mc.level, pos);
+         BlockHitResult blockHit = mc.level.clipWithInteractionOverride(from, to, pos, blockShape, blockState);
+         VoxelShape fluidShape = context.getFluidShape(fluidState, mc.level, pos);
+         BlockHitResult fluidHit = fluidShape.clip(from, to, pos);
+         double blockDistanceSquared = blockHit == null ? Double.MAX_VALUE : context.getFrom().distanceToSqr(blockHit.getLocation());
+         double fluidDistanceSquared = fluidHit == null ? Double.MAX_VALUE : context.getFrom().distanceToSqr(fluidHit.getLocation());
+         if (!predicate.test(blockDistanceSquared <= fluidDistanceSquared ? blockHit : fluidHit)) {
             return null;
          } else {
-            return d <= d2 ? clipWithInteractionOverride : clip;
+            return blockDistanceSquared <= fluidDistanceSquared ? blockHit : fluidHit;
          }
-      }, var0x -> {
-         Vec3 var1x = var0x.getFrom().subtract(var0x.getTo());
-         return BlockHitResult.miss(var0x.getTo(), Direction.getApproximateNearest(var1x.x, var1x.y, var1x.z), BlockPos.containing(var0x.getTo()));
+      }, missContext -> {
+         Vec3 context = missContext.getFrom().subtract(missContext.getTo());
+         return BlockHitResult.miss(missContext.getTo(), Direction.getApproximateNearest(context.x, context.y, context.z), BlockPos.containing(missContext.getTo()));
       });
    }
 
    public static BlockHitResult method3218(Vec3 from, Vec3 to, BlockPos pos, VoxelShape voxelShape, BlockState blockState) {
-      BlockHitResult clip = voxelShape.clip(from, to, pos);
-      if (clip != null) {
-         BlockHitResult blockHitResult = blockState.getInteractionShape(mc.level, pos).clip(from, to, pos);
-         if (blockHitResult != null && blockHitResult.getLocation().subtract(from).lengthSqr() < clip.getLocation().subtract(from).lengthSqr()) {
-            return clip.withDirection(blockHitResult.getDirection());
+      BlockHitResult shapeHit = voxelShape.clip(from, to, pos);
+      if (shapeHit != null) {
+         BlockHitResult interactionHit = blockState.getInteractionShape(mc.level, pos).clip(from, to, pos);
+         if (interactionHit != null && interactionHit.getLocation().subtract(from).lengthSqr() < shapeHit.getLocation().subtract(from).lengthSqr()) {
+            return shapeHit.withDirection(interactionHit.getDirection());
          }
       }
 
-      return clip;
+      return shapeHit;
    }
 
    @Generated

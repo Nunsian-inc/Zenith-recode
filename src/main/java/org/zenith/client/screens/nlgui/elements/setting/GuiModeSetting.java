@@ -14,7 +14,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.ModeSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -41,8 +41,8 @@ public class GuiModeSetting extends GuiSetting<ModeSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
-      if (this.setting.isVisible() && (enum2 == Enum3.LEFT || enum2 == Enum3.RIGHT)) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
+      if (this.setting.isVisible() && (enum2 == MouseButton.LEFT || enum2 == MouseButton.RIGHT)) {
          if (this.expanded && this.options.onMouseClicked(x, y, enum2)) {
             return true;
          } else if (this.bounds != null && this.bounds.contains(x, y)) {
@@ -62,11 +62,11 @@ public class GuiModeSetting extends GuiSetting<ModeSetting> {
    public void render(MenuDrawContext menuDrawContext, float lastClickX, float lastClickY, float floatValue, float y, float previewAlpha) {
       this.options.clearBounds();
       this.bounds = null;
-      this.animationVisible.method2807(this.setting.isVisible());
+      this.animationVisible.updateVisibility(this.setting.isVisible());
       previewAlpha *= this.animationVisible.getValue();
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null && !(previewAlpha <= 0.01F)) {
-         float f = this.animationExpanded.method2808(this.expanded ? 1.0F : 0.0F);
+         float f = this.animationExpanded.animateTo(this.expanded ? 1.0F : 0.0F);
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_MEDIUM.getFont(5.01F);
          this.bounds = new BoundsData(floatValue, y, this.width, this.rowHeight());

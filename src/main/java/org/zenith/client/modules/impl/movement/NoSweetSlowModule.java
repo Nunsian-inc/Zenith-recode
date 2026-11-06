@@ -22,7 +22,7 @@ public final class NoSweetSlowModule extends Module {
    }
 
    @EventTarget
-   public void method106(BlockCollisionEvent event) {
+   public void onBlockCollision(BlockCollisionEvent event) {
       if (event.getBlock() == Blocks.SWEET_BERRY_BUSH) {
          event.setCancelled(true);
          mc.player.makeStuckInBlock(mc.level.getBlockState(event.getBlockPos()), new Vec3(this.speed.getValue3(), 0.75, this.speed.getValue3()));

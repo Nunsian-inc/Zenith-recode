@@ -82,11 +82,11 @@ public class SparkParticle extends Particle {
 
    @Override
    public float getAlpha() {
-      return this.method1449(1.0F);
+      return this.getInterpolatedAlpha(1.0F);
    }
 
    @Override
-   public float method1449(float f) {
+   public float getInterpolatedAlpha(float f) {
       float f2 = this.method6571(f);
       float f3;
       if (f2 < 0.1F) {

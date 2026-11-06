@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zenith.utility.misc.CosmeticType;
-import org.zenith.utility.misc.Util31;
+import org.zenith.utility.misc.CosmeticTransformUtils;
 
 public final class Overrides {
    private static final Logger logger = LoggerFactory.getLogger("Zenith/Cosmetics");
@@ -90,10 +90,10 @@ public final class Overrides {
       }
    }
 
-   public Util31.Data method6463(String text, Util31.Data data) {
+   public CosmeticTransformUtils.Data method6463(String text, CosmeticTransformUtils.Data data) {
       Overrides.Data data2 = this.method6458(text);
       return data2 != null && data != null && !data2.empty()
-         ? new Util31.Data(
+         ? new CosmeticTransformUtils.Data(
             data.getFloatValue() + data2.getFloatValues()[0],
             data.getFloatValue2() + data2.getFloatValues()[1],
             data.getFloatValue3() + data2.getFloatValues()[2],

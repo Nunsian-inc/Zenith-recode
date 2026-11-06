@@ -20,7 +20,7 @@ import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ButtonSetting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.api.PlayTimeTracker;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -55,7 +55,7 @@ public class ClientPanel extends Panel {
 
    @Override
    public void render(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f) {
-      this.animationVisible.method2807(this.expanded);
+      this.animationVisible.updateVisibility(this.expanded);
       this.animationVisible.setDuration(200L);
       previewAlpha *= this.animationVisible.getValue();
       float panelWidth = 128.0F;
@@ -281,8 +281,8 @@ public class ClientPanel extends Panel {
    }
 
    @Override
-   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
-      if (enum2.getIntValue() != 0) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, MouseButton enum2) {
+      if (enum2.getGlfwButton() != 0) {
          return false;
       } else if (this.expanded && this.exitBounds != null && this.exitBounds.method8092(anchorMouseX, lastClickY, 2.0F)) {
          this.expanded = false;
@@ -301,7 +301,7 @@ public class ClientPanel extends Panel {
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       this.guiScale.onMouseReleased(x, y, enum2);
       this.blurStrength.onMouseReleased(x, y, enum2);
       return super.onMouseReleased(x, y, enum2);

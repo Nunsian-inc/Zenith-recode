@@ -24,7 +24,7 @@ import org.zenith.ModuleInfo;
 import org.zenith.PacketEvent;
 import org.zenith.Rotation;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.MovementCorrectionEvent;
 import org.zenith.client.events.PostMotionEvent;
@@ -39,7 +39,7 @@ import org.zenith.utility.game.PlayerSimulation;
 import org.zenith.utility.misc.MovementInputUtils;
 import org.zenith.utility.misc.PacketUtils;
 import org.zenith.utility.misc.RotationRequest;
-import org.zenith.utility.misc.Util13;
+import org.zenith.utility.misc.TimerSpeed;
 import org.zenith.utility.misc.ViaCompat;
 import org.zenith.utility.network.InventoryUtils;
 
@@ -50,7 +50,7 @@ import org.zenith.utility.network.InventoryUtils;
 )
 public final class SpeedModule extends Module {
    public static final SpeedModule INSTANCE = new SpeedModule();
-   private static final int CONST_intValue = 16;
+   private static final int ELYTRA_GROUND_TICKS = 16;
    private final ModeSetting mode = new ModeSetting(
       "module.speed.mode",
       "module.speed.mode.desc",
@@ -62,16 +62,16 @@ public final class SpeedModule extends Module {
       "module.speed.mode.custom"
    );
    private final SliderSetting grim72SlowTimer = new SliderSetting(
-      "module.speed.grim72SlowTimer", 0.4F, 0.0F, 2.0F, 0.1F, "module.speed.grim72SlowTimer.desc", "x", this::method6601
+      "module.speed.grim72SlowTimer", 0.4F, 0.0F, 2.0F, 0.1F, "module.speed.grim72SlowTimer.desc", "x", this::isGrim72Mode
    );
    private final SliderSetting grim72FastTimer = new SliderSetting(
-      "module.speed.grim72FastTimer", 3.4F, 1.0F, 5.0F, 0.1F, "module.speed.grim72FastTimer.desc", "x", this::method6601
+      "module.speed.grim72FastTimer", 3.4F, 1.0F, 5.0F, 0.1F, "module.speed.grim72FastTimer.desc", "x", this::isGrim72Mode
    );
-   private final SliderSetting speed = new SliderSetting("module.speed.speed", 0.1F, 0.0F, 0.5F, 0.01F, "module.speed.speed.desc", "x", this::method6607);
+   private final SliderSetting speed = new SliderSetting("module.speed.speed", 0.1F, 0.0F, 0.5F, 0.01F, "module.speed.speed.desc", "x", this::isCollisionSpeedMode);
    private final SliderSetting collisionRadius = new SliderSetting(
-      "module.speed.collisionRadius", 0.3F, 0.0F, 1.0F, 0.01F, "module.speed.collisionRadius.desc", "b", this::method6607
+      "module.speed.collisionRadius", 0.3F, 0.0F, 1.0F, 0.01F, "module.speed.collisionRadius.desc", "b", this::isCollisionSpeedMode
    );
-   private final BooleanSetting onlyAura = new BooleanSetting("module.speed.onlyAura", "module.speed.onlyAura.desc", true, this::method6607);
+   private final BooleanSetting onlyAura = new BooleanSetting("module.speed.onlyAura", "module.speed.onlyAura.desc", true, this::isCollisionSpeedMode);
    // Custom: скорость (блоков за тик) задаётся вручную, отдельно под эффекты Скорости/Замедления.
    private final SliderSetting customBaseSpeed = new SliderSetting(
       "module.speed.customBaseSpeed", 0.36F, 0.1F, 1.0F, 0.01F, "module.speed.customBaseSpeed.desc", "", this::isCustomMode
@@ -114,8 +114,8 @@ public final class SpeedModule extends Module {
       () -> this.isCustomMode() && this.customDamageBoost.isEnabled()
    );
    private int ticks = 0;
-   private int intValue = 0;
-   private double doubleValue;
+   private int verticalCollisionTicks = 0;
+   private double lastGroundY;
    public boolean flag = false;
    public int intValue2 = 0;
 
@@ -127,10 +127,10 @@ public final class SpeedModule extends Module {
       this.intValue2 = 0;
       this.flag = false;
       this.ticks = 0;
-      this.intValue = 0;
-      Util13.method2404(1.0F);
+      this.verticalCollisionTicks = 0;
+      TimerSpeed.setSpeedMultiplier(1.0F);
       if (this.method6606() && mc.player != null && !mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-         this.method6608();
+         this.swapChestEquipment();
       }
 
       super.onEnable();
@@ -138,16 +138,16 @@ public final class SpeedModule extends Module {
 
    @Override
    public void onDisable() {
-      Util13.method2404(1.0F);
+      TimerSpeed.setSpeedMultiplier(1.0F);
       if (this.method6606() && mc.player != null && mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-         this.method6608();
+         this.swapChestEquipment();
       }
 
       super.onDisable();
    }
 
    @EventTarget
-   public void method6592(SprintUpdateEvent event) {
+   public void onSprintUpdate(SprintUpdateEvent event) {
       if (this.flag) {
          event.setFlag2(false);
          this.flag = false;
@@ -155,32 +155,32 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget(4)
-   public void method6593(UpdateEvent event) {
+   public void onCollisionSpeedUpdate(UpdateEvent event) {
       if (this.intValue2 > 0) {
          this.intValue2--;
       }
 
-      if (this.method6607()) {
+      if (this.isCollisionSpeedMode()) {
          if (AuraModule.INSTANCE.isEnabled() || !this.onlyAura.isEnabled()) {
-            this.method6602(null);
+            this.applyCollisionSpeed(null);
          }
       }
    }
 
    @EventTarget
-   public void method6594(MovementCorrectionEvent event) {
-      if (this.method6603() && mc.player != null) {
-         Util13.method2404(1.7F);
+   public void onReallyWorldMovementCorrection(MovementCorrectionEvent event) {
+      if (this.isReallyWorldMode() && mc.player != null) {
+         TimerSpeed.setSpeedMultiplier(1.7F);
          if (this.ticks > 3) {
-            double d = 0.03;
+            double pushSpeed = 0.03;
             if (this.ticks % 2 == 0) {
                mc.player.push(0.0, 0.03F, 0.0);
-               d = mc.player.onGround() ? 0.085 : 0.03;
+               pushSpeed = mc.player.onGround() ? 0.085 : 0.03;
             }
 
-            if (this.method6609()) {
-               double d2 = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
-               mc.player.push(-Math.sin(d2) * d, 0.0, Math.cos(d2) * d);
+            if (this.hasMovementInput()) {
+               double movementYawRadians = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
+               mc.player.push(-Math.sin(movementYawRadians) * pushSpeed, 0.0, Math.cos(movementYawRadians) * pushSpeed);
             }
          }
 
@@ -190,24 +190,24 @@ public final class SpeedModule extends Module {
 
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
-      if (this.method6603() && mc.player != null) {
+      if (this.isReallyWorldMode() && mc.player != null) {
          if (mc.player.verticalCollision) {
-            this.intValue++;
+            this.verticalCollisionTicks++;
          } else {
-            this.intValue = 0;
+            this.verticalCollisionTicks = 0;
          }
 
-         if (this.intValue >= 1) {
+         if (this.verticalCollisionTicks >= 1) {
             mc.player.jumpFromGround();
          }
       }
    }
 
    @EventTarget
-   public void method6595(PostMotionEvent event) {
-      if (this.method6603() && mc.player != null && mc.getConnection() != null) {
+   public void onReallyWorldPostMotion(PostMotionEvent event) {
+      if (this.isReallyWorldMode() && mc.player != null && mc.getConnection() != null) {
          if (this.ticks % 2 == 0) {
-            Util13.method2404(0.3F);
+            TimerSpeed.setSpeedMultiplier(0.3F);
             PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
          }
       }
@@ -215,27 +215,27 @@ public final class SpeedModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (this.method6603()) {
-         if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+      if (this.isReallyWorldMode()) {
+         if (event.getPacket() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> {
                if (this.ticks % 2 == 1) {
                   this.ticks++;
                }
 
-               Util13.method2404(1.0F);
+               TimerSpeed.setSpeedMultiplier(1.0F);
             });
          }
       }
    }
 
    @EventTarget
-   public void method6596(PostMotionEvent event) {
-      if (this.method6601()) {
-         if (this.method6599()) {
-            this.method6600();
+   public void onGrim72PostMotion(PostMotionEvent event) {
+      if (this.isGrim72Mode()) {
+         if (this.shouldResetGrim72()) {
+            this.resetGrim72Timer();
          } else {
             if (this.ticks % 2 == 0) {
-               Util13.method2404(this.grim72SlowTimer.getValue3());
+               TimerSpeed.setSpeedMultiplier(this.grim72SlowTimer.getValue3());
                PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
                PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
             }
@@ -244,21 +244,21 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6597(MovementCorrectionEvent event) {
-      if (this.method6601()) {
-         if (this.method6599()) {
-            this.method6600();
+   public void onGrim72MovementCorrection(MovementCorrectionEvent event) {
+      if (this.isGrim72Mode()) {
+         if (this.shouldResetGrim72()) {
+            this.resetGrim72Timer();
          } else {
-            Util13.method2404(this.grim72FastTimer.getValue3());
+            TimerSpeed.setSpeedMultiplier(this.grim72FastTimer.getValue3());
             if (this.ticks > 3) {
-               double d = 0.03;
+               double pushSpeed = 0.03;
                if (this.ticks % 2 == 0) {
                   mc.player.push(0.0, 0.03, 0.0);
-                  d = mc.player.onGround() ? 0.085 : 0.03;
+                  pushSpeed = mc.player.onGround() ? 0.085 : 0.03;
                }
 
-               double d2 = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
-               mc.player.push(-Math.sin(d2) * d, 0.0, Math.cos(d2) * d);
+               double movementYawRadians = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
+               mc.player.push(-Math.sin(movementYawRadians) * pushSpeed, 0.0, Math.cos(movementYawRadians) * pushSpeed);
             }
 
             this.ticks++;
@@ -267,56 +267,56 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6598(PacketEvent event) {
-      if (this.method6601() && event.method7100() && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+   public void onGrim72Packet(PacketEvent event) {
+      if (this.isGrim72Mode() && event.isIncoming() && event.getPacket() instanceof ClientboundPlayerPositionPacket) {
          mc.execute(() -> {
-            if (!this.method6599()) {
+            if (!this.shouldResetGrim72()) {
                if (this.ticks % 2 == 1) {
                   this.ticks++;
                }
 
-               Util13.method2404(1.0F);
+               TimerSpeed.setSpeedMultiplier(1.0F);
             }
          });
       }
    }
 
-   private boolean method6599() {
+   private boolean shouldResetGrim72() {
       return mc.player == null
          || mc.level == null
          || mc.getConnection() == null
-         || !this.method6609()
+         || !this.hasMovementInput()
          || mc.player.isPassenger()
          || mc.player.getAbilities().flying;
    }
 
-   private void method6600() {
+   private void resetGrim72Timer() {
       this.ticks = 0;
-      Util13.method2404(1.0F);
+      TimerSpeed.setSpeedMultiplier(1.0F);
    }
 
-   public boolean method6601() {
+   public boolean isGrim72Mode() {
       return this.mode.isSelected(4);
    }
 
-   private void method6602(MoveInputEvent event) {
-      boolean sprinting;
-      if (sprinting = mc.player.isSprinting()) {
+   private void applyCollisionSpeed(MoveInputEvent event) {
+      boolean wasSprinting;
+      if (wasSprinting = mc.player.isSprinting()) {
          mc.player.setSprinting(false);
       }
 
       PlayerSimulation playerSimulation = PlayerSimulation.method6031(1);
-      if (sprinting) {
+      if (wasSprinting) {
          mc.player.setSprinting(true);
       }
 
-      AABB inflate = playerSimulation.box.inflate(this.collisionRadius.getValue3(), this.collisionRadius.getValue3(), this.collisionRadius.getValue3());
-      Object player = null;
+      AABB collisionBox = playerSimulation.box.inflate(this.collisionRadius.getValue3(), this.collisionRadius.getValue3(), this.collisionRadius.getValue3());
+      Object collisionTarget = null;
       if (!this.onlyAura.isEnabled()) {
          if (AuraModule.INSTANCE.method6358() == null) {
             for (Entity entity : mc.level.entitiesForRendering()) {
-               if (entity != mc.player && (entity instanceof LivingEntity || entity instanceof Boat) && inflate.intersects(entity.getBoundingBox())) {
-                  player = entity;
+               if (entity != mc.player && (entity instanceof LivingEntity || entity instanceof Boat) && collisionBox.intersects(entity.getBoundingBox())) {
+                  collisionTarget = entity;
                   break;
                }
             }
@@ -326,29 +326,29 @@ public final class SpeedModule extends Module {
             return;
          }
 
-         if (inflate.intersects(AuraModule.INSTANCE.method6358().getBoundingBox())) {
-            player = AuraModule.INSTANCE.method6358();
+         if (collisionBox.intersects(AuraModule.INSTANCE.method6358().getBoundingBox())) {
+            collisionTarget = AuraModule.INSTANCE.method6358();
          }
       }
 
-      if (player instanceof Player) {
-         Vec3 vec3d = playerSimulation.vec3d;
-         Vec3 center = (ReachV3Module.INSTANCE.isEnabled() && ReachV3Module.INSTANCE.getVec3d2() != null
-               ? ((Entity)player).dimensions.makeBoundingBox(ReachV3Module.INSTANCE.getVec3d2())
-               : (player instanceof Player ? PlayerSimulation.method6032((Player)player, 2).box : ((Entity)player).getBoundingBox()))
+      if (collisionTarget instanceof Player) {
+         Vec3 simulatedPosition = playerSimulation.vec3d;
+         Vec3 targetCenter = (ReachV3Module.INSTANCE.isEnabled() && ReachV3Module.INSTANCE.getVec3d2() != null
+               ? ((Entity)collisionTarget).dimensions.makeBoundingBox(ReachV3Module.INSTANCE.getVec3d2())
+               : (collisionTarget instanceof Player ? PlayerSimulation.method6032((Player)collisionTarget, 2).box : ((Entity)collisionTarget).getBoundingBox()))
             .getCenter();
-         double d = center.x - vec3d.x;
-         double d2 = center.z - vec3d.z;
-         double d3 = Math.sqrt(d * d + d2 * d2);
-         double d4 = this.speed.getValue3();
-         double d5 = 0.0;
-         double d6 = Math.max(0.0, d3 - d5);
-         double d7 = Math.min(d4, d6);
-         double[] doubles = new double[]{d * d7, d2 * d7};
-         mc.player.push(doubles[0], 0.0, doubles[1]);
+         double deltaX = targetCenter.x - simulatedPosition.x;
+         double deltaZ = targetCenter.z - simulatedPosition.z;
+         double horizontalDistance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+         double configuredSpeed = this.speed.getValue3();
+         double minimumDistance = 0.0;
+         double remainingDistance = Math.max(0.0, horizontalDistance - minimumDistance);
+         double pushScale = Math.min(configuredSpeed, remainingDistance);
+         double[] horizontalPush = new double[]{deltaX * pushScale, deltaZ * pushScale};
+         mc.player.push(horizontalPush[0], 0.0, horizontalPush[1]);
          if (this.mode.isSelected(0)) {
             if (mc.player.wasSprinting) {
-               mc.player.push(-doubles[0], 0.0, -doubles[1]);
+               mc.player.push(-horizontalPush[0], 0.0, -horizontalPush[1]);
             }
 
             mc.player.setSprinting(false);
@@ -356,7 +356,7 @@ public final class SpeedModule extends Module {
             this.flag = true;
          }
 
-         if (mc.player.getBoundingBox().intersects(((Entity)player).getBoundingBox())) {
+         if (mc.player.getBoundingBox().intersects(((Entity)collisionTarget).getBoundingBox())) {
             this.intValue2 = 3;
             return;
          }
@@ -365,14 +365,14 @@ public final class SpeedModule extends Module {
       }
    }
 
-   private boolean method6603() {
+   private boolean isReallyWorldMode() {
       return this.mode.isSelected(2);
    }
 
    @EventTarget
-   public void method6604(UpdateEvent event) {
+   public void onGrimElytraUpdate(UpdateEvent event) {
       if (this.method6606() && mc.player != null && mc.level != null) {
-         if (this.method6609()) {
+         if (this.hasMovementInput()) {
             mc.player.setSprinting(true);
          }
 
@@ -383,28 +383,28 @@ public final class SpeedModule extends Module {
 
          if (mc.player.onGround()) {
             this.ticks = 16;
-            this.doubleValue = mc.player.getY();
+            this.lastGroundY = mc.player.getY();
          }
       }
    }
 
    @EventTarget
-   public void method6605(Event5 event) {
+   public void onGrimElytraRotation(PreRotationEvent event) {
       if (this.method6606()
          && mc.player != null
          && mc.level != null
-         && this.method6609()
+         && this.hasMovementInput()
          && !mc.player.onGround()
          && mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-         float yRot = (float)Math.toDegrees(
+         float movementYaw = (float)Math.toDegrees(
             MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input))
          );
          if (this.ticks > 0) {
-            double d = Math.abs(mc.player.getY() - this.doubleValue);
-            Math.max(0.0, 1.0 - d);
-            float xRot = 75.0F;
-            Rotation rotation = new Rotation(yRot, xRot);
-            zenith.getRotationManager().method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 2, this);
+            double heightDifference = Math.abs(mc.player.getY() - this.lastGroundY);
+            Math.max(0.0, 1.0 - heightDifference);
+            float glidePitch = 75.0F;
+            Rotation rotation = new Rotation(movementYaw, glidePitch);
+            zenith.getRotationManager().requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 2, this);
          }
       }
    }
@@ -413,11 +413,11 @@ public final class SpeedModule extends Module {
       return this.mode.isSelected(3);
    }
 
-   private boolean method6607() {
+   private boolean isCollisionSpeedMode() {
       return this.mode.isSelected(0) || this.mode.isSelected(1);
    }
 
-   private void method6608() {
+   private void swapChestEquipment() {
       if (mc.player != null) {
          Slot slot;
          if (mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
@@ -455,19 +455,19 @@ public final class SpeedModule extends Module {
 
    /** Custom: каждый тик ставит горизонтальную скорость по вводу; в воздухе — с множителем, без ввода — стоп. */
    private void handleCustomMove(LocalPlayer player) {
-      float f = this.customBaseSpeed.getValue3();
-      MobEffectInstance effect = player.getEffect(MobEffects.SPEED);
-      if (effect != null) {
-         f = switch (effect.getAmplifier()) {
+      float horizontalSpeed = this.customBaseSpeed.getValue3();
+      MobEffectInstance speedEffect = player.getEffect(MobEffects.SPEED);
+      if (speedEffect != null) {
+         horizontalSpeed = switch (speedEffect.getAmplifier()) {
             case 0 -> this.customSpeedI.getValue3();
             case 1 -> this.customSpeedII.getValue3();
             default -> this.customSpeedIII.getValue3();
          };
       }
 
-      MobEffectInstance mobEffectInstance = player.getEffect(MobEffects.SLOWNESS);
-      if (mobEffectInstance != null) {
-         f *= switch (mobEffectInstance.getAmplifier()) {
+      MobEffectInstance slownessEffect = player.getEffect(MobEffects.SLOWNESS);
+      if (slownessEffect != null) {
+         horizontalSpeed *= switch (slownessEffect.getAmplifier()) {
             case 0 -> this.customSlowI.getValue3();
             case 1 -> this.customSlowII.getValue3();
             default -> this.customSlowIII.getValue3();
@@ -475,33 +475,33 @@ public final class SpeedModule extends Module {
       }
 
       if (this.customDamageBoost.isEnabled() && player.hurtTime > 0) {
-         f += this.customDamageSpeed.getValue3();
+         horizontalSpeed += this.customDamageSpeed.getValue3();
       }
 
-      if (this.customAutoJump.isEnabled() && this.method6609() && player.onGround() && !mc.options.keyJump.isDown()) {
+      if (this.customAutoJump.isEnabled() && this.hasMovementInput() && player.onGround() && !mc.options.keyJump.isDown()) {
          player.jumpFromGround();
       }
 
       if (!player.isInWater() && !player.onGround() && !player.isFallFlying()) {
-         this.setHorizontalSpeed(player, f * this.customAirMultiplier.getValue3());
+         this.setHorizontalSpeed(player, horizontalSpeed * this.customAirMultiplier.getValue3());
       }
 
       if (player.onGround()) {
-         this.setHorizontalSpeed(player, f);
+         this.setHorizontalSpeed(player, horizontalSpeed);
       }
    }
 
-   private void setHorizontalSpeed(LocalPlayer player, double d) {
+   private void setHorizontalSpeed(LocalPlayer player, double horizontalSpeed) {
       Vec3 deltaMovement = player.getDeltaMovement();
-      if (!this.method6609()) {
+      if (!this.hasMovementInput()) {
          player.setDeltaMovement(0.0, deltaMovement.y, 0.0);
       } else {
-         double d2 = MovementInputUtils.method7427(player.getYRot(), ViaCompat.method4846(player.input), ViaCompat.method4847(player.input));
-         player.setDeltaMovement(-Math.sin(d2) * d, deltaMovement.y, Math.cos(d2) * d);
+         double movementYawRadians = MovementInputUtils.method7427(player.getYRot(), ViaCompat.method4846(player.input), ViaCompat.method4847(player.input));
+         player.setDeltaMovement(-Math.sin(movementYawRadians) * horizontalSpeed, deltaMovement.y, Math.cos(movementYawRadians) * horizontalSpeed);
       }
    }
 
-   private boolean method6609() {
+   private boolean hasMovementInput() {
       return ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F;
    }
 

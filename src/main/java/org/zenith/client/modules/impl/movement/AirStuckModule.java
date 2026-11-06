@@ -27,101 +27,112 @@ public final class AirStuckModule extends Module {
    public static final AirStuckModule INSTANCE = new AirStuckModule();
    private final BooleanSetting onlyFalling = new BooleanSetting("module.airStuck.onlyFalling", "module.airStuck.onlyFalling.desc", false);
    private final ModeSetting mode = new ModeSetting("module.airSuck.mode", "module.airSuck.mode.desc", "1.21.4", "1.17.1");
-   private Vec3 vec3d = Vec3.ZERO;
+   private Vec3 velocityBeforeEnable = Vec3.ZERO;
    private boolean frozen;
-   private boolean flag;
+   private boolean onGroundWhenFrozen;
 
    private AirStuckModule() {
    }
 
    @EventTarget
-   public void method1577(PlayerMoveEvent event) {
-      if (this.method1581()) {
+   public void onPlayerMove(PlayerMoveEvent event) {
+      if (shouldFreeze()) {
          event.setVec3d(Vec3.ZERO);
       }
    }
 
    @EventTarget
    public void onTick(TickEvent event) {
-      if (mc.player != null) {
-         if (!this.method1581()) {
-            this.frozen = false;
-            mc.player.setNoGravity(false);
-         } else {
-            if (!this.frozen) {
-               this.frozen = true;
-               this.flag = mc.player.onGround();
-            }
-
-            mc.player.setDeltaMovement(Vec3.ZERO);
-            mc.player.setNoGravity(true);
-         }
+      if (mc.player == null) {
+         return;
       }
+
+      if (!shouldFreeze()) {
+         this.frozen = false;
+         mc.player.setNoGravity(false);
+         return;
+      }
+
+      if (!this.frozen) {
+         this.frozen = true;
+         this.onGroundWhenFrozen = mc.player.onGround();
+      }
+
+      mc.player.setDeltaMovement(Vec3.ZERO);
+      mc.player.setNoGravity(true);
    }
 
    @EventTarget
-   public void method1578(PlayerTickEvent event) {
-      if (mc.player != null && this.frozen && this.flag && this.method1581()) {
+   public void onPlayerTick(PlayerTickEvent event) {
+      if (mc.player != null && this.frozen && this.onGroundWhenFrozen && shouldFreeze()) {
          mc.player.setOnGround(true);
       }
    }
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (mc.player != null && this.method1581()) {
-         if (this.method1580()) {
-            if (event.getPacket3() instanceof ServerboundMovePlayerPacket) {
-               event.setCancelled(true);
-            }
-         } else if (event.getPacket3() instanceof Pos || event.getPacket3() instanceof PosRot || event.getPacket3() instanceof StatusOnly) {
+      if (!shouldFreeze()) {
+         return;
+      }
+
+      if (isModernMode()) {
+         if (event.getPacket() instanceof ServerboundMovePlayerPacket) {
             event.setCancelled(true);
          }
+      } else if (event.getPacket() instanceof Pos || event.getPacket() instanceof PosRot || event.getPacket() instanceof StatusOnly) {
+         event.setCancelled(true);
       }
    }
 
    @EventTarget(0)
-   public void method1579(UpdateEvent event) {
-      if (mc.player != null && !this.method1580() && this.method1581()) {
-         if (Math.abs(zenith.getRotationManager().method7844().getFloatValue() - mc.player.yRotLast) != 0.0F
-            || Math.abs(zenith.getRotationManager().method7844().getFloatValue2() - mc.player.xRotLast) != 0.0F) {
-            UseItemUtils.method6533(0.0, zenith.getRotationManager().method7844());
-         }
+   public void onUpdate(UpdateEvent event) {
+      if (mc.player == null || isModernMode() || !shouldFreeze()) {
+         return;
+      }
+
+      if (Math.abs(zenith.getRotationManager().getEffectiveRotation().getFloatValue() - mc.player.yRotLast) != 0.0F
+         || Math.abs(zenith.getRotationManager().getEffectiveRotation().getFloatValue2() - mc.player.xRotLast) != 0.0F) {
+         UseItemUtils.method6533(0.0, zenith.getRotationManager().getEffectiveRotation());
       }
    }
 
    @Override
    public void onEnable() {
       super.onEnable();
-      if (mc.player != null) {
-         this.vec3d = mc.player.getDeltaMovement();
-         this.frozen = false;
-         if (this.method1581()) {
-            mc.player.setNoGravity(true);
-         }
+      if (mc.player == null) {
+         return;
+      }
+
+      this.velocityBeforeEnable = mc.player.getDeltaMovement();
+      this.frozen = false;
+      if (shouldFreeze()) {
+         mc.player.setNoGravity(true);
       }
    }
 
    @Override
    public void onDisable() {
       super.onDisable();
-      if (mc.player != null) {
-         if (!mc.player.onGround() && this.method1581() && this.vec3d != null) {
-            mc.player.setDeltaMovement(this.vec3d);
-         }
-
-         mc.player.setNoGravity(false);
+      if (mc.player == null) {
+         return;
       }
+
+      if (!mc.player.onGround() && shouldFreeze() && this.velocityBeforeEnable != null) {
+         mc.player.setDeltaMovement(this.velocityBeforeEnable);
+      }
+
+      mc.player.setNoGravity(false);
    }
 
-   private boolean method1580() {
+   private boolean isModernMode() {
       return this.mode.method2101("1.21.4");
    }
 
-   private boolean method1581() {
-      return mc.player != null && (!this.onlyFalling.isEnabled() || !mc.player.onGround() && mc.player.fallDistance > 0.0);
+   private boolean shouldFreeze() {
+      return mc.player != null && (!this.onlyFalling.isEnabled() || (!mc.player.onGround() && mc.player.fallDistance > 0.0));
    }
 
-   public void method1582() {
+   public void reinitialize() {
       this.onEnable();
    }
 }

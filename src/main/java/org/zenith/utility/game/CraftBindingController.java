@@ -12,7 +12,7 @@ import net.minecraft.world.phys.HitResult.Type;
 import org.zenith.Zenith;
 import org.zenith.client.events.MouseButtonEvent;
 import org.zenith.client.modules.impl.misc.AutoCraftModule;
-import org.zenith.utility.api.Class1;
+import org.zenith.utility.api.BlockPosReference;
 import org.zenith.utility.misc.CraftBinding;
 
 public final class CraftBindingController {
@@ -93,7 +93,7 @@ public final class CraftBindingController {
                   this.autoCraftModule.method1128("Этот тип сундуков пока не поддерживается");
                   return true;
                } else {
-                  Class1 class2 = Class1.method55(blockPos);
+                  BlockPosReference class2 = BlockPosReference.fromBlockPos(blockPos);
                   if (this.craftBinding.getType() == CraftBinding.Type.SOURCE && !this.craftBinding.getText3().isBlank()) {
                      craftRecipe.getItems3().put(this.craftBinding.getText3(), class2);
                      this.autoCraftModule.method1106();

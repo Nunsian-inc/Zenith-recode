@@ -6,7 +6,7 @@ import org.zenith.ModuleInfo;
 import org.zenith.base.Module;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.utility.game.Util14;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 
 @ModuleInfo(
    name = "View Armor Durability",
@@ -24,7 +24,7 @@ public class ViewArmorDurabilityModule extends Module {
    public boolean method7550(ItemStack renderStack, boolean renderSelf) {
       if (renderStack == null || renderStack.isEmpty()) {
          return false;
-      } else if (!Util10.method2181(renderStack)) {
+      } else if (!ItemStackTags.isArmor(renderStack)) {
          return false;
       } else if (renderSelf && !this.naSebe.isEnabled()) {
          return false;

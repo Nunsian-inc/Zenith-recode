@@ -98,9 +98,9 @@ public final class ChipStrip {
          float f = bound.getFloatValue() - floatValue;
          float floatValue2 = bound.getFloatValue2() - y;
          if (!this.plateReady) {
-            this.plateX.method2809(f);
-            this.plateY.method2809(floatValue2);
-            this.plateWidth.method2809(bound.width());
+            this.plateX.snapTo(f);
+            this.plateY.snapTo(floatValue2);
+            this.plateWidth.snapTo(bound.width());
             this.plateReady = true;
          }
 
@@ -112,9 +112,9 @@ public final class ChipStrip {
             this.lastSelected = lastSelected;
          }
 
-         float floatValue3 = floatValue + this.plateX.method2808(f);
-         float y2 = y + this.plateY.method2808(floatValue2);
-         float width2 = this.plateWidth.method2808(bound.width());
+         float floatValue3 = floatValue + this.plateX.animateTo(f);
+         float y2 = y + this.plateY.animateTo(floatValue2);
+         float width2 = this.plateWidth.animateTo(bound.width());
          float f2 = this.pulseAt == 0L ? 0.0F : Math.max(0.0F, 1.0F - (float)(System.currentTimeMillis() - this.pulseAt) / 380.0F);
          f2 *= f2;
          float f3 = (float)Math.sin(f2 * Math.PI) * 1.2F;
@@ -143,7 +143,7 @@ public final class ChipStrip {
       for (int i = 0; i < this.labels.length; i++) {
          BoundsData bound = this.bounds[i];
          boolean flag = i == lastSelected;
-         float hover = this.hot[i].method2808(i == this.hovered && !flag ? 1.0F : 0.0F);
+         float hover = this.hot[i].animateTo(i == this.hovered && !flag ? 1.0F : 0.0F);
          if (hover > 0.01F) {
             menuDrawContext.drawRoundedRect(
                bound.getFloatValue(),

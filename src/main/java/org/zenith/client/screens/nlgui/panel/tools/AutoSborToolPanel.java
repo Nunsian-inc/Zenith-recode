@@ -24,7 +24,7 @@ import org.zenith.utility.api.SborList;
 import org.zenith.utility.api.ServerNameNormalizer;
 import org.zenith.utility.game.ItemEntry;
 import org.zenith.utility.game.ItemMatcher;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.HudBatchState;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.misc.WindowUtils;
@@ -1196,7 +1196,7 @@ public class AutoSborToolPanel extends ToolTab {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (hit(this.searchField, lastClickX, lastClickY)) {
          this.focus(this.searchInput());
          Zenith.getInstance().getClientSounds().method1570(false);
@@ -1211,7 +1211,7 @@ public class AutoSborToolPanel extends ToolTab {
             this.focus(null);
          }
 
-         if (enum2 == Enum3.LEFT && hit(this.startButton, lastClickX, lastClickY)) {
+         if (enum2 == MouseButton.LEFT && hit(this.startButton, lastClickX, lastClickY)) {
             BoundsData asideViewport = this.asideViewport();
             if (asideViewport == null || asideViewport.contains(lastClickX, lastClickY)) {
                this.pressButton("start", lastClickX, lastClickY);
@@ -1247,14 +1247,14 @@ public class AutoSborToolPanel extends ToolTab {
                }
             }
 
-            if (enum2 == Enum3.LEFT && hit(this.clearButton, lastClickX, lastClickY)) {
+            if (enum2 == MouseButton.LEFT && hit(this.clearButton, lastClickX, lastClickY)) {
                this.pressButton("clear", lastClickX, lastClickY);
                this.clearSet();
                Zenith.getInstance().getClientSounds().method1570(true);
                return true;
             }
 
-            if (enum2 == Enum3.LEFT && hit(this.saveButton, lastClickX, lastClickY)) {
+            if (enum2 == MouseButton.LEFT && hit(this.saveButton, lastClickX, lastClickY)) {
                this.pressButton("save", lastClickX, lastClickY);
                this.savePreset();
                Zenith.getInstance().getClientSounds().method1570(false);
@@ -1287,9 +1287,9 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private void onSlotClicked(int selectedSlot, Enum3 enum2) {
+   private void onSlotClicked(int selectedSlot, MouseButton enum2) {
       InventoryPreset inventoryPreset = set();
-      if (enum2 == Enum3.RIGHT) {
+      if (enum2 == MouseButton.RIGHT) {
          if (!inventoryPreset.method871(selectedSlot)) {
             inventoryPreset.method875(selectedSlot);
             if (this.selectedSlot == selectedSlot) {

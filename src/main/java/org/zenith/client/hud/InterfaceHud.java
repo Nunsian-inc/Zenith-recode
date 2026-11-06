@@ -147,7 +147,7 @@ public class InterfaceHud extends Interface {
          InterfaceHud.Entry entry = (InterfaceHud.Entry)iterator.next();
          if (!entry.flag && now - entry.longValue > entry.longValue2) {
             entry.flag = true;
-            entry.animation2.method2808(0.0F);
+            entry.animation2.animateTo(0.0F);
          }
 
          if (entry.flag && entry.animation2.getValue() < 0.01F) {
@@ -158,11 +158,11 @@ public class InterfaceHud extends Interface {
                   entry.animation.reset(n);
                }
 
-               entry.animation.method2808(n);
+               entry.animation.animateTo(n);
                n++;
             }
 
-            entry.animation2.method2808(entry.flag ? 0.0F : 1.0F);
+            entry.animation2.animateTo(entry.flag ? 0.0F : 1.0F);
          }
       }
 

@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Random;
 import org.zenith.ChatLogger;
 import org.zenith.Rotation;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public class MotorHand2 extends Util22 {
+public class MotorHand2 extends RotationContext {
    private static final String text = "motor_hand.json";
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static MotorHand motorHand;
@@ -82,7 +82,7 @@ public class MotorHand2 extends Util22 {
    }
 
    public Rotation method3430(Rotation rotation) {
-      Rotation rotation2 = zenith.getRotationManager().method7844();
+      Rotation rotation2 = zenith.getRotationManager().getEffectiveRotation();
       MotorHand motorHand = method3426();
       if (motorHand != null && mc.player != null && rotation != null) {
          int tickCount = mc.player.tickCount;
@@ -106,7 +106,7 @@ public class MotorHand2 extends Util22 {
                d,
                this.random.nextDouble()
             );
-            Rotation rotation3 = rotation2.method3140((float)(doubles[0] * d), (float)(doubles[1] * d));
+            Rotation rotation3 = rotation2.add((float)(doubles[0] * d), (float)(doubles[1] * d));
             this.intValue2 = tickCount;
             this.rotation = rotation3;
             return rotation3;

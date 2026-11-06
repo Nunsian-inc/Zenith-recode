@@ -1,7 +1,7 @@
 package org.zenith.client.screens.override.button;
 
 import net.minecraft.client.input.KeyEvent;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.Bounds;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -25,18 +25,18 @@ public abstract class ButtonScreen {
       return this.bounds.getHeight();
    }
 
-   public void onMouseClicked(double x, double y, Enum3 enum2) {
+   public void onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.bounds.contains(x, y)) {
          this.onClick(x, y, enum2);
       }
    }
 
-   public abstract void onClick(double x, double y, Enum3 enum2);
+   public abstract void onClick(double x, double y, MouseButton enum2);
 
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
    }
 
-   public void onMouseDragged(double d, double d2, Enum3 enum2, double d3, double d4) {
+   public void onMouseDragged(double d, double d2, MouseButton enum2, double d3, double d4) {
    }
 
    public boolean keyPressed(KeyEvent event) {

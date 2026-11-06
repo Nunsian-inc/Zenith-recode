@@ -73,8 +73,8 @@ public final class Names implements MinecraftAccess {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         Packet packet3 = event.getPacket3();
+      if (event.isIncoming()) {
+         Packet packet3 = event.getPacket();
          if (packet3 instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket) {
             method4515(containerSetSlotPacket.getItem());
          } else if (packet3 instanceof ClientboundContainerSetContentPacket setContentPacket) {

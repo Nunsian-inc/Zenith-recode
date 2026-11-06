@@ -18,56 +18,56 @@ import org.zenith.utility.network.UseItemUtils;
    description = "module.noslow.description"
 )
 public final class NoSlowModule extends Module {
-   private static final int[] CONST_intValues = new int[]{2, 3, 3};
+   private static final int[] SLOWDOWN_CANCEL_INTERVALS = new int[]{2, 3, 3};
    public static final NoSlowModule INSTANCE = new NoSlowModule();
-   private int intValue;
-   private int intValue2;
+   private int itemUseTicks;
+   private int cancelIntervalIndex;
    private final ModeSetting mode = new ModeSetting("module.noSlow.mode", "module.noSlow.mode.desc");
-   private final ModeSetting.Entry entry = new ModeSetting.Entry(this.mode, "module.noSlow.mode.grimNew");
-   private final ModeSetting.Entry entry2 = new ModeSetting.Entry(this.mode, "module.noSlow.mode.realyWorld");
-   private final ModeSetting.Entry entry3 = new ModeSetting.Entry(this.mode, "module.noSlow.mode.grimOld").method2103();
-   private final BooleanSetting sprint = new BooleanSetting("module.noSlow.sprint", "module.noSlow.sprint.desc", true, this.entry3::isSelected);
+   private final ModeSetting.Entry grimNewMode = new ModeSetting.Entry(this.mode, "module.noSlow.mode.grimNew");
+   private final ModeSetting.Entry reallyWorldMode = new ModeSetting.Entry(this.mode, "module.noSlow.mode.realyWorld");
+   private final ModeSetting.Entry grimOldMode = new ModeSetting.Entry(this.mode, "module.noSlow.mode.grimOld").method2103();
+   private final BooleanSetting sprint = new BooleanSetting("module.noSlow.sprint", "module.noSlow.sprint.desc", true, this.grimOldMode::isSelected);
 
    private NoSlowModule() {
    }
 
    @Override
    public void onEnable() {
-      this.method1475();
+      this.resetItemUseTicks();
       super.onEnable();
    }
 
    @Override
    public void onDisable() {
-      this.method1475();
+      this.resetItemUseTicks();
       super.onDisable();
    }
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
-      if (this.entry2.isSelected() && mc.player != null && mc.level != null && !mc.player.isFallFlying() && mc.player.isUsingItem()) {
-         this.intValue++;
+      if (this.reallyWorldMode.isSelected() && mc.player != null && mc.level != null && !mc.player.isFallFlying() && mc.player.isUsingItem()) {
+         this.itemUseTicks++;
       } else {
-         this.method1475();
+         this.resetItemUseTicks();
       }
    }
 
    @EventTarget
-   public void method1474(NoSlowEvent event) {
-      if (this.entry.isSelected() && mc.player.getTicksUsingItem() % 2 == 0) {
+   public void onNoSlow(NoSlowEvent event) {
+      if (this.grimNewMode.isSelected() && mc.player.getTicksUsingItem() % 2 == 0) {
          event.setCancelled(true);
       }
 
-      if (this.entry2.isSelected() && !mc.player.isFallFlying()) {
-         int n = CONST_intValues[this.intValue2 % CONST_intValues.length];
-         if (this.intValue >= n) {
+      if (this.reallyWorldMode.isSelected() && !mc.player.isFallFlying()) {
+         int requiredUseTicks = SLOWDOWN_CANCEL_INTERVALS[this.cancelIntervalIndex % SLOWDOWN_CANCEL_INTERVALS.length];
+         if (this.itemUseTicks >= requiredUseTicks) {
             event.setCancelled(true);
-            this.intValue = 0;
-            this.intValue2++;
+            this.itemUseTicks = 0;
+            this.cancelIntervalIndex++;
          }
       }
 
-      if (this.entry3.isSelected()) {
+      if (this.grimOldMode.isSelected()) {
          InteractionHand usedItemHand = mc.player.getUsedItemHand();
          if (this.sprint.isEnabled()) {
             mc.player
@@ -84,8 +84,8 @@ public final class NoSlowModule extends Module {
       }
    }
 
-   private void method1475() {
-      this.intValue = 0;
-      this.intValue2 = 0;
+   private void resetItemUseTicks() {
+      this.itemUseTicks = 0;
+      this.cancelIntervalIndex = 0;
    }
 }

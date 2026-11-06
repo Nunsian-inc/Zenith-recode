@@ -9,7 +9,7 @@ import org.zenith.base.font.Font;
 import org.zenith.base.font.Fonts;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.screens.override.main.MainMenuBlurRenderer;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.ShapeRenderer;
 import org.zenith.utility.render.display.base.GlowColor;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -34,7 +34,7 @@ public class DefaultButton extends ButtonScreen {
    public void render(MenuDrawContext customDrawContext, float x, float y, float floatValue, float f) {
       super.render(customDrawContext, x, y, floatValue, f);
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      this.hoverAnimation.method2807(this.bounds.contains(x, y));
+      this.hoverAnimation.updateVisibility(this.bounds.contains(x, y));
       ShapeRenderer.method7167(
          MatrixUtils.method663(customDrawContext),
          floatValue,
@@ -81,7 +81,7 @@ public class DefaultButton extends ButtonScreen {
    }
 
    @Override
-   public void onClick(double d, double d2, Enum3 enum2) {
+   public void onClick(double d, double d2, MouseButton enum2) {
       this.onClick.run();
    }
 }

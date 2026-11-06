@@ -72,7 +72,7 @@ public abstract class ToolTab extends SectionPanel {
    }
 
    public float hot(String anObject, boolean contains) {
-      return this.hovers.computeIfAbsent(anObject, hover -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.hovers.computeIfAbsent(anObject, hover -> new Animation(160L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    public void mark(String str) {
@@ -255,7 +255,7 @@ public abstract class ToolTab extends SectionPanel {
    }
 
    public void drawSwitch(MenuDrawContext menuDrawContext, String key, float floatValue, float y, float width, float height, boolean enabled, float previewAlpha, ZenithStyle zenithStyle) {
-      float hover = this.switches.computeIfAbsent(key, var1x -> new Animation(220L, enabled ? 1.0F : 0.0F, Easing.INSTANCE15)).method2808(enabled ? 1.0F : 0.0F);
+      float hover = this.switches.computeIfAbsent(key, var1x -> new Animation(220L, enabled ? 1.0F : 0.0F, Easing.INSTANCE15)).animateTo(enabled ? 1.0F : 0.0F);
       ZenithColor zenithColor = zenithStyle.getFieldBorder().getZenithColor().method7294(3.0F);
       menuDrawContext.drawRoundedRect(
          floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha)

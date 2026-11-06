@@ -3,7 +3,7 @@ package org.zenith.utility.misc;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.resources.Identifier;
 
-public class BlurTintShaderKey extends KawaseShaderKey implements Handler2 {
+public class BlurTintShaderKey extends KawaseShaderKey implements WindowAccess {
    private ShaderUniform shaderUniform;
    private ShaderUniform shaderUniform2;
    private ShaderUniform shaderUniform3;

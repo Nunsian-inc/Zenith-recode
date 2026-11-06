@@ -43,12 +43,12 @@ public final class ChestStealerModule extends Module {
    private final SliderSetting closeDelay = new SliderSetting(
       "module.chestStealer.closeDelay", 4.0F, 0.0F, 60.0F, 1.0F, "module.chestStealer.closeDelay.desc", "t"
    );
-   private final StopWatch stopWatch = new StopWatch();
-   private final StopWatch stopWatch2 = new StopWatch();
-   private final StopWatch stopWatch3 = new StopWatch();
-   private int lastId = -1;
-   private boolean flag = false;
-   private boolean flag2 = false;
+   private final StopWatch stealTimer = new StopWatch();
+   private final StopWatch startTimer = new StopWatch();
+   private final StopWatch closeTimer = new StopWatch();
+   private int lastContainerId = -1;
+   private boolean startDelayElapsed = false;
+   private boolean waitingToClose = false;
 
    private ChestStealerModule() {
       this.startDelay.setVisible(() -> this.mode.method2101("module.chestStealer.mode.custom"));
@@ -58,14 +58,14 @@ public final class ChestStealerModule extends Module {
    }
 
    private void resetState() {
-      this.lastId = -1;
-      this.flag = false;
-      this.flag2 = false;
-      this.stopWatch2.reset();
-      this.stopWatch3.reset();
+      this.lastContainerId = -1;
+      this.startDelayElapsed = false;
+      this.waitingToClose = false;
+      this.startTimer.reset();
+      this.closeTimer.reset();
    }
 
-   private float method3071() {
+   private float getStartDelayTicks() {
       if (this.mode.method2101("module.chestStealer.mode.funTime")) {
          return 8.0F;
       } else if (this.mode.method2101("module.chestStealer.mode.holyWorld")) {
@@ -75,7 +75,7 @@ public final class ChestStealerModule extends Module {
       }
    }
 
-   private float method3072() {
+   private float getMinStealDelayTicks() {
       if (this.mode.method2101("module.chestStealer.mode.funTime")) {
          return 4.0F;
       } else if (this.mode.method2101("module.chestStealer.mode.holyWorld")) {
@@ -85,7 +85,7 @@ public final class ChestStealerModule extends Module {
       }
    }
 
-   private float method3073() {
+   private float getMaxStealDelayTicks() {
       if (this.mode.method2101("module.chestStealer.mode.funTime")) {
          return 8.0F;
       } else if (this.mode.method2101("module.chestStealer.mode.holyWorld")) {
@@ -95,7 +95,7 @@ public final class ChestStealerModule extends Module {
       }
    }
 
-   private float method3074() {
+   private float getCloseDelayTicks() {
       if (this.mode.method2101("module.chestStealer.mode.funTime")) {
          return 7.0F;
       } else if (this.mode.method2101("module.chestStealer.mode.holyWorld")) {
@@ -106,70 +106,70 @@ public final class ChestStealerModule extends Module {
    }
 
    @EventTarget
-   public void method3075(WorldRenderEvent event) {
+   public void onWorldRender(WorldRenderEvent event) {
       if (mc.player.containerMenu instanceof ChestMenu chestMenu && mc.gui.screen() != null) {
-         if (this.lastId != chestMenu.containerId) {
-            this.lastId = chestMenu.containerId;
-            this.stopWatch2.reset();
-            this.stopWatch3.reset();
-            this.stopWatch.reset();
-            this.flag = false;
-            this.flag2 = false;
+         if (this.lastContainerId != chestMenu.containerId) {
+            this.lastContainerId = chestMenu.containerId;
+            this.startTimer.reset();
+            this.closeTimer.reset();
+            this.stealTimer.reset();
+            this.startDelayElapsed = false;
+            this.waitingToClose = false;
          }
 
-         if (!this.flag) {
-            if (!this.stopWatch2.method7546((long)this.method3071() * 50L)) {
+         if (!this.startDelayElapsed) {
+            if (!this.startTimer.method7546((long)this.getStartDelayTicks() * 50L)) {
                return;
             }
 
-            this.flag = true;
+            this.startDelayElapsed = true;
          }
 
-         String string = mc.gui.screen().getTitle().getString();
-         String str = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.auction");
-         String str2 = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.purchases");
-         boolean flag = string.contains(str) || string.contains(str2);
+         String screenTitle = mc.gui.screen().getTitle().getString();
+         String auctionTitle = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.auction");
+         String purchasesTitle = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.purchases");
+         boolean isAuctionScreen = screenTitle.contains(auctionTitle) || screenTitle.contains(purchasesTitle);
          int containerSize = chestMenu.getContainer().getContainerSize();
-         List<Integer> list = IntStream.range(0, containerSize).boxed().collect(Collectors.toList());
-         Collections.shuffle(list);
-         if (!flag) {
-            for (int index : list) {
+         List<Integer> slotIndices = IntStream.range(0, containerSize).boxed().collect(Collectors.toList());
+         Collections.shuffle(slotIndices);
+         if (!isAuctionScreen) {
+            for (int index : slotIndices) {
                Slot slot = chestMenu.getSlot(index);
                if (slot.hasItem()) {
-                  long l = (long)MathUtils.method2651(Math.min(this.method3072(), this.method3073()), Math.max(this.method3072(), this.method3073()));
-                  if (this.stopWatch.method7546(l * 50L)) {
+                  long stealDelayTicks = (long)MathUtils.method2651(Math.min(this.getMinStealDelayTicks(), this.getMaxStealDelayTicks()), Math.max(this.getMinStealDelayTicks(), this.getMaxStealDelayTicks()));
+                  if (this.stealTimer.method7546(stealDelayTicks * 50L)) {
                      mc.gameMode.handleContainerInput(chestMenu.containerId, index, 0, ContainerInput.QUICK_MOVE, mc.player);
-                     this.stopWatch.reset();
-                     this.flag2 = false;
+                     this.stealTimer.reset();
+                     this.waitingToClose = false;
                      break;
                   }
                }
             }
          }
 
-         boolean flag2 = this.method3076(chestMenu);
-         if (this.closeScreen.isEnabled() && flag2) {
-            if (!this.flag2) {
-               this.flag2 = true;
-               this.stopWatch3.reset();
+         boolean chestEmpty = this.isChestEmpty(chestMenu);
+         if (this.closeScreen.isEnabled() && chestEmpty) {
+            if (!this.waitingToClose) {
+               this.waitingToClose = true;
+               this.closeTimer.reset();
                return;
             }
 
-            if (this.stopWatch3.method7546((long)this.method3074() * 50L)) {
+            if (this.closeTimer.method7546((long)this.getCloseDelayTicks() * 50L)) {
                mc.player.closeContainer();
-               this.flag2 = false;
+               this.waitingToClose = false;
             }
          } else {
-            this.flag2 = false;
+            this.waitingToClose = false;
          }
       } else {
          this.resetState();
       }
    }
 
-   private boolean method3076(ChestMenu chestMenu) {
-      for (int i = 0; i < (chestMenu.getContainer().getContainerSize() == 90 ? 54 : 27); i++) {
-         if (chestMenu.getSlot(i).hasItem()) {
+   private boolean isChestEmpty(ChestMenu chestMenu) {
+      for (int slotIndex = 0; slotIndex < (chestMenu.getContainer().getContainerSize() == 90 ? 54 : 27); slotIndex++) {
+         if (chestMenu.getSlot(slotIndex).hasItem()) {
             return false;
          }
       }
@@ -181,13 +181,13 @@ public final class ChestStealerModule extends Module {
    public void onEnable() {
       super.onEnable();
       this.resetState();
-      this.stopWatch.reset();
+      this.stealTimer.reset();
    }
 
    @Override
    public void onDisable() {
       super.onDisable();
       this.resetState();
-      this.stopWatch.reset();
+      this.stealTimer.reset();
    }
 }

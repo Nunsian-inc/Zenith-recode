@@ -296,7 +296,7 @@ public final class UseItemUtils implements ZenithAccess {
    }
 
    public static boolean method6530(LivingEntity livingEntity) {
-      Rotation rotation = Rotation.method3129(mc.player.getBoundingBox().getCenter().subtract(livingEntity.getEyePosition()));
+      Rotation rotation = Rotation.fromDirection(mc.player.getBoundingBox().getCenter().subtract(livingEntity.getEyePosition()));
       boolean flag = livingEntity.isUsingItem() && livingEntity.getUseItem().getItem().equals(Items.SHIELD);
       boolean flag2 = Math.abs(Mth.wrapDegrees(livingEntity.getYRot() - rotation.getFloatValue())) < 60.0F;
       return flag && flag2;

@@ -17,8 +17,8 @@ import org.zenith.PacketEvent;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.client.events.CloseHandledScreenEvent;
-import org.zenith.client.events.Event1;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.SchedulerPulseEvent;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.SlotClickEvent;
 import org.zenith.client.events.UpdateEvent;
@@ -40,38 +40,38 @@ import org.zenith.utility.render.KeyBindUtils;
 public final class GuiWalkModule extends Module {
    public static final GuiWalkModule INSTANCE = new GuiWalkModule();
    private final ModeSetting mode = new ModeSetting("module.guiWalk.mode", "module.guiWalk.mode.desc");
-   private final ModeSetting.Entry entry = new ModeSetting.Entry(this.mode, "module.guiWalk.mode.visual").method2103();
-   private final ModeSetting.Entry entry2 = new ModeSetting.Entry(this.mode, "module.guiWalk.mode.grim");
-   private final ModeSetting.Entry entry3 = new ModeSetting.Entry(this.mode, "HolyWorld");
-   private final BooleanSetting cameraLock = new BooleanSetting("module.guiWalk.cameraLock", "module.guiWalk.cameraLock.desc", true, this.entry2::isSelected);
-   private ContainerInput slotActionType = null;
-   private final List<Packet<?>> items = new ArrayList<>();
-   public boolean flag = false;
-   public boolean flag2 = false;
-   public boolean flag3 = false;
+   private final ModeSetting.Entry visualMode = new ModeSetting.Entry(this.mode, "module.guiWalk.mode.visual").method2103();
+   private final ModeSetting.Entry grimMode = new ModeSetting.Entry(this.mode, "module.guiWalk.mode.grim");
+   private final ModeSetting.Entry holyWorldMode = new ModeSetting.Entry(this.mode, "HolyWorld");
+   private final BooleanSetting cameraLock = new BooleanSetting("module.guiWalk.cameraLock", "module.guiWalk.cameraLock.desc", true, this.grimMode::isSelected);
+   private ContainerInput lastClickAction = null;
+   private final List<Packet<?>> queuedClickPackets = new ArrayList<>();
+   public boolean queueNextClick = false;
+   public boolean clickedWhileStationary = false;
+   public boolean stationaryClick = false;
 
    private GuiWalkModule() {
    }
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (!this.entry3.isSelected()) {
+      if (!this.holyWorldMode.isSelected()) {
          try {
             if (UseItemUtils.method6526()) {
                return;
             }
 
             if (mc.player.containerMenu instanceof InventoryMenu) {
-               if (!this.flag) {
+               if (!this.queueNextClick) {
                   return;
                }
 
-               this.flag = false;
-               if (Objects.requireNonNull(event.getPacket3()) instanceof ServerboundContainerClickPacket containerClickPacket
-                  && (!this.items.isEmpty() || MovementInputUtils.method7418())
+               this.queueNextClick = false;
+               if (Objects.requireNonNull(event.getPacket()) instanceof ServerboundContainerClickPacket containerClickPacket
+                  && (!this.queuedClickPackets.isEmpty() || MovementInputUtils.method7418())
                   && KeyBindUtils.method2635()) {
-                  this.items.add(containerClickPacket);
-                  this.slotActionType = containerClickPacket.containerInput();
+                  this.queuedClickPackets.add(containerClickPacket);
+                  this.lastClickAction = containerClickPacket.containerInput();
                   event.setCancelled(true);
                }
             }
@@ -82,25 +82,25 @@ public final class GuiWalkModule extends Module {
    }
 
    @EventTarget
-   public void method1665(UpdateEvent event) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player.containerMenu instanceof InventoryMenu) {
          if (KeyBindUtils.method2635()
-            && (!this.entry.isSelected() || !this.flag2)
-            && !this.flag3
+            && (!this.visualMode.isSelected() || !this.clickedWhileStationary)
+            && !this.stationaryClick
             && (
-               !this.items.isEmpty()
+               !this.queuedClickPackets.isEmpty()
                   || mc.player.containerMenu.getCarried().isEmpty()
             )) {
             KeyBindUtils.method2634();
          }
       } else {
-         this.flag2 = false;
-         this.flag3 = false;
+         this.clickedWhileStationary = false;
+         this.stationaryClick = false;
       }
    }
 
    @EventTarget
-   public void method1666(SlotClickEvent event) {
+   public void onSlotClick(SlotClickEvent event) {
       if (event.getIntValue2() >= 0) {
          Slot slot = mc.player.containerMenu.getSlot(event.getIntValue2());
          ItemStack stack = slot.getItem();
@@ -108,25 +108,25 @@ public final class GuiWalkModule extends Module {
          }
       }
 
-      if (!this.entry3.isSelected()) {
+      if (!this.holyWorldMode.isSelected()) {
          if (mc.player.containerMenu instanceof InventoryMenu) {
-            ContainerInput slotActionType = event.getSlotActionType();
-            if (this.entry.isSelected()) {
+            ContainerInput lastClickAction = event.getSlotActionType();
+            if (this.visualMode.isSelected()) {
                if (MovementInputUtils.method7418()) {
                   event.setCancelled(true);
                } else {
-                  this.flag2 = true;
+                  this.clickedWhileStationary = true;
                }
             }
 
-            if (this.items.isEmpty() && !MovementInputUtils.method7418()) {
-               this.flag3 = true;
-            } else if ((event.getIntValue3() != 1 || !slotActionType.equals(ContainerInput.PICKUP))
-               && (this.slotActionType != ContainerInput.PICKUP || event.getSlotActionType() != ContainerInput.QUICK_MOVE)
-               && (this.slotActionType != ContainerInput.QUICK_MOVE || event.getSlotActionType() != ContainerInput.PICKUP)
-               && (this.slotActionType != ContainerInput.QUICK_MOVE || event.getSlotActionType() != ContainerInput.PICKUP_ALL)
-               && (this.slotActionType != ContainerInput.PICKUP_ALL || event.getSlotActionType() != ContainerInput.QUICK_MOVE)) {
-               this.flag = true;
+            if (this.queuedClickPackets.isEmpty() && !MovementInputUtils.method7418()) {
+               this.stationaryClick = true;
+            } else if ((event.getIntValue3() != 1 || !lastClickAction.equals(ContainerInput.PICKUP))
+               && (this.lastClickAction != ContainerInput.PICKUP || event.getSlotActionType() != ContainerInput.QUICK_MOVE)
+               && (this.lastClickAction != ContainerInput.QUICK_MOVE || event.getSlotActionType() != ContainerInput.PICKUP)
+               && (this.lastClickAction != ContainerInput.QUICK_MOVE || event.getSlotActionType() != ContainerInput.PICKUP_ALL)
+               && (this.lastClickAction != ContainerInput.PICKUP_ALL || event.getSlotActionType() != ContainerInput.QUICK_MOVE)) {
+               this.queueNextClick = true;
             } else {
                event.setCancelled(true);
             }
@@ -135,28 +135,28 @@ public final class GuiWalkModule extends Module {
    }
 
    @EventTarget
-   public void method1667(CloseHandledScreenEvent event) {
-      if (!this.entry3.isSelected()) {
+   public void onCloseScreen(CloseHandledScreenEvent event) {
+      if (!this.holyWorldMode.isSelected()) {
          if (mc.player.containerMenu instanceof InventoryMenu) {
-            if (this.entry.isSelected()) {
-               if (!this.flag2) {
+            if (this.visualMode.isSelected()) {
+               if (!this.clickedWhileStationary) {
                   event.setCancelled(true);
                }
 
-               this.flag2 = false;
-            } else if (this.flag3 && this.items.isEmpty()) {
-               this.flag3 = false;
+               this.clickedWhileStationary = false;
+            } else if (this.stationaryClick && this.queuedClickPackets.isEmpty()) {
+               this.stationaryClick = false;
             } else {
-               this.flag3 = false;
-               if (MovementInputUtils.method7418() || !this.items.isEmpty()) {
+               this.stationaryClick = false;
+               if (MovementInputUtils.method7418() || !this.queuedClickPackets.isEmpty()) {
                   event.setCancelled(true);
                }
 
-               if (!this.items.isEmpty()) {
-                  this.slotActionType = null;
-                  this.flag = false;
-                  var packets = new ArrayList<>(this.items);
-                  this.items.clear();
+               if (!this.queuedClickPackets.isEmpty()) {
+                  this.lastClickAction = null;
+                  this.queueNextClick = false;
+                  var packets = new ArrayList<>(this.queuedClickPackets);
+                  this.queuedClickPackets.clear();
                   TaskScheduler.Entry2 task = new TaskScheduler.Entry2(GuiWalkModule.class);
                   if (InventorySettingModule.INSTANCE.method2396()) {
                      task.method5120(
@@ -169,7 +169,7 @@ public final class GuiWalkModule extends Module {
                               && !mc.player.lastSentInput.backward()
                               && !mc.player.lastSentInput.left()
                               && !mc.player.lastSentInput.right()) {
-                              packets.forEach(var0x -> mc.getConnection().send(var0x));
+                              packets.forEach(queuedPacket -> mc.getConnection().send(queuedPacket));
                               InventoryUtils.closeScreen();
                               return true;
                            } else {
@@ -181,7 +181,7 @@ public final class GuiWalkModule extends Module {
                      for (int i = 0; i < packets.size(); i++) {
                         Packet packet = (Packet)packets.get(i);
                         task.method5120(
-                           Event1.class,
+                           SchedulerPulseEvent.class,
                            var1x -> {
                               if (!(mc.player.containerMenu instanceof InventoryMenu)) {
                                  InventoryUtils.closeScreen();
@@ -224,11 +224,11 @@ public final class GuiWalkModule extends Module {
                      });
                      if (this.cameraLock.isEnabled()) {
                         task.method5123(
-                           Event5.class,
+                           PreRotationEvent.class,
                            var1x -> {
-                              rotationManager.method7848(
+                              rotationManager.requestRotation(
                                  new RotationRequest(
-                                    rotationManager.method7844(), rotationManager::method7844, rotationManager.getBcCameraTestnerv().getRotationConfig()
+                                    rotationManager.getEffectiveRotation(), rotationManager::getEffectiveRotation, rotationManager.getBcCameraTestnerv().getRotationConfig()
                                  ),
                                  999,
                                  this,

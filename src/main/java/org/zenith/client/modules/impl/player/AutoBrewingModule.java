@@ -36,7 +36,7 @@ import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.BcCameraTestnerv;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.utility.game.AutoPotionBrewingEnum;
@@ -134,9 +134,9 @@ public final class AutoBrewingModule extends Module {
    }
 
    @EventTarget
-   public void method4268(Event5 event) {
+   public void method4268(PreRotationEvent event) {
       if (this.rotation != null) {
-         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(this.rotation, () -> {
+         Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(this.rotation, () -> {
             BcCameraTestnerv var1x = Zenith.getInstance().getRotationManager().getBcCameraTestnerv();
             return var1x.method1851(var1x.getRotationConfig(), this.rotation);
          }, Zenith.getInstance().getRotationManager().getBcCameraTestnerv().getRotationConfig()), 5, this);
@@ -878,7 +878,7 @@ public final class AutoBrewingModule extends Module {
    }
 
    private boolean method4318(BlockPos blockPos2) {
-      Rotation rotation = Zenith.getInstance().getRotationManager().method7844();
+      Rotation rotation = Zenith.getInstance().getRotationManager().getEffectiveRotation();
       BlockHitResult blockHitResult = TargetUtils.method3216(
          mc.player.getEyePosition(1.0F), rotation, mc.player.blockInteractionRange(), var1x -> var1x != null && var1x.getBlockPos().equals(blockPos2)
       );

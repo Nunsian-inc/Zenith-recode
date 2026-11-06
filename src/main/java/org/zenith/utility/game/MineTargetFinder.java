@@ -38,8 +38,8 @@ public final class MineTargetFinder {
       Blocks.CLAY
    );
 
-   public static MineTargetFinder.Data method1933(boolean flag) {
-      return flag ? data2 : data;
+   public static MineTargetFinder.Data method1933(boolean netherMine) {
+      return netherMine ? data2 : data;
    }
 
    private MineTargetFinder() {
@@ -49,64 +49,64 @@ public final class MineTargetFinder {
       return items.contains(block);
    }
 
-   public static boolean method1935(MineTargetFinder.Data data, BlockPos blockPos) {
-      return blockPos.getX() >= data.getIntValue()
-         && blockPos.getX() <= data.getIntValue2()
-         && blockPos.getY() >= data.getIntValue3()
-         && blockPos.getY() <= data.getIntValue4()
-         && blockPos.getZ() >= data.getIntValue5()
-         && blockPos.getZ() <= data.getIntValue6();
+   public static boolean method1935(MineTargetFinder.Data bounds, BlockPos position) {
+      return position.getX() >= bounds.getIntValue()
+         && position.getX() <= bounds.getIntValue2()
+         && position.getY() >= bounds.getIntValue3()
+         && position.getY() <= bounds.getIntValue4()
+         && position.getZ() >= bounds.getIntValue5()
+         && position.getZ() <= bounds.getIntValue6();
    }
 
-   public static boolean method1936(MineTargetFinder.Data data, Vec3 vec) {
-      return vec.x >= data.getIntValue() && vec.x <= data.getIntValue2() + 1.0 && vec.z >= data.getIntValue5() && vec.z <= data.getIntValue6() + 1.0;
+   public static boolean method1936(MineTargetFinder.Data bounds, Vec3 position) {
+      return position.x >= bounds.getIntValue() && position.x <= bounds.getIntValue2() + 1.0 && position.z >= bounds.getIntValue5() && position.z <= bounds.getIntValue6() + 1.0;
    }
 
-   public static boolean method1937(MineTargetFinder.Data data, BlockPos pos) {
-      return pos.getX() >= data.getIntValue()
-         && pos.getX() <= data.getIntValue2()
-         && pos.getY() >= data.getIntValue3() - 3
-         && pos.getY() <= data.getIntValue4() + 3
-         && pos.getZ() >= data.getIntValue5()
-         && pos.getZ() <= data.getIntValue6();
+   public static boolean method1937(MineTargetFinder.Data bounds, BlockPos pos) {
+      return pos.getX() >= bounds.getIntValue()
+         && pos.getX() <= bounds.getIntValue2()
+         && pos.getY() >= bounds.getIntValue3() - 3
+         && pos.getY() <= bounds.getIntValue4() + 3
+         && pos.getZ() >= bounds.getIntValue5()
+         && pos.getZ() <= bounds.getIntValue6();
    }
 
    public static boolean method1938(MineTargetFinder.Data selectedMine, Level world) {
-      int x = selectedMine.getIntValue() - 4;
-      int n = selectedMine.getIntValue2() + 4;
-      int z = selectedMine.getIntValue5() - 4;
-      int z2 = selectedMine.getIntValue6() + 4;
-      int x2 = (selectedMine.getIntValue() + selectedMine.getIntValue2()) / 2;
-      int z3 = (selectedMine.getIntValue5() + selectedMine.getIntValue6()) / 2;
-      return world.hasChunkAt(new BlockPos(x, selectedMine.getIntValue3(), z))
-         && world.hasChunkAt(new BlockPos(x, selectedMine.getIntValue3(), z2))
-         && world.hasChunkAt(new BlockPos(n, selectedMine.getIntValue3(), z))
-         && world.hasChunkAt(new BlockPos(n, selectedMine.getIntValue3(), z2))
-         && world.hasChunkAt(new BlockPos(x2, selectedMine.getIntValue3(), z3));
+      int minX = selectedMine.getIntValue() - 4;
+      int maxX = selectedMine.getIntValue2() + 4;
+      int minZ = selectedMine.getIntValue5() - 4;
+      int maxZ = selectedMine.getIntValue6() + 4;
+      int centerX = (selectedMine.getIntValue() + selectedMine.getIntValue2()) / 2;
+      int centerZ = (selectedMine.getIntValue5() + selectedMine.getIntValue6()) / 2;
+      return world.hasChunkAt(new BlockPos(minX, selectedMine.getIntValue3(), minZ))
+         && world.hasChunkAt(new BlockPos(minX, selectedMine.getIntValue3(), maxZ))
+         && world.hasChunkAt(new BlockPos(maxX, selectedMine.getIntValue3(), minZ))
+         && world.hasChunkAt(new BlockPos(maxX, selectedMine.getIntValue3(), maxZ))
+         && world.hasChunkAt(new BlockPos(centerX, selectedMine.getIntValue3(), centerZ));
    }
 
    public static double method1939(Vec3 eyePosition, BlockPos pos) {
-      double x = Math.max((double)pos.getX(), Math.min(pos.getX() + 1.0, eyePosition.x));
-      double y = Math.max((double)pos.getY(), Math.min(pos.getY() + 1.0, eyePosition.y));
-      double z = Math.max((double)pos.getZ(), Math.min(pos.getZ() + 1.0, eyePosition.z));
-      return eyePosition.distanceToSqr(x, y, z);
+      double closestX = Math.max((double)pos.getX(), Math.min(pos.getX() + 1.0, eyePosition.x));
+      double closestY = Math.max((double)pos.getY(), Math.min(pos.getY() + 1.0, eyePosition.y));
+      double closestZ = Math.max((double)pos.getZ(), Math.min(pos.getZ() + 1.0, eyePosition.z));
+      return eyePosition.distanceToSqr(closestX, closestY, closestZ);
    }
 
    public static BlockHitResult method1940(BlockPos pos, double blockInteractionRange, Vec3 eyePosition) {
-      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
-      double x = 0.49;
-      Vec3[] vecs = new Vec3[]{
-         atCenterOf,
-         atCenterOf.add(x, 0.0, 0.0),
-         atCenterOf.add(-x, 0.0, 0.0),
-         atCenterOf.add(0.0, x, 0.0),
-         atCenterOf.add(0.0, -x, 0.0),
-         atCenterOf.add(0.0, 0.0, x),
-         atCenterOf.add(0.0, 0.0, -x)
+      Vec3 blockCenter = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      double faceOffset = 0.49;
+      Vec3[] aimSamples = new Vec3[]{
+         blockCenter,
+         blockCenter.add(faceOffset, 0.0, 0.0),
+         blockCenter.add(-faceOffset, 0.0, 0.0),
+         blockCenter.add(0.0, faceOffset, 0.0),
+         blockCenter.add(0.0, -faceOffset, 0.0),
+         blockCenter.add(0.0, 0.0, faceOffset),
+         blockCenter.add(0.0, 0.0, -faceOffset)
       };
 
-      for (Vec3 vec : vecs) {
-         BlockHitResult blockHitResult = TargetUtils.method3205(eyePosition, blockInteractionRange, Rotation.method3128(vec, eyePosition), false);
+      for (Vec3 aimPoint : aimSamples) {
+         BlockHitResult blockHitResult = TargetUtils.method3205(eyePosition, blockInteractionRange, Rotation.lookingAt(aimPoint, eyePosition), false);
          if (blockHitResult != null && blockHitResult.getType() != Type.MISS && blockHitResult.getBlockPos().equals(pos)) {
             return blockHitResult;
          }
@@ -115,64 +115,64 @@ public final class MineTargetFinder {
       return null;
    }
 
-   public static boolean method1941(BlockPos pos, Vec3 vec, Vec3 vec2, double d) {
-      Vec3 vec3 = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(vec);
-      double d2 = vec3.x * vec2.x + vec3.z * vec2.z;
-      return d2 > 0.0 && d2 <= d + 0.75 && method1945(pos, vec, vec2) <= 1.2;
+   public static boolean method1941(BlockPos pos, Vec3 origin, Vec3 direction, double targetDistance) {
+      Vec3 offset = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(origin);
+      double forwardDistance = offset.x * direction.x + offset.z * direction.z;
+      return forwardDistance > 0.0 && forwardDistance <= targetDistance + 0.75 && method1945(pos, origin, direction) <= 1.2;
    }
 
-   public static boolean method1942(BlockPos pos, Vec3 vec, Vec3 vec2, double d) {
-      Vec3 vec3 = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(vec);
-      double d2 = vec3.x * vec2.x + vec3.z * vec2.z;
-      return d2 > -0.35 && d2 <= Math.min(d + 0.75, 4.25) && method1945(pos, vec, vec2) <= 2.25;
+   public static boolean method1942(BlockPos pos, Vec3 origin, Vec3 direction, double targetDistance) {
+      Vec3 offset = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(origin);
+      double forwardDistance = offset.x * direction.x + offset.z * direction.z;
+      return forwardDistance > -0.35 && forwardDistance <= Math.min(targetDistance + 0.75, 4.25) && method1945(pos, origin, direction) <= 2.25;
    }
 
-   public static BlockPos method1943(BlockPos pos, List<BlockPos> poses, Vec3 eyePosition, Vec3 vec) {
-      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
-      Vec3 vec2 = new Vec3(atCenterOf.x - vec.x, 0.0, atCenterOf.z - vec.z);
-      double lengthSqr = vec2.lengthSqr();
-      if (lengthSqr < 0.01) {
+   public static BlockPos method1943(BlockPos pos, List<BlockPos> candidates, Vec3 eyePosition, Vec3 origin) {
+      Vec3 targetCenter = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      Vec3 horizontalOffset = new Vec3(targetCenter.x - origin.x, 0.0, targetCenter.z - origin.z);
+      double distanceSquared = horizontalOffset.lengthSqr();
+      if (distanceSquared < 0.01) {
          return null;
       } else {
-         double d = Math.sqrt(lengthSqr);
-         Vec3 vec3 = vec2.scale(1.0 / d);
-         return poses.stream()
-            .filter(var1x -> !var1x.equals(pos))
-            .filter(var4x -> method1942(var4x, vec, vec3, d))
-            .min(Comparator.<BlockPos>comparingDouble(var1x -> method1939(eyePosition, var1x)).thenComparingDouble(var2x -> method1945(var2x, vec, vec3)))
+         double targetDistance = Math.sqrt(distanceSquared);
+         Vec3 direction = horizontalOffset.scale(1.0 / targetDistance);
+         return candidates.stream()
+            .filter(candidate -> !candidate.equals(pos))
+            .filter(candidate -> method1942(candidate, origin, direction, targetDistance))
+            .min(Comparator.<BlockPos>comparingDouble(candidate -> method1939(eyePosition, candidate)).thenComparingDouble(candidate -> method1945(candidate, origin, direction)))
             .orElse(null);
       }
    }
 
-   public static BlockPos method1944(BlockPos pos, List<BlockPos> poses, Vec3 eyePosition, Vec3 vec, int n) {
-      if (pos.getY() != n) {
+   public static BlockPos method1944(BlockPos pos, List<BlockPos> candidates, Vec3 eyePosition, Vec3 origin, int targetY) {
+      if (pos.getY() != targetY) {
          return null;
       } else {
-         Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
-         Vec3 vec2 = new Vec3(atCenterOf.x - vec.x, 0.0, atCenterOf.z - vec.z);
-         double lengthSqr = vec2.lengthSqr();
-         if (lengthSqr < 0.01) {
+         Vec3 targetCenter = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+         Vec3 horizontalOffset = new Vec3(targetCenter.x - origin.x, 0.0, targetCenter.z - origin.z);
+         double distanceSquared = horizontalOffset.lengthSqr();
+         if (distanceSquared < 0.01) {
             return null;
          } else {
-            double d = Math.sqrt(lengthSqr);
-            Vec3 vec3 = vec2.scale(1.0 / d);
-            return poses.stream()
-               .filter(var1x -> var1x.getY() == pos.getY())
-               .filter(var4x -> method1941(var4x, vec, vec3, d))
-               .min(Comparator.<BlockPos>comparingDouble(var2x -> method1945(var2x, vec, vec3)).thenComparingDouble(var1x -> method1939(eyePosition, var1x)))
+            double targetDistance = Math.sqrt(distanceSquared);
+            Vec3 direction = horizontalOffset.scale(1.0 / targetDistance);
+            return candidates.stream()
+               .filter(candidate -> candidate.getY() == pos.getY())
+               .filter(candidate -> method1941(candidate, origin, direction, targetDistance))
+               .min(Comparator.<BlockPos>comparingDouble(candidate -> method1945(candidate, origin, direction)).thenComparingDouble(candidate -> method1939(eyePosition, candidate)))
                .orElse(null);
          }
       }
    }
 
-   public static double method1945(BlockPos pos, Vec3 vec, Vec3 vec2) {
-      Vec3 vec3 = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(vec);
-      double d = vec3.x * vec2.x + vec3.z * vec2.z;
-      double d2 = vec.x + vec2.x * d;
-      double d3 = vec.z + vec2.z * d;
-      double d4 = pos.getX() + 0.5 - d2;
-      double d5 = pos.getZ() + 0.5 - d3;
-      return d4 * d4 + d5 * d5;
+   public static double method1945(BlockPos pos, Vec3 origin, Vec3 direction) {
+      Vec3 offset = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(origin);
+      double forwardDistance = offset.x * direction.x + offset.z * direction.z;
+      double projectedX = origin.x + direction.x * forwardDistance;
+      double projectedZ = origin.z + direction.z * forwardDistance;
+      double perpendicularX = pos.getX() + 0.5 - projectedX;
+      double perpendicularZ = pos.getZ() + 0.5 - projectedZ;
+      return perpendicularX * perpendicularX + perpendicularZ * perpendicularZ;
    }
 
    public static final class Data {

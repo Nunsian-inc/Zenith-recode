@@ -8,7 +8,7 @@ public final class MeshValidator {
    private MeshValidator() {
    }
 
-   public static List<String> method6095(Class32 class2) {
+   public static List<String> method6095(SparseVoxelGrid class2) {
       ArrayList<String> strings = new ArrayList<>();
       method6097(strings);
       method6098(strings);
@@ -21,7 +21,7 @@ public final class MeshValidator {
    }
 
    private static void method6096(List<String> strings) {
-      Class32 class2 = new Class32();
+      SparseVoxelGrid class2 = new SparseVoxelGrid();
       byte b = 24;
       int n = b / 2;
       float f = 7.0F;
@@ -34,7 +34,7 @@ public final class MeshValidator {
                float f4 = k - n;
                float f5 = (float)Math.sqrt(f2 * f2 + f3 * f3 + f4 * f4);
                float f6 = (f - f5) / f * 127.0F;
-               class2.method4904(i, j, k, (byte)Math.clamp((long)Math.round(f6), -127, 127));
+               class2.setVoxel(i, j, k, (byte)Math.clamp((long)Math.round(f6), -127, 127));
             }
          }
       }
@@ -79,7 +79,7 @@ public final class MeshValidator {
             }
          }
 
-         Class32 class3 = new Class32();
+         SparseVoxelGrid class3 = new SparseVoxelGrid();
          FloatArrayBuffer floatArrayBuffer2 = new FloatArrayBuffer();
          MeshImporter.method658(class3, floatArrayBuffer2, 0, 0, 0, b, b, b);
          if (!floatArrayBuffer2.isEmpty()) {
@@ -89,7 +89,7 @@ public final class MeshValidator {
    }
 
    private static void method6097(List<String> strings) {
-      Class32 class2 = new Class32();
+      SparseVoxelGrid class2 = new SparseVoxelGrid();
       Random random = new Random(20260911L);
 
       for (int i = 0; i < 4000; i++) {
@@ -97,8 +97,8 @@ public final class MeshValidator {
          int n = random.nextInt(512) - 256;
          int n2 = random.nextInt(4096) - 2048;
          byte b = (byte)(random.nextInt(255) - 127);
-         class2.method4904(x, n, n2, b);
-         byte b2 = class2.method4902(x, n, n2);
+         class2.setVoxel(x, n, n2, b);
+         byte b2 = class2.getVoxel(x, n, n2);
          if (b2 != b) {
             strings.add("запись не читается: " + x + " " + n + " " + n2 + " записано " + b + ", прочитано " + b2);
             return;
@@ -107,15 +107,15 @@ public final class MeshValidator {
    }
 
    private static void method6098(List<String> strings) {
-      Class32 class2 = new Class32();
+      SparseVoxelGrid class2 = new SparseVoxelGrid();
 
       try {
-         if (class2.method4902(1000000, 64536, 999999) != -127) {
+         if (class2.getVoxel(1000000, 64536, 999999) != -127) {
             strings.add("пустое пространство отдаёт не воздух");
          }
 
-         class2.method4904(5, 5, 5, (byte)-127);
-         if (class2.method4906() != 0) {
+         class2.setVoxel(5, 5, 5, (byte)-127);
+         if (class2.chunkCount() != 0) {
             strings.add("запись воздуха создала чанк");
          }
       } catch (RuntimeException e) {
@@ -124,39 +124,39 @@ public final class MeshValidator {
    }
 
    private static void method6099(List<String> strings) {
-      Class32 class2 = new Class32();
+      SparseVoxelGrid class2 = new SparseVoxelGrid();
       byte x = 64;
-      class2.method4904(x - 1, x - 1, x - 1, (byte)40);
-      class2.method4904(x, x, x, (byte)-40);
-      if (class2.method4902(x - 1, x - 1, x - 1) != 40 || class2.method4902(x, x, x) != -40) {
+      class2.setVoxel(x - 1, x - 1, x - 1, (byte)40);
+      class2.setVoxel(x, x, x, (byte)-40);
+      if (class2.getVoxel(x - 1, x - 1, x - 1) != 40 || class2.getVoxel(x, x, x) != -40) {
          strings.add("соседние чанки перетирают друг друга на границе");
       }
 
-      if (class2.method4906() != 2) {
-         strings.add("на границе чанков создано " + class2.method4906() + " вместо 2");
+      if (class2.chunkCount() != 2) {
+         strings.add("на границе чанков создано " + class2.chunkCount() + " вместо 2");
       }
    }
 
    private static void method6100(List<String> strings) {
-      Class32 class2 = new Class32();
-      class2.method4904(-1, -1, -1, (byte)77);
-      if (class2.method4902(-1, -1, -1) != 77) {
+      SparseVoxelGrid class2 = new SparseVoxelGrid();
+      class2.setVoxel(-1, -1, -1, (byte)77);
+      if (class2.getVoxel(-1, -1, -1) != 77) {
          strings.add("отрицательные координаты читаются неверно");
       }
 
-      if (class2.method4902(-65, -1, -1) != -127) {
+      if (class2.getVoxel(-65, -1, -1) != -127) {
          strings.add("отрицательные координаты заворачиваются в чужой чанк");
       }
    }
 
    private static void method6101(List<String> strings) {
-      Class32 class2 = new Class32();
-      class2.method4904(3, 3, 3, (byte)127);
-      class2.method4904(3, 3, 3, (byte)-127);
-      long l = class2.method4909();
-      class2.method4910();
-      long l2 = class2.method4909();
-      if (class2.method4906() != 0) {
+      SparseVoxelGrid class2 = new SparseVoxelGrid();
+      class2.setVoxel(3, 3, 3, (byte)127);
+      class2.setVoxel(3, 3, 3, (byte)-127);
+      long l = class2.estimatedMemoryBytes();
+      class2.compact();
+      long l2 = class2.estimatedMemoryBytes();
+      if (class2.chunkCount() != 0) {
          strings.add("пустой чанк не убран при сжатии");
       }
 
@@ -165,16 +165,16 @@ public final class MeshValidator {
       }
    }
 
-   private static void method6102(Class32 class2, List<String> strings) {
-      if (class2 != null && class2.method4906() != 0) {
-         long l = class2.method4908();
+   private static void method6102(SparseVoxelGrid class2, List<String> strings) {
+      if (class2 != null && class2.chunkCount() != 0) {
+         long l = class2.positiveVoxelCount();
          if (l == 0L) {
             strings.add("чанки есть, а заполненных вокселей нет");
          }
 
-         long l2 = class2.method4909();
-         long l3 = class2.method4906() * 64L * 64L * 64L;
-         if (l2 > l3 + class2.method4906() * 16L) {
+         long l2 = class2.estimatedMemoryBytes();
+         long l3 = class2.chunkCount() * 64L * 64L * 64L;
+         if (l2 > l3 + class2.chunkCount() * 16L) {
             strings.add("память больше плотного хранения: " + l2 + " > " + l3);
          }
       }

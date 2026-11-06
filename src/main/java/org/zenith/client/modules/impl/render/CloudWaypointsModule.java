@@ -108,7 +108,7 @@ public final class CloudWaypointsModule extends Module {
          } else if (blockHitResult != null && blockHitResult.getType() != Type.MISS) {
             center = blockHitResult.getLocation();
          } else {
-            center = eyePosition.add(rotation.method3135().scale(blockInteractionRange));
+            center = eyePosition.add(rotation.toDirection().scale(blockInteractionRange));
          }
 
          String str = this.label.getValue() == null ? "" : this.label.getValue().strip();

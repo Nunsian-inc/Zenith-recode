@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.zenith.client.modules.impl.misc.AutoCraftModule;
-import org.zenith.utility.api.Class1;
+import org.zenith.utility.api.BlockPosReference;
 
 public class CraftRecipe {
    private final String text;
@@ -24,9 +24,9 @@ public class CraftRecipe {
    private boolean locked;
    private final List<String> items = new ArrayList<>();
    private final List<String> items2 = new ArrayList<>();
-   private final Map<String, Class1> items3 = new HashMap<>();
-   private Class1 class1 = Class1.INSTANCE;
-   private Class1 class12 = Class1.INSTANCE;
+   private final Map<String, BlockPosReference> items3 = new HashMap<>();
+   private BlockPosReference class1 = BlockPosReference.INSTANCE;
+   private BlockPosReference class12 = BlockPosReference.INSTANCE;
    private ItemStack itemStack;
    private String text7;
    private boolean flag3;
@@ -122,7 +122,7 @@ public class CraftRecipe {
       return autoCraftModule.method1107(this.method5395(key), this.method5396(key));
    }
 
-   public Class1 method5398(String key) {
+   public BlockPosReference method5398(String key) {
       return this.items3.get(key);
    }
 
@@ -221,23 +221,23 @@ public class CraftRecipe {
       return this.items2;
    }
 
-   public Map<String, Class1> getItems3() {
+   public Map<String, BlockPosReference> getItems3() {
       return this.items3;
    }
 
-   public Class1 getClass1() {
+   public BlockPosReference getClass1() {
       return this.class1;
    }
 
-   public void method5407(Class1 class2) {
-      this.class1 = class2 == null ? Class1.INSTANCE : class2;
+   public void method5407(BlockPosReference class2) {
+      this.class1 = class2 == null ? BlockPosReference.INSTANCE : class2;
    }
 
-   public Class1 getClass12() {
+   public BlockPosReference getClass12() {
       return this.class12;
    }
 
-   public void method5408(Class1 class2) {
-      this.class12 = class2 == null ? Class1.INSTANCE : class2;
+   public void method5408(BlockPosReference class2) {
+      this.class12 = class2 == null ? BlockPosReference.INSTANCE : class2;
    }
 }

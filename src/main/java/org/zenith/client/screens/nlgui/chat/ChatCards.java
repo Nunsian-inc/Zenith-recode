@@ -559,7 +559,7 @@ public final class ChatCards {
             STICKER_FADE.clear();
          }
 
-         float f = STICKER_FADE.computeIfAbsent(key, var0x -> new Animation(240L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+         float f = STICKER_FADE.computeIfAbsent(key, var0x -> new Animation(240L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
          if (f < 1.0F) {
             menuDrawContext.drawRoundedRect(floatValue, centeredTextY, 44.0F, 44.0F, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 1.4F * (1.0F - f)));
          }

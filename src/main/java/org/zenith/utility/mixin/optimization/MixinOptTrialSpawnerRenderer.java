@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.TrialSpawnerBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.zenith.utility.render.Util27;
+import org.zenith.utility.render.SpawnerRenderOptimizer;
 
 @Mixin({TrialSpawnerRenderer.class})
 public class MixinOptTrialSpawnerRenderer {
@@ -34,6 +34,6 @@ public class MixinOptTrialSpawnerRenderer {
       float f,
       Vec3 vec
    ) {
-      Util27.method7106(spawnerBlockEntity, vec, spawnerRenderState, alpha1, entity, entityRenderDispatcher, d, d2, operation);
+      SpawnerRenderOptimizer.extractDisplayEntity(spawnerBlockEntity, vec, spawnerRenderState, alpha1, entity, entityRenderDispatcher, d, d2, operation);
    }
 }

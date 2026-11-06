@@ -242,7 +242,7 @@ public class AimAssistModule extends Module {
    private void method5162(MoveInputEvent event) {
       if (!this.entry2.isSelected() && this.livingEntity != null) {
          Rotation rotation = RotationUtils.method6912(this.livingEntity.getBoundingBox().getCenter().subtract(mc.player.getBoundingBox().getCenter()));
-         MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), rotation.getFloatValue());
+         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), rotation.getFloatValue());
       }
    }
 }

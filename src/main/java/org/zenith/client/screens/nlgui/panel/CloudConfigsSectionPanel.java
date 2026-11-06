@@ -53,7 +53,7 @@ import org.zenith.utility.api.ConfigFile;
 import org.zenith.utility.api.Manager;
 import org.zenith.utility.api.StoreApi;
 import org.zenith.utility.config.ConfigSyncService;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -410,7 +410,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       float headerButtonWidth = this.headerButtonWidth(font);
       this.headerButton = new BoundsData(f + f3 - 8.0F - headerButtonWidth, y, headerButtonWidth, 11.0F);
       boolean contains = this.headerButton.contains(lastClickX, lastClickY);
-      float f4 = this.animation("hdr:button", 140).method2808(contains ? 1.0F : 0.0F);
+      float f4 = this.animation("hdr:button", 140).animateTo(contains ? 1.0F : 0.0F);
       ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
       ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(5.5F);
       boolean begin = this.pressFx.begin(menuDrawContext, "hdr:button", this.headerButton);
@@ -465,23 +465,23 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       BoundsData mainHeaderBounds = this.mainHeaderBounds();
       if (mainHeaderBounds != null && mainHeaderBounds.contains(lastClickX, lastClickY)) {
-         if (enum2 == Enum3.LEFT && this.headerButton != null && this.headerButton.contains(lastClickX, lastClickY)) {
+         if (enum2 == MouseButton.LEFT && this.headerButton != null && this.headerButton.contains(lastClickX, lastClickY)) {
             this.pressFx.press("hdr:button", lastClickX, lastClickY);
             this.toggleCreator();
             Zenith.getInstance().getClientSounds().method1570(false);
-         } else if (enum2 == Enum3.LEFT) {
+         } else if (enum2 == MouseButton.LEFT) {
             this.pressFx.press("hdr:sync", lastClickX, lastClickY);
             ConfigSyncService.getInstance().method675();
          }
 
          return true;
-      } else if (this.selectedLocal != null && enum2 == Enum3.LEFT && this.page.mouseClicked(lastClickX, lastClickY)) {
+      } else if (this.selectedLocal != null && enum2 == MouseButton.LEFT && this.page.mouseClicked(lastClickX, lastClickY)) {
          return true;
       } else {
-         if (this.creatorOpen && enum2 == Enum3.LEFT) {
+         if (this.creatorOpen && enum2 == MouseButton.LEFT) {
             BoundsData bounds = this.nameField.bounds();
             if (this.savePill != null && this.savePill.contains(lastClickX, lastClickY)) {
                this.pressFx.press("creator:save", lastClickX, lastClickY);
@@ -534,18 +534,18 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    private void toggleCreator() {
       this.creatorOpen = !this.creatorOpen;
       this.creatorAnimation.reset(0.0F);
-      this.creatorAnimation.method2810(1.0F);
+      this.creatorAnimation.setTarget(1.0F);
       this.nameField.setFocused(this.creatorOpen);
       this.invalidate();
    }
 
    private void renderCreatorField(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float f4, ZenithStyle currentStyle) {
-      float f5 = this.creatorAnimation.method2808(1.0F);
+      float f5 = this.creatorAnimation.animateTo(1.0F);
       float previewAlpha = f4 * Math.min(1.0F, f5 * 1.6F);
       float f6 = (1.0F - f5) * -4.0F;
       BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F + f6, f3 - 16.0F, 22.0F);
       boolean contains = boundsData.contains(lastClickX, lastClickY);
-      float hover = this.animation("creator:field", 140).method2808(!contains && !this.nameField.isFocused() ? 0.0F : 1.0F);
+      float hover = this.animation("creator:field", 140).animateTo(!contains && !this.nameField.isFocused() ? 0.0F : 1.0F);
       ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hover * 0.6F, previewAlpha);
       Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
       String text = t("gui.configs.creator.save");
@@ -555,7 +555,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          boundsData.getFloatValue() + boundsData.width() - width - 4.0F, boundsData.getFloatValue2() + (boundsData.height() - height) / 2.0F, width, height
       );
       boolean flag = this.savePill.contains(lastClickX, lastClickY);
-      float f7 = this.animation("creator:save", 120).method2808(flag ? 1.0F : 0.0F);
+      float f7 = this.animation("creator:save", 120).animateTo(flag ? 1.0F : 0.0F);
       ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
       boolean begin = this.pressFx.begin(menuDrawContext, "creator:save", this.savePill);
       menuDrawContext.drawRoundedRect(
@@ -605,13 +605,13 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    private void renderTemplate(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float f4, ZenithStyle currentStyle, int n) {
-      float f5 = this.creatorAnimation.method2808(1.0F);
+      float f5 = this.creatorAnimation.animateTo(1.0F);
       float f6 = Math.max(0.0F, Math.min(1.0F, f5 * 1.8F - (n + 1) * 0.15F));
       float previewAlpha = f4 * f6;
       float f7 = (1.0F - f6) * -4.0F;
       BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F + f7, f3 - 16.0F, 16.0F);
       boolean contains = boundsData.contains(lastClickX, lastClickY);
-      float hot = this.animation("template:" + n, 140).method2808(contains ? 1.0F : 0.0F);
+      float hot = this.animation("template:" + n, 140).animateTo(contains ? 1.0F : 0.0F);
       ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
       ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
       TEMPLATE_GLYPHS[n]
@@ -725,7 +725,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    private float drawPill(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, BoundsData boundsData, String pillKey, String pillText, boolean have, float previewAlpha, ZenithStyle zenithStyle) {
       BoundsData pillRect = ScriptMarketTab.pillRect(boundsData, boundsData.getFloatValue() + boundsData.width() - 7.0F, pillText);
       boolean contains = pillRect.contains(lastClickX, lastClickY);
-      float hot = this.animation("pill:" + pillKey, 120).method2808(contains ? 1.0F : 0.0F);
+      float hot = this.animation("pill:" + pillKey, 120).animateTo(contains ? 1.0F : 0.0F);
       ScriptMarketTab.drawPill(menuDrawContext, zenithStyle, pillRect, pillText, have, hot, false, previewAlpha);
       this.pillHot = this.pillHot || contains;
       return pillRect.getFloatValue();
@@ -736,8 +736,8 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    private void card(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, BoundsData boundsData, String cardKey, String name, boolean contains, boolean flag, float previewAlpha) {
-      float hot = this.animation("row:" + cardKey, 140).method2808(contains ? 1.0F : 0.0F);
-      float f = this.animation("sel:" + cardKey, 160).method2808(flag ? 1.0F : 0.0F);
+      float hot = this.animation("row:" + cardKey, 140).animateTo(contains ? 1.0F : 0.0F);
+      float f = this.animation("sel:" + cardKey, 160).animateTo(flag ? 1.0F : 0.0F);
       ScriptMarketTab.drawCard(menuDrawContext, currentStyle, boundsData, hot, f, 0.0F, letterColor(name), previewAlpha);
    }
 
@@ -1346,7 +1346,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
                      zenithStyle.getTextTertiary().getZenithColor().method7294(f4 * f5)
                   );
                } else {
-                  float f5 = this.previewFade.computeIfAbsent(uuid, uuid2 -> new Animation(260L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+                  float f5 = this.previewFade.computeIfAbsent(uuid, uuid2 -> new Animation(260L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
                   if (f5 < 1.0F) {
                      var4x.drawRoundedRect(
                         floatValue, y, width, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(f4 * 2.0F * (1.0F - f5))

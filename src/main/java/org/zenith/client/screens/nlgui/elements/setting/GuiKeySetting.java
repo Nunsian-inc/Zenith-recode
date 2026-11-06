@@ -12,7 +12,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.BindSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.KeyName;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -36,14 +36,14 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    }
 
    @Override
-   public boolean onMousePriorityClicked(double d, double d2, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double d, double d2, MouseButton enum2) {
       return this.bindMouse(enum2);
    }
 
    @Override
-   public boolean bindMouse(Enum3 enum2) {
+   public boolean bindMouse(MouseButton enum2) {
       if (this.binding && MouseBindTarget.bindable(enum2)) {
-         this.setting.setKeyCode(enum2.getIntValue());
+         this.setting.setKeyCode(enum2.getGlfwButton());
          this.stopBinding();
          this.bindLabel.set();
          Zenith.getInstance().getClientSounds().method1566();
@@ -54,11 +54,11 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.bindMouse(enum2)) {
          return true;
       } else if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
-         if (enum2 == Enum3.RIGHT) {
+         if (enum2 == MouseButton.RIGHT) {
             this.setting.setKeyCode(-1);
             this.stopBinding();
             this.bindLabel.cleared();
@@ -118,7 +118,7 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
             return;
          }
 
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);

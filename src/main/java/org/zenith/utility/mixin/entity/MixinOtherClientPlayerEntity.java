@@ -8,11 +8,11 @@ import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.zenith.utility.misc.Handler6;
-import org.zenith.utility.misc.Handler8;
+import org.zenith.utility.misc.ServerPositionTracker;
+import org.zenith.utility.misc.PositionResolver;
 
 @Mixin({RemotePlayer.class})
-public class MixinOtherClientPlayerEntity extends AbstractClientPlayer implements Handler8 {
+public class MixinOtherClientPlayerEntity extends AbstractClientPlayer implements PositionResolver {
    @Unique
    private double backUpX;
    @Unique
@@ -31,7 +31,7 @@ public class MixinOtherClientPlayerEntity extends AbstractClientPlayer implement
       this.backUpY = this.getY();
       this.backUpZ = this.getZ();
       Vec3 vec = new Vec3(
-         ((Handler6)(Object)this).zenithDLC$getPrevServerX(), ((Handler6)(Object)this).zenithDLC$getPrevServerY(), ((Handler6)(Object)this).zenithDLC$getPrevServerZ()
+         ((ServerPositionTracker)(Object)this).zenithDLC$getPrevServerX(), ((ServerPositionTracker)(Object)this).zenithDLC$getPrevServerY(), ((ServerPositionTracker)(Object)this).zenithDLC$getPrevServerZ()
       );
       Vec3 position = this.position();
       if (Minecraft.getInstance().player.distanceToSqr(vec) > Minecraft.getInstance().player.distanceToSqr(position)) {

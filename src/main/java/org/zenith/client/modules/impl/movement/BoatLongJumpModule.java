@@ -16,35 +16,33 @@ import org.zenith.client.events.UpdateEvent;
 )
 public final class BoatLongJumpModule extends Module {
    public static final BoatLongJumpModule INSTANCE = new BoatLongJumpModule();
-   private boolean flag = false;
+   private boolean jumpTriggered = false;
 
    private BoatLongJumpModule() {
    }
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
-      if (mc.player != null && mc.level != null) {
-         if (mc.player.getVehicle() == null) {
-            if (mc.player.onGround()) {
-               if (mc.options.keyJump.isDown() && !this.flag && mc.player.isSprinting() && this.method1825() != null) {
-                  float yRot = mc.player.getYRot();
-                  double xd = mc.player.getDeltaMovement().x + -Math.sin(Math.toRadians(yRot)) * 0.9F;
-                  double zd = mc.player.getDeltaMovement().z + Math.cos(Math.toRadians(yRot)) * 0.9F;
-                  mc.player.setDeltaMovement(xd, mc.player.getDeltaMovement().y, zd);
-                  this.flag = true;
-               }
-            } else {
-               this.flag = false;
+      if (mc.player != null && mc.level != null && mc.player.getVehicle() == null) {
+         if (mc.player.onGround()) {
+            if (mc.options.keyJump.isDown() && !this.jumpTriggered && mc.player.isSprinting() && this.findNearbyBoat() != null) {
+               float yaw = mc.player.getYRot();
+               double velocityX = mc.player.getDeltaMovement().x + -Math.sin(Math.toRadians(yaw)) * 0.9F;
+               double velocityZ = mc.player.getDeltaMovement().z + Math.cos(Math.toRadians(yaw)) * 0.9F;
+               mc.player.setDeltaMovement(velocityX, mc.player.getDeltaMovement().y, velocityZ);
+               this.jumpTriggered = true;
             }
+         } else {
+            this.jumpTriggered = false;
          }
       }
    }
 
-   private Entity method1825() {
-      AABB inflate = mc.player.getBoundingBox().inflate(1.0);
+   private Entity findNearbyBoat() {
+      AABB searchBounds = mc.player.getBoundingBox().inflate(1.0);
 
       for (Entity entity : mc.level.entitiesForRendering()) {
-         if (entity instanceof Boat boat && !boat.hasPassenger(mc.player) && boat.getBoundingBox().intersects(inflate)) {
+         if (entity instanceof Boat boat && !boat.hasPassenger(mc.player) && boat.getBoundingBox().intersects(searchBounds)) {
             return boat;
          }
       }
@@ -54,7 +52,7 @@ public final class BoatLongJumpModule extends Module {
 
    @Override
    public void onDisable() {
-      this.flag = false;
+      this.jumpTriggered = false;
       super.onDisable();
    }
 }

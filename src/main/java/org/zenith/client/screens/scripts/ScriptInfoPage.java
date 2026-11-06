@@ -82,7 +82,7 @@ public final class ScriptInfoPage {
 
    public void renderCompact(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float width, float height, float f, ZenithStyle currentStyle) {
       if (this.script != null) {
-         float previewAlpha = f * this.appear.method2808(1.0F);
+         float previewAlpha = f * this.appear.animateTo(1.0F);
          floatValue += (1.0F - this.appear.getValue()) * 10.0F;
          this.bounds = new BoundsData(floatValue, y, width, height);
          this.buttons.clear();
@@ -451,7 +451,7 @@ public final class ScriptInfoPage {
       this.scroller.reset(0.0F);
       this.armed = "";
       this.appear.reset(0.0F);
-      this.appear.method2810(1.0F);
+      this.appear.setTarget(1.0F);
 
       for (FormField field : this.fields) {
          field.setFocused(false);
@@ -518,7 +518,7 @@ public final class ScriptInfoPage {
    }
 
    private float hot(String key, boolean contains) {
-      return this.hover.computeIfAbsent(key, str -> new Animation(150L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.hover.computeIfAbsent(key, str -> new Animation(150L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    private static void card(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float floatValue, float centeredTextY, float shownWidth, float height, float f, float previewAlpha) {
@@ -621,7 +621,7 @@ public final class ScriptInfoPage {
 
    public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float width, float height, float previewAlpha, ZenithStyle currentStyle) {
       if (this.script != null) {
-         float f = previewAlpha * this.appear.method2808(1.0F);
+         float f = previewAlpha * this.appear.animateTo(1.0F);
          this.bounds = new BoundsData(floatValue, y, width, height);
          this.buttons.clear();
          this.swatches.clear();

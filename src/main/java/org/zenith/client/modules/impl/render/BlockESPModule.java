@@ -148,12 +148,12 @@ public final class BlockESPModule extends Module {
 
    @EventTarget
    public void method7565(PacketEvent event) {
-      if (event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+      if (event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
             blocksUpdatePacket.runUpdates((var1x, var2x) -> this.method7566(var1x.immutable(), var2x.getBlock()));
          }
 
-         if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+         if (event.getPacket() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
             this.method7566(blockUpdatePacket.getPos().immutable(), blockUpdatePacket.getBlockState().getBlock());
          }
       }

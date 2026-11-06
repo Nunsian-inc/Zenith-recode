@@ -18,9 +18,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.Rotation;
 import org.zenith.client.modules.impl.combat.AuraModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public final class Agent extends Util22 {
+public final class Agent extends RotationContext {
    private static final String text = "agent.json";
    private static final String text2 = "models/agent.json";
    private static final List<Path> items = List.of(Path.of("agent.json"), Path.of("models", "agent.json"), Path.of("..", "models", "agent.json"));
@@ -284,7 +284,7 @@ public final class Agent extends Util22 {
    }
 
    public Rotation method3462() {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       Agent.Entry entry = method3452();
       if (entry == null) {
          this.reset();
@@ -370,7 +370,7 @@ public final class Agent extends Util22 {
                this.doubleValue2 = d9 - l2;
                this.doubleValue3 = l * 0.15190947;
                this.doubleValue4 = l2 * 0.15190947;
-               Rotation rotation2 = rotation.method3140((float)this.doubleValue3, (float)this.doubleValue4);
+               Rotation rotation2 = rotation.add((float)this.doubleValue3, (float)this.doubleValue4);
                this.method3460(tickCount, rotation2);
                return rotation2;
             }

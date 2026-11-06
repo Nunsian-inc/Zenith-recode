@@ -12,7 +12,7 @@ import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.Rotation;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.HandleInputEvent;
 import org.zenith.client.settings.MultiSelectSetting;
 import org.zenith.client.settings.SliderSetting;
@@ -56,10 +56,10 @@ public final class AutoPotionModule extends Module {
    }
 
    @EventTarget
-   public void method510(Event5 event) {
+   public void method510(PreRotationEvent event) {
       if (this.method512() && this.intValue >= 20 && !this.method513().isEmpty()) {
          Rotation rotation = new Rotation(mc.player.getYRot(), 90.0F);
-         rotationManager.method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 8, this);
+         rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 8, this);
       }
    }
 

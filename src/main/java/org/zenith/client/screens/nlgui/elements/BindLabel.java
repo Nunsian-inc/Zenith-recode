@@ -135,9 +135,9 @@ public final class BindLabel {
 
       boolean flag2 = this.kind != BindLabel.Kind.NONE;
       boolean flag3 = text == null && !flag2 && this.hoverStartAt >= 0L && now - this.hoverStartAt >= 350L && f2 <= f - font.width("+");
-      float f4 = this.hintFade.method2808(flag3 ? 1.0F : 0.0F);
+      float f4 = this.hintFade.animateTo(flag3 ? 1.0F : 0.0F);
       if (flag2 || text != null) {
-         this.hintFade.method2809(0.0F);
+         this.hintFade.snapTo(0.0F);
          f4 = 0.0F;
       }
 

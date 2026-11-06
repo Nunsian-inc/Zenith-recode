@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.game.PlayerSimulation;
@@ -51,7 +51,7 @@ public final class AutoMaceModule extends Module {
    }
 
    @EventTarget(0)
-   public void method308(Event5 event) {
+   public void method308(PreRotationEvent event) {
       this.method316();
       if (mc.player != null && mc.level != null && !mc.player.isDeadOrDying()) {
          int selected = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).is(Items.MACE));

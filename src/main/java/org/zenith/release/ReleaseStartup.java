@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ReleaseStartup {
-   private static final AtomicBoolean opened = new AtomicBoolean();
+   private static final AtomicBoolean linksOpened = new AtomicBoolean();
 
    private ReleaseStartup() {
    }
@@ -22,23 +22,23 @@ public final class ReleaseStartup {
    }
 
    public static void openLinks() {
-      if (opened.compareAndSet(false, true)) {
-         Thread thread = new Thread(() -> {
+      if (linksOpened.compareAndSet(false, true)) {
+         Thread linkOpeningThread = new Thread(() -> {
             if (Desktop.isDesktopSupported()) {
-               Desktop var0x = Desktop.getDesktop();
-               if (var0x.isSupported(Action.BROWSE)) {
-                  for (String str : new String[]{"Для югейма - GlebVeaneqzhe", "Для югейма - GlebVeaneqzhe"}) {
+               Desktop desktop = Desktop.getDesktop();
+               if (desktop.isSupported(Action.BROWSE)) {
+                  for (String link : new String[]{"Для югейма - GlebVeaneqzhe", "Для югейма - GlebVeaneqzhe"}) {
                      try {
-                        var0x.browse(URI.create(str));
-                     } catch (Exception e) {
-                        System.err.println("[Zenith] Не могу открыть: " + e.getClass().getSimpleName());
+                        desktop.browse(URI.create(link));
+                     } catch (Exception exception) {
+                        System.err.println("[Zenith] Не могу открыть: " + exception.getClass().getSimpleName());
                      }
                   }
                }
             }
          }, "zenith-startup-links");
-         thread.setDaemon(true);
-         thread.start();
+         linkOpeningThread.setDaemon(true);
+         linkOpeningThread.start();
       }
    }
 }

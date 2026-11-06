@@ -65,7 +65,7 @@ public abstract class MixinClientConnection implements MinecraftAccess {
                return;
             }
 
-            packet2 = event.getPacket3();
+            packet2 = event.getPacket();
             if (packet2 != packet) {
                callbackInfo.cancel();
 

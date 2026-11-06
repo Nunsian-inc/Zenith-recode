@@ -37,7 +37,7 @@ import org.zenith.client.settings.SliderSetting;
 )
 public final class VelocityModule extends Module {
    public static final VelocityModule INSTANCE = new VelocityModule();
-   private static final long CONST_longValue = 2000L;
+   private static final long CORRECTION_COOLDOWN_MILLIS = 2000L;
    private static final String MODE_DELAY = "module.velocity.mode.delay";
    private static final String MODE_VANILLA = "module.velocity.mode.vanilla";
    /** Delay — прежняя логика (придержать пакеты после отбрасывания в воздухе), Vanilla — отменить отбрасывание целиком. */
@@ -45,19 +45,19 @@ public final class VelocityModule extends Module {
    private final SliderSetting delay = new SliderSetting(
       "module.backtrack.delay", 300.0F, 50.0F, 1000.0F, 50.0F, "module.velocity.delay.desc", "ms", this::isDelayMode
    );
-   private final Queue<VelocityModule.Entry> queue = new ConcurrentLinkedQueue<>();
-   private final StopWatch stopWatch = new StopWatch();
-   private boolean flag;
-   private boolean flag2;
-   private long longValue;
-   private final AtomicBoolean atomicBoolean = new AtomicBoolean();
+   private final Queue<VelocityModule.Entry> delayedPackets = new ConcurrentLinkedQueue<>();
+   private final StopWatch delayTimer = new StopWatch();
+   private boolean delayingPackets;
+   private boolean disablePending;
+   private long correctionCooldownEndTime;
+   private final AtomicBoolean reachConflictCheckPending = new AtomicBoolean();
 
    private VelocityModule() {
    }
 
    @Override
    public void onEnable() {
-      this.flag2 = false;
+      this.disablePending = false;
       if (ReachV3Module.INSTANCE.isEnabled()) {
          ChatLogger.method2019("Не работает с ReachV3");
       }
@@ -67,37 +67,37 @@ public final class VelocityModule extends Module {
 
    @Override
    public void onDisable() {
-      this.flag2 = true;
+      this.disablePending = true;
    }
 
    @EventTarget
    public void onPacket(PacketEvent event) {
       if (ReachV3Module.INSTANCE.isEnabled()) {
-         if (this.atomicBoolean.compareAndSet(false, true)) {
+         if (this.reachConflictCheckPending.compareAndSet(false, true)) {
             mc.execute(() -> {
-               this.atomicBoolean.set(false);
+               this.reachConflictCheckPending.set(false);
                if (this.isEnabled() && ReachV3Module.INSTANCE.isEnabled()) {
                   ChatLogger.method2019("Не работает с ReachV3");
                   this.setToggled(false);
                }
             });
          }
-      } else if (event.method7100()) {
+      } else if (event.isIncoming()) {
          if (!this.isDelayMode()) {
             this.handleVanilla(event);
             return;
          }
 
          try {
-            Packet packet3 = event.getPacket3();
-            if (packet3 instanceof ClientboundDisconnectPacket) {
-               this.method2625();
+            Packet packet = event.getPacket();
+            if (packet instanceof ClientboundDisconnectPacket) {
+               this.flushDelayedPackets();
                return;
             }
 
-            if (packet3 instanceof ClientboundPlayerPositionPacket) {
-               this.method2625();
-               this.longValue = System.currentTimeMillis() + 2000L;
+            if (packet instanceof ClientboundPlayerPositionPacket) {
+               this.flushDelayedPackets();
+               this.correctionCooldownEndTime = System.currentTimeMillis() + 2000L;
                return;
             }
 
@@ -105,29 +105,29 @@ public final class VelocityModule extends Module {
                return;
             }
 
-            if (System.currentTimeMillis() < this.longValue) {
+            if (System.currentTimeMillis() < this.correctionCooldownEndTime) {
                return;
             }
 
-            if (!this.flag) {
-               if (!this.method2626(packet3) || mc.player.onGround()) {
+            if (!this.delayingPackets) {
+               if (!this.isLocalPlayerVelocityPacket(packet) || mc.player.onGround()) {
                   return;
                }
 
-               this.flag = true;
-               this.stopWatch.reset();
+               this.delayingPackets = true;
+               this.delayTimer.reset();
             }
 
-            if (packet3 instanceof ServerboundChatPacket
-               || packet3 instanceof ClientboundSetHealthPacket
-               || packet3 instanceof ClientboundSoundPacket
-               || packet3 instanceof ClientboundSystemChatPacket
-               || packet3 instanceof ServerboundChatCommandPacket) {
+            if (packet instanceof ServerboundChatPacket
+               || packet instanceof ClientboundSetHealthPacket
+               || packet instanceof ClientboundSoundPacket
+               || packet instanceof ClientboundSystemChatPacket
+               || packet instanceof ServerboundChatCommandPacket) {
                return;
             }
 
             event.cancel();
-            this.queue.add(new VelocityModule.Entry(packet3));
+            this.delayedPackets.add(new VelocityModule.Entry(packet));
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -135,30 +135,30 @@ public final class VelocityModule extends Module {
    }
 
    @EventTarget
-   public void method2624(PacketProcessEndEvent event) {
+   public void onPacketProcessEnd(PacketProcessEndEvent event) {
       if (mc.level == null || mc.player == null) {
-         this.queue.clear();
-         this.flag = false;
+         this.delayedPackets.clear();
+         this.delayingPackets = false;
       }
 
-      if (this.flag && !this.queue.isEmpty()) {
-         boolean flag = mc.player != null && mc.player.onGround();
-         boolean flag2 = this.stopWatch.method7546((long)this.delay.getValue3());
-         if (flag || flag2 || !this.isDelayMode()) {
-            this.method2625();
+      if (this.delayingPackets && !this.delayedPackets.isEmpty()) {
+         boolean playerOnGround = mc.player != null && mc.player.onGround();
+         boolean delayElapsed = this.delayTimer.method7546((long)this.delay.getValue3());
+         if (playerOnGround || delayElapsed || !this.isDelayMode()) {
+            this.flushDelayedPackets();
          }
       }
 
-      if (this.flag2) {
-         this.flag2 = false;
-         this.method2625();
+      if (this.disablePending) {
+         this.disablePending = false;
+         this.flushDelayedPackets();
          super.onDisable();
       }
    }
 
-   private void method2625() {
-      while (!this.queue.isEmpty()) {
-         VelocityModule.Entry entry = this.queue.poll();
+   private void flushDelayedPackets() {
+      while (!this.delayedPackets.isEmpty()) {
+         VelocityModule.Entry entry = this.delayedPackets.poll();
          if (entry != null) {
             try {
                entry.getPacket().handle(mc.getConnection());
@@ -170,7 +170,7 @@ public final class VelocityModule extends Module {
          }
       }
 
-      this.flag = false;
+      this.delayingPackets = false;
    }
 
    private boolean isDelayMode() {
@@ -182,13 +182,13 @@ public final class VelocityModule extends Module {
     * отменяется только толчок — сам пакет выполняется копией без playerKnockback, звук и частицы остаются.
     */
    private void handleVanilla(PacketEvent event) {
-      Packet<?> packet3 = event.getPacket3();
+      Packet<?> packet = event.getPacket();
       if (mc.player != null) {
-         if (this.method2626(packet3)) {
+         if (this.isLocalPlayerVelocityPacket(packet)) {
             event.cancel();
-         } else if (packet3 instanceof ClientboundExplodePacket explodePacket && explodePacket.playerKnockback().isPresent()) {
+         } else if (packet instanceof ClientboundExplodePacket explodePacket && explodePacket.playerKnockback().isPresent()) {
             event.cancel();
-            ClientboundExplodePacket explodePacket2 = new ClientboundExplodePacket(
+            ClientboundExplodePacket explosionWithoutKnockback = new ClientboundExplodePacket(
                explodePacket.center(),
                explodePacket.radius(),
                explodePacket.blockCount(),
@@ -202,7 +202,7 @@ public final class VelocityModule extends Module {
             ClientGamePacketListener connection = packetListener instanceof ClientGamePacketListener gamePacketListener ? gamePacketListener : mc.getConnection();
             if (connection != null) {
                try {
-                  explodePacket2.handle(connection);
+                  explosionWithoutKnockback.handle(connection);
                } catch (RunningOnDifferentThreadException e) {
                   // пакет поставлен в очередь главного потока, как обычный
                }
@@ -211,17 +211,17 @@ public final class VelocityModule extends Module {
       }
    }
 
-   private boolean method2626(Packet<?> packet3) {
-      return mc.player != null && packet3 instanceof ClientboundSetEntityMotionPacket setEntityMotionPacket && setEntityMotionPacket.id() == mc.player.getId();
+   private boolean isLocalPlayerVelocityPacket(Packet<?> packet) {
+      return mc.player != null && packet instanceof ClientboundSetEntityMotionPacket setEntityMotionPacket && setEntityMotionPacket.id() == mc.player.getId();
    }
 
    public static class Entry {
       private final Packet<?> packet;
-      private final long longValue;
+      private final long enqueueTime;
 
       public Entry(Packet<?> packet) {
          this.packet = packet;
-         this.longValue = System.currentTimeMillis();
+         this.enqueueTime = System.currentTimeMillis();
       }
 
       public Packet<ClientGamePacketListener> getPacket() {
@@ -235,7 +235,7 @@ public final class VelocityModule extends Module {
 
       @Generated
       public long getTime() {
-         return this.longValue;
+         return this.enqueueTime;
       }
    }
 }

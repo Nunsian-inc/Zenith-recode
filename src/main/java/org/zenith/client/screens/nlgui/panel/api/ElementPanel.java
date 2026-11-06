@@ -2,7 +2,7 @@ package org.zenith.client.screens.nlgui.panel.api;
 
 import java.util.List;
 import org.zenith.client.screens.nlgui.elements.api.Element;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -46,7 +46,7 @@ public abstract class ElementPanel extends Panel {
    public void renderHeaderButtons(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float f2, float animationPosY, float buttonWidth, float alpha1) {
    }
 
-   public boolean onHeaderButtonsClicked(double x, double y, Enum3 enum2) {
+   public boolean onHeaderButtonsClicked(double x, double y, MouseButton enum2) {
       return false;
    }
 

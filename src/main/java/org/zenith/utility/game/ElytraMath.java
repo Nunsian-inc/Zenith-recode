@@ -9,36 +9,36 @@ public final class ElytraMath {
    private ElytraMath() {
    }
 
-   public static Vec3 method5972(LivingEntity player, Vec3 vec, Vec3 lookAngle) {
-      return method5973(player, vec, lookAngle, 3.2);
+   public static Vec3 method5972(LivingEntity player, Vec3 velocity, Vec3 lookAngle) {
+      return method5973(player, velocity, lookAngle, 3.2);
    }
 
-   public static Vec3 method5973(LivingEntity player, Vec3 vec, Vec3 lookAngle, double d) {
-      return method5974(player, vec, lookAngle, d).multiply(0.99F, 0.98F, 0.99F);
+   public static Vec3 method5973(LivingEntity player, Vec3 velocity, Vec3 lookAngle, double liftMultiplier) {
+      return method5974(player, velocity, lookAngle, liftMultiplier).multiply(0.99F, 0.98F, 0.99F);
    }
 
-   public static Vec3 method5974(LivingEntity player, Vec3 vec, Vec3 lookAngle, double d) {
-      float f = (float)(-Math.asin(Mth.clamp(lookAngle.y, -1.0, 1.0)));
-      double d2 = Math.sqrt(lookAngle.x * lookAngle.x + lookAngle.z * lookAngle.z);
-      double horizontalDistance = vec.horizontalDistance();
-      double d3 = method5975(player);
-      double square = Mth.square(Math.cos(f));
-      vec = vec.add(0.0, d3 * (-1.0 + square * 0.75), 0.0);
-      if (vec.y < 0.0 && d2 > 0.0) {
-         double y = vec.y * -0.1 * square;
-         vec = vec.add(lookAngle.x * y / d2, y, lookAngle.z * y / d2);
+   public static Vec3 method5974(LivingEntity player, Vec3 velocity, Vec3 lookAngle, double liftMultiplier) {
+      float pitch = (float)(-Math.asin(Mth.clamp(lookAngle.y, -1.0, 1.0)));
+      double horizontalLookLength = Math.sqrt(lookAngle.x * lookAngle.x + lookAngle.z * lookAngle.z);
+      double horizontalSpeed = velocity.horizontalDistance();
+      double gravity = method5975(player);
+      double cosPitchSquared = Mth.square(Math.cos(pitch));
+      velocity = velocity.add(0.0, gravity * (-1.0 + cosPitchSquared * 0.75), 0.0);
+      if (velocity.y < 0.0 && horizontalLookLength > 0.0) {
+         double downwardLift = velocity.y * -0.1 * cosPitchSquared;
+         velocity = velocity.add(lookAngle.x * downwardLift / horizontalLookLength, downwardLift, lookAngle.z * downwardLift / horizontalLookLength);
       }
 
-      if (f < 0.0F && d2 > 0.0) {
-         double d4 = horizontalDistance * -Mth.sin(f) * 0.04;
-         vec = vec.add(-lookAngle.x * d4 / d2, d4 * d, -lookAngle.z * d4 / d2);
+      if (pitch < 0.0F && horizontalLookLength > 0.0) {
+         double upwardLift = horizontalSpeed * -Mth.sin(pitch) * 0.04;
+         velocity = velocity.add(-lookAngle.x * upwardLift / horizontalLookLength, upwardLift * liftMultiplier, -lookAngle.z * upwardLift / horizontalLookLength);
       }
 
-      if (d2 > 0.0) {
-         vec = vec.add((lookAngle.x / d2 * horizontalDistance - vec.x) * 0.1, 0.0, (lookAngle.z / d2 * horizontalDistance - vec.z) * 0.1);
+      if (horizontalLookLength > 0.0) {
+         velocity = velocity.add((lookAngle.x / horizontalLookLength * horizontalSpeed - velocity.x) * 0.1, 0.0, (lookAngle.z / horizontalLookLength * horizontalSpeed - velocity.z) * 0.1);
       }
 
-      return vec;
+      return velocity;
    }
 
    public static double method5975(LivingEntity player) {

@@ -57,10 +57,10 @@ public class PotionsHud extends Interface {
 
          this.items.values().removeIf(PotionsHud.Entry::method5496);
          if (this.items.isEmpty()) {
-            this.animation2.method2808(0.0F);
+            this.animation2.animateTo(0.0F);
          } else {
             PotionsHud.Entry entry = this.items.values().iterator().next();
-            this.animation2.method2808(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+            this.animation2.animateTo(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
          }
 
          Font font = Fonts.NEW_ICONS.getFont(5.5F);
@@ -75,10 +75,10 @@ public class PotionsHud extends Interface {
             .sum();
          float height = 20.0F + GuiStyle.PADDING.intValue() / 2.0F + f;
          float width = (float)this.items.values().stream().mapToDouble(PotionsHud.Entry::method5494).max().orElse(0.0);
-         width = this.animation.method2808(Math.max(HudListLayout.method7638("o", "Potions"), width));
+         width = this.animation.animateTo(Math.max(HudListLayout.method7638("o", "Potions"), width));
          this.width = width;
          this.height = height;
-         this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
+         this.animation3.updateVisibility(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
          float intValue = InterfaceModule.method6801();
          ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(intValue);
          customDrawContext.pushMatrix();
@@ -194,7 +194,7 @@ public class PotionsHud extends Interface {
             this.statusEffectInstance = effect;
          }
 
-         this.animation.method2808(PotionsHud.this.items2.contains(this.text) ? 1.0F : 0.0F);
+         this.animation.animateTo(PotionsHud.this.items2.contains(this.text) ? 1.0F : 0.0F);
          ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
          Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
          Font font2 = Fonts.NEW_SEMIBOLD.getFont(5.4F);
@@ -206,7 +206,7 @@ public class PotionsHud extends Interface {
          }
 
          float f = this.intValue <= 0 ? 0.0F : Mth.clamp((float)n / this.intValue, 0.0F, 1.0F);
-         float f2 = Mth.clamp(this.animation2.method2808(f), 0.0F, 1.0F);
+         float f2 = Mth.clamp(this.animation2.animateTo(f), 0.0F, 1.0F);
          customDrawContext.pushMatrix();
          customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
          float x = this.animation.getValue();

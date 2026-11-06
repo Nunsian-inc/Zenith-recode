@@ -95,8 +95,8 @@ import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.events.AttackEvent;
 import org.zenith.client.events.EntityAddEvent;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.PostMotionEvent;
 import org.zenith.client.events.WorldRenderEvent;
@@ -107,11 +107,11 @@ import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.MultiSelectSetting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.config.CombatLogger;
-import org.zenith.utility.game.Class35;
+import org.zenith.utility.game.CombatDamageCalculator;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.MovementInputUtils;
 import org.zenith.utility.misc.RotationRequest;
-import org.zenith.utility.network.Class33;
+import org.zenith.utility.network.InventoryActionState;
 import org.zenith.utility.network.PlacementQueue;
 import org.zenith.utility.network.UseItemUtils;
 import org.zenith.utility.render.GlowUtil;
@@ -282,9 +282,9 @@ public final class CrystalAuraModule extends Module {
    private final BooleanSetting throughWalls = new BooleanSetting(
       "module.crystalAura.throughWalls", "module.crystalAura.throughWalls.desc", false, this::method5954
    );
-   private final Class35 class35 = new Class35();
+   private final CombatDamageCalculator class35 = new CombatDamageCalculator();
    private final PlacementQueue placementQueue = new PlacementQueue();
-   private final Class33 class33 = new Class33();
+   private final InventoryActionState class33 = new InventoryActionState();
    private final Map<Long, Integer> items = new HashMap<>();
    private final Map<Long, Integer> items2 = new HashMap<>();
    private final Map<Long, Integer> items3 = new HashMap<>();
@@ -502,7 +502,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    @EventTarget
-   public void method5749(Event5 event) {
+   public void method5749(PreRotationEvent event) {
       if (!UseItemUtils.method6526() && mc.gameMode != null) {
          int tickCount = mc.player.tickCount;
          if (this.intValue5 != (-32768 << 16 | 0) && tickCount < this.intValue5) {
@@ -517,7 +517,7 @@ public final class CrystalAuraModule extends Module {
 
          Rotation rotation = this.rotation;
          if (rotation != null) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                8,
                this
@@ -527,7 +527,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    @EventTarget
-   public void method5750(Event9 event) {
+   public void method5750(InteractionInputEvent event) {
       if (mc.player != null && mc.gameMode != null && !this.data3.isFlag() && this.intValue5 == mc.player.tickCount) {
          int n = this.intValue8;
          this.method5760(this.intValue5);
@@ -578,7 +578,7 @@ public final class CrystalAuraModule extends Module {
             this.blockPos4 = flag ? this.data4.pos() : null;
             this.type3 = flag ? this.data4.getType() : null;
             Rotation rotation3 = this.rotation;
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(rotation3, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation3), bcCameraTestnerv.getRotationConfig()),
                8,
                this
@@ -604,26 +604,26 @@ public final class CrystalAuraModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         this.placementQueue.method2815(event.getPacket3());
+      if (event.isIncoming()) {
+         this.placementQueue.method2815(event.getPacket());
          LocalPlayer player = mc.player;
          if (player != null && this.combatLogger.active()) {
-            this.method5928(event.getPacket3(), player);
+            this.method5928(event.getPacket(), player);
          }
 
          if (player != null && !player.isDeadOrDying()) {
             ClientLevel level = mc.level;
-            if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+            if (event.getPacket() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
                this.queue.add(new CrystalAuraModule.Data7(blockUpdatePacket.getPos().asLong(), blockUpdatePacket.getBlockState(), level == null ? null : level.getBlockState(blockUpdatePacket.getPos())));
-            } else if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+            } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
                blocksUpdatePacket.runUpdates(
                   (var2x, var3x) -> this.queue.add(new CrystalAuraModule.Data7(var2x.asLong(), var3x, level == null ? null : level.getBlockState(var2x)))
                );
-            } else if (event.getPacket3() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35) {
+            } else if (event.getPacket() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35) {
                this.queue2.add(entityEventPacket.entityId);
-            } else if (event.getPacket3() instanceof ClientboundExplodePacket explodePacket) {
+            } else if (event.getPacket() instanceof ClientboundExplodePacket explodePacket) {
                this.queue3.add(new CrystalAuraModule.Data9(explodePacket.center(), explodePacket.radius()));
-            } else if (event.getPacket3() instanceof ClientboundBlockDestructionPacket blockDestructionPacket && blockDestructionPacket.getId() != player.getId()) {
+            } else if (event.getPacket() instanceof ClientboundBlockDestructionPacket blockDestructionPacket && blockDestructionPacket.getId() != player.getId()) {
                this.queue4.add(new CrystalAuraModule.Data2(blockDestructionPacket.getPos().asLong(), blockDestructionPacket.getProgress()));
             }
          }
@@ -786,7 +786,7 @@ public final class CrystalAuraModule extends Module {
       this.class33.onMoveInput(event);
       if (mc.player == null || this.blockPos9 == null || !this.method5773(event)) {
          if (this.rotation != null && mc.player != null) {
-            MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), mc.player.getYRot());
+            MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
          }
       }
    }
@@ -862,7 +862,7 @@ public final class CrystalAuraModule extends Module {
          this.method5955();
          this.method5862();
       } else {
-         if (!this.method5869() && this.class33.method5304()) {
+         if (!this.method5869() && this.class33.tryCompleteInventoryMove()) {
             this.intValue7 = tickCount;
          }
 
@@ -1028,7 +1028,7 @@ public final class CrystalAuraModule extends Module {
             }
          }
 
-         Vec3 to = eyePosition.add(this.rotation3.method3135().scale(this.method5877()));
+         Vec3 to = eyePosition.add(this.rotation3.toDirection().scale(this.method5877()));
          var iterator = this.items.keySet().iterator();
 
          while (iterator.hasNext()) {
@@ -1692,7 +1692,7 @@ public final class CrystalAuraModule extends Module {
             double d5 = Math.abs(d3) > 0.15 ? d3 : 0.0;
             double x = Math.abs(d4) > 0.15 ? d4 : 0.0;
             float f = (float)Math.toDegrees(Math.atan2(-d5, x));
-            float floatValue = this.rotation != null ? rotationManager.method7844().getFloatValue() : mc.player.getYRot();
+            float floatValue = this.rotation != null ? rotationManager.getEffectiveRotation().getFloatValue() : mc.player.getYRot();
             float f2 = 0.0F;
             float f3 = 0.0F;
             double d6 = Double.MAX_VALUE;
@@ -1943,7 +1943,7 @@ public final class CrystalAuraModule extends Module {
             Vec3 vec = new Vec3(below.getX() + d2, below.getY() + 1.0, below.getZ() + d3);
             if (!(this.vec3d.distanceToSqr(vec) > scale * scale)) {
                Rotation rotation3 = method5898(this.vec3d, vec);
-               Vec3 to = this.vec3d.add(rotation3.method3135().scale(scale));
+               Vec3 to = this.vec3d.add(rotation3.toDirection().scale(scale));
                BlockHitResult traverseBlocks = BlockGetter.traverseBlocks(this.vec3d, to, pos, (var2x, var3x) -> {
                   if (var3x.equals(var2x)) {
                      return null;
@@ -1953,7 +1953,7 @@ public final class CrystalAuraModule extends Module {
                   }
                }, pos2 -> null);
                double d4;
-               if (traverseBlocks != null && traverseBlocks.getBlockPos().equals(below) && traverseBlocks.getDirection() == Direction.UP && (d4 = rotation2.method3131(rotation3).method5327()) < d
+               if (traverseBlocks != null && traverseBlocks.getBlockPos().equals(below) && traverseBlocks.getDirection() == Direction.UP && (d4 = rotation2.wrappedDeltaTo(rotation3).length()) < d
                   )
                 {
                   d = d4;
@@ -3571,7 +3571,7 @@ public final class CrystalAuraModule extends Module {
                );
                Rotation rotation3 = method5898(vec3d, vec);
                double d2;
-               if (this.method5835(vec3d, rotation3, endCrystalEntity) != null && (d2 = rotation.method3131(rotation3).method5327()) < d) {
+               if (this.method5835(vec3d, rotation3, endCrystalEntity) != null && (d2 = rotation.wrappedDeltaTo(rotation3).length()) < d) {
                   d = d2;
                   rotation2 = rotation3;
                }
@@ -3587,7 +3587,7 @@ public final class CrystalAuraModule extends Module {
       if (boundingBox.contains(eyePosition)) {
          return eyePosition;
       } else {
-         var clip = boundingBox.clip(eyePosition, eyePosition.add(rotation.method3135().scale(this.method5877())));
+         var clip = boundingBox.clip(eyePosition, eyePosition.add(rotation.toDirection().scale(this.method5877())));
          if (clip.isEmpty()) {
             return null;
          } else {
@@ -3618,10 +3618,10 @@ public final class CrystalAuraModule extends Module {
                      if (blockHitResult.getType() == HitResult.Type.BLOCK && !blockHitResult.isInside() && blockHitResult.getBlockPos().equals(pos) && !this.method5838(vec3d, rotation2)
                         )
                       {
-                        double doubleValue = rotation.method3131(rotation2).method5327()
+                        double doubleValue = rotation.wrappedDeltaTo(rotation2).length()
                            + (opposite == Direction.UP ? 0.0 : 2.0)
                            + (Math.abs(d - 0.5) + Math.abs(d2 - 0.5)) * 4.0;
-                        if (aabb != null && aabb.clip(vec3d, vec3d.add(rotation2.method3135().scale(this.method5877()))).isEmpty()) {
+                        if (aabb != null && aabb.clip(vec3d, vec3d.add(rotation2.toDirection().scale(this.method5877()))).isEmpty()) {
                            doubleValue += 6.0;
                         }
 
@@ -3658,7 +3658,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    private boolean method5838(Vec3 vec3d, Rotation rotation) {
-      return this.box3 != null && this.box3.clip(vec3d, vec3d.add(rotation.method3135().scale(this.method5877()))).isEmpty();
+      return this.box3 != null && this.box3.clip(vec3d, vec3d.add(rotation.toDirection().scale(this.method5877()))).isEmpty();
    }
 
    private Rotation method5839(List<CrystalAuraModule.Data4> data4s) {
@@ -3724,14 +3724,14 @@ public final class CrystalAuraModule extends Module {
                               && blockHitResult.getBlockPos().equals(relative)
                               && blockHitResult.getDirection() == opposite
                               && !this.method5838(vec3d, rotation2)) {
-                              double doubleValue = rotation.method3131(rotation2).method5327()
+                              double doubleValue = rotation.wrappedDeltaTo(rotation2).length()
                                  + vec3d.distanceTo(vec)
                                  + (Math.abs(d - 0.5) + Math.abs(d2 - 0.5)) * 6.0;
                               if (direction != Direction.DOWN) {
                                  doubleValue += 2.0;
                               }
 
-                              if (aabb.clip(vec3d, vec3d.add(rotation2.method3135().scale(this.method5877()))).isEmpty()) {
+                              if (aabb.clip(vec3d, vec3d.add(rotation2.toDirection().scale(this.method5877()))).isEmpty()) {
                                  doubleValue += 4.0;
                               }
 
@@ -4428,7 +4428,7 @@ public final class CrystalAuraModule extends Module {
    }
 
    private BlockHitResult method5875(Vec3 vec3d, Rotation rotation, double scale) {
-      Vec3 to = vec3d.add(rotation.method3135().scale(scale));
+      Vec3 to = vec3d.add(rotation.toDirection().scale(scale));
       return mc.level.clip(new ClipContext(vec3d, to, Block.OUTLINE, Fluid.NONE, mc.player));
    }
 
@@ -4437,7 +4437,7 @@ public final class CrystalAuraModule extends Module {
       if ((max = this.data3.getFloatValue3()) >= 180.0F) {
          return rotation;
       } else {
-         Rotation rotation2 = rotationManager.method7844();
+         Rotation rotation2 = rotationManager.getEffectiveRotation();
          float f = Mth.clamp(Mth.wrapDegrees(rotation.getFloatValue() - rotation2.getFloatValue()), -max, max);
          float f2 = Mth.clamp(rotation.getFloatValue2() - rotation2.getFloatValue2(), -max, max);
          return new Rotation(rotation2.getFloatValue() + f, Mth.clamp(rotation2.getFloatValue2() + f2, -90.0F, 90.0F));
@@ -4747,7 +4747,7 @@ public final class CrystalAuraModule extends Module {
          if (this.items16.isEmpty() && this.method5891()) {
             AABB inflate = playerEntity3.getBoundingBox().inflate(playerEntity3.getPickRadius());
             double scale = this.method5877();
-            if (!inflate.clip(eyePosition, eyePosition.add(rotation.method3135().scale(scale))).isEmpty() && (this.data3.isFlag5() || !this.method5874(eyePosition, inflate.getCenter()))
+            if (!inflate.clip(eyePosition, eyePosition.add(rotation.toDirection().scale(scale))).isEmpty() && (this.data3.isFlag5() || !this.method5874(eyePosition, inflate.getCenter()))
                )
              {
                float f = this.method5892();
@@ -5139,8 +5139,8 @@ public final class CrystalAuraModule extends Module {
    }
 
    private void method5914(Predicate<ItemStack> predicate, boolean flag) {
-      if (flag && !this.class33.pending() && !this.method5915(predicate) && this.class33.method5302(predicate)) {
-         this.class33.method5303(predicate);
+      if (flag && !this.class33.pending() && !this.method5915(predicate) && this.class33.hasMatchingInventoryItem(predicate)) {
+         this.class33.requestInventoryMove(predicate);
       }
    }
 
@@ -7420,7 +7420,7 @@ public final class CrystalAuraModule extends Module {
          return this.intValue8 != Integer.MIN_VALUE && n - this.intValue8 >= 0 && n - this.intValue8 < 10;
       }
 
-      private void method5970(Player playerEntity, Vec3 base, int tickCount, CrystalAuraModule.Data8 data8, Class35 class2, Boolean flag, int n) {
+      private void method5970(Player playerEntity, Vec3 base, int tickCount, CrystalAuraModule.Data8 data8, CombatDamageCalculator class2, Boolean flag, int n) {
          this.arrayDeque.addLast(base);
 
          while (this.arrayDeque.size() > 3) {

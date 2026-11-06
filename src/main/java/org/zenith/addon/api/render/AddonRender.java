@@ -25,33 +25,33 @@ public final class AddonRender {
    }
 
    public static void prepareBlur(GuiGraphicsExtractor context, float strength) {
-      backend.prepareBlur(Objects.requireNonNull(context, "context"), Math.max(0.0F, finite(strength)));
+      backend.prepareBlur(Objects.requireNonNull(context, "context"), Math.max(0.0F, finiteOrZero(strength)));
    }
 
    public static void blur(GuiGraphicsExtractor context, float x, float y, float width, float height, float radius, int argb) {
-      if (drawable(width, height)) {
+      if (hasDrawableDimensions(width, height)) {
          backend.blur(
-            Objects.requireNonNull(context, "context"), x, y, width, height, Math.max(0.0F, Math.min(finite(radius), Math.min(width, height) / 2.0F)), argb
+            Objects.requireNonNull(context, "context"), x, y, width, height, Math.max(0.0F, Math.min(finiteOrZero(radius), Math.min(width, height) / 2.0F)), argb
          );
       }
    }
 
    public static void rect(GuiGraphicsExtractor context, float x, float y, float width, float height, int argb) {
-      if (drawable(width, height)) {
+      if (hasDrawableDimensions(width, height)) {
          backend.rect(Objects.requireNonNull(context, "context"), x, y, width, height, argb);
       }
    }
 
    public static void roundedRect(GuiGraphicsExtractor context, float x, float y, float width, float height, float radius, int argb) {
-      if (drawable(width, height)) {
+      if (hasDrawableDimensions(width, height)) {
          backend.roundedRect(
-            Objects.requireNonNull(context, "context"), x, y, width, height, Math.max(0.0F, Math.min(finite(radius), Math.min(width, height) / 2.0F)), argb
+            Objects.requireNonNull(context, "context"), x, y, width, height, Math.max(0.0F, Math.min(finiteOrZero(radius), Math.min(width, height) / 2.0F)), argb
          );
       }
    }
 
    public static void text(GuiGraphicsExtractor context, String text, float x, float y, float size, int argb) {
-      backend.text(Objects.requireNonNull(context, "context"), Objects.requireNonNullElse(text, ""), x, y, Math.max(1.0F, finite(size)), argb);
+      backend.text(Objects.requireNonNull(context, "context"), Objects.requireNonNullElse(text, ""), x, y, Math.max(1.0F, finiteOrZero(size)), argb);
    }
 
    public static void text(GuiGraphicsExtractor context, AddonFont font, String text, float x, float y, float size, int argb) {
@@ -61,7 +61,7 @@ public final class AddonRender {
          Objects.requireNonNullElse(text, ""),
          x,
          y,
-         Math.max(1.0F, finite(size)),
+         Math.max(1.0F, finiteOrZero(size)),
          argb
       );
    }
@@ -75,23 +75,23 @@ public final class AddonRender {
    }
 
    public static float textWidth(String text, float size) {
-      return backend.textWidth(Objects.requireNonNullElse(text, ""), Math.max(1.0F, finite(size)));
+      return backend.textWidth(Objects.requireNonNullElse(text, ""), Math.max(1.0F, finiteOrZero(size)));
    }
 
    public static float textWidth(AddonFont font, String text, float size) {
-      return backend.textWidth(Objects.requireNonNull(font, "font"), Objects.requireNonNullElse(text, ""), Math.max(1.0F, finite(size)));
+      return backend.textWidth(Objects.requireNonNull(font, "font"), Objects.requireNonNullElse(text, ""), Math.max(1.0F, finiteOrZero(size)));
    }
 
    public static float textHeight(float size) {
-      return backend.textHeight(Math.max(1.0F, finite(size)));
+      return backend.textHeight(Math.max(1.0F, finiteOrZero(size)));
    }
 
    public static float textHeight(AddonFont font, float size) {
-      return backend.textHeight(Objects.requireNonNull(font, "font"), Math.max(1.0F, finite(size)));
+      return backend.textHeight(Objects.requireNonNull(font, "font"), Math.max(1.0F, finiteOrZero(size)));
    }
 
    public static void pushClip(GuiGraphicsExtractor context, float x, float y, float width, float height) {
-      if (drawable(width, height)) {
+      if (hasDrawableDimensions(width, height)) {
          context.enableScissor((int)Math.floor(x), (int)Math.floor(y), (int)Math.ceil(x + width), (int)Math.ceil(y + height));
       }
    }
@@ -100,11 +100,11 @@ public final class AddonRender {
       Objects.requireNonNull(context, "context").disableScissor();
    }
 
-   private static boolean drawable(float width, float height) {
+   private static boolean hasDrawableDimensions(float width, float height) {
       return Float.isFinite(width) && Float.isFinite(height) && width > 0.0F && height > 0.0F;
    }
 
-   private static float finite(float value) {
+   private static float finiteOrZero(float value) {
       return Float.isFinite(value) ? value : 0.0F;
    }
 
@@ -120,16 +120,16 @@ public final class AddonRender {
          int top = floor(y);
          int right = ceil(x + width);
          int bottom = ceil(y + height);
-         int checked = Math.max(0, Math.round(radius));
-         if (checked == 0) {
+         int roundedRadius = Math.max(0, Math.round(radius));
+         if (roundedRadius == 0) {
             context.fill(left, top, right, bottom, argb);
          } else {
             for (int row = 0; row < bottom - top; row++) {
-               int edge = Math.min(row, bottom - top - row - 1);
+               int distanceToEdge = Math.min(row, bottom - top - row - 1);
                int inset = 0;
-               if (edge < checked) {
-                  double dy = checked - edge - 0.5;
-                  inset = (int)Math.ceil(checked - Math.sqrt(checked * checked - dy * dy));
+               if (distanceToEdge < roundedRadius) {
+                  double verticalDistance = roundedRadius - distanceToEdge - 0.5;
+                  inset = (int)Math.ceil(roundedRadius - Math.sqrt(roundedRadius * roundedRadius - verticalDistance * verticalDistance));
                }
 
                context.fill(left + inset, top + row, right - inset, top + row + 1, argb);

@@ -156,11 +156,11 @@ public final class EmotesModule extends Module {
             this.hovered = -1;
 
             for (Animation animation : this.animations) {
-               animation.method2809(0.0F);
+               animation.snapTo(0.0F);
             }
 
-            this.animation.method2809(0.0F);
-            this.animation.method2808(1.0F);
+            this.animation.snapTo(0.0F);
+            this.animation.animateTo(1.0F);
             this.method6909(true);
             return;
          }
@@ -204,7 +204,7 @@ public final class EmotesModule extends Module {
    private void method6891(MenuDrawContext menuDrawContext, EmotesModule.Data data) {
       ZenithStyle currentStyle = zenith.getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         float previewAlpha = Math.clamp(this.animation.method2808(1.0F), 0.0F, 1.0F);
+         float previewAlpha = Math.clamp(this.animation.animateTo(1.0F), 0.0F, 1.0F);
          float x = 0.82F + 0.18F * previewAlpha;
          menuDrawContext.pose().pushMatrix();
          menuDrawContext.pose().translate(data.floatValue, data.floatValue2);
@@ -246,7 +246,7 @@ public final class EmotesModule extends Module {
       ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
 
       for (int i = 0; i < 8; i++) {
-         float hover = this.animations[i].method2808(this.hovered == i ? 1.0F : 0.0F);
+         float hover = this.animations[i].animateTo(this.hovered == i ? 1.0F : 0.0F);
          float f3 = data.floatValue4 + hover * 6.0F;
          ZenithColor zenithColor4 = zenithColor.method7295(currentStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha), hover);
          ZenithColor zenithColor22 = zenithColor2.method7295(zenithColor3.method7296(0.48F), hover * 0.86F);

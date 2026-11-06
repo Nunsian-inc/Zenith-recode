@@ -51,7 +51,7 @@ public final class FreeCamModule extends Module {
    }
 
    @EventTarget
-   public void method1661(WorldRenderEvent event) {
+   public void onWorldRender(WorldRenderEvent event) {
       GlowUtil.method2230(
          mc.player.getBoundingBox().move(MathUtils.method2656(mc.player).subtract(mc.player.position())),
          zenith.getStyleManager().getClientColor(90).method7287(),
@@ -60,7 +60,7 @@ public final class FreeCamModule extends Module {
    }
 
    @EventTarget
-   public void method1662(DrawEvent event) {
+   public void onDraw(DrawEvent event) {
       if (this.vec3d != null) {
          String text = MathUtils.round((float)this.vec3d.x) + "   " + MathUtils.round((float)this.vec3d.y) + "   " + MathUtils.round((float)this.vec3d.z);
          float width = Fonts.MEDIUM.getWidth(text, 7.0F);
@@ -76,7 +76,7 @@ public final class FreeCamModule extends Module {
    }
 
    @EventTarget
-   public void method1663(MoveInputEvent event) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.vec3d == null) {
          Entity cameraEntity = mc.getCameraEntity();
          if (cameraEntity == null) {
@@ -87,15 +87,15 @@ public final class FreeCamModule extends Module {
          this.vec3d2 = this.vec3d = cameraEntity.getEyePosition();
       }
 
-      float f = this.speedSetting.getValue3();
-      double[] doubles = MovementInputUtils.method7421(f);
+      float speed = this.speedSetting.getValue3();
+      double[] horizontalMovement = MovementInputUtils.method7421(speed);
       this.vec3d2 = this.vec3d;
-      this.vec3d = this.vec3d.add(doubles[0], event.getPlayerInput().jump() ? f : (event.getPlayerInput().shift() ? -f : 0.0), doubles[1]);
+      this.vec3d = this.vec3d.add(horizontalMovement[0], event.getPlayerInput().jump() ? speed : (event.getPlayerInput().shift() ? -speed : 0.0), horizontalMovement[1]);
       event.method3044();
    }
 
    @EventTarget
-   public void method1664(CameraPosEvent event) {
+   public void onCameraPosition(CameraPosEvent event) {
       if (this.vec3d == null && event.getVec3d() != null) {
          this.vec3d2 = this.vec3d = event.getVec3d();
       }

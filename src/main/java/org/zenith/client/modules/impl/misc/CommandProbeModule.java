@@ -268,8 +268,8 @@ public class CommandProbeModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundCommandSuggestionsPacket suggestionsPacket) {
+      if (event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundCommandSuggestionsPacket suggestionsPacket) {
             mc.execute(() -> this.method6369(suggestionsPacket));
          }
       }

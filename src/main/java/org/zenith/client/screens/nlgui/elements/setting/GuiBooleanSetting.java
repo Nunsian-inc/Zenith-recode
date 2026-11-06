@@ -11,7 +11,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.BooleanSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -34,7 +34,7 @@ public class GuiBooleanSetting extends GuiSetting<BooleanSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, MouseButton enum2) {
       if (this.bounds != null && this.bounds.contains(anchorMouseX, lastClickY)) {
          this.setting.toggle();
          Zenith.getInstance()
@@ -50,7 +50,7 @@ public class GuiBooleanSetting extends GuiSetting<BooleanSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
@@ -59,7 +59,7 @@ public class GuiBooleanSetting extends GuiSetting<BooleanSetting> {
          ZenithColor zenithColor2 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
          ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
          this.drawDefault(menuDrawContext, x, y, "t", this.setting.getName(), this.setting.getDescription(), font, font2, floatValue, centeredTextY, maxWidth, zenithColor, zenithColor2, zenithColor3);
-         this.animationEnable.method2807(this.setting.isEnabled());
+         this.animationEnable.updateVisibility(this.setting.isEnabled());
          if (!this.isShort()) {
             float width = 6.0F;
             float height = 6.0F;

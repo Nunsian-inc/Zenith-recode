@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.zenith.utility.misc.Class32;
+import org.zenith.utility.misc.SparseVoxelGrid;
 
 public final class SnowStats {
    public static final int CONST_intValue = 24;
@@ -13,7 +13,7 @@ public final class SnowStats {
    private SnowStats() {
    }
 
-   public static SnowStats.Entry method803(Level level, Class32 class2, int blockX, int blockY, int blockZ, int integer, float f) {
+   public static SnowStats.Entry method803(Level level, SparseVoxelGrid class2, int blockX, int blockY, int blockZ, int integer, float f) {
       SnowStats.Entry entry = new SnowStats.Entry();
       if (level != null && class2 != null) {
          int n = Math.max(1, Math.round(f * 4.0F));
@@ -36,7 +36,7 @@ public final class SnowStats {
             }
          }
 
-         entry.intValue4 = class2.method4910();
+         entry.intValue4 = class2.compact();
          return entry;
       } else {
          return entry;
@@ -66,16 +66,16 @@ public final class SnowStats {
       return Integer.MIN_VALUE;
    }
 
-   private static void method805(Class32 class2, int x, int n, int z, int n2) {
-      int n3 = Class32.method4911(x);
-      int n4 = Class32.method4911(z);
-      int n5 = Class32.method4911(n + 1);
+   private static void method805(SparseVoxelGrid class2, int x, int n, int z, int n2) {
+      int n3 = SparseVoxelGrid.blockToVoxel(x);
+      int n4 = SparseVoxelGrid.blockToVoxel(z);
+      int n5 = SparseVoxelGrid.blockToVoxel(n + 1);
 
       for (int i = 0; i < 4; i++) {
          for (int j = 0; j < 4; j++) {
             for (int k = 0; k < n2; k++) {
                int n6 = k == n2 - 1 ? 0 : 127;
-               class2.method4904(n3 + i, n5 + k, n4 + j, (byte)n6);
+               class2.setVoxel(n3 + i, n5 + k, n4 + j, (byte)n6);
             }
          }
       }

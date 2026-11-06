@@ -70,8 +70,8 @@ public class ServerDetector implements MinecraftAccess {
 
    @EventTarget
    public void method1628(PacketEvent event) {
-      if (!event.method7100() || !(event.getPacket3() instanceof ClientboundLoginPacket) && !(event.getPacket3() instanceof ClientboundRespawnPacket)) {
-         if (event.method7100() && event.getPacket3() instanceof ClientboundSetTimePacket setTimePacket) {
+      if (!event.isIncoming() || !(event.getPacket() instanceof ClientboundLoginPacket) && !(event.getPacket() instanceof ClientboundRespawnPacket)) {
+         if (event.isIncoming() && event.getPacket() instanceof ClientboundSetTimePacket setTimePacket) {
             this.criticalsState.method1706(setTimePacket.gameTime(), System.nanoTime());
          }
       } else {
@@ -81,11 +81,11 @@ public class ServerDetector implements MinecraftAccess {
 
    @EventTarget(0)
    public void onPacket(PacketEvent event) {
-      if (event.method7099() && event.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
+      if (event.isOutgoing() && event.getPacket() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
          this.criticalsState.method1707(System.nanoTime());
       }
 
-      if (event.getPacket3() instanceof ServerboundPlayerCommandPacket playerCommandPacket) {
+      if (event.getPacket() instanceof ServerboundPlayerCommandPacket playerCommandPacket) {
          if (playerCommandPacket.getAction().equals(Action.START_SPRINTING)) {
             this.flag = true;
          } else if (playerCommandPacket.getAction().equals(Action.STOP_SPRINTING)) {

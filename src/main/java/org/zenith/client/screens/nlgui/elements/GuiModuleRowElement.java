@@ -25,7 +25,7 @@ import org.zenith.client.screens.nlgui.MenuGlyph;
 import org.zenith.client.screens.nlgui.MouseBindTarget;
 import org.zenith.client.screens.nlgui.elements.api.Element;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.KeyName;
 import org.zenith.utility.render.TextureFilterUtils;
 import org.zenith.utility.render.display.base.BoundsData;
@@ -88,7 +88,7 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
    public GuiModuleRowElement(Module surfacedModule) {
       this.module = surfacedModule;
       if (surfacedModule.isEnabled()) {
-         this.animationEnable.method2809(1.0F);
+         this.animationEnable.snapTo(1.0F);
       }
    }
 
@@ -137,7 +137,7 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
 
    public void resetSearchVisible(boolean searchVisible) {
       this.searchVisible = searchVisible;
-      this.searchVisibleAnimation.method2809(searchVisible ? 1.0F : 0.0F);
+      this.searchVisibleAnimation.snapTo(searchVisible ? 1.0F : 0.0F);
       this.forgetSlide();
    }
 
@@ -162,7 +162,7 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
    }
 
    public float updateSearchVisible() {
-      return this.searchVisibleAnimation.method2808(this.searchVisible ? 1.0F : 0.0F);
+      return this.searchVisibleAnimation.animateTo(this.searchVisible ? 1.0F : 0.0F);
    }
 
    public float getSearchVisibleProgress() {
@@ -202,9 +202,9 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
       if (currentStyle != null) {
          this.bounds = new BoundsData(floatValue, y, this.width, 16.0F);
          boolean flag = this.bounds.contains(lastClickX, lastClickY) && (boundsData == null || boundsData.contains(lastClickX, lastClickY));
-         float f = this.animationEnable.method2808(this.module.isEnabled() ? 1.0F : 0.0F);
-         float f2 = this.animationHovered.method2808(flag ? 1.0F : 0.0F);
-         float f3 = this.animationSelected.method2808(this.isSelected() ? 1.0F : 0.0F);
+         float f = this.animationEnable.animateTo(this.module.isEnabled() ? 1.0F : 0.0F);
+         float f2 = this.animationHovered.animateTo(flag ? 1.0F : 0.0F);
+         float f3 = this.animationSelected.animateTo(this.isSelected() ? 1.0F : 0.0F);
          ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
          float f4;
          if ((f4 = Math.max(f3, f2 * 0.5F)) > 0.002F) {
@@ -294,10 +294,10 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
          float floatValue2 = text == null ? 0.0F : font.width(text) + 5.0F;
          if (!this.labelSlotKnown) {
             this.labelSlotKnown = true;
-            this.labelSlot.method2809(floatValue2);
+            this.labelSlot.snapTo(floatValue2);
          }
 
-         float f10 = f9 - this.labelSlot.method2808(floatValue2) - 5.0F;
+         float f10 = f9 - this.labelSlot.animateTo(floatValue2) - 5.0F;
          Font font2 = (f > 0.5F ? Fonts.NEW_SEMIBOLD : Fonts.NEW_MEDIUM).getFont(5.5F);
          ZenithColor zenithColor3 = currentStyle.getTextTertiary()
             .getZenithColor()
@@ -438,9 +438,9 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
    }
 
    @Override
-   public boolean bindMouse(Enum3 enum2) {
+   public boolean bindMouse(MouseButton enum2) {
       if (this.isBinding() && this.module != null && MouseBindTarget.bindable(enum2)) {
-         this.module.setKeyCode(enum2.getIntValue());
+         this.module.setKeyCode(enum2.getGlfwButton());
          this.module.setKeyModifiers(0);
          this.binding = false;
          BindCapture.end(this);
@@ -453,12 +453,12 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.bounds == null || !this.bounds.contains(lastClickX, lastClickY)) {
          return false;
       } else if (this.bindMouse(enum2)) {
          return true;
-      } else if (this.heartBounds != null && this.heartBounds.contains(lastClickX, lastClickY) && enum2 == Enum3.LEFT) {
+      } else if (this.heartBounds != null && this.heartBounds.contains(lastClickX, lastClickY) && enum2 == MouseButton.LEFT) {
          boolean priority = !this.module.isPriority();
          this.module.setPriority(priority);
          if (priority) {
@@ -472,7 +472,7 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
 
          return true;
       } else if (this.bindBounds != null && this.bindBounds.contains(lastClickX, lastClickY)) {
-         if (enum2 == Enum3.RIGHT) {
+         if (enum2 == MouseButton.RIGHT) {
             boolean flag = this.module.getKeyCode() != -1 && this.module.getKeyCode() != 0;
             this.module.setKeyCode(-1);
             this.module.setKeyModifiers(0);
@@ -486,11 +486,11 @@ public class GuiModuleRowElement extends Element implements MouseBindTarget {
          }
 
          return true;
-      } else if (enum2 == Enum3.MIDDLE) {
+      } else if (enum2 == MouseButton.MIDDLE) {
          this.beginBinding();
          Zenith.getInstance().getClientSounds().method1570(false);
          return true;
-      } else if (enum2 == Enum3.RIGHT) {
+      } else if (enum2 == MouseButton.RIGHT) {
          Zenith.getInstance().getNLMenuScreen().getInspectorPanel().toggleFor(this.module);
          Zenith.getInstance().getClientSounds().method1570(true);
          return true;

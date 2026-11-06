@@ -33,7 +33,7 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.client.events.CloudStateEvent;
 import org.zenith.client.events.CloudWaypointEvent;
-import org.zenith.client.events.Event11;
+import org.zenith.client.events.CloudMessageEvent;
 import org.zenith.client.events.PartyUpdateEvent;
 import org.zenith.client.events.TickEvent;
 import org.zenith.utility.api.CloudJsonIo;
@@ -713,7 +713,7 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
             CloudPackets.Data13 data13 = CloudPackets.method1815(friendlyByteBuf);
             mc.execute(() -> {
                this.cloudConnectionState.method8050(data13);
-               EventManager.call(new Event11(data13, data13.uid() == this.longValue));
+               EventManager.call(new CloudMessageEvent(data13, data13.uid() == this.longValue));
             });
             break;
          case 161:

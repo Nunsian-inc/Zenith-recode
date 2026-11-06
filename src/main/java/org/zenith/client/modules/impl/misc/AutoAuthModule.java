@@ -141,8 +141,8 @@ public final class AutoAuthModule extends Module {
 
    @EventTarget
    public void method2714(PacketEvent event) {
-      if (event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+      if (event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket) {
             if (mc.getConnection() != null) {
                String lowerCase = systemChatPacket.content().getString().toLowerCase();
                boolean flag = lowerCase.contains("/register") || lowerCase.contains("зарегистрируйтесь");

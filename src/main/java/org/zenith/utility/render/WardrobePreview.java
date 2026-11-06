@@ -28,8 +28,8 @@ import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
 import org.zenith.utility.game.PetBehavior;
 import org.zenith.utility.misc.AnimationState;
-import org.zenith.utility.misc.Class15;
-import org.zenith.utility.misc.Class16;
+import org.zenith.utility.misc.WardrobeModel;
+import org.zenith.utility.misc.ModelPoseEvaluator;
 import org.zenith.utility.misc.HoveredData;
 
 public final class WardrobePreview implements MinecraftAccess {
@@ -39,7 +39,7 @@ public final class WardrobePreview implements MinecraftAccess {
    private static final Map<Integer, PetBehavior> items = new HashMap<>();
    private static double doubleValue;
    private static final AnimationState animationState = new AnimationState();
-   private static final Class16 class16 = new Class16();
+   private static final ModelPoseEvaluator class16 = new ModelPoseEvaluator();
    private static WeakReference<Level> weakReference = new WeakReference<>(null);
    private long longValue;
 
@@ -74,7 +74,7 @@ public final class WardrobePreview implements MinecraftAccess {
                && !(player.distanceToSqr(position) > 4096.0)) {
                HoveredData hoveredData = wardrobe.method2499(wardrobe.method2498(player.getGameProfile().name(), flag), FocusSlotEnum.PET);
                if (hoveredData != null) {
-                  Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+                  WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData);
                   if (class2 != null && class2.data3 != null) {
                      PetBehavior petBehavior = items.get(player.getId());
                      if (petBehavior == null || petBehavior.hoveredData != hoveredData) {
@@ -169,11 +169,11 @@ public final class WardrobePreview implements MinecraftAccess {
       matrixStack.translate(0.0F, -1.501F, 0.0F);
    }
 
-   private static void method3146(Class15 key, float[] floatValues, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue, boolean flag, int n, boolean flag2) {
+   private static void method3146(WardrobeModel key, float[] floatValues, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue, boolean flag, int n, boolean flag2) {
       BoneMatrices.method4787(key, floatValues, 6, matrixStack, orderedRenderCommandQueue, intValue, OverlayTexture.NO_OVERLAY, flag2, flag, n);
    }
 
-   public static void method3147(HoveredData hoveredData, Class15 key, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue, float floatValue) {
+   public static void method3147(HoveredData hoveredData, WardrobeModel key, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue, float floatValue) {
       if (key != null) {
          animationState.method6539(key, "idle", floatValue);
          float[] floatValues = class16.method2139(key, animationState, floatValue, null);

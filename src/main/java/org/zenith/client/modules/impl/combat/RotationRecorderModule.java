@@ -50,7 +50,7 @@ import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.events.AttackEvent;
-import org.zenith.client.events.Event2;
+import org.zenith.client.events.PostRotationEvent;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ButtonSetting;
 import org.zenith.client.settings.ModeSetting;
@@ -159,8 +159,8 @@ public final class RotationRecorderModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+      if (event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> {
                if (this.isEnabled()) {
                   this.method4936();
@@ -197,7 +197,7 @@ public final class RotationRecorderModule extends Module {
    }
 
    @EventTarget
-   public void method4916(Event2 event) {
+   public void method4916(PostRotationEvent event) {
       if (!mc.isPaused() && mc.player != null && mc.level != null && !mc.player.isSpectator()) {
          if (this.entry7 != null && mc.player.tickCount > this.entry7.intValue4) {
             this.method4935();
@@ -205,8 +205,8 @@ public final class RotationRecorderModule extends Module {
 
          boolean flag = this.flag5;
          this.flag5 = false;
-         float floatValue = this.flag3 ? rotationManager.method7844().getFloatValue() : mc.player.getYRot();
-         float xRot = this.flag3 ? rotationManager.method7844().getFloatValue2() : mc.player.getXRot();
+         float floatValue = this.flag3 ? rotationManager.getEffectiveRotation().getFloatValue() : mc.player.getYRot();
+         float xRot = this.flag3 ? rotationManager.getEffectiveRotation().getFloatValue2() : mc.player.getXRot();
          Rotation rotation = new Rotation(floatValue, xRot);
          if (!this.flag4) {
             this.floatValue = floatValue;
@@ -219,14 +219,14 @@ public final class RotationRecorderModule extends Module {
          int n = 0;
          if (this.flag3) {
             Rotation rotation2 = new Rotation(mc.player.yRotLast, mc.player.xRotLast);
-            Vec2f vec2f = rotation2.method3131(zenith.getRotationManager().method7844());
+            Vec2f vec2f = rotation2.wrappedDeltaTo(zenith.getRotationManager().getEffectiveRotation());
             Vec2f vec2f2 = new Vec2f(f, f2);
             f = vec2f.getFloatValue();
             f2 = vec2f.getFloatValue2();
             n = vec2f.getFloatValue() == vec2f2.getFloatValue()
                   && vec2f.getFloatValue2() == vec2f2.getFloatValue2()
-                  && mc.player.getYRot() == zenith.getRotationManager().method7844().getFloatValue()
-                  && mc.player.getXRot() == zenith.getRotationManager().method7844().getFloatValue2()
+                  && mc.player.getYRot() == zenith.getRotationManager().getEffectiveRotation().getFloatValue()
+                  && mc.player.getXRot() == zenith.getRotationManager().getEffectiveRotation().getFloatValue2()
                ? 0
                : 1;
          }
@@ -319,12 +319,12 @@ public final class RotationRecorderModule extends Module {
       };
       Vec3 vec4 = new Vec3((move.minX + move.maxX) * 0.5, (move.minY + move.maxY) * 0.5, (move.minZ + move.maxZ) * 0.5);
       Rotation rotation2 = this.method4918(eyePosition, vec4);
-      Vec2f vec2f = rotation.method3131(rotation2);
+      Vec2f vec2f = rotation.wrappedDeltaTo(rotation2);
       float floatValue2 = vec2f.getFloatValue();
       float floatValue3 = vec2f.getFloatValue2();
       if (this.isFinite(floatValue2) && this.isFinite(floatValue3)) {
          AABB aabb = move.move(vec3d.subtract(livingEntity.position()));
-         Vec2f vec2f2 = rotation.method3131(this.method4918(vec, this.method4923(aabb)));
+         Vec2f vec2f2 = rotation.wrappedDeltaTo(this.method4918(vec, this.method4923(aabb)));
          float floatValue4 = vec2f2.getFloatValue();
          float floatValue5 = vec2f2.getFloatValue2();
          if (this.isFinite(floatValue4) && this.isFinite(floatValue5)) {
@@ -333,14 +333,14 @@ public final class RotationRecorderModule extends Module {
             float f5 = (float)Math.cos(f3);
             Vec3 eyePosition2 = vec3d.add(livingEntity.getEyePosition().subtract(livingEntity.position()));
             Rotation rotation3 = new Rotation(livingEntity.getYRot(), livingEntity.getXRot());
-            Vec2f vec2f3 = rotation3.method3131(this.method4918(eyePosition2, eyePosition));
+            Vec2f vec2f3 = rotation3.wrappedDeltaTo(this.method4918(eyePosition2, eyePosition));
             float floatValue6 = vec2f3.getFloatValue();
             float floatValue7 = vec2f3.getFloatValue2();
             Vec3 vec3d2 = eyePosition.subtract(eyePosition2);
             if (this.isFinite(floatValue6) && this.isFinite(floatValue7) && this.method4977(vec3d2) && !(vec3d2.lengthSqr() <= 1.0E-10)) {
                float f6 = (float)Math.toRadians(floatValue6);
                float f7 = (float)Math.toRadians(floatValue7);
-               float f8 = (float)Mth.clamp(rotation3.method3135().dot(vec3d2.normalize()), -1.0, 1.0);
+               float f8 = (float)Mth.clamp(rotation3.toDirection().dot(vec3d2.normalize()), -1.0, 1.0);
                float f9 = Float.MAX_VALUE;
                float f10 = -Float.MAX_VALUE;
                float f11 = Float.MAX_VALUE;
@@ -348,7 +348,7 @@ public final class RotationRecorderModule extends Module {
 
                for (Vec3 vec5 : vecs) {
                   Rotation rotation4 = this.method4918(eyePosition, vec5);
-                  Vec2f vec2f4 = rotation.method3131(rotation4);
+                  Vec2f vec2f4 = rotation.wrappedDeltaTo(rotation4);
                   float floatValue8 = vec2f4.getFloatValue();
                   float floatValue9 = vec2f4.getFloatValue2();
                   if (this.isFinite(floatValue8) && this.isFinite(floatValue9)) {
@@ -376,10 +376,10 @@ public final class RotationRecorderModule extends Module {
                float floatValue8 = (float)eyePosition.distanceTo(vec4);
                float hypot = this.hypot(f15, f17);
                Vec3 vec5 = vec4.add(vec2);
-               Vec2f vec2f4 = rotation2.method3131(this.method4918(eyePosition, vec5));
+               Vec2f vec2f4 = rotation2.wrappedDeltaTo(this.method4918(eyePosition, vec5));
                float floatValue9 = (float)eyePosition.distanceTo(vec5) - floatValue8;
                Vec3 eyePosition3 = eyePosition.add(vec3);
-               Vec2f vec2f5 = rotation2.method3131(this.method4918(eyePosition3, vec4));
+               Vec2f vec2f5 = rotation2.wrappedDeltaTo(this.method4918(eyePosition3, vec4));
                float floatValue10 = (float)eyePosition3.distanceTo(vec4) - floatValue8;
                if (this.isFinite(vec2f4.getFloatValue())
                   && this.isFinite(vec2f4.getFloatValue2())
@@ -415,8 +415,8 @@ public final class RotationRecorderModule extends Module {
                   float f27 = Mth.clamp(floatValue3 / Math.max(Math.abs(f14), 0.1F), -20.0F, 20.0F);
                   float floatValue14 = (float)Math.sqrt(floatValue2 * floatValue2 + floatValue3 * floatValue3);
                   Vec3 vec6 = vec4.subtract(eyePosition).normalize();
-                  Vec3 vec7 = rotation.method3135().normalize();
-                  Vec3 vec8 = new Rotation(rotation.getFloatValue() + 90.0F, 0.0F).method3135().normalize();
+                  Vec3 vec7 = rotation.toDirection().normalize();
+                  Vec3 vec8 = new Rotation(rotation.getFloatValue() + 90.0F, 0.0F).toDirection().normalize();
                   Vec3 vec9 = vec8.cross(vec7).normalize();
                   float f28 = (float)vec6.dot(vec8);
                   float f29 = (float)vec6.dot(vec9);
@@ -1077,7 +1077,7 @@ public final class RotationRecorderModule extends Module {
       Vec3 position = mc.player.position();
       Vec3 vec3d2 = this.method4922(move);
       Vec3 vec2 = this.method4921(position);
-      float floatValue = Rotation.method3138();
+      float floatValue = Rotation.sensitivityStep();
       if (this.isFinite(floatValue) && !(floatValue <= 0.0F)) {
          boolean flag3 = mc.player.onGround();
          RotationRecorderModule.Data2 data2 = this.method4917(rotation, eyePosition, vec, livingEntity, move, vec3d, f, f2, vec3d2, vec2, floatValue, keyPresses, flag3, flag);
@@ -1089,8 +1089,8 @@ public final class RotationRecorderModule extends Module {
             AABB boundingBox = mc.player.getBoundingBox();
             Vec3 vec3d3 = this.entry == null ? position : this.entry.vec3d;
             Vec3 vec3d4 = this.method4923(move);
-            float floatValue3 = this.method4924(rotation.method3131(this.method4918(eyePosition, vec3d4)).getFloatValue(), floatValue);
-            float f4 = this.method4924(rotation.method3131(this.method4918(eyePosition, vec3d4)).getFloatValue2(), floatValue);
+            float floatValue3 = this.method4924(rotation.wrappedDeltaTo(this.method4918(eyePosition, vec3d4)).getFloatValue(), floatValue);
+            float f4 = this.method4924(rotation.wrappedDeltaTo(this.method4918(eyePosition, vec3d4)).getFloatValue2(), floatValue);
             boolean flag4 = this.method4971();
             RotationRecorderModule.Data10 data10 = this.method4956(mc.player.isSprinting(), boundingBox, entry10);
             if (!data10.method4982()) {
@@ -4738,7 +4738,7 @@ public final class RotationRecorderModule extends Module {
             && livingEntity != null
             && livingEntity.isAlive()
             && rotation != null
-            && !rotation.method3137()) {
+            && !rotation.isInvalid()) {
             if (livingEntity.getId() != this.intValue
                || !livingEntity.getUUID().equals(this.uUID)
                || this.intValue2 != Integer.MIN_VALUE && RotationRecorderModule.mc.player.tickCount != this.intValue2 + 1) {

@@ -11,7 +11,7 @@ import org.zenith.ModuleInfo;
 import org.zenith.PacketEvent;
 import org.zenith.Rotation;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.PlayerMoveEvent;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.game.TargetUtils;
@@ -25,27 +25,27 @@ import org.zenith.utility.network.UseItemUtils;
 )
 public final class WallBypassModule extends Module {
    public static final WallBypassModule INSTANCE = new WallBypassModule();
-   private static final double CONST_doubleValue = 3.0;
-   private static final int CONST_intValue = 70;
-   private static final int[] CONST_intValues = new int[]{15, 5, 1};
+   private static final double ROTATION_SEARCH_DISTANCE = 3.0;
+   private static final int ROTATION_PRIORITY = 70;
+   private static final int[] ROTATION_SEARCH_STEPS = new int[]{15, 5, 1};
    private final SliderSetting attackDistance = new SliderSetting(
       "module.wallBypass.attackDistance", 3.0F, 3.0F, 6.0F, 0.1F, "module.wallBypass.attackDistance.desc", "b"
    );
-   private Rotation rotation;
-   private boolean flag;
-   private boolean flag2;
-   private int intValue;
+   private Rotation bypassRotation;
+   private boolean bypassAvailable;
+   private boolean rotationRequested;
+   private int remainingMovementPackets;
 
    private WallBypassModule() {
    }
 
    @Override
    public void onEnable() {
-      this.rotation = this.method7503();
-      this.flag = this.rotation != null;
-      this.flag2 = false;
-      this.intValue = 1;
-      if (!this.flag) {
+      this.bypassRotation = this.findBypassRotation();
+      this.bypassAvailable = this.bypassRotation != null;
+      this.rotationRequested = false;
+      this.remainingMovementPackets = 1;
+      if (!this.bypassAvailable) {
          this.setToggled(false);
       } else {
          super.onEnable();
@@ -54,37 +54,37 @@ public final class WallBypassModule extends Module {
 
    @Override
    public void onDisable() {
-      this.rotation = null;
-      this.flag = false;
-      this.flag2 = false;
-      this.intValue = 0;
+      this.bypassRotation = null;
+      this.bypassAvailable = false;
+      this.rotationRequested = false;
+      this.remainingMovementPackets = 0;
       super.onDisable();
    }
 
    @EventTarget
-   public void method7499(PlayerMoveEvent event) {
-      if (this.intValue <= 0) {
+   public void onPlayerMove(PlayerMoveEvent event) {
+      if (this.remainingMovementPackets <= 0) {
          event.setVec3d(Vec3.ZERO);
       }
    }
 
    @EventTarget
-   public void method7500(Event5 event) {
-      if (!this.flag || this.rotation == null || mc.player == null || mc.level == null) {
+   public void onBypassRotation(PreRotationEvent event) {
+      if (!this.bypassAvailable || this.bypassRotation == null || mc.player == null || mc.level == null) {
          this.setToggled(false);
-      } else if (!this.flag2) {
-         Rotation rotation = this.rotation;
-         rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 70, this, 1);
-         this.flag2 = true;
+      } else if (!this.rotationRequested) {
+         Rotation requestedRotation = this.bypassRotation;
+         rotationManager.requestRotation(new RotationRequest(requestedRotation, () -> requestedRotation, bcCameraTestnerv.getRotationConfig()), 70, this, 1);
+         this.rotationRequested = true;
       }
    }
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.getPacket3() instanceof ServerboundMovePlayerPacket) {
-         if (this.intValue > 0) {
-            if (this.flag2) {
-               this.intValue--;
+      if (event.getPacket() instanceof ServerboundMovePlayerPacket) {
+         if (this.remainingMovementPackets > 0) {
+            if (this.rotationRequested) {
+               this.remainingMovementPackets--;
             }
 
             return;
@@ -95,36 +95,36 @@ public final class WallBypassModule extends Module {
    }
 
    public boolean method7501() {
-      return this.isEnabled() && this.flag && this.rotation != null && this.intValue <= 0;
+      return this.isEnabled() && this.bypassAvailable && this.bypassRotation != null && this.remainingMovementPackets <= 0;
    }
 
    public float method7502() {
       return this.attackDistance.getValue3();
    }
 
-   private Rotation method7503() {
+   private Rotation findBypassRotation() {
       if (mc.player != null && mc.level != null) {
-         Rotation rotation = rotationManager.method7844();
-         float floatValue = rotation.getFloatValue();
-         Rotation[] rotations = new Rotation[]{
-            new Rotation(floatValue, -90.0F),
-            new Rotation(floatValue, 90.0F),
-            new Rotation(floatValue, 0.0F),
+         Rotation currentRotation = rotationManager.getEffectiveRotation();
+         float currentYaw = currentRotation.getFloatValue();
+         Rotation[] initialRotations = new Rotation[]{
+            new Rotation(currentYaw, -90.0F),
+            new Rotation(currentYaw, 90.0F),
+            new Rotation(currentYaw, 0.0F),
             new Rotation(mc.player.getYRot(), -90.0F),
             new Rotation(mc.player.getYRot(), 90.0F),
             new Rotation(mc.player.getYRot(), 0.0F)
          };
 
-         for (Rotation rotation2 : rotations) {
-            if (this.method7505(rotation2)) {
-               return rotation2;
+         for (Rotation candidateRotation : initialRotations) {
+            if (this.isBypassRotation(candidateRotation)) {
+               return candidateRotation;
             }
          }
 
-         for (int n : CONST_intValues) {
-            Rotation rotation2 = this.method7504(floatValue, n);
-            if (rotation2 != null) {
-               return rotation2;
+         for (int angleStep : ROTATION_SEARCH_STEPS) {
+            Rotation candidateRotation = this.searchBypassRotation(currentYaw, angleStep);
+            if (candidateRotation != null) {
+               return candidateRotation;
             }
          }
 
@@ -134,34 +134,34 @@ public final class WallBypassModule extends Module {
       }
    }
 
-   private Rotation method7504(float floatValue, int n) {
-      int xRot = -90;
+   private Rotation searchBypassRotation(float baseYaw, int angleStep) {
+      int pitch = -90;
 
-      while (xRot <= 90) {
-         for (int i = 0; i < 360; i += n) {
-            Rotation rotation = new Rotation(floatValue + i, xRot);
-            if (this.method7505(rotation)) {
-               return rotation;
+      while (pitch <= 90) {
+         for (int yawOffset = 0; yawOffset < 360; yawOffset += angleStep) {
+            Rotation positiveYawRotation = new Rotation(baseYaw + yawOffset, pitch);
+            if (this.isBypassRotation(positiveYawRotation)) {
+               return positiveYawRotation;
             }
 
-            if (i != 0) {
-               Rotation rotation2 = new Rotation(floatValue - i, xRot);
-               if (this.method7505(rotation2)) {
-                  return rotation2;
+            if (yawOffset != 0) {
+               Rotation negativeYawRotation = new Rotation(baseYaw - yawOffset, pitch);
+               if (this.isBypassRotation(negativeYawRotation)) {
+                  return negativeYawRotation;
                }
             }
          }
 
-         xRot += n;
+         pitch += angleStep;
       }
 
       return null;
    }
 
-   private boolean method7505(Rotation rotation) {
+   private boolean isBypassRotation(Rotation candidateRotation) {
       if (mc.player != null && mc.level != null) {
-         BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotation, 3.0, blockHitResult2 -> true);
-         return blockHitResult != null && blockHitResult.getType() == Type.MISS && UseItemUtils.method6523(BlockPos.containing(blockHitResult.getLocation()));
+         BlockHitResult hitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), candidateRotation, 3.0, candidateHit -> true);
+         return hitResult != null && hitResult.getType() == Type.MISS && UseItemUtils.method6523(BlockPos.containing(hitResult.getLocation()));
       } else {
          return false;
       }

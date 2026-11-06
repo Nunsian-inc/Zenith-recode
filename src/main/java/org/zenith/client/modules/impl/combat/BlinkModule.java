@@ -75,11 +75,11 @@ public final class BlinkModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && event.getPacket3() != null) {
+      if (event.isIncoming() && event.getPacket() != null) {
          if (mc.player != null && !mc.player.isDeadOrDying()) {
-            if (event.getPacket3() instanceof ClientboundDisconnectPacket) {
+            if (event.getPacket() instanceof ClientboundDisconnectPacket) {
                this.method6746();
-            } else if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+            } else if (event.getPacket() instanceof ClientboundPlayerPositionPacket) {
                this.method6747();
             }
          } else {

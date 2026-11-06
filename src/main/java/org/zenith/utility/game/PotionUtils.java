@@ -18,26 +18,26 @@ public final class PotionUtils implements MinecraftAccess {
    private PotionUtils() {
    }
 
-   public static List<MobEffectInstance> method2321(ItemStack useItem) {
-      ArrayList<MobEffectInstance> mobEffectInstances = new ArrayList<>();
-      if (useItem != null && !useItem.isEmpty()) {
-         PotionContents potionContents = useItem.get(DataComponents.POTION_CONTENTS);
-         if (potionContents == null) {
-            return mobEffectInstances;
+   public static List<MobEffectInstance> method2321(ItemStack stack) {
+      ArrayList<MobEffectInstance> effects = new ArrayList<>();
+      if (stack != null && !stack.isEmpty()) {
+         PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+         if (contents == null) {
+            return effects;
          } else {
-            for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
-               mobEffectInstances.add(allEffect);
+            for (MobEffectInstance effect : contents.getAllEffects()) {
+               effects.add(effect);
             }
 
-            return mobEffectInstances;
+            return effects;
          }
       } else {
-         return mobEffectInstances;
+         return effects;
       }
    }
 
-   public static boolean method2322(ItemStack useItem, Holder<MobEffect> effect) {
-      for (MobEffectInstance mobEffectInstance : method2321(useItem)) {
+   public static boolean method2322(ItemStack stack, Holder<MobEffect> effect) {
+      for (MobEffectInstance mobEffectInstance : method2321(stack)) {
          if (mobEffectInstance.getEffect().equals(effect)) {
             return true;
          }
@@ -46,22 +46,22 @@ public final class PotionUtils implements MinecraftAccess {
       return false;
    }
 
-   public static boolean method2323(ItemStack useItem) {
-      return useItem != null && !useItem.isEmpty() && useItem.is(Items.SPLASH_POTION);
+   public static boolean method2323(ItemStack stack) {
+      return stack != null && !stack.isEmpty() && stack.is(Items.SPLASH_POTION);
    }
 
-   public static boolean method2324(ItemStack useItem) {
-      return useItem != null && !useItem.isEmpty() && useItem.is(Items.POTION);
+   public static boolean method2324(ItemStack stack) {
+      return stack != null && !stack.isEmpty() && stack.is(Items.POTION);
    }
 
    public static int method2325(Predicate<ItemStack> predicate) {
-      int n = method2326(predicate);
-      if (n != -1) {
-         return n;
+      int hotbarSlot = method2326(predicate);
+      if (hotbarSlot != -1) {
+         return hotbarSlot;
       } else {
-         for (int i = 9; i < 36; i++) {
-            if (predicate.test(mc.player.getInventory().getItem(i))) {
-               return i;
+         for (int slot = 9; slot < 36; slot++) {
+            if (predicate.test(mc.player.getInventory().getItem(slot))) {
+               return slot;
             }
          }
 
@@ -70,9 +70,9 @@ public final class PotionUtils implements MinecraftAccess {
    }
 
    public static int method2326(Predicate<ItemStack> predicate) {
-      for (int i = 0; i < 9; i++) {
-         if (predicate.test(mc.player.getInventory().getItem(i))) {
-            return i;
+      for (int slot = 0; slot < 9; slot++) {
+         if (predicate.test(mc.player.getInventory().getItem(slot))) {
+            return slot;
          }
       }
 

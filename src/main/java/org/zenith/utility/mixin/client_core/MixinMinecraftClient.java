@@ -35,8 +35,8 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.zenith.Zenith;
 import org.zenith.base.font.HintedText;
-import org.zenith.client.events.Event7;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.HandleKeybindsEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.HandleInputEvent;
 import org.zenith.client.events.HandleInputPostEvent;
 import org.zenith.client.events.PacketProcessEndEvent;
@@ -47,7 +47,7 @@ import org.zenith.client.events.TickEvent;
 import org.zenith.client.modules.impl.combat.CrystalAuraModule;
 import org.zenith.client.modules.impl.misc.NoInteractModule;
 import org.zenith.client.modules.impl.player.AutoMineModule;
-import org.zenith.utility.misc.Util13;
+import org.zenith.utility.misc.TimerSpeed;
 import org.zenith.utility.render.ImmediateRenderer;
 import org.zenith.utility.render.ProjectionUtils;
 import org.zenith.utility.render.UniformStorage;
@@ -160,7 +160,7 @@ public abstract class MixinMinecraftClient {
       )
    )
    public void injectHandleInputEventss(ClientPacketListener clientPacketListener, Packet packet) {
-      Event9 event = new Event9();
+      InteractionInputEvent event = new InteractionInputEvent();
       EventManager.call(event);
       if (!event.isCancelled()) {
          clientPacketListener.send(packet);
@@ -193,7 +193,7 @@ public abstract class MixinMinecraftClient {
    )
    public void injectHandleInputEvents(CallbackInfo callbackInfo) {
       EventManager.call(new HandleInputPostEvent());
-      Event9 event = new Event9();
+      InteractionInputEvent event = new InteractionInputEvent();
       EventManager.call(event);
       if (!event.isCancelled()) {
          HandleInputEvent event2 = new HandleInputEvent();
@@ -228,7 +228,7 @@ public abstract class MixinMinecraftClient {
       at = {@At("RETURN")}
    )
    private float zenith$applyTimerSpeed(float f) {
-      float floatValue = Util13.getFloatValue();
+      float floatValue = TimerSpeed.getSpeedMultiplier();
       return floatValue == 1.0F ? f : f / floatValue;
    }
 
@@ -242,7 +242,7 @@ public abstract class MixinMinecraftClient {
    )
    public void doItemUseHook(CallbackInfo callbackInfo) {
       if (this.player != null && this.gameMode != null) {
-         Event9 event = new Event9();
+         InteractionInputEvent event = new InteractionInputEvent();
          EventManager.call(event);
          if (event.isCancelled()) {
             callbackInfo.cancel();
@@ -278,7 +278,7 @@ public abstract class MixinMinecraftClient {
       cancellable = true
    )
    public void handleInputEventsHook(CallbackInfo callbackInfo) {
-      Event7 event = new Event7();
+      HandleKeybindsEvent event = new HandleKeybindsEvent();
       EventManager.call(event);
       if (event.isCancelled()) {
          callbackInfo.cancel();

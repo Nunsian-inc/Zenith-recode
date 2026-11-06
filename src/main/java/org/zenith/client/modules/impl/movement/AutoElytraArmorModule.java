@@ -19,7 +19,7 @@ import org.zenith.client.modules.impl.misc.ElytraHelperModule;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 
 @ModuleInfo(
    name = "AutoElytraArmor",
@@ -34,10 +34,10 @@ public final class AutoElytraArmorModule extends Module {
    private final SliderSetting range = new SliderSetting("module.autoElytraArmor.range", 5.0F, 1.0F, 10.0F, 1.0F, "module.autoElytraArmor.range.desc", "b");
    private final BooleanSetting autoAirStuck = new BooleanSetting("module.autoElytraArmor.autoAirStuck", "module.autoElytraArmor.autoAirStuck.desc", true);
    private final BooleanSetting reverseSwap = new BooleanSetting("module.autoElytraArmor.reverseSwap", "module.autoElytraArmor.reverseSwap.desc", false);
-   private Player playerEntity;
-   private boolean flag;
-   private boolean flag2;
-   private AutoElytraArmorModule.Type type = AutoElytraArmorModule.Type.NONE;
+   private Player trackedTarget;
+   private boolean targetWasWearingElytra;
+   private boolean targetWasWearingChestplate;
+   private AutoElytraArmorModule.SwapType pendingSwap = AutoElytraArmorModule.SwapType.NONE;
 
    private AutoElytraArmorModule() {
    }
@@ -60,180 +60,179 @@ public final class AutoElytraArmorModule extends Module {
       if (player == null || mc.level == null) {
          this.resetState();
       } else if (this.mode.isSelected(1)) {
-         this.method412(player);
+         this.updateAlwaysMode(player);
       } else {
-         this.type = AutoElytraArmorModule.Type.NONE;
-         this.method417(player);
-         this.method416(this.method411(player));
+         this.pendingSwap = AutoElytraArmorModule.SwapType.NONE;
+         this.handleTargetEquipmentChange(player);
+         this.updateTrackedTarget(this.findTrackedOrGlidingTarget(player));
       }
    }
 
-   private Player method411(Player player) {
-      if (this.method414(player, this.playerEntity)) {
-         return this.playerEntity;
-      } else if (AuraModule.INSTANCE.method6358() instanceof Player playerEntity && this.method415(player, playerEntity)) {
-         return playerEntity;
+   private Player findTrackedOrGlidingTarget(Player player) {
+      if (this.isValidArmoredTarget(player, this.trackedTarget)) {
+         return this.trackedTarget;
+      } else if (AuraModule.INSTANCE.method6358() instanceof Player auraTarget && this.isValidGlidingTarget(player, auraTarget)) {
+         return auraTarget;
       } else {
          ClientLevel level = mc.level;
          return level == null
             ? null
             : level.players()
                .stream()
-               .filter(var1x -> var1x != player)
-               .filter(player2 -> this.method415(player, player2))
-               .filter(player2 -> !Zenith.getInstance().getFriends().method7626(player2))
-               .min(Comparator.comparingDouble(playerEntity2 -> this.method420(player, playerEntity2)))
+               .filter(candidate -> candidate != player)
+               .filter(candidate -> this.isValidGlidingTarget(player, candidate))
+               .filter(candidate -> !Zenith.getInstance().getFriends().method7626(candidate))
+               .min(Comparator.comparingDouble(candidate -> this.getHorizontalDistanceSquared(player, candidate)))
                .orElse(null);
       }
    }
 
-   private void method412(Player player) {
-      Player player2 = this.method413(player);
-      if (player2 == null) {
-         this.type = AutoElytraArmorModule.Type.NONE;
-         this.method419(false);
+   private void updateAlwaysMode(Player player) {
+      Player target = this.findArmoredTarget(player);
+      if (target == null) {
+         this.pendingSwap = AutoElytraArmorModule.SwapType.NONE;
+         this.setAirStuckEnabled(false);
       } else {
-         ItemStack itemBySlot = player.getItemBySlot(EquipmentSlot.CHEST);
-         boolean is = itemBySlot.is(Items.ELYTRA);
-         boolean flag = Util10.method2182(itemBySlot);
-         if (this.type == AutoElytraArmorModule.Type.ELYTRA && is || this.type == AutoElytraArmorModule.Type.CHESTPLATE && flag) {
-            this.type = AutoElytraArmorModule.Type.NONE;
+         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
+         boolean wearingElytra = chestStack.is(Items.ELYTRA);
+         boolean wearingChestplate = ItemStackTags.isChestArmor(chestStack);
+         if (this.pendingSwap == AutoElytraArmorModule.SwapType.ELYTRA && wearingElytra
+            || this.pendingSwap == AutoElytraArmorModule.SwapType.CHESTPLATE && wearingChestplate) {
+            this.pendingSwap = AutoElytraArmorModule.SwapType.NONE;
          }
 
-         boolean is2 = player2.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
-         this.method419(!is2);
-         if (this.type == AutoElytraArmorModule.Type.NONE) {
-            if (is2) {
-               if (flag) {
-                  this.type = AutoElytraArmorModule.Type.ELYTRA;
+         boolean targetWearingElytra = target.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
+         this.setAirStuckEnabled(!targetWearingElytra);
+         if (this.pendingSwap == AutoElytraArmorModule.SwapType.NONE) {
+            if (targetWearingElytra) {
+               if (wearingChestplate) {
+                  this.pendingSwap = AutoElytraArmorModule.SwapType.ELYTRA;
                   ElytraHelperModule.INSTANCE.method7454();
                }
-            } else if (is) {
-               this.type = AutoElytraArmorModule.Type.CHESTPLATE;
-               this.method418();
+            } else if (wearingElytra) {
+               this.pendingSwap = AutoElytraArmorModule.SwapType.CHESTPLATE;
+               this.swapToChestplate();
             }
          }
       }
    }
 
-   private Player method413(Player player) {
-      if (AuraModule.INSTANCE.method6358() instanceof Player playerEntity && this.method414(player, playerEntity)) {
-         return playerEntity;
+   private Player findArmoredTarget(Player player) {
+      if (AuraModule.INSTANCE.method6358() instanceof Player auraTarget && this.isValidArmoredTarget(player, auraTarget)) {
+         return auraTarget;
       } else {
          ClientLevel level = mc.level;
          return level == null
             ? null
             : level.players()
                .stream()
-               .filter(var1x -> var1x != player)
-               .filter(player2 -> this.method414(player, player2))
-               .filter(player2 -> !Zenith.getInstance().getFriends().method7626(player2))
-               .min(Comparator.comparingDouble(playerEntity2 -> this.method420(player, playerEntity2)))
+               .filter(candidate -> candidate != player)
+               .filter(candidate -> this.isValidArmoredTarget(player, candidate))
+               .filter(candidate -> !Zenith.getInstance().getFriends().method7626(candidate))
+               .min(Comparator.comparingDouble(candidate -> this.getHorizontalDistanceSquared(player, candidate)))
                .orElse(null);
       }
    }
 
-   private boolean method414(Player player, Player playerEntity) {
-      if (playerEntity != null && playerEntity.isAlive() && !playerEntity.isRemoved() && !(this.method420(player, playerEntity) > this.method421())) {
-         ItemStack itemBySlot = playerEntity.getItemBySlot(EquipmentSlot.CHEST);
-         return itemBySlot.is(Items.ELYTRA) || Util10.method2182(itemBySlot);
+   private boolean isValidArmoredTarget(Player player, Player target) {
+      if (target != null && target.isAlive() && !target.isRemoved() && !(this.getHorizontalDistanceSquared(player, target) > this.getRangeSquared())) {
+         ItemStack chestStack = target.getItemBySlot(EquipmentSlot.CHEST);
+         return chestStack.is(Items.ELYTRA) || ItemStackTags.isChestArmor(chestStack);
       } else {
          return false;
       }
    }
 
-   private boolean method415(Player player, Player playerEntity) {
-      return playerEntity != null
-         && playerEntity.isAlive()
-         && !playerEntity.isRemoved()
-         && playerEntity.isFallFlying()
-         && playerEntity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)
-         && this.method420(player, playerEntity) <= this.method421();
+   private boolean isValidGlidingTarget(Player player, Player target) {
+      return target != null
+         && target.isAlive()
+         && !target.isRemoved()
+         && target.isFallFlying()
+         && target.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)
+         && this.getHorizontalDistanceSquared(player, target) <= this.getRangeSquared();
    }
 
-   private void method416(Player playerEntity) {
-      if (playerEntity == null) {
-         this.method422();
-      } else {
-         if (this.playerEntity != playerEntity) {
-            this.playerEntity = playerEntity;
-            this.flag = playerEntity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
-            this.flag2 = Util10.method2182(playerEntity.getItemBySlot(EquipmentSlot.CHEST));
-         } else if (playerEntity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-            this.flag = true;
-            this.flag2 = false;
-         } else if (Util10.method2182(playerEntity.getItemBySlot(EquipmentSlot.CHEST))) {
-            this.flag = false;
-            this.flag2 = true;
-         }
+   private void updateTrackedTarget(Player target) {
+      if (target == null) {
+         this.clearTrackedTarget();
+      } else if (this.trackedTarget != target) {
+         this.trackedTarget = target;
+         this.targetWasWearingElytra = target.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
+         this.targetWasWearingChestplate = ItemStackTags.isChestArmor(target.getItemBySlot(EquipmentSlot.CHEST));
+      } else if (target.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
+         this.targetWasWearingElytra = true;
+         this.targetWasWearingChestplate = false;
+      } else if (ItemStackTags.isChestArmor(target.getItemBySlot(EquipmentSlot.CHEST))) {
+         this.targetWasWearingElytra = false;
+         this.targetWasWearingChestplate = true;
       }
    }
 
-   private void method417(Player player) {
-      Player playerEntity = this.playerEntity;
-      if (playerEntity != null) {
-         if (!this.method414(player, playerEntity)) {
-            this.method422();
+   private void handleTargetEquipmentChange(Player player) {
+      Player target = this.trackedTarget;
+      if (target != null) {
+         if (!this.isValidArmoredTarget(player, target)) {
+            this.clearTrackedTarget();
          } else {
-            ItemStack itemBySlot = playerEntity.getItemBySlot(EquipmentSlot.CHEST);
-            if (itemBySlot.is(Items.ELYTRA)) {
-               boolean flag = this.flag2;
-               this.flag = true;
-               this.flag2 = false;
-               if (this.reverseSwap.isEnabled() && flag && Util10.method2182(player.getItemBySlot(EquipmentSlot.CHEST))) {
+            ItemStack chestStack = target.getItemBySlot(EquipmentSlot.CHEST);
+            if (chestStack.is(Items.ELYTRA)) {
+               boolean wasWearingChestplate = this.targetWasWearingChestplate;
+               this.targetWasWearingElytra = true;
+               this.targetWasWearingChestplate = false;
+               if (this.reverseSwap.isEnabled() && wasWearingChestplate && ItemStackTags.isChestArmor(player.getItemBySlot(EquipmentSlot.CHEST))) {
                   ElytraHelperModule.INSTANCE.method7454();
-                  this.method419(false);
+                  this.setAirStuckEnabled(false);
                }
-            } else if (!Util10.method2182(itemBySlot)) {
-               this.flag = false;
-               this.flag2 = false;
+            } else if (!ItemStackTags.isChestArmor(chestStack)) {
+               this.targetWasWearingElytra = false;
+               this.targetWasWearingChestplate = false;
             } else {
-               boolean flag = this.flag;
-               this.flag = false;
-               this.flag2 = true;
-               if (flag && player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-                  this.method418();
+               boolean wasWearingElytra = this.targetWasWearingElytra;
+               this.targetWasWearingElytra = false;
+               this.targetWasWearingChestplate = true;
+               if (wasWearingElytra && player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
+                  this.swapToChestplate();
                }
             }
          }
       }
    }
 
-   private void method418() {
+   private void swapToChestplate() {
       ElytraHelperModule.INSTANCE.method7454();
-      this.method419(true);
+      this.setAirStuckEnabled(true);
    }
 
-   private void method419(boolean toggled) {
-      if (this.autoAirStuck.isEnabled() && AirStuckModule.INSTANCE.isEnabled() != toggled) {
-         AirStuckModule.INSTANCE.setToggled(toggled);
+   private void setAirStuckEnabled(boolean enabled) {
+      if (this.autoAirStuck.isEnabled() && AirStuckModule.INSTANCE.isEnabled() != enabled) {
+         AirStuckModule.INSTANCE.setToggled(enabled);
       }
    }
 
-   private double method420(Player player, Player playerEntity) {
-      Vec3 base = playerEntity.getPositionCodec().getBase();
-      double d = player.getX() - base.x;
-      double d2 = player.getZ() - base.z;
-      return d * d + d2 * d2;
+   private double getHorizontalDistanceSquared(Player player, Player target) {
+      Vec3 targetPosition = target.getPositionCodec().getBase();
+      double deltaX = player.getX() - targetPosition.x;
+      double deltaZ = player.getZ() - targetPosition.z;
+      return deltaX * deltaX + deltaZ * deltaZ;
    }
 
-   private double method421() {
-      double d;
-      return (d = this.range.getValue3()) * d;
+   private double getRangeSquared() {
+      double range = this.range.getValue3();
+      return range * range;
    }
 
    private void resetState() {
-      this.method422();
-      this.type = AutoElytraArmorModule.Type.NONE;
+      this.clearTrackedTarget();
+      this.pendingSwap = AutoElytraArmorModule.SwapType.NONE;
    }
 
-   private void method422() {
-      this.playerEntity = null;
-      this.flag = false;
-      this.flag2 = false;
+   private void clearTrackedTarget() {
+      this.trackedTarget = null;
+      this.targetWasWearingElytra = false;
+      this.targetWasWearingChestplate = false;
    }
 
-   private static enum Type {
+   private static enum SwapType {
       NONE,
       CHESTPLATE,
       ELYTRA;

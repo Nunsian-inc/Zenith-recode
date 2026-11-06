@@ -56,8 +56,8 @@ import org.zenith.Rotation;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.WorldRenderEvent;
 import org.zenith.client.modules.impl.misc.FreeCamModule;
@@ -69,7 +69,7 @@ import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.MovementInputUtils;
 import org.zenith.utility.misc.RotationRequest;
-import org.zenith.utility.network.Class33;
+import org.zenith.utility.network.InventoryActionState;
 import org.zenith.utility.network.Island;
 import org.zenith.utility.network.PlacementQueue;
 import org.zenith.utility.network.UseItemUtils;
@@ -148,7 +148,7 @@ public final class AutoTrapModule extends Module {
    private final ArrayDeque<Vec3> arrayDeque = new ArrayDeque<>();
    private final List<AutoTrapModule.Data5> items3 = new ArrayList<>();
    private final PlacementQueue placementQueue = new PlacementQueue();
-   private final Class33 class33 = new Class33();
+   private final InventoryActionState class33 = new InventoryActionState();
    private Player playerEntity;
    private List<BlockPos> items4 = List.of();
    private List<AABB> items5 = List.of();
@@ -183,7 +183,7 @@ public final class AutoTrapModule extends Module {
    }
 
    @EventTarget
-   public void method2428(Event5 event) {
+   public void method2428(PreRotationEvent event) {
       if (!UseItemUtils.method6526() && mc.gameMode != null) {
          int tickCount = mc.player.tickCount;
          if (this.intValue != (-32768 << 16 | 0) && tickCount < this.intValue) {
@@ -197,7 +197,7 @@ public final class AutoTrapModule extends Module {
 
          Rotation rotation = this.rotation;
          if (rotation != null) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                10,
                this
@@ -207,7 +207,7 @@ public final class AutoTrapModule extends Module {
    }
 
    @EventTarget
-   public void method2429(Event9 event) {
+   public void method2429(InteractionInputEvent event) {
       AutoTrapModule.Data2 data2 = this.data2;
       if (data2 != null && mc.player != null && mc.gameMode != null) {
          int tickCount = mc.player.tickCount;
@@ -237,12 +237,12 @@ public final class AutoTrapModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         this.placementQueue.method2815(event.getPacket3());
+      if (event.isIncoming()) {
+         this.placementQueue.method2815(event.getPacket());
          if (this.flag) {
-            if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+            if (event.getPacket() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
                this.queue.add(new AutoTrapModule.Data3(blockUpdatePacket.getPos().immutable(), blockUpdatePacket.getBlockState()));
-            } else if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+            } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
                blocksUpdatePacket.runUpdates((var1x, var2x) -> this.queue.add(new AutoTrapModule.Data3(var1x.immutable(), var2x)));
             }
          }
@@ -253,7 +253,7 @@ public final class AutoTrapModule extends Module {
    public void onMoveInput(MoveInputEvent event) {
       this.class33.onMoveInput(event);
       if (this.rotation != null && mc.player != null) {
-         MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
       }
    }
 
@@ -307,7 +307,7 @@ public final class AutoTrapModule extends Module {
          this.method2472();
          this.items6 = List.of();
       } else {
-         if (this.class33.method5304()) {
+         if (this.class33.tryCompleteInventoryMove()) {
             this.intValue5 = tickCount;
          }
 
@@ -490,8 +490,8 @@ public final class AutoTrapModule extends Module {
          }
 
          for (AutoTrapModule.Type type : types) {
-            if (!this.method2460(type) && this.class33.method5302(var1x -> method2462(type, var1x))) {
-               this.class33.method5303(var1x -> method2462(type, var1x));
+            if (!this.method2460(type) && this.class33.hasMatchingInventoryItem(var1x -> method2462(type, var1x))) {
+               this.class33.requestInventoryMove(var1x -> method2462(type, var1x));
                return;
             }
          }
@@ -715,7 +715,7 @@ public final class AutoTrapModule extends Module {
                                     && blockHitResult.getBlockPos().equals(relative)
                                     && blockHitResult.getDirection() == opposite
                                     && (
-                                          d3 = rotation2.method3131(rotation).method5327()
+                                          d3 = rotation2.wrappedDeltaTo(rotation).length()
                                              + eyePosition.distanceTo(vec) * 2.0
                                              + (direction == Direction.DOWN ? 0 : 3)
                                              + (Math.abs(alpha1 - 0.5) + Math.abs(d2 - 0.5)) * 6.0
@@ -755,7 +755,7 @@ public final class AutoTrapModule extends Module {
                   Rotation rotation = RotationUtils.method6913(vec);
                   BlockHitResult blockHitResult = this.method2453(eyePosition, rotation, blockInteractionRange, Fluid.SOURCE_ONLY);
                   double d6;
-                  if (blockHitResult.getType() == HitResult.Type.BLOCK && blockHitResult.getBlockPos().equals(pos) && (d6 = rotation2.method3131(rotation).method5327()) < d2) {
+                  if (blockHitResult.getType() == HitResult.Type.BLOCK && blockHitResult.getBlockPos().equals(pos) && (d6 = rotation2.wrappedDeltaTo(rotation).length()) < d2) {
                      d2 = d6;
                      data4 = new AutoTrapModule.Data4(rotation);
                   }
@@ -821,7 +821,7 @@ public final class AutoTrapModule extends Module {
    }
 
    private BlockHitResult method2453(Vec3 eyePosition, Rotation rotation2, double blockInteractionRange, Fluid fluid) {
-      Vec3 to = eyePosition.add(rotation2.method3135().scale(blockInteractionRange));
+      Vec3 to = eyePosition.add(rotation2.toDirection().scale(blockInteractionRange));
       return mc.level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, fluid, mc.player));
    }
 

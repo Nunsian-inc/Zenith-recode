@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.zenith.client.events.BackgroundRenderEvent;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.ModuleHookDefinitions;
-import org.zenith.utility.render.Util26;
+import org.zenith.utility.render.FogStateCache;
 
 // 26.3: setupFog returns FogData (its colour is also the world clear colour) and computeFogColor writes into a vector.
 // A custom fog colour is applied only when the fog UBO is written, so the clear colour stays vanilla like in 1.21.11.
@@ -46,7 +46,7 @@ public class MixinBackGroundRenderer {
       boolean flag = fogEnvironment instanceof BlindnessFogEnvironment || fogEnvironment instanceof DarknessFogEnvironment;
       if (flag && ModuleHookDefinitions.class128.active()) {
          String text = fogEnvironment instanceof DarknessFogEnvironment ? "darkness" : "blindness";
-         if (ModuleHookDefinitions.class128.method1645(new ModuleHookDefinitions.Entry3(text)).cancelled) {
+         if (ModuleHookDefinitions.class128.dispatch(new ModuleHookDefinitions.Entry3(text)).cancelled) {
             return false;
          }
       }
@@ -94,7 +94,7 @@ public class MixinBackGroundRenderer {
    )
    private Vector4f zenith$captureFog(Vector4f vec, @Local(argsOnly = true) FogData fogData) {
       Vector4f zenith$fogColorOverride2 = zenith$fogColorOverride != null ? zenith$fogColorOverride : vec;
-      Util26.method6982(zenith$fogColorOverride2, fogData);
+      FogStateCache.captureFog(zenith$fogColorOverride2, fogData);
       return zenith$fogColorOverride2;
    }
 

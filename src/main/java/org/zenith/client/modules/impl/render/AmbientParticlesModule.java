@@ -17,7 +17,7 @@ import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.misc.ColorProvider;
-import org.zenith.utility.misc.Util12;
+import org.zenith.utility.misc.AmbientStrandRenderer;
 import org.zenith.utility.render.Glowboost;
 import org.zenith.utility.render.MatrixStackUtils;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -87,7 +87,7 @@ public final class AmbientParticlesModule extends Module {
          Vec3 position = mc.player.position();
          this.method2393(position);
          this.glowboost.method3232(camera, 1.15F);
-         Util12.method2340(
+         AmbientStrandRenderer.renderStrands(
             this.glowboost,
             position.x,
             position.y + 1.0,
@@ -108,7 +108,7 @@ public final class AmbientParticlesModule extends Module {
    public void method2392(MenuDrawContext customDrawContext, float xo, float yo, float xScale, float previewAlpha) {
       PoseStack matrixStack = MatrixStackUtils.method5467(customDrawContext, xo, yo, xScale);
       this.glowboost.method3233(MatrixStackUtils.method5468(), MatrixStackUtils.method5469(), 1.15F * previewAlpha);
-      Util12.method2340(this.glowboost, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, method2394(), (int)this.strands.getValue3(), 3.0F, 1.0F, this.colorProvider);
+      AmbientStrandRenderer.renderStrands(this.glowboost, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, method2394(), (int)this.strands.getValue3(), 3.0F, 1.0F, this.colorProvider);
       this.glowboost.method3253(matrixStack);
    }
 

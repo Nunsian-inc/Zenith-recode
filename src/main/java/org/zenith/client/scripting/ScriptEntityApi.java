@@ -32,17 +32,17 @@ import org.mozilla.javascript.Scriptable;
 import org.zenith.Zenith;
 
 public final class ScriptEntityApi {
-   private static final float[] CONST_floatValues = new float[]{1.0F};
+   private static final float[] TICK_DELTA = new float[]{1.0F};
 
    private ScriptEntityApi() {
    }
 
    public static void method6573(float tickDelta) {
-      CONST_floatValues[0] = tickDelta;
+      TICK_DELTA[0] = tickDelta;
    }
 
    public static float method6574() {
-      return CONST_floatValues[0];
+      return TICK_DELTA[0];
    }
 
    public static Minecraft method6575() {
@@ -54,103 +54,103 @@ public final class ScriptEntityApi {
          return null;
       } else {
          LivingEntity livingEntity = entity instanceof LivingEntity livingEntity2 ? livingEntity2 : null;
-         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
-         entry2.method6274("id", var1x -> (double)entity.getId());
-         entry2.method6274("name", var1x -> entity.getName().getString());
-         entry2.method6274("displayName", var1x -> entity.getDisplayName() == null ? entity.getName().getString() : entity.getDisplayName().getString());
-         entry2.method6274("type", var1x -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
-         entry2.method6274("uuid", var1x -> entity.getStringUUID());
-         entry2.method6274("x", var1x -> entity.getX());
-         entry2.method6274("y", var1x -> entity.getY());
-         entry2.method6274("z", var1x -> entity.getZ());
-         entry2.method6274("pos", var2x -> ScriptValueUtils.method6270(scope, entity.getX(), entity.getY(), entity.getZ()));
-         entry2.method6274("prevPos", var2x -> ScriptValueUtils.method6270(scope, entity.xo, entity.yo, entity.zo));
-         entry2.method6274(
+         ScriptValueUtils.Entry2 itemData = ScriptValueUtils.method6247(scope);
+         itemData.method6274("id", args -> (double)entity.getId());
+         itemData.method6274("name", args -> entity.getName().getString());
+         itemData.method6274("displayName", args -> entity.getDisplayName() == null ? entity.getName().getString() : entity.getDisplayName().getString());
+         itemData.method6274("type", args -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
+         itemData.method6274("uuid", args -> entity.getStringUUID());
+         itemData.method6274("x", args -> entity.getX());
+         itemData.method6274("y", args -> entity.getY());
+         itemData.method6274("z", args -> entity.getZ());
+         itemData.method6274("pos", args -> ScriptValueUtils.method6270(scope, entity.getX(), entity.getY(), entity.getZ()));
+         itemData.method6274("prevPos", args -> ScriptValueUtils.method6270(scope, entity.xo, entity.yo, entity.zo));
+         itemData.method6274(
             "renderPos",
-            var2x -> {
-               float var3x = ScriptValueUtils.method6252(var2x, 0) ? (float)ScriptValueUtils.method6256(var2x, 0, 1.0) : method6574();
+            args -> {
+               float tickDelta = ScriptValueUtils.method6252(args, 0) ? (float)ScriptValueUtils.method6256(args, 0, 1.0) : method6574();
                return ScriptValueUtils.method6270(
                   scope,
-                  entity.xo + (entity.getX() - entity.xo) * var3x,
-                  entity.yo + (entity.getY() - entity.yo) * var3x,
-                  entity.zo + (entity.getZ() - entity.zo) * var3x
+                  entity.xo + (entity.getX() - entity.xo) * tickDelta,
+                  entity.yo + (entity.getY() - entity.yo) * tickDelta,
+                  entity.zo + (entity.getZ() - entity.zo) * tickDelta
                );
             }
          );
-         entry2.method6274("velocity", var2x -> {
-            Vec3 var3x = entity.getDeltaMovement();
-            return ScriptValueUtils.method6270(scope, var3x.x, var3x.y, var3x.z);
+         itemData.method6274("velocity", args -> {
+            Vec3 velocity = entity.getDeltaMovement();
+            return ScriptValueUtils.method6270(scope, velocity.x, velocity.y, velocity.z);
          });
-         entry2.method6274("yaw", var1x -> (double)entity.getYRot());
-         entry2.method6274("pitch", var1x -> (double)entity.getXRot());
-         entry2.method6274("headYaw", var1x -> (double)entity.getYHeadRot());
-         entry2.method6274("eyeY", var1x -> entity.getEyeY());
-         entry2.method6274("width", var1x -> (double)entity.getBbWidth());
-         entry2.method6274("height", var1x -> (double)entity.getBbHeight());
-         entry2.method6274("box", var2x -> method6577(scope, entity.getBoundingBox()));
-         entry2.method6274("alive", var1x -> entity.isAlive() && !entity.isRemoved());
-         entry2.method6274("isPlayer", var1x -> entity instanceof Player);
-         entry2.method6274("isLiving", var1x -> livingEntity != null);
-         entry2.method6274("isSelf", var1x -> entity == method6575().player);
-         entry2.method6274("isFriend", var1x -> entity instanceof Player && Zenith.getInstance().getFriends().method7626(entity));
-         entry2.method6274("onGround", var1x -> entity.onGround());
-         entry2.method6274("sneaking", var1x -> entity.isShiftKeyDown());
-         entry2.method6274("sprinting", var1x -> entity.isSprinting());
-         entry2.method6274("invisible", var1x -> entity.isInvisible());
-         entry2.method6274("onFire", var1x -> entity.isOnFire());
-         entry2.method6274("inWater", var1x -> entity.isInWater());
-         entry2.method6274("glowing", var1x -> entity.isCurrentlyGlowing());
-         entry2.method6274("fallDistance", var1x -> entity.fallDistance);
-         entry2.method6274("age", var1x -> (double)entity.tickCount);
-         entry2.method6274("distance", var1x -> method6575().player == null ? 0.0 : method6575().player.distanceTo(entity));
-         entry2.method6274(
+         itemData.method6274("yaw", args -> (double)entity.getYRot());
+         itemData.method6274("pitch", args -> (double)entity.getXRot());
+         itemData.method6274("headYaw", args -> (double)entity.getYHeadRot());
+         itemData.method6274("eyeY", args -> entity.getEyeY());
+         itemData.method6274("width", args -> (double)entity.getBbWidth());
+         itemData.method6274("height", args -> (double)entity.getBbHeight());
+         itemData.method6274("box", args -> method6577(scope, entity.getBoundingBox()));
+         itemData.method6274("alive", args -> entity.isAlive() && !entity.isRemoved());
+         itemData.method6274("isPlayer", args -> entity instanceof Player);
+         itemData.method6274("isLiving", args -> livingEntity != null);
+         itemData.method6274("isSelf", args -> entity == method6575().player);
+         itemData.method6274("isFriend", args -> entity instanceof Player && Zenith.getInstance().getFriends().method7626(entity));
+         itemData.method6274("onGround", args -> entity.onGround());
+         itemData.method6274("sneaking", args -> entity.isShiftKeyDown());
+         itemData.method6274("sprinting", args -> entity.isSprinting());
+         itemData.method6274("invisible", args -> entity.isInvisible());
+         itemData.method6274("onFire", args -> entity.isOnFire());
+         itemData.method6274("inWater", args -> entity.isInWater());
+         itemData.method6274("glowing", args -> entity.isCurrentlyGlowing());
+         itemData.method6274("fallDistance", args -> entity.fallDistance);
+         itemData.method6274("age", args -> (double)entity.tickCount);
+         itemData.method6274("distance", args -> method6575().player == null ? 0.0 : method6575().player.distanceTo(entity));
+         itemData.method6274(
             "distanceTo",
-            var1x -> Math.sqrt(
+            args -> Math.sqrt(
                entity.distanceToSqr(
-                  ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)
+                  ScriptValueUtils.method6256(args, 0, 0.0), ScriptValueUtils.method6256(args, 1, 0.0), ScriptValueUtils.method6256(args, 2, 0.0)
                )
             )
          );
-         entry2.method6274("canSee", var1x -> method6575().player != null && method6575().player.hasLineOfSight(entity));
-         entry2.method6274("health", var1x -> livingEntity == null ? 0.0 : livingEntity.getHealth());
-         entry2.method6274("maxHealth", var1x -> livingEntity == null ? 0.0 : livingEntity.getMaxHealth());
-         entry2.method6274("absorption", var1x -> livingEntity == null ? 0.0 : livingEntity.getAbsorptionAmount());
-         entry2.method6274("armor", var1x -> livingEntity == null ? 0.0 : livingEntity.getArmorValue());
-         entry2.method6274("hurtTime", var1x -> livingEntity == null ? 0.0 : livingEntity.hurtTime);
-         entry2.method6274("gliding", var1x -> livingEntity != null && livingEntity.isFallFlying());
-         entry2.method6274("usingItem", var1x -> livingEntity != null && livingEntity.isUsingItem());
-         entry2.method6274("blocking", var1x -> livingEntity != null && livingEntity.isBlocking());
-         entry2.method6274("mainHand", var2x -> livingEntity == null ? method6579(scope, ItemStack.EMPTY) : method6579(scope, livingEntity.getMainHandItem()));
-         entry2.method6274("offHand", var2x -> livingEntity == null ? method6579(scope, ItemStack.EMPTY) : method6579(scope, livingEntity.getOffhandItem()));
-         entry2.method6274("armorItems", var2x -> {
-            ArrayList var3x = new ArrayList();
+         itemData.method6274("canSee", args -> method6575().player != null && method6575().player.hasLineOfSight(entity));
+         itemData.method6274("health", args -> livingEntity == null ? 0.0 : livingEntity.getHealth());
+         itemData.method6274("maxHealth", args -> livingEntity == null ? 0.0 : livingEntity.getMaxHealth());
+         itemData.method6274("absorption", args -> livingEntity == null ? 0.0 : livingEntity.getAbsorptionAmount());
+         itemData.method6274("armor", args -> livingEntity == null ? 0.0 : livingEntity.getArmorValue());
+         itemData.method6274("hurtTime", args -> livingEntity == null ? 0.0 : livingEntity.hurtTime);
+         itemData.method6274("gliding", args -> livingEntity != null && livingEntity.isFallFlying());
+         itemData.method6274("usingItem", args -> livingEntity != null && livingEntity.isUsingItem());
+         itemData.method6274("blocking", args -> livingEntity != null && livingEntity.isBlocking());
+         itemData.method6274("mainHand", args -> livingEntity == null ? method6579(scope, ItemStack.EMPTY) : method6579(scope, livingEntity.getMainHandItem()));
+         itemData.method6274("offHand", args -> livingEntity == null ? method6579(scope, ItemStack.EMPTY) : method6579(scope, livingEntity.getOffhandItem()));
+         itemData.method6274("armorItems", args -> {
+            ArrayList items = new ArrayList();
             if (livingEntity != null) {
                for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-                  var3x.add(method6579(scope, livingEntity.getItemBySlot(slot)));
+                  items.add(method6579(scope, livingEntity.getItemBySlot(slot)));
                }
             }
 
-            return ScriptValueUtils.method6267(scope, var3x);
+            return ScriptValueUtils.method6267(scope, items);
          });
-         entry2.method6274("effects", var2x -> {
-            ArrayList var3x = new ArrayList();
+         itemData.method6274("effects", args -> {
+            ArrayList effects = new ArrayList();
             if (livingEntity != null) {
                for (MobEffectInstance activeEffect : livingEntity.getActiveEffects()) {
-                  var3x.add(method6578(scope, activeEffect));
+                  effects.add(method6578(scope, activeEffect));
                }
             }
 
-            return ScriptValueUtils.method6267(scope, var3x);
+            return ScriptValueUtils.method6267(scope, effects);
          });
-         entry2.method6274("ping", var1x -> {
+         itemData.method6274("ping", args -> {
             if (entity instanceof Player && method6575().getConnection() != null) {
-               PlayerInfo var2x = method6575().getConnection().getPlayerInfo(entity.getUUID());
-               return var2x == null ? 0.0 : var2x.getLatency();
+               PlayerInfo playerInfo = method6575().getConnection().getPlayerInfo(entity.getUUID());
+               return playerInfo == null ? 0.0 : playerInfo.getLatency();
             } else {
                return 0.0;
             }
          });
-         return entry2.getScriptableObject();
+         return itemData.getScriptableObject();
       }
    }
 
@@ -178,47 +178,47 @@ public final class ScriptEntityApi {
          .getScriptableObject();
    }
 
-   public static Object method6579(Scriptable scope, ItemStack mainHandItem) {
-      ItemStack stack = mainHandItem == null ? ItemStack.EMPTY : mainHandItem;
-      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
-      String string = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-      entry2.method6277("empty", stack.isEmpty());
-      entry2.method6277("id", string);
-      entry2.method6277("count", (double)stack.getCount());
-      entry2.method6277("name", stack.isEmpty() ? "" : stack.getHoverName().getString());
-      entry2.method6274("is", var1x -> matches(string, ScriptValueUtils.method6254(var1x, 0, "")));
-      entry2.method6274("details", var2x -> ScriptWorldApi.method4818(scope, stack));
-      entry2.method6274("toString", var1x -> string);
+   public static Object method6579(Scriptable scope, ItemStack item) {
+      ItemStack stack = item == null ? ItemStack.EMPTY : item;
+      ScriptValueUtils.Entry2 itemData = ScriptValueUtils.method6247(scope);
+      String registryId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+      itemData.method6277("empty", stack.isEmpty());
+      itemData.method6277("id", registryId);
+      itemData.method6277("count", (double)stack.getCount());
+      itemData.method6277("name", stack.isEmpty() ? "" : stack.getHoverName().getString());
+      itemData.method6274("is", args -> matches(registryId, ScriptValueUtils.method6254(args, 0, "")));
+      itemData.method6274("details", args -> ScriptWorldApi.method4818(scope, stack));
+      itemData.method6274("toString", args -> registryId);
       if (stack.isEmpty()) {
-         return entry2.getScriptableObject();
+         return itemData.getScriptableObject();
       } else {
-         entry2.method6277("maxCount", (double)stack.getMaxStackSize());
-         entry2.method6277("damage", (double)stack.getDamageValue());
-         entry2.method6277("maxDamage", (double)stack.getMaxDamage());
-         entry2.method6277("durability", stack.getMaxDamage() <= 0 ? 1.0 : 1.0 - (double)stack.getDamageValue() / stack.getMaxDamage());
-         entry2.method6277("damageable", stack.isDamageableItem());
-         entry2.method6277("stackable", stack.isStackable());
-         entry2.method6277("food", stack.get(DataComponents.FOOD) != null);
-         entry2.method6277("block", stack.getItem() instanceof BlockItem);
-         entry2.method6277("customName", stack.get(DataComponents.CUSTOM_NAME) != null);
-         entry2.method6277("cooldown", method6575().player != null && method6575().player.getCooldowns().isOnCooldown(stack));
-         ArrayList arrayList = new ArrayList();
+         itemData.method6277("maxCount", (double)stack.getMaxStackSize());
+         itemData.method6277("damage", (double)stack.getDamageValue());
+         itemData.method6277("maxDamage", (double)stack.getMaxDamage());
+         itemData.method6277("durability", stack.getMaxDamage() <= 0 ? 1.0 : 1.0 - (double)stack.getDamageValue() / stack.getMaxDamage());
+         itemData.method6277("damageable", stack.isDamageableItem());
+         itemData.method6277("stackable", stack.isStackable());
+         itemData.method6277("food", stack.get(DataComponents.FOOD) != null);
+         itemData.method6277("block", stack.getItem() instanceof BlockItem);
+         itemData.method6277("customName", stack.get(DataComponents.CUSTOM_NAME) != null);
+         itemData.method6277("cooldown", method6575().player != null && method6575().player.getCooldowns().isOnCooldown(stack));
+         ArrayList lore = new ArrayList();
          ItemLore itemLore = stack.get(DataComponents.LORE);
          if (itemLore != null) {
             for (Component line : itemLore.lines()) {
-               if (arrayList.size() >= 64) {
+               if (lore.size() >= 64) {
                   break;
                }
 
-               arrayList.add(line.getString());
+               lore.add(line.getString());
             }
          }
 
-         entry2.method6277("lore", ScriptValueUtils.method6267(scope, arrayList));
-         ArrayList arrayList2 = new ArrayList();
+         itemData.method6277("lore", ScriptValueUtils.method6267(scope, lore));
+         ArrayList enchantments = new ArrayList();
 
          for (Entry entry : stack.getEnchantments().entrySet()) {
-            arrayList2.add(
+            enchantments.add(
                ScriptValueUtils.method6247(scope)
                   .method6277("id", ((Holder)entry.getKey()).getRegisteredName())
                   .method6277("level", (double)entry.getIntValue())
@@ -226,38 +226,38 @@ public final class ScriptEntityApi {
             );
          }
 
-         entry2.method6277("enchants", ScriptValueUtils.method6267(scope, arrayList2));
-         entry2.method6274("enchant", var1x -> {
-            String var2x = ScriptValueUtils.method6254(var1x, 0, "");
+         itemData.method6277("enchants", ScriptValueUtils.method6267(scope, enchantments));
+         itemData.method6274("enchant", args -> {
+            String enchantmentId = ScriptValueUtils.method6254(args, 0, "");
 
-            for (Entry var4x : stack.getEnchantments().entrySet()) {
-               if (matches(((Holder)var4x.getKey()).getRegisteredName(), var2x)) {
-                  return (double)var4x.getIntValue();
+            for (Entry enchantment : stack.getEnchantments().entrySet()) {
+               if (matches(((Holder)enchantment.getKey()).getRegisteredName(), enchantmentId)) {
+                  return (double)enchantment.getIntValue();
                }
             }
 
             return 0.0;
          });
-         return entry2.getScriptableObject();
+         return itemData.getScriptableObject();
       }
    }
 
-   public static boolean matches(String string, String str) {
-      if (str != null && !str.isEmpty()) {
-         String lowerCase = str.toLowerCase(Locale.ROOT);
-         return string.equals(lowerCase) || string.equals("minecraft:" + lowerCase);
+   public static boolean matches(String registryId, String query) {
+      if (query != null && !query.isEmpty()) {
+         String normalizedQuery = query.toLowerCase(Locale.ROOT);
+         return registryId.equals(normalizedQuery) || registryId.equals("minecraft:" + normalizedQuery);
       } else {
          return false;
       }
    }
 
-   public static Object method6580(Scriptable scope, BlockPos containing) {
+   public static Object method6580(Scriptable scope, BlockPos position) {
       if (method6575().level == null) {
-         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope)
+         ScriptValueUtils.Entry2 blockData = ScriptValueUtils.method6247(scope)
             .method6277("id", "minecraft:air")
-            .method6277("x", (double)containing.getX())
-            .method6277("y", (double)containing.getY())
-            .method6277("z", (double)containing.getZ())
+            .method6277("x", (double)position.getX())
+            .method6277("y", (double)position.getY())
+            .method6277("z", (double)position.getZ())
             .method6277("air", true)
             .method6277("liquid", false)
             .method6277("solid", false)
@@ -266,57 +266,57 @@ public final class ScriptEntityApi {
             .method6277("hardness", 0.0)
             .method6277("luminance", 0.0)
             .method6277("properties", ScriptValueUtils.method6247(scope).getScriptableObject());
-         entry2.method6274("is", var0x -> matches("minecraft:air", ScriptValueUtils.method6254(var0x, 0, "")));
-         entry2.method6274("toString", var0x -> "minecraft:air");
-         entry2.method6274("valueOf", var0x -> "minecraft:air");
-         return entry2.getScriptableObject();
+         blockData.method6274("is", args -> matches("minecraft:air", ScriptValueUtils.method6254(args, 0, "")));
+         blockData.method6274("toString", args -> "minecraft:air");
+         blockData.method6274("valueOf", args -> "minecraft:air");
+         return blockData.getScriptableObject();
       } else {
-         BlockState blockState = method6575().level.getBlockState(containing);
-         String string = BuiltInRegistries.BLOCK.getKey(blockState.getBlock()).toString();
-         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope)
-            .method6277("id", string)
-            .method6277("x", (double)containing.getX())
-            .method6277("y", (double)containing.getY())
-            .method6277("z", (double)containing.getZ())
+         BlockState blockState = method6575().level.getBlockState(position);
+         String registryId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock()).toString();
+         ScriptValueUtils.Entry2 blockData = ScriptValueUtils.method6247(scope)
+            .method6277("id", registryId)
+            .method6277("x", (double)position.getX())
+            .method6277("y", (double)position.getY())
+            .method6277("z", (double)position.getZ())
             .method6277("air", blockState.isAir())
             .method6277("liquid", !blockState.getFluidState().isEmpty())
-            .method6277("solid", blockState.isRedstoneConductor(method6575().level, containing))
+            .method6277("solid", blockState.isRedstoneConductor(method6575().level, position))
             .method6277("replaceable", blockState.canBeReplaced())
-            .method6277("full", blockState.isCollisionShapeFullBlock(method6575().level, containing))
-            .method6277("hardness", (double)blockState.getDestroySpeed(method6575().level, containing))
+            .method6277("full", blockState.isCollisionShapeFullBlock(method6575().level, position))
+            .method6277("hardness", (double)blockState.getDestroySpeed(method6575().level, position))
             .method6277("luminance", (double)blockState.getLightEmission());
-         entry2.method6274("is", var1x -> matches(string, ScriptValueUtils.method6254(var1x, 0, "")));
-         entry2.method6274("toString", var1x -> string);
-         entry2.method6274("valueOf", var1x -> string);
-         ScriptValueUtils.Entry2 entry22 = ScriptValueUtils.method6247(scope);
-         blockState.getValues().forEach(var1x -> entry22.method6277(var1x.property().getName(), var1x.valueName().toLowerCase(Locale.ROOT)));
-         entry2.method6277("properties", entry22.getScriptableObject());
-         return entry2.getScriptableObject();
+         blockData.method6274("is", args -> matches(registryId, ScriptValueUtils.method6254(args, 0, "")));
+         blockData.method6274("toString", args -> registryId);
+         blockData.method6274("valueOf", args -> registryId);
+         ScriptValueUtils.Entry2 properties = ScriptValueUtils.method6247(scope);
+         blockState.getValues().forEach(property -> properties.method6277(property.property().getName(), property.valueName().toLowerCase(Locale.ROOT)));
+         blockData.method6277("properties", properties.getScriptableObject());
+         return blockData.getScriptableObject();
       }
    }
 
    public static Object method6581(Scriptable scope, HitResult hitResult) {
       if (hitResult != null && hitResult.getType() != Type.MISS) {
          Vec3 location = hitResult.getLocation();
-         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope).method6277("pos", ScriptValueUtils.method6270(scope, location.x, location.y, location.z));
+         ScriptValueUtils.Entry2 blockData = ScriptValueUtils.method6247(scope).method6277("pos", ScriptValueUtils.method6270(scope, location.x, location.y, location.z));
          if (hitResult instanceof BlockHitResult blockHitResult) {
-            entry2.method6277("type", "block");
-            entry2.method6277("side", blockHitResult.getDirection().getSerializedName());
-            entry2.method6277("block", method6580(scope, blockHitResult.getBlockPos()));
+            blockData.method6277("type", "block");
+            blockData.method6277("side", blockHitResult.getDirection().getSerializedName());
+            blockData.method6277("block", method6580(scope, blockHitResult.getBlockPos()));
          } else if (hitResult instanceof EntityHitResult entityHitResult) {
-            entry2.method6277("type", "entity");
-            entry2.method6277("entity", method6576(scope, entityHitResult.getEntity()));
+            blockData.method6277("type", "entity");
+            blockData.method6277("entity", method6576(scope, entityHitResult.getEntity()));
          }
 
-         return entry2.getScriptableObject();
+         return blockData.getScriptableObject();
       } else {
          return ScriptValueUtils.method6247(scope).method6277("type", "miss").getScriptableObject();
       }
    }
 
-   public static HitResult method6582(Vec3 eyePosition, Vec3 to, boolean flag) {
+   public static HitResult method6582(Vec3 eyePosition, Vec3 to, boolean includeFluids) {
       return method6575().level != null && method6575().player != null
-         ? method6575().level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, flag ? Fluid.ANY : Fluid.NONE, method6575().player))
+         ? method6575().level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, includeFluids ? Fluid.ANY : Fluid.NONE, method6575().player))
          : null;
    }
 }

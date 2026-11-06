@@ -23,8 +23,8 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.modules.impl.combat.AuraModule;
 import org.zenith.client.modules.impl.combat.AutoTotemModule;
@@ -72,11 +72,11 @@ public final class AutoWebModule extends Module {
    }
 
    @EventTarget
-   public void method278(Event9 event) {
+   public void method278(InteractionInputEvent event) {
       if (mc.player != null && mc.level != null) {
          if (!AutoTrapModule.INSTANCE.isEnabled() || !AutoTrapModule.INSTANCE.method2427()) {
             if (!event.isCancelled() && mc.player.tickCount % 2 == 0) {
-               BlockHitResult rotate = this.handler != null ? this.handler.isRotate(Zenith.getInstance().getRotationManager().method7844()) : null;
+               BlockHitResult rotate = this.handler != null ? this.handler.isRotate(Zenith.getInstance().getRotationManager().getEffectiveRotation()) : null;
                if (rotate != null && mc.player.getItemInHand(this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND).getItem() == Items.COBWEB) {
                   UseItemUtils.method6514(rotate, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
                   GlowUtil.method2230(new AABB(rotate.getBlockPos()), -1, 1.0F);
@@ -89,14 +89,14 @@ public final class AutoWebModule extends Module {
    }
 
    @EventTarget
-   public void method279(Event5 event) {
+   public void method279(PreRotationEvent event) {
       if (!AutoTrapModule.INSTANCE.isEnabled() || !AutoTrapModule.INSTANCE.method2427()) {
          this.playerEntity = this.method284();
          if (this.playerEntity != null) {
             this.method280();
             Rotation rotation = this.rotation;
             if (rotation != null) {
-               rotationManager.method7849(
+               rotationManager.requestRotation(
                   new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                   5,
                   this
@@ -254,7 +254,7 @@ public final class AutoWebModule extends Module {
    @EventTarget
    private void method283(MoveInputEvent event) {
       if (this.handler != null) {
-         MovementInputUtils.method7426(event, zenith.getRotationManager().method7844().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.method7426(event, zenith.getRotationManager().getEffectiveRotation().getFloatValue(), mc.player.getYRot());
       }
    }
 

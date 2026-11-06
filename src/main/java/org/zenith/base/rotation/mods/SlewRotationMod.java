@@ -6,10 +6,10 @@ import net.minecraft.world.phys.Vec3;
 import org.zenith.Rotation;
 import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.modules.impl.combat.AuraModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 import org.zenith.utility.misc.Vec2f;
 
-public final class SlewRotationMod extends Util22 {
+public final class SlewRotationMod extends RotationContext {
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static final double CONST_doubleValue = 0.15190947;
    private static final double CONST_doubleValue2 = 0.3;
@@ -109,7 +109,7 @@ public final class SlewRotationMod extends Util22 {
    private static final double CONST_doubleValue16 = 1184.9162530815229;
 
    public Rotation method3636() {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
       if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
          int tickCount = mc.player.tickCount;
@@ -121,7 +121,7 @@ public final class SlewRotationMod extends Util22 {
             }
 
             this.intValue2 = tickCount;
-            float f = Rotation.method3138();
+            float f = Rotation.sensitivityStep();
             if (Float.isFinite(f) && !(f <= 0.0F)) {
                Vec3 eyePosition = mc.player.getEyePosition();
                Vec3 center = livingEntity.getBoundingBox().getCenter();
@@ -137,14 +137,14 @@ public final class SlewRotationMod extends Util22 {
                }
 
                Rotation rotation2 = RotationUtils.method6912(vec.subtract(eyePosition));
-               Vec2f vec2f = rotation.method3131(rotation2);
+               Vec2f vec2f = rotation.wrappedDeltaTo(rotation2);
                double sign = vec2f.getFloatValue() / 0.15190947;
                double d = vec2f.getFloatValue2() / 0.15190947;
                double d2 = 0.0;
                double d3 = 0.0;
                if (this.vec3d != null) {
                   Rotation rotation3 = RotationUtils.method6912(vec.subtract(this.vec3d));
-                  Vec2f vec2f2 = rotation3.method3131(rotation2);
+                  Vec2f vec2f2 = rotation3.wrappedDeltaTo(rotation2);
                   d2 = vec2f2.getFloatValue() / 0.15190947;
                   d3 = vec2f2.getFloatValue2() / 0.15190947;
                }
@@ -183,7 +183,7 @@ public final class SlewRotationMod extends Util22 {
                      return rotation;
                   } else {
                      doubleValue = 3.0;
-                     Rotation rotation3 = rotation.method3140(n * f, n2 * f);
+                     Rotation rotation3 = rotation.add(n * f, n2 * f);
                      System.out.println("yawCounts=" + d7 + " yawErr=" + sign + " yawDrift=" + this.doubleValue6 + " lead=" + doubleValue);
                      this.method3641(tickCount, rotation3);
                      return rotation3;

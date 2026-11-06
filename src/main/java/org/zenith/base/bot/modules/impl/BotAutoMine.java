@@ -46,7 +46,7 @@ import org.zenith.client.events.BotUpdateEvent;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.utility.game.MineTargetFinder;
 import org.zenith.utility.game.Pathfinder;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 import org.zenith.utility.misc.ViaCompat;
 import org.zenith.utility.render.MathUtils;
 
@@ -126,7 +126,7 @@ public class BotAutoMine extends BotModule {
             this.onDrop();
             this.onBreak(blockMines);
             if (!this.onMove(blockMines)) {
-               this.setRotation(this.currentRotation.method3140((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0)));
+               this.setRotation(this.currentRotation.add((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0)));
             }
          }
 
@@ -152,10 +152,10 @@ public class BotAutoMine extends BotModule {
          } else {
             Vec3 eyePosition = this.player.getEyePosition(1.0F);
             Vec3 vec = Pathfinder.method761(this.nextRouteBlock);
-            Rotation rotation = Rotation.method3128(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
+            Rotation rotation = Rotation.lookingAt(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
             Rotation currentRotation = this.currentRotation
-               .method3141(this.currentRotation.method3131(rotation))
-               .method3140((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0));
+               .add(this.currentRotation.wrappedDeltaTo(rotation))
+               .add((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0));
             this.setRotation(currentRotation);
             return true;
          }
@@ -259,7 +259,7 @@ public class BotAutoMine extends BotModule {
 
    private void onBreak(List<BotAutoMine.BlockMine> blockMines) {
       ItemStack mainHandItem = this.player.getMainHandItem();
-      if (Util10.method2177(mainHandItem) && mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() >= 30) {
+      if (ItemStackTags.isPickaxe(mainHandItem) && mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() >= 30) {
          ArrayList arrayList = new ArrayList();
 
          for (BotAutoMine.BlockMine blockMine : blockMines) {
@@ -309,7 +309,7 @@ public class BotAutoMine extends BotModule {
 
       for (BotAutoMine.BreakCandidate breakCandidate : breakCandidates) {
          BlockPos pos = breakCandidate.pos();
-         Rotation rotation = this.currentRotation.method3141(this.currentRotation.method3131(Rotation.method3128(net.minecraft.world.phys.Vec3.atCenterOf(pos), eyePosition)));
+         Rotation rotation = this.currentRotation.add(this.currentRotation.wrappedDeltaTo(Rotation.lookingAt(net.minecraft.world.phys.Vec3.atCenterOf(pos), eyePosition)));
          BlockHitResult rayTracePos = BotRaytracing.rayTracePos(
             this.world, this.player, eyePosition, rotation, blockInteractionRange, var1x -> (var1x != null && pos.equals(var1x.getBlockPos()))
          );
@@ -557,7 +557,7 @@ public class BotAutoMine extends BotModule {
    public void onRepair() {
       if (this.player.tickCount % 20 == 0) {
          ItemStack mainHandItem = this.player.getMainHandItem();
-         if (Util10.method2177(mainHandItem) && mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() < 30) {
+         if (ItemStackTags.isPickaxe(mainHandItem) && mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() < 30) {
             if (this.player.getItemInHand(InteractionHand.OFF_HAND).is(Items.EXPERIENCE_BOTTLE)) {
                this.useItem(InteractionHand.OFF_HAND);
             } else {

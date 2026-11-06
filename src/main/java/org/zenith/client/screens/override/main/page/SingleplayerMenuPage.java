@@ -172,7 +172,7 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
       float content = this.rows.isEmpty() ? 0.0F : this.rows.size() * ROW_HEIGHT + (this.rows.size() - 1) * ROW_GAP;
       this.scroll.update(listArea.height(), content);
       this.viewport = new BoundsData(listArea.getFloatValue(), listArea.getFloatValue2(), width, listArea.height());
-      float f = this.entrance.method2808(1.0F);
+      float f = this.entrance.animateTo(1.0F);
       graphics.enableScissor(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.getFloatValue() + width, listArea.getFloatValue2() + listArea.height());
       float y = listArea.getFloatValue2() - this.scroll.offset();
       int n = 0;

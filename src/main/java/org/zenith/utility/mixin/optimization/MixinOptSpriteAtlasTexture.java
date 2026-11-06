@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.zenith.utility.misc.Util20;
+import org.zenith.utility.misc.BlockEntityOptimizationState;
 
 @Mixin({TextureAtlas.class})
 public class MixinOptSpriteAtlasTexture {
@@ -15,7 +15,7 @@ public class MixinOptSpriteAtlasTexture {
       at = {@At("RETURN")}
    )
    private void zenith$onCreate(Preparations preparations, CallbackInfo callbackInfo) {
-      Util20.method5135();
+      BlockEntityOptimizationState.invalidateSpriteAtlas();
    }
 
    @Inject(
@@ -23,6 +23,6 @@ public class MixinOptSpriteAtlasTexture {
       at = {@At("RETURN")}
    )
    private void zenith$onClear(CallbackInfo callbackInfo) {
-      Util20.method5135();
+      BlockEntityOptimizationState.invalidateSpriteAtlas();
    }
 }

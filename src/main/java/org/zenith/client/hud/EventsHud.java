@@ -44,10 +44,10 @@ public class EventsHud extends Interface {
 
       this.items.values().removeIf(EventsHud.Entry::method7017);
       if (this.items.isEmpty()) {
-         this.animation2.method2808(0.0F);
+         this.animation2.animateTo(0.0F);
       } else {
          EventsHud.Entry entry = this.items.values().iterator().next();
-         this.animation2.method2808(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+         this.animation2.animateTo(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
       }
 
       float floatValue = this.floatValue;
@@ -57,10 +57,10 @@ public class EventsHud extends Interface {
             + this.items.values().stream().mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue()).sum()
       );
       float width = (float)this.items.values().stream().mapToDouble(EventsHud.Entry::method7014).max().orElse(0.0);
-      width = this.animation.method2808(Math.max(HudListLayout.method7638("L", "Events"), width));
+      width = this.animation.animateTo(Math.max(HudListLayout.method7638("L", "Events"), width));
       this.width = width;
       this.height = height;
-      this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
+      this.animation3.updateVisibility(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
       float f = InterfaceModule.method6801();
       customDrawContext.pushMatrix();
       customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
@@ -119,7 +119,7 @@ public class EventsHud extends Interface {
       }
 
       public void method7016(CustomDrawContext customDrawContext, float floatValue, float y1, float width, boolean contains) {
-         this.animation.method2808(contains ? 1.0F : 0.0F);
+         this.animation.animateTo(contains ? 1.0F : 0.0F);
          customDrawContext.pushMatrix();
          customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
          customDrawContext.pose().scale(this.animation.getValue(), this.animation.getValue());

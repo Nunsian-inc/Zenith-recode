@@ -14,7 +14,7 @@ import org.zenith.client.modules.impl.render.WeatherModule;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.FlakeUtil;
 import org.zenith.utility.misc.FrameTimer;
-import org.zenith.utility.misc.Util15;
+import org.zenith.utility.misc.CameraFov;
 import org.zenith.utility.misc.WeatherDepthTexture;
 import org.zenith.utility.misc.WeatherFlakeChannel;
 import org.zenith.utility.misc.WeatherUniforms;
@@ -54,7 +54,7 @@ public final class WetnessPass {
                return false;
             } else {
                float f2 = width / Math.max((float)height, 1.0F);
-               float f3 = Util15.method2704();
+               float f3 = CameraFov.getTanHalfFov();
                float f4 = (float)Math.toRadians(mainCamera.xRot());
                float f5 = (float)(Math.PI - Math.toRadians(mainCamera.yRot()));
                float depthFar2 = minecraft.gameRenderer.gameRenderState().levelRenderState.cameraRenderState.depthFar;
@@ -89,12 +89,12 @@ public final class WetnessPass {
                method3125(entry2, "FadeEnd", depthFar3);
                method3125(entry2, "RainAmount", weatherFlakeChannel.intValue2 == 1 ? weatherFlakeChannel.floatValue18 : 0.0F);
                float[] floats = FrameTimer.method756();
-               Vector4f vector4f = Util26.getVector4f();
+               Vector4f vector4f = FogStateCache.getFogColor();
                method3125(entry2, "ZenithSaturation", FrameTimer.method755());
-               method3125(entry2, "FogEnvironmentalStart", Util26.getFloatValue());
-               method3125(entry2, "FogEnvironmentalEnd", Util26.getFloatValue2());
-               method3125(entry2, "FogRenderDistanceStart", Util26.getFloatValue3());
-               method3125(entry2, "FogRenderDistanceEnd", Util26.getFloatValue4());
+               method3125(entry2, "FogEnvironmentalStart", FogStateCache.getEnvironmentalStart());
+               method3125(entry2, "FogEnvironmentalEnd", FogStateCache.getEnvironmentalEnd());
+               method3125(entry2, "FogRenderDistanceStart", FogStateCache.getRenderDistanceStart());
+               method3125(entry2, "FogRenderDistanceEnd", FogStateCache.getRenderDistanceEnd());
                entry2.method2831("ZenithGrade", floats[0], floats[1], floats[2], floats[3]);
                entry2.method2831("FogColor", vector4f.x, vector4f.y, vector4f.z, vector4f.w);
                PostEffectManager.method2819(postChain, identifier, entry2);

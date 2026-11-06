@@ -22,7 +22,7 @@ import org.zenith.Rotation;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.modules.impl.render.PredictionsModule;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.game.PlayerSimulation;
@@ -46,7 +46,7 @@ public final class TridentAimbotModule extends Module {
    );
 
    @EventTarget
-   public void method2788(Event5 event) {
+   public void method2788(PreRotationEvent event) {
       if (mc.player.isUsingItem() && mc.player.getUseItem().getItem() == Items.TRIDENT) {
          Rotation rotation = this.method2789();
          if (rotation == null) {
@@ -54,7 +54,7 @@ public final class TridentAimbotModule extends Module {
          }
 
          Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
-         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
+         Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
       }
    }
 
@@ -70,7 +70,7 @@ public final class TridentAimbotModule extends Module {
             return null;
          } else {
             AABB aabb = this.method2797(livingEntity);
-            Rotation rotation2 = Rotation.method3128(this.method2793(aabb), eyePosition);
+            Rotation rotation2 = Rotation.lookingAt(this.method2793(aabb), eyePosition);
             return this.method2798(useItem, playerSimulation, rotation2, aabb);
          }
       } catch (Exception e) {
@@ -126,7 +126,7 @@ public final class TridentAimbotModule extends Module {
 
    private List<HitResult> method2794(ItemStack useItem, Rotation rotation, PlayerSimulation playerSimulation) {
       HitResult hitResult = PredictionsModule.INSTANCE
-         .method2918(this.method2795(playerSimulation), playerSimulation.vec3d2, rotation.method3135(), new ThrownTrident(mc.level, mc.player, useItem), this.method2804());
+         .method2918(this.method2795(playerSimulation), playerSimulation.vec3d2, rotation.toDirection(), new ThrownTrident(mc.level, mc.player, useItem), this.method2804());
       return hitResult == null ? List.of() : List.of(hitResult);
    }
 
@@ -189,12 +189,12 @@ public final class TridentAimbotModule extends Module {
       for (int i = 1; i <= 50; i++) {
          Rotation rotation = new Rotation(yRot + i, xRot);
          if (this.method2802(rotation, vec, vec3d2, aabb, thrownTrident, d)) {
-            return rotation.method3140(3.0F, 0.0F);
+            return rotation.add(3.0F, 0.0F);
          }
 
          Rotation rotation2 = new Rotation(yRot - i, xRot);
          if (this.method2802(rotation2, vec, vec3d2, aabb, thrownTrident, d)) {
-            return rotation2.method3140(-3.0F, 0.0F);
+            return rotation2.add(-3.0F, 0.0F);
          }
       }
 
@@ -203,7 +203,7 @@ public final class TridentAimbotModule extends Module {
 
    private boolean method2801(int yRot, int xRot, Vec3 vec, Vec3 vec3d2, AABB aabb, ThrownTrident thrownTrident, double d) {
       Rotation rotation = new Rotation(yRot, xRot);
-      Vec3 vec2 = rotation.method3135();
+      Vec3 vec2 = rotation.toDirection();
       double length = vec2.length();
       if (length <= 1.0E-6) {
          return false;
@@ -254,7 +254,7 @@ public final class TridentAimbotModule extends Module {
    }
 
    private boolean method2802(Rotation rotation, Vec3 vec, Vec3 vec3d2, AABB aabb, ThrownTrident thrownTrident, double d) {
-      Vec3 vec2 = rotation.method3135();
+      Vec3 vec2 = rotation.toDirection();
       double length = vec2.length();
       if (length <= 1.0E-6) {
          return false;

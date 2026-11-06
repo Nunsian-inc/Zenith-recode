@@ -17,7 +17,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -65,8 +65,8 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
-      if (enum2 != Enum3.LEFT) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, MouseButton enum2) {
+      if (enum2 != MouseButton.LEFT) {
          return false;
       } else if (this.bounds != null && this.valueBox != null && this.bounds.method8092(anchorMouseX, lastClickY, 1.5F)) {
          if (!this.editing) {
@@ -98,7 +98,7 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
    }
 
    @Override
-   public void onMouseReleased(double x, double y, Enum3 enum2) {
+   public void onMouseReleased(double x, double y, MouseButton enum2) {
       this.selected = false;
       if (this.editing) {
          this.updateInputPreview();
@@ -170,7 +170,7 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
             this.applayValue = this.setting.getValue3();
          }
 
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
@@ -182,14 +182,14 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
          float applayValue = this.editing ? this.applayValue : this.setting.getValue3();
          float f;
          if (this.selected) {
-            this.numberAnimation.method2809(applayValue);
+            this.numberAnimation.snapTo(applayValue);
             f = applayValue;
          } else {
-            f = this.numberAnimation.method2808(applayValue);
+            f = this.numberAnimation.animateTo(applayValue);
          }
 
-         this.editAnimation.method2807(this.editing);
-         this.commitFlash.method2808(0.0F);
+         this.editAnimation.updateVisibility(this.editing);
+         this.commitFlash.animateTo(0.0F);
          String text = this.editing ? this.valueBox.getText() : this.formatValue(this.selected ? applayValue : f);
          if (!this.editing) {
             this.valueBox.setText(text);
@@ -202,16 +202,16 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
          float f4 = Math.min(f3 = Math.max(12.0F, maxWidth - GuiStyle.PADDING.intValue() - 12.0F), GuiStyle.PADDING.intValue() + f2 + width + 1.0F);
          float floatValue2 = Math.min(f3, GuiStyle.PADDING.intValue() + Math.max(this.editing ? 8.0F : 4.0F, font.width(text)) + width + 1.0F);
          if (this.boxWidthAnimation.getValue() < 0.0F) {
-            this.boxWidthAnimation.method2809(floatValue2);
+            this.boxWidthAnimation.snapTo(floatValue2);
          }
 
-         float width2 = this.boxWidthAnimation.method2808(floatValue2);
+         float width2 = this.boxWidthAnimation.animateTo(floatValue2);
          float height = 9.0F;
          float f5 = floatValue + this.width;
          float shakeOffset = this.shakeOffset();
          this.bounds = new BoundsData(f5 - width2, centeredTextY + (this.getHeight() - height) / 2.0F, width2, height);
          boolean flag = this.bounds.method8092(x, y, 1.5F);
-         this.focusAnimation.method2807(this.editing || flag);
+         this.focusAnimation.updateVisibility(this.editing || flag);
          float f6 = this.focusAnimation.getValue();
          float hover = this.editAnimation.getValue();
          float hover2 = this.commitFlash.getValue();
@@ -271,8 +271,8 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
          float animationPosY = centeredTextY + (this.getHeight() - height2) / 2.0F;
          this.selectedBounds = new BoundsData(floatValue5, animationPosY, width4, height2);
          this.updateSlider(x);
-         this.hoverAnimation.method2807(this.selected || this.selectedBounds.method8092(x, y, 3.0F));
-         this.dragAnimation.method2807(this.selected);
+         this.hoverAnimation.updateVisibility(this.selected || this.selectedBounds.method8092(x, y, 3.0F));
+         this.dragAnimation.updateVisibility(this.selected);
          float f9 = this.hoverAnimation.getValue();
          float f10 = this.dragAnimation.getValue();
          float progress = this.getProgress(this.selected ? this.applayValue : f);
@@ -356,7 +356,7 @@ public class GuiNumberSetting extends GuiSetting<SliderSetting> {
             Zenith.getInstance().getClientSounds().method1571(this.getProgress(normalizeValue));
          }
 
-         this.commitFlash.method2809(1.0F);
+         this.commitFlash.snapTo(1.0F);
          this.finishEditing();
       } else {
          if (text != null && !text.isBlank()) {

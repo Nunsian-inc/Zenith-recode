@@ -57,27 +57,27 @@ public class ZenithInitializer implements ClientModInitializer {
 
    private static void ensureBaritoneSettingsExist() {
       try {
-         Path path = Minecraft.getInstance().gameDirectory.toPath().resolve("baritone").resolve("settings.txt");
-         if (Files.notExists(path)) {
-            Files.createDirectories(path.getParent());
-            Files.createFile(path);
+         Path settingsPath = Minecraft.getInstance().gameDirectory.toPath().resolve("baritone").resolve("settings.txt");
+         if (Files.notExists(settingsPath)) {
+            Files.createDirectories(settingsPath.getParent());
+            Files.createFile(settingsPath);
          }
 
-         ensureSettingPresent(path);
-      } catch (IOException e) {
+         ensureChunkCachingDisabledSettingPresent(settingsPath);
+      } catch (IOException ignored) {
       }
    }
 
-   private static void ensureSettingPresent(Path path) throws IOException {
-      List<String> allLines = Files.readAllLines(path);
+   private static void ensureChunkCachingDisabledSettingPresent(Path settingsPath) throws IOException {
+      List<String> settingLines = Files.readAllLines(settingsPath);
 
-      for (String allLine : allLines) {
-         if (allLine.trim().equalsIgnoreCase("chunkCaching false")) {
+      for (String settingLine : settingLines) {
+         if (settingLine.trim().equalsIgnoreCase("chunkCaching false")) {
             return;
          }
       }
 
-      String lineSeparator = allLines.isEmpty() ? "" : System.lineSeparator();
-      Files.writeString(path, lineSeparator + "chunkCaching false", StandardOpenOption.APPEND);
+      String lineSeparator = settingLines.isEmpty() ? "" : System.lineSeparator();
+      Files.writeString(settingsPath, lineSeparator + "chunkCaching false", StandardOpenOption.APPEND);
    }
 }

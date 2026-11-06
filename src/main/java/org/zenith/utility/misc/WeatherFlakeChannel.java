@@ -153,11 +153,11 @@ public final class WeatherFlakeChannel {
       this.intValue8 = entry.intValue8;
    }
 
-   public WeatherFlakeChannel method7457(Util8 util8, WeatherFlakeChannel.Data data) {
+   public WeatherFlakeChannel method7457(WeatherTimeProfile util8, WeatherFlakeChannel.Data data) {
       return this.method7458(util8, data, null);
    }
 
-   public WeatherFlakeChannel method7458(Util8 util8, WeatherFlakeChannel.Data data, WeatherPresets weatherPresets) {
+   public WeatherFlakeChannel method7458(WeatherTimeProfile util8, WeatherFlakeChannel.Data data, WeatherPresets weatherPresets) {
       WeatherFlakeChannel.Entry entry = new WeatherFlakeChannel.Entry();
       entry.floatValues = method7463(this.floatValues, util8, util8.floatValue3, 0.45F);
       float f = 1.0F - Math.clamp(util8.floatValue2, 0.0F, 1.0F);
@@ -219,7 +219,7 @@ public final class WeatherFlakeChannel {
       return new WeatherFlakeChannel(entry);
    }
 
-   private static void method7459(WeatherFlakeChannel.Entry entry, WeatherPresets.Data data, Util8 util8, WeatherFlakeChannel.Data data2) {
+   private static void method7459(WeatherFlakeChannel.Entry entry, WeatherPresets.Data data, WeatherTimeProfile util8, WeatherFlakeChannel.Data data2) {
       entry.floatValues = data.getFloatValues();
       entry.floatValues2 = data.getFloatValues2();
       entry.floatValues3 = data.getFloatValues3();
@@ -255,7 +255,7 @@ public final class WeatherFlakeChannel {
       return Math.clamp((long)((int)(f2 * 255.0F + 0.5F)), 0, 255);
    }
 
-   private static float[] method7463(float[] floatValues, Util8 util8, float f, float f2) {
+   private static float[] method7463(float[] floatValues, WeatherTimeProfile util8, float f, float f2) {
       float f3 = util8.floatValue2 * f;
       return new float[]{
          floatValues[0] * f3 * method7464(util8.floatValue4, f2),
@@ -268,7 +268,7 @@ public final class WeatherFlakeChannel {
       return 1.0F + (f - 1.0F) * f2;
    }
 
-   private static int method7465(int intValue, Util8 util8) {
+   private static int method7465(int intValue, WeatherTimeProfile util8) {
       if (intValue == 0) {
          return 0;
       } else {
@@ -281,7 +281,7 @@ public final class WeatherFlakeChannel {
       }
    }
 
-   private static int method7466(int n, Util8 util8) {
+   private static int method7466(int n, WeatherTimeProfile util8) {
       if (n == 0) {
          return 0;
       } else {

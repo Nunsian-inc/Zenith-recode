@@ -101,10 +101,10 @@ public final class TrapTpModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && event.getPacket3() != null) {
-         if (event.getPacket3() instanceof ClientboundDisconnectPacket) {
+      if (event.isIncoming() && event.getPacket() != null) {
+         if (event.getPacket() instanceof ClientboundDisconnectPacket) {
             mc.execute(() -> this.method1520(false));
-         } else if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         } else if (event.getPacket() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> this.method1520(true));
          }
       }

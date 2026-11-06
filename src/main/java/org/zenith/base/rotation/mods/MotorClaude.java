@@ -11,9 +11,9 @@ import java.util.Random;
 import net.minecraft.util.Mth;
 import org.zenith.ChatLogger;
 import org.zenith.Rotation;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public class MotorClaude extends Util22 {
+public class MotorClaude extends RotationContext {
    public static final String text = "motor_claude.json";
    public static final String text2 = "motor_imitation.json";
    private static final int CONST_intValue = Integer.MIN_VALUE;
@@ -113,7 +113,7 @@ public class MotorClaude extends Util22 {
    }
 
    public Rotation method3425(Rotation rotation) {
-      Rotation rotation2 = zenith.getRotationManager().method7844();
+      Rotation rotation2 = zenith.getRotationManager().getEffectiveRotation();
       MotorClaudeNet motorClaudeNet = this.method3420();
       if (motorClaudeNet != null && mc.player != null && rotation != null) {
          int tickCount = mc.player.tickCount;
@@ -161,7 +161,7 @@ public class MotorClaude extends Util22 {
             }
 
             MotorClaudeNet.Entry2 entry2 = motorClaudeNet.method3579(this.entry, doubles, doubles2, rotation2.getFloatValue2(), d, log, doubles3, null);
-            Rotation rotation3 = rotation2.method3140((float)(entry2.doubleValue * d), (float)(entry2.doubleValue2 * d));
+            Rotation rotation3 = rotation2.add((float)(entry2.doubleValue * d), (float)(entry2.doubleValue2 * d));
             this.intValue2 = tickCount;
             this.rotation = rotation3;
             return rotation3;

@@ -25,7 +25,7 @@ public class MixinTextVisitFactory {
    @Unique
    private static String protect(String text) {
       return text != null && ModuleHookDefinitions.class124.active()
-         ? ModuleHookDefinitions.class124.method1645(new ModuleHookDefinitions.Entry5(text)).text
+         ? ModuleHookDefinitions.class124.dispatch(new ModuleHookDefinitions.Entry5(text)).text
          : text;
    }
 }

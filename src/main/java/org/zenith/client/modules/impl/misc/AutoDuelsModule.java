@@ -32,10 +32,10 @@ import org.zenith.client.settings.MultiSelectSetting;
 )
 public final class AutoDuelsModule extends Module {
    public static final AutoDuelsModule INSTANCE = new AutoDuelsModule();
-   private static final Pattern pattern = Pattern.compile("^\\w{3,16}$");
-   private static final long CONST_longValue = 600L;
-   private static final long CONST_longValue2 = 31000L;
-   private static final double CONST_doubleValue = 500.0;
+   private static final Pattern PLAYER_NAME_PATTERN = Pattern.compile("^\\w{3,16}$");
+   private static final long INVITE_INTERVAL_MS = 600L;
+   private static final long PLAYER_INVITE_COOLDOWN_MS = 31000L;
+   private static final double TELEPORT_DISTANCE = 500.0;
    private final MultiSelectSetting mode = MultiSelectSetting.method5224(
       "module.autoDuels.mode",
       "module.autoDuels.mode.desc",
@@ -52,14 +52,14 @@ public final class AutoDuelsModule extends Module {
       )
    );
    private final BooleanSetting noFriends = new BooleanSetting("module.autoDuels.noFriends", "module.autoDuels.noFriends.desc", true);
-   private final StopWatch stopWatch = new StopWatch();
-   private final StopWatch stopWatch2 = new StopWatch();
-   private final Set<String> items = new HashSet<>();
-   private final Map<String, Long> items2 = new HashMap<>();
-   private int intValue;
-   private double doubleValue;
-   private double doubleValue2;
-   private double doubleValue3;
+   private final StopWatch inviteTimer = new StopWatch();
+   private final StopWatch inviteCycleTimer = new StopWatch();
+   private final Set<String> invitedPlayers = new HashSet<>();
+   private final Map<String, Long> lastInviteTimes = new HashMap<>();
+   private int onlinePlayerCount;
+   private double previousX;
+   private double previousY;
+   private double previousZ;
 
    private AutoDuelsModule() {
    }
@@ -67,109 +67,109 @@ public final class AutoDuelsModule extends Module {
    @EventTarget
    public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.player.connection != null) {
-         double d = Math.sqrt(
-            Math.pow(this.doubleValue - mc.player.getX(), 2.0)
-               + Math.pow(this.doubleValue2 - mc.player.getY(), 2.0)
-               + Math.pow(this.doubleValue3 - mc.player.getZ(), 2.0)
+         double distanceMoved = Math.sqrt(
+            Math.pow(this.previousX - mc.player.getX(), 2.0)
+               + Math.pow(this.previousY - mc.player.getY(), 2.0)
+               + Math.pow(this.previousZ - mc.player.getZ(), 2.0)
          );
-         if (d > 500.0) {
+         if (distanceMoved > 500.0) {
             this.setToggled(false);
          } else {
-            this.doubleValue = mc.player.getX();
-            this.doubleValue2 = mc.player.getY();
-            this.doubleValue3 = mc.player.getZ();
-            if (this.stopWatch.method7546(600L)) {
-               List<String> list = this.method5981();
-               this.intValue = list.size();
-               this.method5978();
-               Collections.shuffle(list);
+            this.previousX = mc.player.getX();
+            this.previousY = mc.player.getY();
+            this.previousZ = mc.player.getZ();
+            if (this.inviteTimer.method7546(600L)) {
+               List<String> onlinePlayerNames = this.getOnlinePlayerNames();
+               this.onlinePlayerCount = onlinePlayerNames.size();
+               this.resetInviteCycleIfElapsed();
+               Collections.shuffle(onlinePlayerNames);
 
-               for (String name : list) {
-                  if (!this.items.contains(name)
+               for (String name : onlinePlayerNames) {
+                  if (!this.invitedPlayers.contains(name)
                      && !name.equals(mc.getUser().getName())
                      && (!this.noFriends.isEnabled() || !Zenith.getInstance().getFriends().method7627(name))) {
-                     long l = this.items2.getOrDefault(name, 0L);
-                     if (System.currentTimeMillis() - l >= 31000L) {
+                     long lastInviteTime = this.lastInviteTimes.getOrDefault(name, 0L);
+                     if (System.currentTimeMillis() - lastInviteTime >= 31000L) {
                         mc.player.connection.sendCommand("duel " + name);
-                        this.items.add(name);
-                        this.items2.put(name, System.currentTimeMillis());
-                        this.stopWatch.reset();
+                        this.invitedPlayers.add(name);
+                        this.lastInviteTimes.put(name, System.currentTimeMillis());
+                        this.inviteTimer.reset();
                         break;
                      }
                   }
                }
             } else {
-               this.method5978();
+               this.resetInviteCycleIfElapsed();
             }
 
-            this.method5979();
+            this.handleDuelScreens();
          }
       }
    }
 
-   private void method5978() {
-      if (this.stopWatch2.method7546(80L * Math.max(1, this.intValue))) {
-         this.items.clear();
-         this.stopWatch2.reset();
+   private void resetInviteCycleIfElapsed() {
+      if (this.inviteCycleTimer.method7546(80L * Math.max(1, this.onlinePlayerCount))) {
+         this.invitedPlayers.clear();
+         this.inviteCycleTimer.reset();
       }
    }
 
-   private void method5979() {
+   private void handleDuelScreens() {
       if (mc.player.containerMenu instanceof ChestMenu chestMenu && mc.gui.screen() instanceof AbstractContainerScreen containerScreen) {
-         String string = containerScreen.getTitle().getString();
-         if (string.contains("Выбор набора")) {
-            ArrayList list = new ArrayList();
+         String screenTitle = containerScreen.getTitle().getString();
+         if (screenTitle.contains("Выбор набора")) {
+            ArrayList selectedModeSlots = new ArrayList();
 
             for (int i = 0; i < this.mode.getItems2().size(); i++) {
                if (this.mode.method5227(i)) {
-                  list.add(i);
+                  selectedModeSlots.add(i);
                }
             }
 
-            Collections.shuffle(list);
-            if (!list.isEmpty()) {
-               mc.gameMode.handleContainerInput(chestMenu.containerId, (Integer)list.getFirst(), 0, ContainerInput.PICKUP, mc.player);
+            Collections.shuffle(selectedModeSlots);
+            if (!selectedModeSlots.isEmpty()) {
+               mc.gameMode.handleContainerInput(chestMenu.containerId, (Integer)selectedModeSlots.getFirst(), 0, ContainerInput.PICKUP, mc.player);
             }
-         } else if (string.contains("Настройка поединка")) {
+         } else if (screenTitle.contains("Настройка поединка")) {
             mc.gameMode.handleContainerInput(chestMenu.containerId, 0, 0, ContainerInput.PICKUP, mc.player);
          }
       }
    }
 
    @EventTarget
-   public void method5980(PacketEvent event) {
-      if (event.method7100() && event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
-         String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
-         boolean flag = lowerCase.contains("начало") && lowerCase.contains("через") && lowerCase.contains("секунд");
-         boolean contains = lowerCase.contains("дуэли » во время поединка запрещено использовать команды");
-         if (flag || contains) {
+   public void onPacket(PacketEvent event) {
+      if (event.isIncoming() && event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket) {
+         String chatMessage = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
+         boolean isDuelCountdown = chatMessage.contains("начало") && chatMessage.contains("через") && chatMessage.contains("секунд");
+         boolean isDuelCommandRestriction = chatMessage.contains("дуэли » во время поединка запрещено использовать команды");
+         if (isDuelCountdown || isDuelCommandRestriction) {
             mc.execute(() -> this.setToggled(false));
          }
       }
    }
 
-   private List<String> method5981() {
+   private List<String> getOnlinePlayerNames() {
       return mc.player
          .connection
          .getOnlinePlayers()
          .stream()
          .map(PlayerInfo::getProfile)
          .map(gameProfile -> gameProfile.name())
-         .filter(input -> pattern.matcher(input).matches())
+         .filter(input -> PLAYER_NAME_PATTERN.matcher(input).matches())
          .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
    }
 
    @Override
    public void onEnable() {
       if (mc.player != null && mc.level != null) {
-         this.items.clear();
-         this.items2.clear();
-         this.stopWatch.reset();
-         this.stopWatch2.reset();
-         this.intValue = mc.player.connection == null ? 0 : this.method5981().size();
-         this.doubleValue = mc.player.getX();
-         this.doubleValue2 = mc.player.getY();
-         this.doubleValue3 = mc.player.getZ();
+         this.invitedPlayers.clear();
+         this.lastInviteTimes.clear();
+         this.inviteTimer.reset();
+         this.inviteCycleTimer.reset();
+         this.onlinePlayerCount = mc.player.connection == null ? 0 : this.getOnlinePlayerNames().size();
+         this.previousX = mc.player.getX();
+         this.previousY = mc.player.getY();
+         this.previousZ = mc.player.getZ();
          super.onEnable();
       } else {
          this.setEnabled(false);

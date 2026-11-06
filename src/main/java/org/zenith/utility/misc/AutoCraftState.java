@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.zenith.client.modules.impl.misc.AutoCraftModule;
-import org.zenith.utility.api.Class1;
+import org.zenith.utility.api.BlockPosReference;
 import org.zenith.utility.game.CraftRecipe;
 
 public final class AutoCraftState {
@@ -94,8 +94,8 @@ public final class AutoCraftState {
 
    private String method752(CraftRecipe craftRecipe, String key) {
       if (craftRecipe != null && key != null && !key.isBlank()) {
-         Class1 class2 = craftRecipe.method5398(key);
-         long l = class2 != null && class2.method56() ? class2.method57().asLong() : Long.MIN_VALUE;
+         BlockPosReference class2 = craftRecipe.method5398(key);
+         long l = class2 != null && class2.isPresent() ? class2.toBlockPos().asLong() : Long.MIN_VALUE;
          return craftRecipe.getText2().toLowerCase(Locale.ROOT) + ":" + craftRecipe.getId().toLowerCase(Locale.ROOT) + ":" + key + ":" + l;
       } else {
          return "";

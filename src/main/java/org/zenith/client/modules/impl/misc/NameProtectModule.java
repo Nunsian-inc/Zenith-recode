@@ -59,7 +59,7 @@ public final class NameProtectModule extends Module {
    @Override
    public void onEnable() {
       if (this.runnable == null) {
-         this.runnable = ModuleHookDefinitions.class124.method1646(0, entry5 -> entry5.text = method5149(entry5.text));
+         this.runnable = ModuleHookDefinitions.class124.subscribe(0, entry5 -> entry5.text = method5149(entry5.text));
       }
 
       super.onEnable();

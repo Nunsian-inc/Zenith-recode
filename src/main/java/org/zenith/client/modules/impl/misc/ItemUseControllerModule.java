@@ -17,8 +17,8 @@ import org.zenith.Rotation;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.HandleInputEvent;
 import org.zenith.client.events.StopUsingItemEvent;
 import org.zenith.client.modules.impl.combat.AuraModule;
@@ -67,13 +67,13 @@ public final class ItemUseControllerModule extends Module {
    }
 
    @EventTarget
-   public void method4811(Event5 event) {
+   public void method4811(PreRotationEvent event) {
       if (!this.newVersion.isEnabled()) {
          this.flag = false;
          if (mc.gui.overlay() == null
             && mc.gui.screen() == null
             && (Zenith.getInstance().getRotationManager().getCurrentRotation() != null || this.aim.isEnabled() && this.method4810())
-            && !Zenith.getInstance().getRotationManager().method7844().method3131(new Rotation(mc.player.getYRot(), mc.player.getXRot())).method5329(5.0F)
+            && !Zenith.getInstance().getRotationManager().getEffectiveRotation().wrappedDeltaTo(new Rotation(mc.player.getYRot(), mc.player.getXRot())).isWithinBounds(5.0F)
             && (
                mc.options.keyUse.isDown()
                      && mc.rightClickDelay == 0
@@ -83,7 +83,7 @@ public final class ItemUseControllerModule extends Module {
             )) {
             Rotation rotation = this.method4813();
             Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
-            Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
+            Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
             this.flag = true;
          }
       } else if (mc.gui.overlay() == null
@@ -95,7 +95,7 @@ public final class ItemUseControllerModule extends Module {
          )) {
          Rotation rotation = this.method4813();
          Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
-         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
+         Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
       }
 
       this.flag2 = false;
@@ -103,16 +103,16 @@ public final class ItemUseControllerModule extends Module {
          && mc.player.isUsingItem()
          && (Zenith.getInstance().getRotationManager().getCurrentRotation() != null || this.aim.isEnabled() && this.method4810())) {
          Rotation rotation = this.method4813();
-         if (!Zenith.getInstance().getRotationManager().method7844().method3131(rotation).method5329(5.0F)) {
+         if (!Zenith.getInstance().getRotationManager().getEffectiveRotation().wrappedDeltaTo(rotation).isWithinBounds(5.0F)) {
             Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
-            Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
+            Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
             this.flag2 = true;
          }
       }
    }
 
    @EventTarget
-   public void method4812(Event9 event) {
+   public void method4812(InteractionInputEvent event) {
       if (!this.newVersion.isEnabled() && this.flag) {
          event.cancel();
       }

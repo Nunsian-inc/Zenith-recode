@@ -54,7 +54,7 @@ import org.zenith.base.font.FontData;
 import org.zenith.base.font.Fonts;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.utility.game.other.render.CustomScreen;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.ScissorFlusher;
@@ -275,10 +275,10 @@ public class BotScreen extends CustomScreen {
       this.closing = false;
       this.screenAnimation.setDuration(300L);
       this.screenAnimation.setEasing(Easing.INSTANCE4);
-      this.screenAnimation.method2809(0.0F);
-      this.screenAnimation.method2808(1.0F);
-      this.moduleMenuAnimation.method2809(this.moduleMenuBotName == null ? 0.0F : 1.0F);
-      this.versionMenuAnimation.method2809(this.versionMenuOpen ? 1.0F : 0.0F);
+      this.screenAnimation.snapTo(0.0F);
+      this.screenAnimation.animateTo(1.0F);
+      this.moduleMenuAnimation.snapTo(this.moduleMenuBotName == null ? 0.0F : 1.0F);
+      this.versionMenuAnimation.snapTo(this.versionMenuOpen ? 1.0F : 0.0F);
       this.connectButtonWidth = 23.0F;
       this.chatInput.setText2(tr("module.bot.message"));
       this.connectInput.setText2(tr("module.bot.connectTo"));
@@ -318,7 +318,7 @@ public class BotScreen extends CustomScreen {
    public void renderTop(MenuDrawContext menuDrawContext, float mouseX, float mouseY) {
       float floatValue = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
       float y = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
-      float f = this.screenAnimation.method2808(this.closing ? 0.0F : 1.0F);
+      float f = this.screenAnimation.animateTo(this.closing ? 0.0F : 1.0F);
       if (this.closing && this.screenAnimation.isDone() && f <= 0.001F) {
          mc.gui.setScreen(null);
       } else {
@@ -732,7 +732,7 @@ public class BotScreen extends CustomScreen {
    }
 
    private void renderProxyPanel(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, float f, float f2) {
-      float f3 = this.proxyPanelAnimation.method2808(this.proxyPanelOpen ? 1.0F : 0.0F);
+      float f3 = this.proxyPanelAnimation.animateTo(this.proxyPanelOpen ? 1.0F : 0.0F);
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
          if (f3 > 0.001F) {
@@ -900,7 +900,7 @@ public class BotScreen extends CustomScreen {
       boolean flag2 = f3 >= f && f3 <= guiScaledHeight && f2 >= floatValue && f2 <= floatValue + width && f3 >= y && f3 <= y + 23.0F;
       boolean flag3 = flag && flag2 && f2 >= floatValue + width - 18.0F;
       Animation animation = this.proxyHoverAnims.computeIfAbsent(proxyNoneKey, proxyHoverAnim -> new Animation(150L, 0.0F, Easing.INSTANCE15));
-      float f4 = animation.method2808(flag2 ? 1.0F : 0.0F);
+      float f4 = animation.animateTo(flag2 ? 1.0F : 0.0F);
       ZenithColor zenithColor = currentStyle.getHeaderDisableBackground()
          .getZenithColor()
          .method7295(currentStyle.getSurfaceEnableBackground().getZenithColor(), selectionHasNoProxy ? 0.9F : f4 * 0.45F)
@@ -1098,7 +1098,7 @@ public class BotScreen extends CustomScreen {
    }
 
    private void focusTextBox(SearchBox proxyManagerInput, double x, double y) {
-      proxyManagerInput.onMouseClicked(x, y, Enum3.LEFT);
+      proxyManagerInput.onMouseClicked(x, y, MouseButton.LEFT);
       if (!proxyManagerInput.isSelected()) {
          proxyManagerInput.setSelected(true);
          proxyManagerInput.setFlag(false);
@@ -1160,19 +1160,19 @@ public class BotScreen extends CustomScreen {
       float f4 = f + n * 25.0F - this.listScroll;
       boolean flag2 = this.isMultiSelectDown() || this.isShiftDown();
       boolean flag3 = f3 >= f && f3 <= guiScaledHeight && f2 >= floatValue + 4.0F && f2 <= floatValue + 4.0F + 227.0F && f3 >= f4 && f3 <= f4 + 23.0F;
-      float f5 = rowAnim.appear.method2808(1.0F);
-      float f6 = rowAnim.hover.method2808(flag3 ? 1.0F : 0.0F);
+      float f5 = rowAnim.appear.animateTo(1.0F);
+      float f6 = rowAnim.hover.animateTo(flag3 ? 1.0F : 0.0F);
       float previewAlpha2 = previewAlpha * f5;
       float y = f4 + (1.0F - f5) * 6.0F;
       float floatValue2 = floatValue + 4.0F;
       menuDrawContext.drawRoundedRect(floatValue2, y, 227.0F, 23.0F, headerRadius, listColor.method7294(previewAlpha2));
-      float hover = rowAnim.select.method2808(this.selectedNames.contains(selected) ? 1.0F : 0.0F);
+      float hover = rowAnim.select.animateTo(this.selectedNames.contains(selected) ? 1.0F : 0.0F);
       menuDrawContext.drawRoundedRect(floatValue2, y, 23.0F, 23.0F, headerRadius, listColor.method7294(previewAlpha2));
       float floatValue3 = floatValue2 + 227.0F - 64.0F;
       menuDrawContext.drawRoundedRect(floatValue3, y, 64.0F, 23.0F, headerRadius, listColor.method7294(previewAlpha2));
       if (flag) {
          boolean flag4 = !flag2 && f2 >= floatValue3 && f2 <= floatValue3 + 64.0F && f3 >= y && f3 <= y + 23.0F && f3 >= f && f3 <= guiScaledHeight;
-         float f7 = rowAnim.disc.method2808(flag4 ? 1.0F : 0.0F);
+         float f7 = rowAnim.disc.animateTo(flag4 ? 1.0F : 0.0F);
          float f8 = 23.0F;
          menuDrawContext.enableScissor(floatValue2, y, floatValue2 + 227.0F, y + 23.0F);
          if (f7 < 0.999F) {
@@ -1219,7 +1219,7 @@ public class BotScreen extends CustomScreen {
       }
 
       boolean flag4 = !flag2 && f2 >= floatValue2 && f2 <= floatValue2 + 23.0F && f3 >= y && f3 <= y + 23.0F && f3 >= f && f3 <= guiScaledHeight;
-      float f7 = rowAnim.delete.method2808(flag4 ? 1.0F : 0.0F);
+      float f7 = rowAnim.delete.animateTo(flag4 ? 1.0F : 0.0F);
       Identifier prewarm = BotAvatarCache.prewarm(selected);
       if (prewarm != null) {
          float x = floatValue2 + 4.0F;
@@ -1279,7 +1279,7 @@ public class BotScreen extends CustomScreen {
       String moduleMenuBotName = this.moduleMenuBotName();
       List<String> supportedModuleNames = BotModuleManager.supportedModuleNames();
       if (moduleMenuBotName != null && !supportedModuleNames.isEmpty()) {
-         float f3 = this.moduleMenuAnimation.method2808(1.0F);
+         float f3 = this.moduleMenuAnimation.animateTo(1.0F);
          float previewAlpha2 = previewAlpha * clamp01(f3);
          float y = this.moduleMenuY + (1.0F - f3) * 6.0F;
          float height = 26.0F + supportedModuleNames.size() * 20.0F + Math.max(0, supportedModuleNames.size() - 1) * 3.0F;
@@ -1372,7 +1372,7 @@ public class BotScreen extends CustomScreen {
          this.closeModuleMenu();
       } else {
          this.versionMenuOpen = false;
-         this.moduleMenuAnimation.method2809(0.0F);
+         this.moduleMenuAnimation.snapTo(0.0F);
          this.moduleMenuBotName = moduleMenuBotName;
          this.moduleMenuX = f + 227.0F + 3.0F;
          this.moduleMenuY = moduleMenuY;
@@ -1457,7 +1457,7 @@ public class BotScreen extends CustomScreen {
             this.versionMenuOpen = false;
          } else {
             float versionMenuX = this.versionMenuX(floatValue);
-            float f3 = this.versionMenuAnimation.method2808(1.0F);
+            float f3 = this.versionMenuAnimation.animateTo(1.0F);
             float previewAlpha2 = previewAlpha * clamp01(f3);
             float y2 = this.versionMenuY(y) + (1.0F - f3) * 6.0F;
             float versionMenuViewportHeight = this.versionMenuViewportHeight();
@@ -1563,7 +1563,7 @@ public class BotScreen extends CustomScreen {
             for (int i = 0; i < elements.length; i++) {
                ChatMessage key = elements[i];
                Animation animation = this.chatAnims.computeIfAbsent(key, chatAnim -> new Animation(260L, 0.0F, Easing.INSTANCE15));
-               float f5 = animation.method2808(1.0F);
+               float f5 = animation.animateTo(1.0F);
                var components = this.wrapCache.get(key);
                if (components == null) {
                   components = wrapText(key.text(), nickFont, f2);
@@ -2237,9 +2237,9 @@ public class BotScreen extends CustomScreen {
    }
 
    @Override
-   public void onMouseClicked(double x, double y, Enum3 enum2) {
+   public void onMouseClicked(double x, double y, MouseButton enum2) {
       if (!this.closing && this.screenAnimation.isDone()) {
-         if (enum2 == Enum3.RIGHT) {
+         if (enum2 == MouseButton.RIGHT) {
             float f = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
             float f2 = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
             var visibleBots = this.visibleBots();
@@ -2257,7 +2257,7 @@ public class BotScreen extends CustomScreen {
             this.closeModuleMenu();
          }
 
-         if (enum2 == Enum3.LEFT) {
+         if (enum2 == MouseButton.LEFT) {
             float floatValue = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
             float f = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
             if (this.handleProxyPanelClick(x, y, floatValue, f)) {
@@ -2437,7 +2437,7 @@ public class BotScreen extends CustomScreen {
             if (flag7 && x >= f14) {
                this.versionMenuOpen = !this.versionMenuOpen;
                if (this.versionMenuOpen) {
-                  this.versionMenuAnimation.method2809(0.0F);
+                  this.versionMenuAnimation.snapTo(0.0F);
                }
 
                this.versionMenuScroll = 0.0F;

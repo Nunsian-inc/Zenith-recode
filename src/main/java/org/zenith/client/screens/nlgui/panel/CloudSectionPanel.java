@@ -14,7 +14,7 @@ import org.zenith.client.screens.nlgui.panel.api.ElementPanel;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.utility.api.CloudDmClient;
 import org.zenith.utility.misc.CloudConnectionState;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.network.Cloud;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -72,7 +72,7 @@ public class CloudSectionPanel extends ElementPanel {
          this.switchDirection = active > this.active ? 1.0F : -1.0F;
          this.active = active;
          this.switchAnimation.reset(0.0F);
-         this.switchAnimation.method2810(1.0F);
+         this.switchAnimation.setTarget(1.0F);
          if (this.switchDirection > 0.0F) {
             Zenith.getInstance().getClientSounds().method1562();
          } else {
@@ -187,7 +187,7 @@ public class CloudSectionPanel extends ElementPanel {
             this.badgeLast[n] = badge;
          }
 
-         return this.badgeShow[n].method2808(badge > 0 ? 1.0F : 0.0F);
+         return this.badgeShow[n].animateTo(badge > 0 ? 1.0F : 0.0F);
       } else {
          return 0.0F;
       }
@@ -224,13 +224,13 @@ public class CloudSectionPanel extends ElementPanel {
          }
 
          if (!this.plateReady) {
-            this.plateX.method2809(floatValue2);
-            this.plateWidth.method2809(tabWidth);
+            this.plateX.snapTo(floatValue2);
+            this.plateWidth.snapTo(tabWidth);
             this.plateReady = true;
          }
 
-         float f4 = this.plateX.method2808(floatValue2);
-         float f5 = this.plateWidth.method2808(tabWidth);
+         float f4 = this.plateX.animateTo(floatValue2);
+         float f5 = this.plateWidth.animateTo(tabWidth);
          float height = 15.0F;
          menuDrawContext.drawRoundedRect(
             f4 + 2.0F,
@@ -244,7 +244,7 @@ public class CloudSectionPanel extends ElementPanel {
          for (int i = 0; i < this.names.size(); i++) {
             BoundsData tabBound = this.tabBounds.get(i);
             boolean flag = i == this.active;
-            float f6 = this.tabHover[i].method2808(!flag && tabBound.contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+            float f6 = this.tabHover[i].animateTo(!flag && tabBound.contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
             ZenithColor zenithColor = (flag ? currentStyle.getTextEnable() : currentStyle.getTextTertiary())
                .getZenithColor()
                .method7295(currentStyle.getTextEnable().getZenithColor(), f6 * 0.5F)
@@ -285,7 +285,7 @@ public class CloudSectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       for (int i = 0; i < this.tabBounds.size(); i++) {
          if (this.tabBounds.get(i).contains(lastClickX, lastClickY)) {
             this.switchTo(i);
@@ -298,7 +298,7 @@ public class CloudSectionPanel extends ElementPanel {
 
    @Override
    public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float y) {
-      float f3 = this.switchAnimation.method2808(1.0F);
+      float f3 = this.switchAnimation.animateTo(1.0F);
       float x = 14.0F * this.switchDirection * (1.0F - f3);
       menuDrawContext.pose().pushMatrix();
       menuDrawContext.pose().translate(x, 0.0F);
@@ -317,12 +317,12 @@ public class CloudSectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       return this.current().onMouseClicked(lastClickX, lastClickY, enum2);
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       return this.current().onMouseReleased(x, y, enum2);
    }
 

@@ -13,7 +13,7 @@ import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.game.ElytraMath;
 import org.zenith.utility.misc.PacketUtils;
-import org.zenith.utility.misc.Util13;
+import org.zenith.utility.misc.TimerSpeed;
 
 @ModuleInfo(
    name = "Grim Glide",
@@ -24,28 +24,28 @@ public final class GrimGlideModule extends Module {
    public static final GrimGlideModule INSTANCE = new GrimGlideModule();
    private final SliderSetting timerBoost = new SliderSetting("module.grimGlide.timerBoost", 1.5F, 1.0F, 5.0F, 0.1F, "module.grimGlide.timerBoost.desc", "x");
    private final SliderSetting timerReset = new SliderSetting("module.grimGlide.timerReset", 0.5F, 0.0F, 0.9F, 0.01F, "module.grimGlide.timerReset.desc", "x");
-   private int intValue;
-   private boolean flag;
-   private int intValue2;
-   private boolean flag2;
+   private int correctionCooldownTicks;
+   private boolean skipNextMovementPacket;
+   private int glideTicks;
+   private boolean timerModified;
 
    private GrimGlideModule() {
    }
 
    @Override
    public void onEnable() {
-      this.intValue = 0;
-      this.flag = false;
-      this.intValue2 = 0;
-      this.flag2 = false;
+      this.correctionCooldownTicks = 0;
+      this.skipNextMovementPacket = false;
+      this.glideTicks = 0;
+      this.timerModified = false;
       super.onEnable();
    }
 
    @Override
    public void onDisable() {
-      if (this.flag2) {
-         Util13.method2404(1.0F);
-         this.flag2 = false;
+      if (this.timerModified) {
+         TimerSpeed.setSpeedMultiplier(1.0F);
+         this.timerModified = false;
       }
 
       super.onDisable();
@@ -53,57 +53,57 @@ public final class GrimGlideModule extends Module {
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
-      if (this.intValue > 0) {
-         this.intValue--;
+      if (this.correctionCooldownTicks > 0) {
+         this.correctionCooldownTicks--;
       }
 
-      boolean flag = mc.player != null && mc.level != null && mc.player.isFallFlying();
-      if (!flag) {
-         if (this.flag2) {
-            Util13.method2404(1.0F);
-            this.flag2 = false;
+      boolean skipNextMovementPacket = mc.player != null && mc.level != null && mc.player.isFallFlying();
+      if (!skipNextMovementPacket) {
+         if (this.timerModified) {
+            TimerSpeed.setSpeedMultiplier(1.0F);
+            this.timerModified = false;
          }
       } else {
-         Util13.method2404(this.intValue2 % 2 == 0 ? this.timerBoost.getValue3() : this.timerReset.getValue3());
-         this.flag2 = true;
-         this.intValue2++;
+         TimerSpeed.setSpeedMultiplier(this.glideTicks % 2 == 0 ? this.timerBoost.getValue3() : this.timerReset.getValue3());
+         this.timerModified = true;
+         this.glideTicks++;
       }
    }
 
    @EventTarget
    public void onPacket(PacketEvent event) {
       if (mc.player != null) {
-         if (event.method7100() && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         if (event.isIncoming() && event.getPacket() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> {
-               this.intValue = 2;
-               this.flag = true;
-               if (this.intValue2 % 2 == 1) {
-                  this.intValue2++;
+               this.correctionCooldownTicks = 2;
+               this.skipNextMovementPacket = true;
+               if (this.glideTicks % 2 == 1) {
+                  this.glideTicks++;
                }
             });
          } else {
-            if (event.method7099() && event.getPacket3() instanceof ServerboundMovePlayerPacket movePlayerPacket && !PacketUtils.getItems().contains(movePlayerPacket)) {
-               if (mc.player.isFallFlying() && this.intValue == 0 && !this.flag) {
-                  event.setPacket2(new StatusOnly(true, true));
+            if (event.isOutgoing() && event.getPacket() instanceof ServerboundMovePlayerPacket movePlayerPacket && !PacketUtils.getItems().contains(movePlayerPacket)) {
+               if (mc.player.isFallFlying() && this.correctionCooldownTicks == 0 && !this.skipNextMovementPacket) {
+                  event.setPacket(new StatusOnly(true, true));
                }
 
-               this.flag = false;
+               this.skipNextMovementPacket = false;
             }
          }
       }
    }
 
-   public Vec3 method5976(Vec3 vec, Vec3 returnValue, Vec3 lookAngle) {
+   public Vec3 method5976(Vec3 velocity, Vec3 originalVelocity, Vec3 lookAngle) {
       if (this.isEnabled() && mc.player != null) {
-         Vec3 vec2 = ElytraMath.method5974(mc.player, vec, lookAngle, 3.2);
-         if (this.intValue >= 1) {
-            double d = Math.toRadians(mc.player.getYRot());
-            return vec2.multiply(0.99F, 0.98F, 0.99F).add(-Math.sin(d) * 0.09F, 0.03F, Math.cos(d) * 0.09F);
+         Vec3 glideVelocity = ElytraMath.method5974(mc.player, velocity, lookAngle, 3.2);
+         if (this.correctionCooldownTicks >= 1) {
+            double yawRadians = Math.toRadians(mc.player.getYRot());
+            return glideVelocity.multiply(0.99F, 0.98F, 0.99F).add(-Math.sin(yawRadians) * 0.09F, 0.03F, Math.cos(yawRadians) * 0.09F);
          } else {
-            return vec2.multiply(0.3F, 0.3F, 0.3F);
+            return glideVelocity.multiply(0.3F, 0.3F, 0.3F);
          }
       } else {
-         return returnValue;
+         return originalVelocity;
       }
    }
 }

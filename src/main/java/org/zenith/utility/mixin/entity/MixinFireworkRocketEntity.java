@@ -37,9 +37,9 @@ public abstract class MixinFireworkRocketEntity {
          Fireworks fireworks = ((FireworkRocketEntity)(Object)this).getItem().get(DataComponents.FIREWORKS);
          int flightDuration = fireworks == null ? 0 : fireworks.flightDuration();
          Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         Vec3 lookAngle = currentRotation == null ? minecraft.player.getLookAngle() : currentRotation.method3135();
+         Vec3 lookAngle = currentRotation == null ? minecraft.player.getLookAngle() : currentRotation.toDirection();
          return ModuleHookDefinitions.class123
-               .method1645(new ModuleHookDefinitions.Entry4(vec3d, this.attachedToEntity.getDeltaMovement(), lookAngle, this.life, 10 * (1 + flightDuration)))
+               .dispatch(new ModuleHookDefinitions.Entry4(vec3d, this.attachedToEntity.getDeltaMovement(), lookAngle, this.life, 10 * (1 + flightDuration)))
             .vec3d;
       } else {
          return vec3d;
@@ -58,7 +58,7 @@ public abstract class MixinFireworkRocketEntity {
          return vec;
       } else {
          Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return currentRotation == null ? vec : currentRotation.method3135();
+         return currentRotation == null ? vec : currentRotation.toDirection();
       }
    }
 }

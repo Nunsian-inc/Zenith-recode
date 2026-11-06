@@ -20,7 +20,7 @@ import org.joml.Quaternionf;
 import org.zenith.RenderState;
 import org.zenith.ZenithColor;
 import org.zenith.utility.misc.FireflyParticle;
-import org.zenith.utility.misc.Handler7;
+import org.zenith.utility.misc.RenderableParticle;
 import org.zenith.utility.misc.ParticleType;
 import org.zenith.utility.misc.SpaceStarParticle;
 
@@ -32,7 +32,7 @@ public class ParticleRenderer {
    private static final Quaternionf quaternionf = new Quaternionf();
    private static final Quaternionf quaternionf2 = new Quaternionf();
    private static final PoseStack matrixStack = new PoseStack();
-   private static final Map<String, List<Handler7>> items = new HashMap<>();
+   private static final Map<String, List<RenderableParticle>> items = new HashMap<>();
 
    public static void method1476(Camera camera) {
       Vec3 position = camera.position();
@@ -50,16 +50,16 @@ public class ParticleRenderer {
    }
 
    @SafeVarargs
-   public static void method1477(PoseStack poseStack, float f, List<? extends Handler7>... handler7ses) {
+   public static void method1477(PoseStack poseStack, float f, List<? extends RenderableParticle>... handler7ses) {
       items.clear();
       int n = 0;
 
       for (List list : handler7ses) {
          if (list != null) {
             for (Object obj : (Iterable<?>)(Object)(list)) {
-               Handler7 handler7 = (Handler7)obj;
-               if (!handler7.method1555()) {
-                  items.computeIfAbsent(handler7.method1559(), var0x -> new ArrayList<>()).add(handler7);
+               RenderableParticle handler7 = (RenderableParticle)obj;
+               if (!handler7.isExpired()) {
+                  items.computeIfAbsent(handler7.getTextureKey(), var0x -> new ArrayList<>()).add(handler7);
                   n++;
                }
             }
@@ -74,12 +74,12 @@ public class ParticleRenderer {
             Identifier identifier = ParticleType.method1705((String)entry.getKey());
             if (identifier != null) {
                RenderState.method1890(0, identifier);
-               List<Handler7> handler7s = (List)entry.getValue();
+               List<RenderableParticle> handler7s = (List)entry.getValue();
                BufferBuilder begin = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
                boolean flag = false;
 
-               for (Handler7 handler7 : handler7s) {
-                  if (handler7.method1449(f) >= 0.001F) {
+               for (RenderableParticle handler7 : handler7s) {
+                  if (handler7.getInterpolatedAlpha(f) >= 0.001F) {
                      method1481(begin, handler7, f);
                      flag = true;
                   }
@@ -108,7 +108,7 @@ public class ParticleRenderer {
          boolean flag = false;
 
          for (FireflyParticle fireflyParticle : fireflyParticles) {
-            Vec3 vec = fireflyParticle.method1557().lerp(fireflyParticle.method1556(), f);
+            Vec3 vec = fireflyParticle.getPreviousPosition().lerp(fireflyParticle.getPosition(), f);
             Vec3 vec3d3 = fireflyParticle.getVec3d3();
             double length = vec3d3.length();
             float f4 = 1.0F - (float)fireflyParticle.getIntValue() / fireflyParticle.getIntValue3();
@@ -125,18 +125,18 @@ public class ParticleRenderer {
                if (!(f10 >= f9)) {
                   float f11 = f10 / f9;
                   float f12 = fireflyParticle.getSize() * (1.0F - f11 * 0.5F) * 2.0F * f7;
-                  float f13 = (float)Math.pow(1.0F - f11, 0.4) * fireflyParticle.method1449(f) * f7 * 0.8F;
+                  float f13 = (float)Math.pow(1.0F - f11, 0.4) * fireflyParticle.getInterpolatedAlpha(f) * f7 * 0.8F;
                   if (!(f13 < 0.01F)) {
                      Vec3 vec3 = vec.subtract(vec2.scale(f11 * f9 * f3));
                      float f14 = (float)Math.pow(1.0F - f11, 1.2) * f7;
                      float f15 = f12 * (1.8F + f14 * 0.8F);
                      float f16 = f13 * 0.5F * f14;
                      if (f16 > 0.01F) {
-                        method1482(begin, vec3, f15, f16, fireflyParticle.method1558());
+                        method1482(begin, vec3, f15, f16, fireflyParticle.getColor());
                         flag = true;
                      }
 
-                     method1482(begin, vec3, f12, f13, fireflyParticle.method1558());
+                     method1482(begin, vec3, f12, f13, fireflyParticle.getColor());
                      flag = true;
                   }
                }
@@ -159,12 +159,12 @@ public class ParticleRenderer {
          BufferBuilder begin = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
 
          for (SpaceStarParticle spaceStarParticle : spaceStarParticles) {
-            if (!spaceStarParticle.method1555()) {
-               Vec3 vec = spaceStarParticle.method1557().lerp(spaceStarParticle.method1556(), f);
-               float f3 = spaceStarParticle.method1449(f);
+            if (!spaceStarParticle.isExpired()) {
+               Vec3 vec = spaceStarParticle.getPreviousPosition().lerp(spaceStarParticle.getPosition(), f);
+               float f3 = spaceStarParticle.getInterpolatedAlpha(f);
                if (!(f3 < 0.005F)) {
-                  method1483(begin, vec, spaceStarParticle.method3081(f), f3 * 0.22F, spaceStarParticle.method1558(), 0.0F);
-                  method1483(begin, vec, spaceStarParticle.method3083(f), f3 * 0.48F, spaceStarParticle.method1558(), 0.0F);
+                  method1483(begin, vec, spaceStarParticle.method3081(f), f3 * 0.22F, spaceStarParticle.getColor(), 0.0F);
+                  method1483(begin, vec, spaceStarParticle.method3083(f), f3 * 0.48F, spaceStarParticle.getColor(), 0.0F);
                   Vec3 vec3d3 = spaceStarParticle.getVec3d3();
                   double length = vec3d3.length();
                   if (!(length <= 5.0E-4)) {
@@ -178,7 +178,7 @@ public class ParticleRenderer {
                         if (!(f6 < 0.01F)) {
                            Vec3 vec3 = vec.subtract(vec2.scale(f5 * f4));
                            float f7 = spaceStarParticle.method3083(f) * (1.0F - f5 * 0.72F);
-                           method1483(begin, vec3, f7, f6, spaceStarParticle.method1558(), 0.0F);
+                           method1483(begin, vec3, f7, f6, spaceStarParticle.getColor(), 0.0F);
                         }
                      }
                   }
@@ -191,11 +191,11 @@ public class ParticleRenderer {
          BufferBuilder bufferBuilder = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
 
          for (SpaceStarParticle spaceStarParticle : spaceStarParticles) {
-            if (!spaceStarParticle.method1555()) {
-               Vec3 vec = spaceStarParticle.method1557().lerp(spaceStarParticle.method1556(), f);
-               float f3 = spaceStarParticle.method1449(f);
+            if (!spaceStarParticle.isExpired()) {
+               Vec3 vec = spaceStarParticle.getPreviousPosition().lerp(spaceStarParticle.getPosition(), f);
+               float f3 = spaceStarParticle.getInterpolatedAlpha(f);
                if (!(f3 < 0.005F)) {
-                  method1483(bufferBuilder, vec, spaceStarParticle.method3082(f), f3, spaceStarParticle.method1558().method7303(0.35F), spaceStarParticle.method1560());
+                  method1483(bufferBuilder, vec, spaceStarParticle.method3082(f), f3, spaceStarParticle.getColor().method7303(0.35F), spaceStarParticle.getRotationDegrees());
                }
             }
          }
@@ -234,21 +234,21 @@ public class ParticleRenderer {
       method1485();
    }
 
-   private static void method1481(BufferBuilder begin, Handler7 handler7, float f) {
-      Vec3 vec = handler7.method1557().lerp(handler7.method1556(), f);
+   private static void method1481(BufferBuilder begin, RenderableParticle handler7, float f) {
+      Vec3 vec = handler7.getPreviousPosition().lerp(handler7.getPosition(), f);
       float xo = (float)(vec.x - doubleValue);
       float yo = (float)(vec.y - doubleValue2);
       float zo = (float)(vec.z - doubleValue3);
-      float f2 = handler7.method1449(f);
+      float f2 = handler7.getInterpolatedAlpha(f);
       if (!(f2 < 0.001F)) {
          float size = handler7.getSize();
-         ZenithColor zenithColor = handler7.method1558();
+         ZenithColor zenithColor = handler7.getColor();
          int color = (int)(f2 * zenithColor.getIntValue4()) << 24 | zenithColor.getIntValue() << 16 | zenithColor.getIntValue2() << 8 | zenithColor.getIntValue3();
          matrixStack.pushPose();
          matrixStack.rotate(quaternionf);
          matrixStack.translate(xo, yo, zo);
          matrixStack.rotate(quaternionf2);
-         float angle = handler7.method1560();
+         float angle = handler7.getRotationDegrees();
          if (angle != 0.0F) {
             matrixStack.rotate(Axis.ZP.rotationDegrees(angle));
          }

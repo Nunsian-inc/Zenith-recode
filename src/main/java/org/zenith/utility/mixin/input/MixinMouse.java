@@ -18,7 +18,7 @@ import org.zenith.MinecraftAccess;
 import org.zenith.client.events.MouseButtonEvent;
 import org.zenith.client.events.MouseRotationEvent;
 import org.zenith.client.events.MouseScrollEvent;
-import org.zenith.utility.misc.Handler3;
+import org.zenith.utility.misc.ContainerScreenAnimationAccess;
 
 @Mixin({MouseHandler.class})
 public class MixinMouse {
@@ -96,6 +96,6 @@ public class MixinMouse {
 
    @Unique
    private boolean isAnim() {
-      return Minecraft.getInstance().gui.screen() instanceof Handler3 handler3 && handler3.zenith$betterMinecraft$isClosingAnimation();
+      return Minecraft.getInstance().gui.screen() instanceof ContainerScreenAnimationAccess handler3 && handler3.zenith$betterMinecraft$isClosingAnimation();
    }
 }

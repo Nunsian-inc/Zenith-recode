@@ -186,7 +186,7 @@ public class FriendsSectionPanel extends SectionPanel {
 
    @Override
    public float asideAlpha() {
-      return this.selected == null ? 1.0F : this.cardReveal.method2808(1.0F);
+      return this.selected == null ? 1.0F : this.cardReveal.animateTo(1.0F);
    }
 
    @Override
@@ -284,11 +284,11 @@ public class FriendsSectionPanel extends SectionPanel {
 
    private static void restart(Animation asideWave) {
       asideWave.reset(0.0F);
-      asideWave.method2810(1.0F);
+      asideWave.setTarget(1.0F);
    }
 
    private static float wave(Animation listWave, int n) {
-      float f = listWave.method2808(1.0F);
+      float f = listWave.animateTo(1.0F);
       return Mth.clamp((f - Math.min(n, 12) * 0.06F) / 0.5F, 0.0F, 1.0F);
    }
 
@@ -560,7 +560,7 @@ public class FriendsSectionPanel extends SectionPanel {
                float height = 34.0F;
                CloudConnectionState cloudConnectionState = state();
                boolean flag = cloudConnectionState != null && cloudConnectionState.method8035();
-               float hover = this.heroPulse.method2808(flag ? 1.0F : 0.0F);
+               float hover = this.heroPulse.animateTo(flag ? 1.0F : 0.0F);
                plate(customDrawContext, floatValue, y, f4 - floatValue, height, 0.0F, 0.0F, previewAlpha, zenithStyle);
                customDrawContext.drawRoundedRect(
                   floatValue,
@@ -1319,13 +1319,13 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private float appear(String key) {
-      return this.buttonHover.computeIfAbsent("appear:" + key, str -> new Animation(240L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+      return this.buttonHover.computeIfAbsent("appear:" + key, str -> new Animation(240L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
    }
 
    private void drawStatusDot(MenuDrawContext customDrawContext, String key, String selected, boolean selectedLocal, float floatValue, float y, float previewAlpha, ZenithStyle zenithStyle) {
       float hover = this.barFill
          .computeIfAbsent("dot:" + key, str -> new Animation(320L, 0.0F, Easing.INSTANCE13))
-         .method2808(selectedLocal ? (this.isNearby(selected) ? 1.0F : 0.0F) : statusLit(selected));
+         .animateTo(selectedLocal ? (this.isNearby(selected) ? 1.0F : 0.0F) : statusLit(selected));
       ZenithColor zenithColor = selectedLocal ? zenithStyle.getFriendColor().getZenithColor() : statusColor(selected, zenithStyle);
       CloudConnectionState cloudConnectionState = state();
       if (!selectedLocal && cloudConnectionState != null && cloudConnectionState.method8061(selected) && peer(selected) == null) {
@@ -1355,7 +1355,7 @@ public class FriendsSectionPanel extends SectionPanel {
       Identifier texture = key > 0L ? CloudAvatarCache.get(Long.toString(key)) : null;
       ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
       if (texture != null) {
-         float f = this.avatarFade.computeIfAbsent(key, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+         float f = this.avatarFade.computeIfAbsent(key, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
          if (f < 1.0F) {
             customDrawContext.drawRoundedRect(floatValue, y, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F * (1.0F - f)));
          }
@@ -2643,7 +2643,7 @@ public class FriendsSectionPanel extends SectionPanel {
             f4 = Float.isFinite(f4) ? Math.max(0.001F, f4) : 20.0F;
             float f5 = this.barFill
                .computeIfAbsent("bar:" + selected + ":" + text, str -> new Animation(260L, 0.0F, Easing.INSTANCE12))
-               .method2808(Math.max(0.0F, Math.min(1.0F, f3 / f4)));
+               .animateTo(Math.max(0.0F, Math.min(1.0F, f3 / f4)));
             String str = String.valueOf(Math.round(f3));
             menuDrawContext.drawText(font, text, f + 8.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             menuDrawContext.drawText(font, str, f + f2 - 8.0F - font.width(str), centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
@@ -2813,7 +2813,7 @@ public class FriendsSectionPanel extends SectionPanel {
       this.custom(
          height + GuiStyle.PADDING.intValue(),
          (var5x, n, n2, f2, y, f3, previewAlpha, zenithStyle) -> {
-            float f4 = this.noticeAppear.method2808(1.0F);
+            float f4 = this.noticeAppear.animateTo(1.0F);
             float floatValue = f2 + 8.0F;
             float width = f3 - 16.0F;
             var5x.drawRoundedRect(
@@ -2896,15 +2896,15 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private float hover(String key, boolean contains) {
-      return this.buttonHover.computeIfAbsent("hover:" + key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.buttonHover.computeIfAbsent("hover:" + key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    private float pick(String key, boolean addOpen) {
-      return this.cardSelect.computeIfAbsent("pick:" + key, str -> new Animation(180L, 0.0F, Easing.INSTANCE12)).method2808(addOpen ? 1.0F : 0.0F);
+      return this.cardSelect.computeIfAbsent("pick:" + key, str -> new Animation(180L, 0.0F, Easing.INSTANCE12)).animateTo(addOpen ? 1.0F : 0.0F);
    }
 
    private float select(String key, boolean flag) {
-      return this.cardSelect.computeIfAbsent(key, str -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(flag ? 1.0F : 0.0F);
+      return this.cardSelect.computeIfAbsent(key, str -> new Animation(160L, 0.0F, Easing.INSTANCE12)).animateTo(flag ? 1.0F : 0.0F);
    }
 
    private static String fit(Font font, String name, float width) {

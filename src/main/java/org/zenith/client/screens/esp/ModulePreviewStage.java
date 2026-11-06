@@ -26,7 +26,7 @@ import org.zenith.client.modules.impl.render.TargetESPModule;
 import org.zenith.client.modules.impl.render.TotemParticlesModule;
 import org.zenith.client.modules.impl.render.WeatherModule;
 import org.zenith.client.modules.impl.render.WorldModule;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.FrameTimer;
 import org.zenith.utility.render.EspScreen;
 import org.zenith.utility.render.OutlineVertexProvider;
@@ -258,7 +258,7 @@ public final class ModulePreviewStage implements MinecraftAccess {
       }
    }
 
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (!this.open || this.bounds == null || !this.bounds.contains(x, y)) {
          return false;
       } else if (this.kind == ModulePreviewStage.Kind.ENTITY && this.isLive() && EntityESPModule.INSTANCE.method561(x, y, enum2)) {

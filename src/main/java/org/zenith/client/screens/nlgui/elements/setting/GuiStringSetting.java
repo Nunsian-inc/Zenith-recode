@@ -13,7 +13,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.TextSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -38,8 +38,8 @@ public class GuiStringSetting extends GuiSetting<TextSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
-      if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY) && enum2 == Enum3.LEFT) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
+      if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY) && enum2 == MouseButton.LEFT) {
          this.getBox().setSelected(true);
          return true;
       } else {
@@ -55,7 +55,7 @@ public class GuiStringSetting extends GuiSetting<TextSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
          SearchBox box = this.getBox();
          if (!box.isSelected()) {
@@ -73,7 +73,7 @@ public class GuiStringSetting extends GuiSetting<TextSetting> {
          float width = this.width / 2.0F;
          float height = this.getHeight();
          this.bounds = new BoundsData(floatValue + this.width - width, centeredTextY + (this.getHeight() - height) / 2.0F, width, height);
-         this.focusAnimation.method2807(!(!box.isSelected() && !this.bounds.contains(x, y)));
+         this.focusAnimation.updateVisibility(!(!box.isSelected() && !this.bounds.contains(x, y)));
          menuDrawContext.drawRoundedRect(
             this.bounds.getFloatValue(),
             this.bounds.getFloatValue2(),

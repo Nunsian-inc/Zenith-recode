@@ -419,7 +419,7 @@ public class TargetESPModule extends Module {
       }
 
       if (livingEntity == null) {
-         this.animation.method2808(0.0F);
+         this.animation.animateTo(0.0F);
          if (this.animation.getValue() <= 0.01F) {
             this.livingEntity = null;
             this.flag2 = false;
@@ -444,7 +444,7 @@ public class TargetESPModule extends Module {
             this.longValue2 = 0L;
          }
 
-         this.animation.method2808(1.0F);
+         this.animation.animateTo(1.0F);
       }
    }
 

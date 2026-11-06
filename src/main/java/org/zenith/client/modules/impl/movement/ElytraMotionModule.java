@@ -30,47 +30,47 @@ public final class ElytraMotionModule extends Module {
    private final SliderSetting distance = new SliderSetting(
       "module.elytraMotion.distance", 0.1F, 0.1F, 4.0F, 1.0F, "module.elytraMotion.distance.desc", "b", () -> this.mode.isSelected(0), null
    );
-   private boolean flag = false;
-   private final StopWatch stopWatch = new StopWatch();
+   private boolean movementStopped = false;
+   private final StopWatch fireworkTimer = new StopWatch();
 
    private ElytraMotionModule() {
    }
 
    @Override
    public void onEnable() {
-      this.flag = false;
+      this.movementStopped = false;
       super.onEnable();
    }
 
    @Override
    public void onDisable() {
-      this.flag = false;
+      this.movementStopped = false;
       super.onDisable();
    }
 
    @EventTarget
-   public void method6853(KeyEvent event) {
+   public void onKey(KeyEvent event) {
    }
 
    @EventTarget
-   public void method6854(UpdateEvent event) {
+   public void onUpdate(UpdateEvent event) {
       if (!mc.player.isFallFlying()) {
-         this.flag = false;
+         this.movementStopped = false;
       } else {
-         if (this.method6855()) {
+         if (this.isWithinTargetRange()) {
             if (UseItemUtils.method6517() != null) {
-               this.flag = true;
-            } else if (this.stopWatch.method7546(300L) && !this.flag) {
+               this.movementStopped = true;
+            } else if (this.fireworkTimer.method7546(300L) && !this.movementStopped) {
                InventoryUtils.useFireworkInFlight();
-               this.stopWatch.reset();
+               this.fireworkTimer.reset();
             }
          } else {
-            this.flag = false;
+            this.movementStopped = false;
          }
       }
    }
 
-   public boolean method6855() {
+   public boolean isWithinTargetRange() {
       AABB box = ElytraTargetModule.INSTANCE.getBox();
       if (box == null) {
          return false;
@@ -82,18 +82,18 @@ public final class ElytraMotionModule extends Module {
    }
 
    @EventTarget
-   public void method6856(PlayerMoveEvent event) {
-      if (this.flag) {
+   public void onPlayerMove(PlayerMoveEvent event) {
+      if (this.movementStopped) {
          event.setVec3d(Vec3.ZERO);
       }
    }
 
    @EventTarget
-   public void method6857(PacketEvent event) {
+   public void onPacket(PacketEvent event) {
    }
 
    @Generated
-   public boolean isFlag10() {
-      return this.flag;
+   public boolean isMovementStopped() {
+      return this.movementStopped;
    }
 }

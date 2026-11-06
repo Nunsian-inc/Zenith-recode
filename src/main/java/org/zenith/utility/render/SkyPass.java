@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.PostChain.TargetBundle;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.client.modules.impl.render.WeatherModule;
-import org.zenith.utility.misc.Util15;
+import org.zenith.utility.misc.CameraFov;
 import org.zenith.utility.misc.WeatherUniforms;
 
 public final class SkyPass {
@@ -30,7 +30,7 @@ public final class SkyPass {
             return false;
          } else {
             float f = width / Math.max((float)height, 1.0F);
-            float f2 = Util15.method2704();
+            float f2 = CameraFov.getTanHalfFov();
             float f3 = (float)Math.toRadians(mainCamera.xRot());
             float f4 = (float)(Math.PI - Math.toRadians(mainCamera.yRot()));
             Vec3 position = mainCamera.position();

@@ -42,14 +42,14 @@ import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.Rotation;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event2;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PostRotationEvent;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.utility.game.MineTargetFinder;
 import org.zenith.utility.game.TargetUtils;
 import org.zenith.utility.misc.RotationRequest;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 import org.zenith.utility.misc.Vec2f;
 import org.zenith.utility.network.InventoryUtils;
 
@@ -142,7 +142,7 @@ public final class AutoMineModule extends Module {
    }
 
    @EventTarget
-   public void method4353(Event5 event) {
+   public void method4353(PreRotationEvent event) {
       if (mc.player != null && mc.level != null) {
          this.ticks++;
          this.flag = false;
@@ -157,7 +157,7 @@ public final class AutoMineModule extends Module {
             } else {
                Vec3 eyePosition = mc.player.getEyePosition();
                double blockInteractionRange = mc.player.blockInteractionRange();
-               Rotation rotation = rotationManager.method7844();
+               Rotation rotation = rotationManager.getEffectiveRotation();
                if (this.data3 != null) {
                   this.data3 = this.method4361(this.data3, eyePosition, blockInteractionRange, rotation);
                }
@@ -181,12 +181,12 @@ public final class AutoMineModule extends Module {
    }
 
    @EventTarget
-   public void method4354(Event2 event) {
+   public void method4354(PostRotationEvent event) {
       this.flag = false;
       this.blockPos = null;
       if (mc.player != null && this.data != null && !this.flag2 && this.intValue <= 0) {
          ItemStack mainHandItem = mc.player.getMainHandItem();
-         if (Util10.method2177(mainHandItem) && method4380(mainHandItem) >= 30) {
+         if (ItemStackTags.isPickaxe(mainHandItem) && method4380(mainHandItem) >= 30) {
             if (mc.missTime <= 0) {
                this.flag = true;
                if (mc.hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getType() == Type.BLOCK) {
@@ -205,13 +205,13 @@ public final class AutoMineModule extends Module {
    }
 
    private void method4356(Rotation rotation) {
-      Rotation rotation2 = rotation != null ? rotation : rotationManager.method7844();
-      rotationManager.method7849(new RotationRequest(rotation2, () -> this.method4357(rotation2), bcCameraTestnerv.getRotationConfig()), 1, this);
+      Rotation rotation2 = rotation != null ? rotation : rotationManager.getEffectiveRotation();
+      rotationManager.requestRotation(new RotationRequest(rotation2, () -> this.method4357(rotation2), bcCameraTestnerv.getRotationConfig()), 1, this);
    }
 
    private Rotation method4357(Rotation rotation) {
-      Rotation rotation2 = rotationManager.method7844();
-      Vec2f vec2f = rotation2.method3131(rotation);
+      Rotation rotation2 = rotationManager.getEffectiveRotation();
+      Vec2f vec2f = rotation2.wrappedDeltaTo(rotation);
       ThreadLocalRandom current = ThreadLocalRandom.current();
       float hypot = (float)Math.hypot(vec2f.getFloatValue(), vec2f.getFloatValue2());
       float f = 0.0F;
@@ -233,7 +233,7 @@ public final class AutoMineModule extends Module {
          float f4 = this.floatValue + (float)current.nextGaussian() * f3 + this.floatValue3;
          float f5 = this.floatValue2 + (float)current.nextGaussian() * f3 * 0.7F + this.floatValue4;
          float f6;
-         if (!((f6 = Rotation.method3138()) > 0.0F) || Float.isInfinite(f6)) {
+         if (!((f6 = Rotation.sensitivityStep()) > 0.0F) || Float.isInfinite(f6)) {
             f6 = 0.15F;
          }
 
@@ -258,8 +258,8 @@ public final class AutoMineModule extends Module {
       if (method4386(method4385(eyePosition, blockInteractionRange, rotation), data3.pos())) {
          return null;
       } else {
-         Rotation rotation2 = Rotation.method3128(data3.getVec3d(), eyePosition);
-         return rotation.method3141(rotation.method3131(rotation2));
+         Rotation rotation2 = Rotation.lookingAt(data3.getVec3d(), eyePosition);
+         return rotation.add(rotation.wrappedDeltaTo(rotation2));
       }
    }
 
@@ -281,7 +281,7 @@ public final class AutoMineModule extends Module {
          } else if (this.method4364(pos, data3.getVec3d(), eyePosition, blockInteractionRange)) {
             return data3;
          } else {
-            Vec3 vec = rotation.method3135();
+            Vec3 vec = rotation.toDirection();
             AutoMineModule.Data3 data32 = null;
             double d = Double.MAX_VALUE;
 
@@ -289,7 +289,7 @@ public final class AutoMineModule extends Module {
                if (this.method4366(pos, direction, eyePosition)) {
                   AutoMineModule.Data3 data33 = this.method4363(pos, direction, method4367(pos, direction, eyePosition, vec), eyePosition, blockInteractionRange, rotation);
                   double d2;
-                  if (data33 != null && (d2 = method4365(rotation, Rotation.method3128(data33.getVec3d(), eyePosition))) < d) {
+                  if (data33 != null && (d2 = method4365(rotation, Rotation.lookingAt(data33.getVec3d(), eyePosition))) < d) {
                      d = d2;
                      data32 = data33;
                   }
@@ -314,7 +314,7 @@ public final class AutoMineModule extends Module {
       int n6 = Math.max(data.getIntValue5(), containing.getZ() - n);
       int n7 = Math.min(data.getIntValue6(), containing.getZ() + n);
       if (n2 <= n3 && n4 <= n5 && n6 <= n7) {
-         Vec3 vec = rotation.method3135();
+         Vec3 vec = rotation.toDirection();
          ArrayList<AutoMineModule.Data2> data2s = new ArrayList();
          MutableBlockPos mutablePos = new MutableBlockPos();
 
@@ -330,7 +330,7 @@ public final class AutoMineModule extends Module {
                         for (Direction direction : Direction.values()) {
                            if (this.method4366(immutable, direction, eyePosition)) {
                               Vec3 vec3d = method4367(immutable, direction, eyePosition, vec);
-                              data2s.add(new AutoMineModule.Data2(immutable, direction, vec3d, d + method4365(rotation, Rotation.method3128(vec3d, eyePosition))));
+                              data2s.add(new AutoMineModule.Data2(immutable, direction, vec3d, d + method4365(rotation, Rotation.lookingAt(vec3d, eyePosition))));
                            }
                         }
                      }
@@ -367,7 +367,7 @@ public final class AutoMineModule extends Module {
          vecs.add(method4368(pos, direction, doubles[0], doubles[1]));
       }
 
-      vecs.subList(1, vecs.size()).sort(Comparator.comparingDouble(var2x -> method4365(rotation, Rotation.method3128(var2x, eyePosition))));
+      vecs.subList(1, vecs.size()).sort(Comparator.comparingDouble(var2x -> method4365(rotation, Rotation.lookingAt(var2x, eyePosition))));
 
       for (Vec3 vec : vecs) {
          if (this.method4364(pos, vec, eyePosition, blockInteractionRange)) {
@@ -379,12 +379,12 @@ public final class AutoMineModule extends Module {
    }
 
    private boolean method4364(BlockPos pos, Vec3 vec3d, Vec3 eyePosition, double blockInteractionRange) {
-      BlockHitResult blockHitResult = method4385(eyePosition, blockInteractionRange, Rotation.method3128(vec3d, eyePosition));
+      BlockHitResult blockHitResult = method4385(eyePosition, blockInteractionRange, Rotation.lookingAt(vec3d, eyePosition));
       return method4386(blockHitResult, pos) && !this.method4387(eyePosition, blockHitResult.getLocation());
    }
 
    private static double method4365(Rotation rotation, Rotation rotation2) {
-      Vec2f vec2f = rotation.method3131(rotation2);
+      Vec2f vec2f = rotation.wrappedDeltaTo(rotation2);
       return Math.abs(vec2f.getFloatValue()) + Math.abs(vec2f.getFloatValue2()) * 1.5;
    }
 
@@ -549,7 +549,7 @@ public final class AutoMineModule extends Module {
       Inventory inventory = mc.player.getInventory();
       if (!this.flag2) {
          ItemStack mainHandItem = mc.player.getMainHandItem();
-         if (Util10.method2177(mainHandItem) && method4380(mainHandItem) < 30) {
+         if (ItemStackTags.isPickaxe(mainHandItem) && method4380(mainHandItem) < 30) {
             this.flag2 = true;
             this.intValue3 = inventory.getSelectedSlot();
             this.intValue4 = 2 + ThreadLocalRandom.current().nextInt(3);
@@ -563,7 +563,7 @@ public final class AutoMineModule extends Module {
          return true;
       } else {
          ItemStack mainHandItem = Inventory.isHotbarSlot(this.intValue3) ? inventory.getItem(this.intValue3) : ItemStack.EMPTY;
-         if (Util10.method2177(mainHandItem) && method4380(mainHandItem) < 150 && mainHandItem.getDamageValue() != 0) {
+         if (ItemStackTags.isPickaxe(mainHandItem) && method4380(mainHandItem) < 150 && mainHandItem.getDamageValue() != 0) {
             if (mc.player.getOffhandItem().is(Items.EXPERIENCE_BOTTLE)) {
                if (inventory.getSelectedSlot() != this.intValue3) {
                   inventory.setSelectedSlot(this.intValue3);
@@ -628,7 +628,7 @@ public final class AutoMineModule extends Module {
    private boolean method4379() {
       Inventory inventory = mc.player.getInventory();
       ItemStack mainHandItem = mc.player.getMainHandItem();
-      if (Util10.method2177(mainHandItem) && method4380(mainHandItem) >= 30) {
+      if (ItemStackTags.isPickaxe(mainHandItem) && method4380(mainHandItem) >= 30) {
          this.intValue3 = inventory.getSelectedSlot();
          return true;
       } else {
@@ -636,7 +636,7 @@ public final class AutoMineModule extends Module {
 
          for (int i = 0; i < 9; i++) {
             ItemStack stack = inventory.getItem(i);
-            if (Util10.method2177(stack) && method4380(stack) >= 30 && (selected == -1 || i == this.intValue3)) {
+            if (ItemStackTags.isPickaxe(stack) && method4380(stack) >= 30 && (selected == -1 || i == this.intValue3)) {
                selected = i;
             }
          }

@@ -37,7 +37,7 @@ import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.base.Module;
 import org.zenith.client.events.UpdateEvent;
-import org.zenith.utility.misc.Util17;
+import org.zenith.utility.misc.PlayerAimUtils;
 import org.zenith.utility.network.InventoryUtils;
 import org.zenith.utility.render.KeyBindUtils;
 import org.zenith.utility.render.MathUtils;
@@ -166,7 +166,7 @@ public final class AppleFarmModule extends Module {
 
    private void method4091() {
       float f;
-      Util17.method3332((f = this.method4108()) * 10.0F, Mth.clamp(f / 4.0F, -30.0F, 30.0F));
+      PlayerAimUtils.smoothAim((f = this.method4108()) * 10.0F, Mth.clamp(f / 4.0F, -30.0F, 30.0F));
       if (mc.player.tickCount % 5 == 0) {
          InventoryMenu inventoryMenu = mc.player.inventoryMenu;
          int index = -1;
@@ -367,8 +367,8 @@ public final class AppleFarmModule extends Module {
    }
 
    private boolean method4107(Vec3 atCenterOf) {
-      Util17.method3329(atCenterOf);
-      return Util17.method3330(atCenterOf, 20.0F);
+      PlayerAimUtils.aimAt(atCenterOf);
+      return PlayerAimUtils.isWithinAimTolerance(atCenterOf, 20.0F);
    }
 
    private float method4108() {

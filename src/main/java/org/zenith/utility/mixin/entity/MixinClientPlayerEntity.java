@@ -260,7 +260,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          return vec;
       } else {
          Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return currentRotation != null ? currentRotation.method3135() : vec;
+         return currentRotation != null ? currentRotation.toDirection() : vec;
       }
    }
 

@@ -30,10 +30,10 @@ import org.zenith.client.modules.impl.misc.ContainerHelperModule;
 import org.zenith.client.modules.impl.player.AHHelperModule;
 import org.zenith.client.modules.impl.render.BetterMinecraftModule;
 import org.zenith.utility.game.ItemNbtUtils;
-import org.zenith.utility.misc.Handler3;
+import org.zenith.utility.misc.ContainerScreenAnimationAccess;
 
 @Mixin({AbstractContainerScreen.class})
-public abstract class MixinHandledScreen extends Screen implements Handler3 {
+public abstract class MixinHandledScreen extends Screen implements ContainerScreenAnimationAccess {
    @Unique
    @Mutable
    private boolean isAuc;

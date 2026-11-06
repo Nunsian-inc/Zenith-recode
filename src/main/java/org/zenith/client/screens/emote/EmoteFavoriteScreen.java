@@ -31,7 +31,7 @@ import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.utility.misc.EmoteAccess;
 import org.zenith.utility.misc.EmoteInfo;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.PreviewEmotePlayer;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.RenderShaders;
@@ -86,8 +86,8 @@ public final class EmoteFavoriteScreen extends Screen {
 
    @Override
    public void init() {
-      this.openAnimation.method2809(0.0F);
-      this.openAnimation.method2808(1.0F);
+      this.openAnimation.snapTo(0.0F);
+      this.openAnimation.animateTo(1.0F);
       this.restartContentAnimation();
       this.closing = false;
       this.searchBox.setSelected(false);
@@ -105,7 +105,7 @@ public final class EmoteFavoriteScreen extends Screen {
    @Override
    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
       float f;
-      float previewAlpha = Math.clamp(f = this.openAnimation.method2808(this.closing ? 0.0F : 1.0F), 0.0F, 1.0F);
+      float previewAlpha = Math.clamp(f = this.openAnimation.animateTo(this.closing ? 0.0F : 1.0F), 0.0F, 1.0F);
       if (this.closing && previewAlpha <= 0.001F) {
          this.finishClose();
       } else {
@@ -229,11 +229,11 @@ public final class EmoteFavoriteScreen extends Screen {
       double d2 = transformY2;
       double d3 = d;
       int n = d >= closeX && d2 >= closeY && d3 <= closeX + f2 && d2 <= closeY + f ? 1 : 0;
-      float hover = this.closeAnimation.method2808(n != 0 ? 1.0F : 0.0F);
+      float hover = this.closeAnimation.animateTo(n != 0 ? 1.0F : 0.0F);
       menuDrawContext.drawRoundedRect(layout.closeX, layout.closeY, 18.0F, 18.0F, ProxyDotRadiusData.method8069(5.0F), zenithColor.method7295(zenithColor2, hover));
       Font font2 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
       menuDrawContext.drawText(font2, "×", layout.closeX + (18.0F - font2.width("×")) / 2.0F, layout.closeY + (18.0F - font2.height()) / 2.0F - 0.5F, zenithColor3);
-      float f3 = this.searchAnimation.method2808(this.searchBox.isSelected() ? 1.0F : 0.0F);
+      float f3 = this.searchAnimation.animateTo(this.searchBox.isSelected() ? 1.0F : 0.0F);
       ZenithColor zenithColor5 = currentStyle.getFieldSurfaceBackground()
          .getZenithColor()
          .method7294(previewAlpha)
@@ -261,7 +261,7 @@ public final class EmoteFavoriteScreen extends Screen {
       float contentHeight = this.contentHeight();
       this.clampScroll(contentHeight, layout.gridHeight);
       this.scroll = this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-      float f = Math.clamp(this.contentAnimation.method2808(1.0F), 0.0F, 1.0F);
+      float f = Math.clamp(this.contentAnimation.animateTo(1.0F), 0.0F, 1.0F);
       String anObject = this.owner.method6905(this.favoriteSlot);
       Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
       Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
@@ -308,7 +308,7 @@ public final class EmoteFavoriteScreen extends Screen {
             }
 
             boolean flag = emoteInfo.getText().equals(anObject);
-            float hover = this.cardAnimations.get(emoteInfo.getText()).method2808(b2 != 0 ? 1.0F : 0.0F);
+            float hover = this.cardAnimations.get(emoteInfo.getText()).animateTo(b2 != 0 ? 1.0F : 0.0F);
             float previewAlpha2 = Math.clamp(f * 1.25F - n * 0.035F, 0.0F, 1.0F);
             float y = f2 + (1.0F - previewAlpha2) * 8.0F;
             float previewAlpha3 = previewAlpha * previewAlpha2;
@@ -359,7 +359,7 @@ public final class EmoteFavoriteScreen extends Screen {
          double d2 = transformY2;
          double d3 = d;
          int n = d >= f3 && d2 >= gridY && d3 <= f3 + f2 && d2 <= gridY + gridHeight ? 1 : 0;
-         float f4 = this.scrollBarAnimation.method2808(n == 0 && !this.draggingScrollBar ? 0.0F : 1.0F);
+         float f4 = this.scrollBarAnimation.animateTo(n == 0 && !this.draggingScrollBar ? 0.0F : 1.0F);
          float width = 3.0F + f4;
          float floatValue = layout.scrollBarX - f4 / 2.0F;
          ZenithColor zenithColor = currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha);
@@ -391,7 +391,7 @@ public final class EmoteFavoriteScreen extends Screen {
          if ((x >= closeX && y >= closeY && x <= closeX + gridWidth && y <= closeY + gridHeight ? 1 : 0) != 0) {
             this.onClose();
             return true;
-         } else if (this.searchBox.onMouseClicked(x, y, Enum3.method6094(mouseToGlfw))) {
+         } else if (this.searchBox.onMouseClicked(x, y, MouseButton.fromGlfwButton(mouseToGlfw))) {
             return true;
          } else if (this.playerPreview.onMouseClicked(x, y, mouseToGlfw)) {
             return true;
@@ -643,8 +643,8 @@ public final class EmoteFavoriteScreen extends Screen {
    }
 
    private void restartContentAnimation() {
-      this.contentAnimation.method2809(0.0F);
-      this.contentAnimation.method2808(1.0F);
+      this.contentAnimation.snapTo(0.0F);
+      this.contentAnimation.animateTo(1.0F);
    }
 
    private void updatePreviewEmote(EmoteInfo filteredEmote) {

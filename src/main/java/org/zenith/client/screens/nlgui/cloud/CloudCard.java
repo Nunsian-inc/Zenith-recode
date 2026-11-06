@@ -86,8 +86,8 @@ public final class CloudCard {
    ) {
       float f = height(width);
       float previewHeight2 = previewHeight(width);
-      float f2 = this.hoverAnimation.method2808(flag2 ? 1.0F : 0.0F);
-      float f3 = this.selectAnimation.method2808(flag ? 1.0F : 0.0F);
+      float f2 = this.hoverAnimation.animateTo(flag2 ? 1.0F : 0.0F);
+      float f3 = this.selectAnimation.animateTo(flag ? 1.0F : 0.0F);
       ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
       ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.75F);
       menuDrawContext.drawRoundedRect(
@@ -130,11 +130,11 @@ public final class CloudCard {
       String likesText = this.likesText;
       float f4 = 8.0F + font2.width(likesText);
       if (!this.likeReady) {
-         this.likeAnimation.method2809(data2.isFlag3() ? 1.0F : 0.0F);
+         this.likeAnimation.snapTo(data2.isFlag3() ? 1.0F : 0.0F);
          this.likeReady = true;
       }
 
-      float hover = this.likeAnimation.method2808(data2.isFlag3() ? 1.0F : 0.0F);
+      float hover = this.likeAnimation.animateTo(data2.isFlag3() ? 1.0F : 0.0F);
       ZenithColor zenithColor3 = zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getHeartIcon().getZenithColor(), hover);
       float f5 = floatValue + width - 4.0F - 1.0F - f4;
       float f6 = centeredTextY2 + (font2.height() - 6.0F) / 2.0F;
@@ -154,7 +154,7 @@ public final class CloudCard {
       Identifier texture = data2.hasPreview() ? CloudPreviewTextureCache.get(data2.getUUID(), data2.getText6()) : null;
       ZenithColor zenithColor = TINTS[Math.floorMod(nameSeed(data2.name()), TINTS.length)];
       if (texture != null) {
-         float f = this.previewFade.method2808(1.0F);
+         float f = this.previewFade.animateTo(1.0F);
          if (f < 1.0F) {
             menuDrawContext.drawRoundedRect(
                floatValue,
@@ -211,7 +211,7 @@ public final class CloudCard {
       float floatValue = f + f3 - 3.0F - width;
       float y = f2 + f4 - 3.0F - 10.0F;
       this.downloadHot = f5 > 0.35F && new BoundsData(floatValue, y, width, 10.0F).contains(lastClickX, lastClickY);
-      float f6 = this.downloadAnimation.method2808(this.downloadHot ? 1.0F : 0.0F);
+      float f6 = this.downloadAnimation.animateTo(this.downloadHot ? 1.0F : 0.0F);
       if (!(f5 <= 0.01F)) {
          ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
          ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(5.0F);

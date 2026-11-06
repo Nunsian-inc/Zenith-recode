@@ -100,7 +100,7 @@ public class SidebarHud extends Interface {
       Scoreboard scoreboard = mc.level.getScoreboard();
       Objective displayObjective = scoreboard.getDisplayObjective(DisplaySlot.LIST);
       this.animation
-         .method2807(
+         .updateVisibility(
             mc.options.keyPlayerList.isDown()
                && (!mc.isLocalServer() || mc.player.connection.getListedOnlinePlayers().size() > 1 || displayObjective != null)
          );

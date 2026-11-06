@@ -7,17 +7,17 @@ public class Animation {
    private float value;
    private Easing easing;
    private long startTime;
-   private float floatValue;
-   private float floatValue2;
+   private float startValue;
+   private float targetValue;
    private boolean done;
    private boolean flag;
 
-   public Animation(long duration, float floatValue, Easing easing) {
+   public Animation(long duration, float initialValue, Easing easing) {
       this.duration = duration;
       this.easing = easing;
-      this.value = floatValue;
-      this.floatValue = floatValue;
-      this.floatValue2 = floatValue;
+      this.value = initialValue;
+      this.startValue = initialValue;
+      this.targetValue = initialValue;
       this.done = true;
    }
 
@@ -25,43 +25,43 @@ public class Animation {
       this(duration, 0.0F, easing);
    }
 
-   public void method2807(boolean visible) {
-      this.method2808(visible ? 1.0F : 0.0F);
+   public void updateVisibility(boolean visible) {
+      this.animateTo(visible ? 1.0F : 0.0F);
    }
 
-   public float method2808(float floatValue) {
+   public float animateTo(float targetValue) {
       long now = System.currentTimeMillis();
-      if (floatValue != this.floatValue2) {
-         this.floatValue = this.value;
-         this.floatValue2 = floatValue;
+      if (targetValue != this.targetValue) {
+         this.startValue = this.value;
+         this.targetValue = targetValue;
          this.startTime = now;
          this.done = false;
       }
 
-      long l = now - this.startTime;
-      if (l >= this.duration) {
-         this.value = this.floatValue2;
+      long elapsed = now - this.startTime;
+      if (elapsed >= this.duration) {
+         this.value = this.targetValue;
          this.done = true;
          return this.value;
       } else {
-         float f = (float)l / (float)this.duration;
-         float ease = this.easing.ease(f, 0.0F, 1.0F, 1.0F);
-         this.value = this.floatValue + (this.floatValue2 - this.floatValue) * ease;
+         float progress = (float)elapsed / (float)this.duration;
+         float easedProgress = this.easing.ease(progress, 0.0F, 1.0F, 1.0F);
+         this.value = this.startValue + (this.targetValue - this.startValue) * easedProgress;
          return this.value;
       }
    }
 
-   public void method2809(float floatValue) {
-      this.value = floatValue;
-      this.floatValue = floatValue;
-      this.floatValue2 = floatValue;
+   public void snapTo(float value) {
+      this.value = value;
+      this.startValue = value;
+      this.targetValue = value;
       this.done = true;
    }
 
-   public void reset(float floatValue) {
-      this.value = floatValue;
-      this.floatValue = floatValue;
-      this.floatValue2 = floatValue;
+   public void reset(float value) {
+      this.value = value;
+      this.startValue = value;
+      this.targetValue = value;
       this.done = true;
    }
 
@@ -69,17 +69,17 @@ public class Animation {
       this.reset(0.0F);
    }
 
-   public void method2810(float lastX) {
-      if (lastX != this.floatValue2) {
-         this.floatValue = this.value;
-         this.floatValue2 = lastX;
+   public void setTarget(float targetValue) {
+      if (targetValue != this.targetValue) {
+         this.startValue = this.value;
+         this.targetValue = targetValue;
          this.startTime = System.currentTimeMillis();
          this.done = false;
       }
    }
 
    public float update() {
-      return this.method2808(this.floatValue2);
+      return this.animateTo(this.targetValue);
    }
 
    @Generated
@@ -104,12 +104,12 @@ public class Animation {
 
    @Generated
    public float getFloatValue() {
-      return this.floatValue;
+      return this.startValue;
    }
 
    @Generated
    public float getFloatValue2() {
-      return this.floatValue2;
+      return this.targetValue;
    }
 
    @Generated
@@ -138,13 +138,13 @@ public class Animation {
    }
 
    @Generated
-   public void setFloatValue(float floatValue) {
-      this.floatValue = floatValue;
+   public void setFloatValue(float startValue) {
+      this.startValue = startValue;
    }
 
    @Generated
-   public void setFloatValue2(float f) {
-      this.floatValue2 = f;
+   public void setFloatValue2(float targetValue) {
+      this.targetValue = targetValue;
    }
 
    @Generated

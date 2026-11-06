@@ -19,12 +19,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.zenith.utility.misc.MapAtlas;
 import org.zenith.utility.misc.OptimizationFlags;
-import org.zenith.utility.misc.Util30;
+import org.zenith.utility.misc.MapAtlasAccess;
 
 @Mixin(
    targets = {"net/minecraft/client/resources/MapTextureManager$MapInstance"}
 )
-public abstract class MixinOptMapTexture implements Util30.Handler2 {
+public abstract class MixinOptMapTexture implements MapAtlasAccess.Handler2 {
    @Shadow
    private MapItemSavedData data;
    @Shadow
@@ -48,7 +48,7 @@ public abstract class MixinOptMapTexture implements Util30.Handler2 {
    private DynamicTexture zenith$allocateInAtlas(
       Supplier<String> supplier, int n, int n2, boolean flag, Operation<DynamicTexture> operation, @Local(argsOnly = true) MapTextureManager mapTextureManager
    ) {
-      if (OptimizationFlags.flag18 && n == 128 && n2 == 128 && mapTextureManager instanceof Util30.Handler handler) {
+      if (OptimizationFlags.flag18 && n == 128 && n2 == 128 && mapTextureManager instanceof MapAtlasAccess.Handler handler) {
          MapAtlas.Data zenith$atlasSlot = handler.zenith$getAtlasPool().method6151(handler.zenith$getTextureManager());
          if (zenith$atlasSlot != null) {
             this.zenith$atlasSlot = zenith$atlasSlot;

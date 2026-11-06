@@ -21,7 +21,7 @@ import org.zenith.ZenithColor;
 import org.zenith.base.font.Font;
 import org.zenith.base.font.Fonts;
 import org.zenith.client.screens.override.server.MenuMultiPlayerScreen;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.TextUtils;
 import org.zenith.utility.misc.ThemeStyle;
 import org.zenith.utility.render.RenderShaders;
@@ -75,7 +75,7 @@ public class ServerButton extends ButtonScreen implements MinecraftAccess {
    public void render(MenuDrawContext graphics, float mouseX, float mouseY, float floatValue, float y) {
       super.render(graphics, mouseX, mouseY, floatValue, y);
       ThemeStyle themeStyle = ThemeStyle.INSTANCE;
-      this.hoverAnimation.method2807(this.bounds.contains(mouseX, mouseY));
+      this.hoverAnimation.updateVisibility(this.bounds.contains(mouseX, mouseY));
       graphics.drawRoundedRect(
          floatValue,
          y,
@@ -119,8 +119,8 @@ public class ServerButton extends ButtonScreen implements MinecraftAccess {
    }
 
    @Override
-   public void onClick(double d, double d2, Enum3 enum2) {
-      if (enum2 == Enum3.LEFT) {
+   public void onClick(double d, double d2, MouseButton enum2) {
+      if (enum2 == MouseButton.LEFT) {
          ServerAddress string = ServerAddress.parseString(this.serverInfo.ip);
          ConnectScreen.startConnecting(mc.gui.screen(), mc, string, this.serverInfo, false, null);
       }

@@ -48,8 +48,8 @@ public class HolyWorldServerTracker implements ZenithAccess {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (this.anarchy != 0 && event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+      if (this.anarchy != 0 && event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket) {
             String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
             if (!lowerCase.contains("хаб") && lowerCase.contains("не удалось")) {
                mc.execute(() -> {
@@ -81,7 +81,7 @@ public class HolyWorldServerTracker implements ZenithAccess {
             } else if (mc.gui.screen() instanceof ContainerScreen containerScreen && containerScreen.getTitle().getString().toLowerCase(Locale.ROOT).contains("лайт анархии")
                )
              {
-               if (System.currentTimeMillis() - ((Handler1)mc.gui.screen()).zenithDLC$callGetStartTime() > 4000L) {
+               if (System.currentTimeMillis() - ((ScreenCreationTimeAccess)mc.gui.screen()).zenithDLC$callGetStartTime() > 4000L) {
                   mc.player.closeContainer();
                } else if (this.stopWatch.method7546(500L)) {
                   byte index = 0;

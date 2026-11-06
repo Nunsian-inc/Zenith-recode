@@ -36,13 +36,13 @@ public class TimerHud extends Interface {
       float floatValue = timerModule.method131();
       String text = "Timer";
       String str = Math.round(floatValue * 100.0F) + "%";
-      this.animation.method2807(enabled);
+      this.animation.updateVisibility(enabled);
       if (!(this.animation.getValue() <= 0.01F)) {
          ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
          Font font = Fonts.NEW_ICONS.getFont(6.2F);
          Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
          Font font3 = Fonts.NEW_SEMIBOLD.getFont(5.3F);
-         float f = Mth.clamp(this.animation2.method2808(floatValue), 0.0F, 1.0F);
+         float f = Mth.clamp(this.animation2.animateTo(floatValue), 0.0F, 1.0F);
          float width = font3.width(str);
          float width2 = Math.max(18.0F, width + GuiStyle.PADDING.intValue() * 1.5F);
          float f2 = Math.max(76.0F, font2.width(text) + GuiStyle.PADDING.intValue() + width2);

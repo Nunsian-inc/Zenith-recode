@@ -42,7 +42,7 @@ import org.zenith.Rotation;
 import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.HandleInputEvent;
 import org.zenith.client.settings.BindSetting;
 import org.zenith.client.settings.BooleanSetting;
@@ -164,16 +164,16 @@ public final class AutoThrowModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && event.getPacket3() instanceof ClientboundSoundPacket clientboundSoundPacket && this.method7131(clientboundSoundPacket)) {
+      if (event.isIncoming() && event.getPacket() instanceof ClientboundSoundPacket clientboundSoundPacket && this.method7131(clientboundSoundPacket)) {
          this.vec3d = new Vec3(clientboundSoundPacket.getX(), clientboundSoundPacket.getY(), clientboundSoundPacket.getZ());
       }
    }
 
    @EventTarget
-   public void method7110(Event5 event) {
+   public void method7110(PreRotationEvent event) {
       if (this.step == 2 && this.method7108() && this.playerEntity != null && mc.player != null) {
-         Rotation rotation = Rotation.method3128(this.playerEntity.getBoundingBox().getCenter(), mc.player.getEyePosition());
-         rotationManager.method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 8, this);
+         Rotation rotation = Rotation.lookingAt(this.playerEntity.getBoundingBox().getCenter(), mc.player.getEyePosition());
+         rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 8, this);
       }
    }
 
@@ -570,7 +570,7 @@ public final class AutoThrowModule extends Module {
    }
 
    private Rotation method7136() {
-      return rotationManager.method7844();
+      return rotationManager.getEffectiveRotation();
    }
 
    private boolean method7137(LivingEntity playerEntity, float f, Rotation rotation2) {
@@ -578,7 +578,7 @@ public final class AutoThrowModule extends Module {
          return false;
       } else {
          Vec3 eyePosition = mc.player.getEyePosition();
-         Vec3 to = eyePosition.add(rotation2.method3135().scale(f + 1.0F));
+         Vec3 to = eyePosition.add(rotation2.toDirection().scale(f + 1.0F));
          AABB inflate = playerEntity.getBoundingBox().inflate(0.15);
          return inflate.contains(eyePosition) || inflate.clip(eyePosition, to).isPresent();
       }

@@ -27,7 +27,7 @@ import org.zenith.utility.api.PlayTimeTracker;
 import org.zenith.utility.api.RegionUtil;
 import org.zenith.utility.api.Server;
 import org.zenith.utility.config.CloudAvatarCache;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -172,7 +172,7 @@ public class QuickMenuPanel extends Panel {
          this.scrollTarget = 0.0F;
          if (expanded) {
             this.openAnimation.reset(0.0F);
-            this.openAnimation.method2810(1.0F);
+            this.openAnimation.setTarget(1.0F);
          }
       }
    }
@@ -217,7 +217,7 @@ public class QuickMenuPanel extends Panel {
 
          this.clampScroll(f2, height);
          this.scroll = this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-         float f3 = this.openAnimation.method2808(1.0F);
+         float f3 = this.openAnimation.animateTo(1.0F);
          customDrawContext.enableScissor(floatValue, f, floatValue + leftWidthPanel, f + height);
          float y2 = f + this.scroll;
          int n = 0;
@@ -325,7 +325,7 @@ public class QuickMenuPanel extends Panel {
    }
 
    @Override
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.expanded && this.bounds != null && this.bounds.contains(x, y)) {
          if (this.closeBounds != null && this.closeBounds.contains(x, y)) {
             this.setExpanded(false);
@@ -381,7 +381,7 @@ public class QuickMenuPanel extends Panel {
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       boolean flag = false;
 
       for (QuickMenuPanel.Row row : this.rows) {
@@ -465,7 +465,7 @@ public class QuickMenuPanel extends Panel {
          this.bounds = new BoundsData(floatValue, y, leftWidthPanel, 12.0F);
          boolean flag = this.clickable() && this.bounds.contains(mouseX, mouseY);
          boolean flag2 = this.selected != null && this.selected.getAsBoolean();
-         float f = this.hover.method2808(flag ? 1.0F : 0.0F);
+         float f = this.hover.animateTo(flag ? 1.0F : 0.0F);
          float floatValue2 = floatValue + 8.0F + 6.0F;
          float f2 = floatValue + leftWidthPanel - 8.0F;
          if (flag2 || f > 0.002F) {
@@ -607,8 +607,8 @@ public class QuickMenuPanel extends Panel {
             float ownHeight = this.ownHeight();
             this.bounds = new BoundsData(floatValue, y, leftWidthPanel, ownHeight);
             boolean contains = this.bounds.contains(mouseX, mouseY);
-            float f = this.hover.method2808(contains ? 1.0F : 0.0F);
-            float f2 = this.expandAnimation.method2808(flag ? 1.0F : 0.0F);
+            float f = this.hover.animateTo(contains ? 1.0F : 0.0F);
+            float f2 = this.expandAnimation.animateTo(flag ? 1.0F : 0.0F);
             float hover = Math.max(Math.max(f, f2), this.dragging ? 1.0F : 0.0F);
             if (hover > 0.002F) {
                customDrawContext.drawRoundedRect(
@@ -822,7 +822,7 @@ public class QuickMenuPanel extends Panel {
          float floatValue = f - width;
          float y2 = y + (15.0F - height) / 2.0F;
          boolean flag = this.state != null && this.state.getAsBoolean();
-         float hover = this.toggleAnimation.method2808(flag ? 1.0F : 0.0F);
+         float hover = this.toggleAnimation.animateTo(flag ? 1.0F : 0.0F);
          customDrawContext.drawRoundedRect(
             floatValue,
             y2,

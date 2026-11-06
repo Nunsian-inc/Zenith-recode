@@ -40,7 +40,7 @@ import org.zenith.utility.config.CloudAvatarCache;
 import org.zenith.utility.config.SiteSession;
 import org.zenith.utility.misc.CloudConnectionState;
 import org.zenith.utility.misc.Coord;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.PartyPlayerInfo;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.misc.ServerNameUtils;
@@ -285,7 +285,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    public void tick() {
       this.prepareStickers();
       if (this.cardClosing) {
-         this.cardReveal.method2808(0.0F);
+         this.cardReveal.animateTo(0.0F);
       }
 
       if (this.cardClosing && this.cardReveal.getValue() <= 0.01F) {
@@ -351,13 +351,13 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.lastQuery = searchQuery;
          if (flag4) {
             this.messageArrival.reset(0.0F);
-            this.messageArrival.method2810(1.0F);
+            this.messageArrival.setTarget(1.0F);
          }
 
          if (flag) {
             this.focusInput();
             this.listReveal.reset(0.0F);
-            this.listReveal.method2810(1.0F);
+            this.listReveal.setTarget(1.0F);
             this.pickerOpen = false;
          }
 
@@ -754,7 +754,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          if (!siteMode() || selectedUid != global().getLongValue()) {
             if (selectedUid != this.selectedUid || this.cardClosing) {
                this.cardReveal.reset(0.0F);
-               this.cardReveal.method2810(1.0F);
+               this.cardReveal.setTarget(1.0F);
             }
 
             this.cardClosing = false;
@@ -794,7 +794,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       this.asideCustom(
          24.0F + GuiStyle.PADDING.intValue(),
          (var1x, var2x, var3x, var4x, animationPosY, f, f2, zenithStyle) -> {
-            float f3 = this.cardReveal.method2808(this.cardClosing ? 0.0F : 1.0F);
+            float f3 = this.cardReveal.animateTo(this.cardClosing ? 0.0F : 1.0F);
             float f4 = (1.0F - f3) * 10.0F;
             float previewAlpha = f2 * f3;
             this.avatar(var1x, this.selectedUid, this.selectedName, var4x + 8.0F + f4, animationPosY, 24.0F, previewAlpha, zenithStyle);
@@ -834,7 +834,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    private void closeCard() {
       if (this.selectedUid != 0L && !this.cardClosing) {
          this.cardClosing = true;
-         this.cardReveal.method2810(0.0F);
+         this.cardReveal.setTarget(0.0F);
       }
    }
 
@@ -1176,10 +1176,10 @@ public class CloudChatSectionPanel extends SectionPanel {
    ) {
       float f = this.selectFade
          .computeIfAbsent(uid, l -> new Animation(160L, 0.0F, Easing.INSTANCE12))
-         .method2808(uid == this.openPeerUid() ? 1.0F : 0.0F);
+         .animateTo(uid == this.openPeerUid() ? 1.0F : 0.0F);
       float f2 = this.contactHover
          .computeIfAbsent(uid, l -> new Animation(130L, 0.0F, Easing.INSTANCE12))
-         .method2808(new BoundsData(floatValue, y, width, 24.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+         .animateTo(new BoundsData(floatValue, y, width, 24.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
       float f3 = Math.max(f, f2 * 0.45F);
       if (f3 > 0.002F) {
          menuDrawContext.drawRoundedRect(
@@ -1209,7 +1209,7 @@ public class CloudChatSectionPanel extends SectionPanel {
 
       menuDrawContext.drawText(font, clip(name, font, maxWidth), floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
       float maxWidth2 = f4 - floatValue3;
-      float hover = this.unreadPop.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(intValue > 0 ? 1.0F : 0.0F);
+      float hover = this.unreadPop.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).animateTo(intValue > 0 ? 1.0F : 0.0F);
       if (hover > 0.01F) {
          Font font4 = Fonts.NEW_MEDIUM.getFont(4.2F);
          String text2 = intValue > 99 ? "99+" : String.valueOf(intValue);
@@ -1256,10 +1256,10 @@ public class CloudChatSectionPanel extends SectionPanel {
       boolean flag,
       boolean flag2
    ) {
-      float f = this.selectFade.computeIfAbsent(key, l -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(flag2 ? 1.0F : 0.0F);
+      float f = this.selectFade.computeIfAbsent(key, l -> new Animation(160L, 0.0F, Easing.INSTANCE12)).animateTo(flag2 ? 1.0F : 0.0F);
       float f2 = this.contactHover
          .computeIfAbsent(key, l -> new Animation(130L, 0.0F, Easing.INSTANCE12))
-         .method2808(new BoundsData(floatValue, y, width, 24.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+         .animateTo(new BoundsData(floatValue, y, width, 24.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
       float f3 = Math.max(f, f2 * 0.45F);
       if (f3 > 0.002F) {
          menuDrawContext.drawRoundedRect(
@@ -1274,7 +1274,7 @@ public class CloudChatSectionPanel extends SectionPanel {
 
       float floatValue2 = floatValue + 8.0F;
       this.avatar(menuDrawContext, key, username, floatValue2, y + 4.0F, 16.0F, previewAlpha, zenithStyle);
-      float f4 = this.onlineFade.computeIfAbsent(key, l -> new Animation(300L, 0.0F, Easing.INSTANCE13)).method2808(flag ? 1.0F : 0.0F);
+      float f4 = this.onlineFade.computeIfAbsent(key, l -> new Animation(300L, 0.0F, Easing.INSTANCE13)).animateTo(flag ? 1.0F : 0.0F);
       if (f4 > 0.01F) {
          float width2 = 4.0F * f4;
          float floatValue3 = floatValue2 + 16.0F - 4.0F + (4.0F - width2) / 2.0F;
@@ -1358,7 +1358,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.barName = this.openPeerName();
       }
 
-      return 24.0F * this.peerBarAnimation.method2808(flag ? 1.0F : 0.0F);
+      return 24.0F * this.peerBarAnimation.animateTo(flag ? 1.0F : 0.0F);
    }
 
    @Override
@@ -1382,7 +1382,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       float centeredTextY2 = f2 + 9.0F;
       float hover = this.glyphHover
          .computeIfAbsent("peerClose", str -> new Animation(130L, 0.0F, Easing.INSTANCE12))
-         .method2808(new BoundsData(floatValue2 - 3.0F, centeredTextY2 - 3.0F, 12.0F, 12.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+         .animateTo(new BoundsData(floatValue2 - 3.0F, centeredTextY2 - 3.0F, 12.0F, 12.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
       MenuGlyph.CLOSE
          .draw(menuDrawContext, floatValue2, centeredTextY2, zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha));
       menuDrawContext.drawRect(f + 8.0F, f2 + 24.0F - 1.0F, f3 - 16.0F, 1.0F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
@@ -1694,7 +1694,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void renderBubble(MenuDrawContext menuDrawContext, float f, float animationPosY, float f2, float previewAlpha, ZenithStyle zenithStyle, CloudChatSectionPanel.Bubble shape) {
-      float f3 = shape.newest() ? this.messageArrival.method2808(1.0F) : 1.0F;
+      float f3 = shape.newest() ? this.messageArrival.animateTo(1.0F) : 1.0F;
       float f4 = (1.0F - f3) * (shape.mine() ? 12.0F : -12.0F);
       previewAlpha *= 0.25F + 0.75F * f3;
       float f5 = shape.mine() ? 0.0F : 20.0F;
@@ -1769,7 +1769,7 @@ public class CloudChatSectionPanel extends SectionPanel {
       Identifier texture = uid > 0L ? CloudAvatarCache.get(Long.toString(uid)) : null;
       ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
       if (texture != null) {
-         float f = this.avatarFade.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+         float f = this.avatarFade.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
          if (f < 1.0F) {
             menuDrawContext.drawRoundedRect(floatValue, animationPosY, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F * (1.0F - f)));
          }
@@ -1815,7 +1815,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.shownError = this.error;
       }
 
-      float f2 = this.errorAnimation.method2808(this.error.isEmpty() ? 0.0F : 1.0F);
+      float f2 = this.errorAnimation.animateTo(this.error.isEmpty() ? 0.0F : 1.0F);
       if (f2 > 0.01F && !this.shownError.isEmpty()) {
          Font font = Fonts.NEW_REGULAR.getFont(4.2F);
          menuDrawContext.drawText(
@@ -1837,7 +1837,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.input.setSelected(true);
       }
 
-      float f3 = this.focusAnimation.method2808(this.input.isSelected() ? 1.0F : 0.0F);
+      float f3 = this.focusAnimation.animateTo(this.input.isSelected() ? 1.0F : 0.0F);
       menuDrawContext.drawRoundedRectBatched(
          floatValue + 8.0F,
          f + 2.0F,
@@ -1865,7 +1865,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.shownNotice = this.notice;
       }
 
-      float f4 = this.noticeAnimation.method2808(this.notice.isEmpty() ? 0.0F : 1.0F);
+      float f4 = this.noticeAnimation.animateTo(this.notice.isEmpty() ? 0.0F : 1.0F);
       Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
       float f5 = Math.max(font2.width(openPeerName), this.shownNotice.isEmpty() ? 0.0F : font2.width(this.shownNotice) * f4);
       float f6 = floatValue + width - 8.0F - 4.0F;
@@ -1874,7 +1874,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.shownLabel = this.pendingLabel;
       }
 
-      float f7 = this.pendingAnimation.method2808(this.pendingTag.isEmpty() ? 0.0F : 1.0F);
+      float f7 = this.pendingAnimation.animateTo(this.pendingTag.isEmpty() ? 0.0F : 1.0F);
       if (f7 > 0.01F && !this.shownLabel.isEmpty()) {
          Font font3 = Fonts.NEW_REGULAR.getFont(4.0F);
          float width2 = font3.width(this.shownLabel) + 6.0F + 9.0F;
@@ -1934,7 +1934,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    public void renderFloating(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, ZenithStyle zenithStyle) {
       if (zenithStyle != null) {
          BoundsData pickerAt = this.pickerAt;
-         float f2 = this.pickerAnimation.method2808(this.pickerOpen ? 1.0F : 0.0F);
+         float f2 = this.pickerAnimation.animateTo(this.pickerOpen ? 1.0F : 0.0F);
          if (pickerAt != null && !(f2 <= 0.01F)) {
             ScissorFlusher.flush();
             this.renderPicker(menuDrawContext, lastClickX, lastClickY, pickerAt.getFloatValue(), pickerAt.getFloatValue2(), pickerAt.width(), pickerAt.height(), zenithStyle, f2);
@@ -1953,7 +1953,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void renderDeleteMenu(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, ZenithStyle zenithStyle) {
-      float f2 = this.deleteMenuAnimation.method2808(this.deleteMenuMessage != 0L ? 1.0F : 0.0F);
+      float f2 = this.deleteMenuAnimation.animateTo(this.deleteMenuMessage != 0L ? 1.0F : 0.0F);
       BoundsData mainViewport = this.mainViewport();
       if (!(f2 <= 0.01F) && mainViewport != null) {
          ScissorFlusher.flush();
@@ -1986,7 +1986,7 @@ public class CloudChatSectionPanel extends SectionPanel {
             zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.5F)
          );
          boolean contains = this.deleteMenuBounds.contains(lastClickX, lastClickY);
-         float f4 = this.deleteMenuHover.method2808(contains ? 1.0F : 0.0F);
+         float f4 = this.deleteMenuHover.animateTo(contains ? 1.0F : 0.0F);
          if (f4 > 0.01F) {
             menuDrawContext.drawRoundedRect(
                floatValue + 1.0F,
@@ -2011,7 +2011,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    ) {
       BoundsData boundsData = new BoundsData(floatValue - 2.0F, centeredTextY - 3.0F, 10.0F, 12.0F);
       boolean contains = boundsData.contains(lastClickX, lastClickY);
-      float hover = this.glyphHover.computeIfAbsent(key, str -> new Animation(130L, 0.0F, Easing.INSTANCE12)).method2808(!contains && !pickerOpen ? 0.0F : 1.0F);
+      float hover = this.glyphHover.computeIfAbsent(key, str -> new Animation(130L, 0.0F, Easing.INSTANCE12)).animateTo(!contains && !pickerOpen ? 0.0F : 1.0F);
       if (hover > 0.01F) {
          menuDrawContext.drawRoundedRect(
             boundsData.getFloatValue(),
@@ -2086,15 +2086,15 @@ public class CloudChatSectionPanel extends SectionPanel {
          }
 
          if (!this.packPlateReady) {
-            this.packPlateX.method2809(f5 - floatValue);
-            this.packPlateWidth.method2809(floatValue2);
+            this.packPlateX.snapTo(f5 - floatValue);
+            this.packPlateWidth.snapTo(floatValue2);
             this.packPlateReady = true;
          }
 
          menuDrawContext.drawRoundedRect(
-            floatValue + this.packPlateX.method2808(f5 - floatValue),
+            floatValue + this.packPlateX.animateTo(f5 - floatValue),
             y + 2.0F,
-            this.packPlateWidth.method2808(floatValue2),
+            this.packPlateWidth.animateTo(floatValue2),
             10.0F,
             ProxyDotRadiusData.method8069(5.0F),
             zenithStyle.getPrimaryColor().getZenithColor().method7294(height * 0.3F)
@@ -2106,7 +2106,7 @@ public class CloudChatSectionPanel extends SectionPanel {
             float f6 = font.width(name) + 8.0F;
             boolean flag = i == floorMod;
             boolean flag2 = !flag && lastClickX >= f4 && lastClickX <= f4 + f6 && lastClickY >= y + 2.0F && lastClickY <= y + 12.0F;
-            float hover = this.cellHover.computeIfAbsent("pack:" + i, str -> new Animation(130L, 0.0F, Easing.INSTANCE12)).method2808(flag2 ? 1.0F : 0.0F);
+            float hover = this.cellHover.computeIfAbsent("pack:" + i, str -> new Animation(130L, 0.0F, Easing.INSTANCE12)).animateTo(flag2 ? 1.0F : 0.0F);
             ZenithColor zenithColor = flag
                ? zenithStyle.getTextEnable().getZenithColor()
                : zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextSecondary().getZenithColor(), hover);
@@ -2134,14 +2134,14 @@ public class CloudChatSectionPanel extends SectionPanel {
                );
             } else {
                boolean flag = lastClickX >= floatValue3 && lastClickX <= floatValue3 + width2 && lastClickY >= y2 && lastClickY <= y2 + width2;
-               float f7 = this.cellHover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(flag ? 1.0F : 0.0F);
+               float f7 = this.cellHover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).animateTo(flag ? 1.0F : 0.0F);
                if (f7 > 0.01F) {
                   menuDrawContext.drawRoundedRect(
                      floatValue3, y2, width2, width2, ProxyDotRadiusData.method8069(4.0F), zenithStyle.getDisableActiveBg().getZenithColor().method7294(height * f7)
                   );
                }
 
-               float f8 = this.stickerFade.computeIfAbsent(key, str -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+               float f8 = this.stickerFade.computeIfAbsent(key, str -> new Animation(220L, 0.0F, Easing.INSTANCE12)).animateTo(1.0F);
                float height3 = (width2 - 4.0F) * (1.0F + f7 * 0.1F);
                ChatCards.drawSticker(
                   menuDrawContext,
@@ -2159,7 +2159,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onFooterClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onFooterClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.pendingButton != null && this.pendingButton.contains(lastClickX, lastClickY)) {
          this.pendingTag = "";
          this.pendingLabel = "";
@@ -2281,7 +2281,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.clickDeleteMenu(lastClickX, lastClickY)) {
          return true;
       } else {
@@ -2531,7 +2531,7 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private float reveal(int n) {
-      float f = this.listReveal.method2808(1.0F);
+      float f = this.listReveal.animateTo(1.0F);
       float f2 = Math.min(0.5F, n * 0.06F);
       return f <= f2 ? 0.0F : Math.min(1.0F, (f - f2) / Math.max(0.05F, 1.0F - f2));
    }

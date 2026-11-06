@@ -244,7 +244,7 @@ public final class Island implements MinecraftAccess {
    @EventTarget
    public void onPacket(PacketEvent event) {
       if (mc.player != null) {
-         if (event.getPacket3() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35) {
+         if (event.getPacket() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35) {
             mc.execute(() -> {
                if (mc.player != null && mc.level != null) {
                   Entity var1x = entityEventPacket.getEntity(mc.level);

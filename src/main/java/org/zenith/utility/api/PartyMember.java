@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zenith.MinecraftAccess;
 import org.zenith.Zenith;
-import org.zenith.client.events.Event10;
+import org.zenith.client.events.CloudNotificationEvent;
 import org.zenith.utility.game.FocusSlotEnum;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.PartyPlayerInfo;
@@ -588,7 +588,7 @@ public final class PartyMember implements MinecraftAccess {
          this.version++;
       }
 
-      EventManager.call(new Event10(data18));
+      EventManager.call(new CloudNotificationEvent(data18));
    }
 
    private void method1181(JsonObject jsonObject) {

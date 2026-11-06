@@ -116,7 +116,7 @@ public final class AssistSilent implements ZenithAccess {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+      if (event.isIncoming() && event.getPacket() instanceof ClientboundPlayerPositionPacket) {
          this.flag = true;
       }
    }
@@ -209,7 +209,7 @@ public final class AssistSilent implements ZenithAccess {
                this.method6311(entry4, d, d2, flag3, d3, doubles);
                if (this.entry.isFlag()) {
                   Rotation rotation = new Rotation((float)doubles[0], (float)doubles[1]);
-                  rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 1, moduleValue, 1);
+                  rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 1, moduleValue, 1);
                   this.rotation = rotation;
                }
             }

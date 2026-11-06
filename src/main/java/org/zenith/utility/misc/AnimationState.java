@@ -32,7 +32,7 @@ public final class AnimationState {
       this.floatValue6 = f;
    }
 
-   public void method6539(Class15 key, String text, float floatValue) {
+   public void method6539(WardrobeModel key, String text, float floatValue) {
       String current = method6545(key, text);
       if (current != null && !current.equals(this.text)) {
          this.text = current;
@@ -43,8 +43,8 @@ public final class AnimationState {
       }
    }
 
-   public boolean method6540(Class15 key, String text, float floatValue) {
-      Class37 class2 = key.method2032(text);
+   public boolean method6540(WardrobeModel key, String text, float floatValue) {
+      AnimationCurve class2 = key.method2032(text);
       if (class2 == null) {
          return false;
       } else {
@@ -59,10 +59,10 @@ public final class AnimationState {
       this.method6544(this.text, floatValue, this.floatValue, 0.38F);
    }
 
-   public void method6542(Class15 key, float floatValue) {
+   public void method6542(WardrobeModel key, float floatValue) {
       this.method6543(floatValue);
       if (this.flag) {
-         Class37 class2 = key.method2032(this.current);
+         AnimationCurve class2 = key.method2032(this.current);
          if (class2 == null || this.floatValue2 >= class2.getFloatValue()) {
             this.flag = false;
             this.method6544(this.text, floatValue, this.floatValue, 0.38F);
@@ -117,7 +117,7 @@ public final class AnimationState {
       }
    }
 
-   private static String method6545(Class15 key, String text) {
+   private static String method6545(WardrobeModel key, String text) {
       if (key.method2032(text) != null) {
          return text;
       } else {
@@ -131,13 +131,13 @@ public final class AnimationState {
       }
    }
 
-   public void method6546(Class15 key, int n, float floatValue, float[] floatValues) {
+   public void method6546(WardrobeModel key, int n, float floatValue, float[] floatValues) {
       this.method6543(floatValue);
-      Class37 class2 = key.method2032(this.current);
+      AnimationCurve class2 = key.method2032(this.current);
       if (class2 == null) {
          method6550(floatValues);
       } else {
-         class2.method6242(n, class2.method6240(this.floatValue2), floatValues);
+         class2.sampleBone(n, class2.normalizeTime(this.floatValue2), floatValues);
       }
 
       float f = (floatValue - this.floatValue4) / this.floatValue5;
@@ -149,9 +149,9 @@ public final class AnimationState {
                floatValues[i] = f3 + (floatValues[i] - f3) * f2;
             }
          } else {
-            Class37 class3 = key.method2032(this.previous);
+            AnimationCurve class3 = key.method2032(this.previous);
             if (class3 != null) {
-               class3.method6242(n, class3.method6240(this.floatValue3), this.floatValues);
+               class3.sampleBone(n, class3.normalizeTime(this.floatValue3), this.floatValues);
 
                for (int i = 0; i < 9; i++) {
                   floatValues[i] = this.floatValues[i] + (floatValues[i] - this.floatValues[i]) * f2;
@@ -179,12 +179,12 @@ public final class AnimationState {
       System.arraycopy(floatValues, 0, this.floatValues2, n * 9, 9);
    }
 
-   public void method6548(Class15 key, String text, int n, float powerForTime, float[] floatValues) {
-      Class37 class2 = key.method2032(text);
+   public void method6548(WardrobeModel key, String text, int n, float powerForTime, float[] floatValues) {
+      AnimationCurve class2 = key.method2032(text);
       if (class2 == null) {
          method6550(floatValues);
       } else {
-         class2.method6242(n, Math.max(0.0F, Math.min(1.0F, powerForTime)) * class2.getFloatValue(), floatValues);
+         class2.sampleBone(n, Math.max(0.0F, Math.min(1.0F, powerForTime)) * class2.getFloatValue(), floatValues);
       }
    }
 

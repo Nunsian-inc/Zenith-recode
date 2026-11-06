@@ -66,7 +66,7 @@ import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.PetManager;
 import org.zenith.utility.game.ArmorSlots;
 import org.zenith.utility.game.Util14;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.PartyPlayerInfo;
 import org.zenith.utility.misc.TextUtils;
 import org.zenith.utility.network.Cloud;
@@ -366,11 +366,11 @@ public final class EntityESPModule extends Module {
       }
    }
 
-   public boolean method561(double x, double y, Enum3 enum2) {
+   public boolean method561(double x, double y, MouseButton enum2) {
       EntityESPModule.Type type = this.method560(x, y);
       if (type == null) {
          return false;
-      } else if (enum2 == Enum3.RIGHT) {
+      } else if (enum2 == MouseButton.RIGHT) {
          if (type != EntityESPModule.Type.GEAR) {
             return false;
          } else {

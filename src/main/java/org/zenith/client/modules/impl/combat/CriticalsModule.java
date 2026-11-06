@@ -16,7 +16,7 @@ import org.zenith.base.Module;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.MultiSelectSetting;
 import org.zenith.utility.misc.CriticalsState;
-import org.zenith.utility.misc.Util13;
+import org.zenith.utility.misc.TimerSpeed;
 import org.zenith.utility.misc.Vec2f;
 import org.zenith.utility.network.UseItemUtils;
 import org.zenith.utility.render.MathUtils;
@@ -58,11 +58,11 @@ public final class CriticalsModule extends Module {
 
    @EventTarget
    public void method4660(PacketEvent event) {
-      if (event.method7099() && mc.player != null && event.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
+      if (event.isOutgoing() && mc.player != null && event.getPacket() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
          if (this.method4667()) {
             this.doubleValue = AuraModule.INSTANCE.method6346();
             this.flag = true;
-            Util13.method2404(this.method4661(this.method4669().method1709(this.doubleValue, 0.0)));
+            TimerSpeed.setSpeedMultiplier(this.method4661(this.method4669().method1709(this.doubleValue, 0.0)));
          } else {
             boolean flag = this.mode.method5226("module.criticals.levitation") && mc.player.hasEffect(MobEffects.LEVITATION);
             boolean flag2 = this.mode.method5226("module.criticals.web") && UseItemUtils.method6513(Blocks.COBWEB);
@@ -72,8 +72,8 @@ public final class CriticalsModule extends Module {
                      -(mc.player.fallDistance = (float)MathUtils.method2651(1.0E-5F, 1.0E-4F)),
                      Zenith.getInstance()
                         .getRotationManager()
-                        .method7844()
-                        .method3141(new Vec2f((float)MathUtils.method2651(-0.001F, 0.001F), (float)MathUtils.method2651(-0.001F, 0.001F)))
+                        .getEffectiveRotation()
+                        .add(new Vec2f((float)MathUtils.method2651(-0.001F, 0.001F), (float)MathUtils.method2651(-0.001F, 0.001F)))
                   );
                }
             } else {
@@ -92,7 +92,7 @@ public final class CriticalsModule extends Module {
       if (mc.player != null && mc.level != null) {
          if (!this.method4667()) {
             if (this.flag) {
-               Util13.method2404(1.0F);
+               TimerSpeed.setSpeedMultiplier(1.0F);
                this.method4671();
             }
          } else {
@@ -104,9 +104,9 @@ public final class CriticalsModule extends Module {
                if (mc.player.fallDistance > 0.0 && criticalsState.method1708(this.doubleValue, 0.0) && AuraModule.INSTANCE.method6348()) {
                   this.flag = false;
                   this.method4665();
-                  Util13.method2404(1.0F);
+                  TimerSpeed.setSpeedMultiplier(1.0F);
                } else {
-                  Util13.method2404(this.method4661(l));
+                  TimerSpeed.setSpeedMultiplier(this.method4661(l));
                }
             }
          }
@@ -247,7 +247,7 @@ public final class CriticalsModule extends Module {
 
    @Override
    public void onDisable() {
-      Util13.method2404(1.0F);
+      TimerSpeed.setSpeedMultiplier(1.0F);
       this.method4671();
       super.onDisable();
    }

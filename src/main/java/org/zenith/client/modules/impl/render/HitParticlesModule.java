@@ -26,9 +26,9 @@ import org.zenith.client.settings.ColorSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.game.Class28;
-import org.zenith.utility.misc.Class42;
-import org.zenith.utility.misc.Util28;
+import org.zenith.utility.game.ParticleEmitter;
+import org.zenith.utility.misc.ParticleMotion;
+import org.zenith.utility.misc.HitParticleRenderer;
 import org.zenith.utility.render.Glowboost;
 import org.zenith.utility.render.MatrixStackUtils;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -101,12 +101,12 @@ public final class HitParticlesModule extends Module {
       "module.hitParticles.customColor", "module.hitParticles.customColor.desc", ZenithColor.INSTANCE, () -> this.color.isSelected(1)
    );
    private final BooleanSetting onlyCrit = new BooleanSetting("module.hitParticles.onlyCrit", "module.hitParticles.onlyCrit.desc", false);
-   private final List<Class28> items = new CopyOnWriteArrayList<>();
+   private final List<ParticleEmitter> items = new CopyOnWriteArrayList<>();
    private final Glowboost glowboost = new Glowboost();
    private long longValue;
    private int intValue;
-   private static final Class42.Handler handler = (d, d2, d3) -> d2 < 0.0;
-   private final Class42.Handler handler2 = (x, y, z) -> {
+   private static final ParticleMotion.Handler handler = (d, d2, d3) -> d2 < 0.0;
+   private final ParticleMotion.Handler handler2 = (x, y, z) -> {
       ClientLevel level = mc.level;
       if (level == null) {
          return false;
@@ -139,7 +139,7 @@ public final class HitParticlesModule extends Module {
          }
       }
    };
-   private Class28 class28;
+   private ParticleEmitter class28;
    private long longValue2;
 
    @Override
@@ -194,7 +194,7 @@ public final class HitParticlesModule extends Module {
                      this.items.stream().findFirst().ifPresent(this.items::remove);
                   }
 
-                  this.items.add(new Class28(intValue, vec2, vec, entity.getBbWidth(), n, this.intValue += 37, ++this.longValue).method4652((LivingEntity)entity));
+                  this.items.add(new ParticleEmitter(intValue, vec2, vec, entity.getBbWidth(), n, this.intValue += 37, ++this.longValue).method4652((LivingEntity)entity));
                }
             }
          }
@@ -210,7 +210,7 @@ public final class HitParticlesModule extends Module {
             if (!this.items.isEmpty()) {
                Camera camera = mc.getEntityRenderDispatcher().camera;
                float f = method7799(this.method7797());
-               Class42.method7379(this.handler2);
+               ParticleMotion.method7379(this.handler2);
                this.method7794(event, camera, f, now, false);
                this.method7794(event, camera, f, now, true);
             }
@@ -223,7 +223,7 @@ public final class HitParticlesModule extends Module {
    private void method7794(WorldRenderEvent event, Camera camera, float f, long now, boolean flag) {
       boolean flag2 = false;
 
-      for (Class28 class2 : this.items) {
+      for (ParticleEmitter class2 : this.items) {
          if (class2.intValue == 0 == flag) {
             if (!flag2) {
                this.glowboost.method3232(camera, f);
@@ -248,13 +248,13 @@ public final class HitParticlesModule extends Module {
          Vec3 vec = new Vec3(0.3, 0.16, 0.94).normalize();
          Vec3 vec2 = intValue == 0 ? new Vec3(0.0, 1.62, 0.0) : new Vec3(0.0, 0.9 + (intValue == 1 ? 0.27 : 0.0), 0.0);
          Vec3 vec3 = intValue == 0 ? vec2.add(vec.scale(0.18)) : vec2;
-         this.class28 = new Class28(intValue, vec3, vec, 0.6, n, this.intValue += 37, ++this.longValue);
+         this.class28 = new ParticleEmitter(intValue, vec3, vec, 0.6, n, this.intValue += 37, ++this.longValue);
          this.longValue2 = now + n + 350L;
       }
 
       float f = this.class28.method4655(now);
       if (!(f >= 1.0F)) {
-         Class42.method7379(handler);
+         ParticleMotion.method7379(handler);
          PoseStack matrixStack = MatrixStackUtils.method5467(customDrawContext, xo, yo, xScale);
          this.glowboost.method3233(MatrixStackUtils.method5468(), MatrixStackUtils.method5469(), method7799(this.class28.intValue));
          this.method7796(this.glowboost, this.class28, f, previewAlpha);
@@ -262,19 +262,19 @@ public final class HitParticlesModule extends Module {
       }
    }
 
-   private void method7796(Glowboost glowboost, Class28 class2, float f, float previewAlpha) {
+   private void method7796(Glowboost glowboost, ParticleEmitter class2, float f, float previewAlpha) {
       if (!(f < 0.0F) && !(f >= 1.0F)) {
          glowboost.method3235(method7799(class2.intValue) * previewAlpha);
          int color = this.method7800(class2.intValue3);
          switch (class2.intValue) {
             case 0:
-               Util28.method7552(glowboost, class2, f, color, this.impactScale.getValue3(), 100.0F);
+               HitParticleRenderer.drawImpact(glowboost, class2, f, color, this.impactScale.getValue3(), 100.0F);
                break;
             case 1:
-               Util28.method7553(glowboost, class2, f, color, this.riftSpeed.getValue3(), 0.55F, 110.0F);
+               HitParticleRenderer.drawRift(glowboost, class2, f, color, this.riftSpeed.getValue3(), 0.55F, 110.0F);
                break;
             default:
-               Util28.method7556(glowboost, class2, f, color, 1.5F, 1.2F, this.sparksDensity.getValue3());
+               HitParticleRenderer.drawSparks(glowboost, class2, f, color, 1.5F, 1.2F, this.sparksDensity.getValue3());
          }
       }
    }

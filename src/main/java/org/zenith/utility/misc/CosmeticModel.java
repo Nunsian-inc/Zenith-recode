@@ -11,7 +11,7 @@ public final class CosmeticModel {
    private final Identifier[] identifiers;
    private final CosmeticAnimation cosmeticAnimation;
    private final CosmeticType cosmeticType;
-   private final Util31.Data data;
+   private final CosmeticTransformUtils.Data data;
    private final boolean flag;
    private static final float CONST_floatValue = 0.5F;
    private static final float CONST_floatValue2 = 0.75F;
@@ -22,13 +22,13 @@ public final class CosmeticModel {
       this.identifiers = identifiers;
       this.cosmeticAnimation = cosmeticAnimation;
       this.cosmeticType = overrides == null ? cosmeticItemInfo.getCosmeticType() : overrides.method6462(cosmeticItemInfo);
-      Util31.Data data = Util31.method7852(cosmeticItemInfo.getData(), cosmeticItemInfo.getType(), this.cosmeticType);
+      CosmeticTransformUtils.Data data = CosmeticTransformUtils.fromPartData(cosmeticItemInfo.getData(), cosmeticItemInfo.getType(), this.cosmeticType);
       Overrides.Data data2 = overrides == null ? null : overrides.method6458(cosmeticItemInfo.getText());
-      this.data = data2 != null ? overrides.method6463(cosmeticItemInfo.getText(), data) : Util23.method5990(data, this.cosmeticType, cosmeticSkeleton.method7145());
+      this.data = data2 != null ? overrides.method6463(cosmeticItemInfo.getText(), data) : CosmeticBounds.fitWithinBounds(data, this.cosmeticType, cosmeticSkeleton.method7145());
       this.flag = cosmeticItemInfo.method7751() && this.cosmeticType.method1683() != null && method5977(cosmeticSkeleton, this.data, this.cosmeticType);
    }
 
-   private static boolean method5977(CosmeticSkeleton cosmeticSkeleton, Util31.Data data, CosmeticType cosmeticType) {
+   private static boolean method5977(CosmeticSkeleton cosmeticSkeleton, CosmeticTransformUtils.Data data, CosmeticType cosmeticType) {
       float[] floats = cosmeticSkeleton.method7145();
       float f = Math.abs((floats[3] - floats[0]) * data.getFloatValue7());
       boolean flag = cosmeticType == CosmeticType.LEFT_ARM || cosmeticType == CosmeticType.RIGHT_ARM;
@@ -59,7 +59,7 @@ public final class CosmeticModel {
       return this.cosmeticAnimation;
    }
 
-   public Util31.Data getData() {
+   public CosmeticTransformUtils.Data getData() {
       return this.data;
    }
 

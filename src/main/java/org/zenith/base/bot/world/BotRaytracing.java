@@ -19,7 +19,7 @@ public final class BotRaytracing {
    }
 
    public static BlockHitResult rayTracePos(BotWorld world, BotPlayer player, Vec3 eyePosition, Rotation rotation, double blockInteractionRange, Predicate<BlockHitResult> predicate) {
-      Vec3 vec = rotation.method3135();
+      Vec3 vec = rotation.toDirection();
       Vec3 to = eyePosition.add(vec.x * blockInteractionRange, vec.y * blockInteractionRange, vec.z * blockInteractionRange);
       ClipContext clipContext = new ClipContext(eyePosition, to, Block.OUTLINE, Fluid.NONE, player);
       return BlockGetter.traverseBlocks(clipContext.getFrom(), clipContext.getTo(), clipContext, (var2x, var3x) -> {

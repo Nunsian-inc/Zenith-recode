@@ -150,7 +150,7 @@ public final class AutoDodgeModule extends Module {
                   ItemStack defaultInstance = Items.DRIED_KELP.getDefaultInstance();
                   if (!mc.player.getCooldowns().isOnCooldown(defaultInstance) && InventoryUtils.method906(Items.DRIED_KELP) != null) {
                      if (Zenith.getInstance().getTaskScheduler().method5116()) {
-                        if (Zenith.getInstance().getRotationManager().method7844().method3130(new Rotation(mc.player.getYRot(), mc.player.getXRot())) < 20.0) {
+                        if (Zenith.getInstance().getRotationManager().getEffectiveRotation().angularDistanceTo(new Rotation(mc.player.getYRot(), mc.player.getXRot())) < 20.0) {
                            this.intValue++;
                         }
 
@@ -160,8 +160,8 @@ public final class AutoDodgeModule extends Module {
                         }
                      }
 
-                     Rotation rotation = Rotation.method3128(entity.getEyePosition(), mc.player.getEyePosition());
-                     this.method4694(rotation.method3140((float)MathUtils.method2651(-3.0, 3.0), (float)MathUtils.method2651(-3.0, 3.0)));
+                     Rotation rotation = Rotation.lookingAt(entity.getEyePosition(), mc.player.getEyePosition());
+                     this.method4694(rotation.add((float)MathUtils.method2651(-3.0, 3.0), (float)MathUtils.method2651(-3.0, 3.0)));
                      break;
                   }
                }
@@ -175,8 +175,8 @@ public final class AutoDodgeModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (mc.player != null && mc.level != null && event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket && systemChatPacket.content().getString().equals("На этой анархии этот предмет не работает")) {
+      if (mc.player != null && mc.level != null && event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket && systemChatPacket.content().getString().equals("На этой анархии этот предмет не работает")) {
             this.intValue = -50;
          }
       }
@@ -225,7 +225,7 @@ public final class AutoDodgeModule extends Module {
 
    private void method4694(Rotation rotation) {
       Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig2(), rotation);
-      Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig2()), 20, this);
+      Zenith.getInstance().getRotationManager().requestRotation(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig2()), 20, this);
    }
 
    private Map<String, AutoDodgeModule.Data> method4695() {

@@ -78,8 +78,8 @@ public final class ChatBridge implements MinecraftAccess {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         Packet packet3 = event.getPacket3();
+      if (event.isIncoming()) {
+         Packet packet3 = event.getPacket();
          Component content = null;
          if (packet3 instanceof ClientboundSystemChatPacket systemChatPacket) {
             content = systemChatPacket.content();

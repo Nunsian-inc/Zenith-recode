@@ -46,7 +46,7 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.zenith.Zenith;
-import org.zenith.client.events.Event10;
+import org.zenith.client.events.CloudNotificationEvent;
 import org.zenith.utility.api.Manager;
 import org.zenith.utility.api.OriginUtil;
 import org.zenith.utility.misc.Friends;
@@ -375,10 +375,10 @@ public final class ScriptNetApi {
       String anObject = method3282(workspace);
       Runnable subscribe = EventManager.main()
          .subscribe(
-            Event10.class,
+            CloudNotificationEvent.class,
             (byte)2,
             (var5x, var6x) -> {
-               CloudPackets.Data18 data18 = ((Event10)var6x).getData18();
+               CloudPackets.Data18 data18 = ((CloudNotificationEvent)var6x).getNotification();
                if (data18.kind() == 50 && workspace.isRunning()) {
                   JsonObject jsonObject = data18.getJsonObject();
                   String string = jsonObject.has("s") ? jsonObject.get("s").getAsString() : "";

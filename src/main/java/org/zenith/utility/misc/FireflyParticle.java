@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.ZenithColor;
 
-public class FireflyParticle implements Handler7 {
+public class FireflyParticle implements RenderableParticle {
    private Vec3 vec3d;
    private Vec3 vec3d2;
    private Vec3 vec3d3;
@@ -36,12 +36,12 @@ public class FireflyParticle implements Handler7 {
    }
 
    @Override
-   public String method1559() {
+   public String getTextureKey() {
       return "particle.texture.firefly";
    }
 
    @Override
-   public float method1560() {
+   public float getRotationDegrees() {
       return 0.0F;
    }
 
@@ -98,17 +98,17 @@ public class FireflyParticle implements Handler7 {
    }
 
    @Override
-   public boolean method1555() {
+   public boolean isExpired() {
       return this.intValue <= 0;
    }
 
    @Override
    public float getAlpha() {
-      return this.method1449(1.0F);
+      return this.getInterpolatedAlpha(1.0F);
    }
 
    @Override
-   public float method1449(float f) {
+   public float getInterpolatedAlpha(float f) {
       float f2 = this.intValue2 + (this.intValue - this.intValue2) * f;
       float f3 = f2 / this.intValue3;
       return f3 * this.floatValue2;
@@ -136,13 +136,13 @@ public class FireflyParticle implements Handler7 {
 
    @Generated
    @Override
-   public Vec3 method1556() {
+   public Vec3 getPosition() {
       return this.vec3d;
    }
 
    @Generated
    @Override
-   public Vec3 method1557() {
+   public Vec3 getPreviousPosition() {
       return this.vec3d2;
    }
 
@@ -179,7 +179,7 @@ public class FireflyParticle implements Handler7 {
 
    @Generated
    @Override
-   public ZenithColor method1558() {
+   public ZenithColor getColor() {
       return this.zenithColor;
    }
 

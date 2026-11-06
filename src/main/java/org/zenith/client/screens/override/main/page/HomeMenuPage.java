@@ -100,7 +100,7 @@ public final class HomeMenuPage implements MainMenuPage {
 
    @Override
    public void update() {
-      this.expansion.method2808(this.expanded ? 1.0F : 0.0F);
+      this.expansion.animateTo(this.expanded ? 1.0F : 0.0F);
    }
 
    @Override

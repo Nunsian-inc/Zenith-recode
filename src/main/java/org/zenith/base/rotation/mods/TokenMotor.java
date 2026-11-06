@@ -26,9 +26,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.Rotation;
 import org.zenith.client.modules.impl.combat.AuraModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public final class TokenMotor extends Util22 {
+public final class TokenMotor extends RotationContext {
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static final String text = "token_motor.json";
    private static final String text2 = "models/token_motor.json";
@@ -62,7 +62,7 @@ public final class TokenMotor extends Util22 {
    private Rotation rotation;
 
    public Rotation method3467() {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
       if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
          TokenMotor.Entry4 entry4 = this.method3481();
@@ -107,7 +107,7 @@ public final class TokenMotor extends Util22 {
                         }
 
                         double d = entry4.doubleValue4;
-                        Rotation rotation2 = rotation.method3140((float)(ints[0] * d), (float)(ints[1] * d));
+                        Rotation rotation2 = rotation.add((float)(ints[0] * d), (float)(ints[1] * d));
                         this.method3475(doubles2, new int[]{entry4.method3488(ints[0]), entry4.method3488(ints[1])});
                         System.arraycopy(doubles, 0, this.doubleValues2, 0, 6);
                         this.doubleValue = ints[0] == 0 && ints[1] == 0 ? 0.0 : this.doubleValue + 1.0;

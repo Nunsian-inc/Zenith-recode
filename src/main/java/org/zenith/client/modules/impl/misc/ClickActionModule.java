@@ -27,7 +27,7 @@ import org.zenith.client.settings.BindSetting;
 import org.zenith.client.settings.Setting;
 import org.zenith.utility.game.PlayerSimulation;
 import org.zenith.utility.game.TargetUtils;
-import org.zenith.utility.misc.Class27;
+import org.zenith.utility.misc.KeyState;
 import org.zenith.utility.misc.RotationRequest;
 import org.zenith.utility.network.InventoryUtils;
 import org.zenith.utility.network.UseItemUtils;
@@ -50,11 +50,11 @@ public final class ClickActionModule extends Module {
    private ClickActionModule() {
       this.items
          .add(
-            new ClickActionModule.Data(Items.ENDER_PEARL, new BindSetting("module.clickAction.enderPearl", "module.clickAction.enderPearl.desc"), new Class27())
+            new ClickActionModule.Data(Items.ENDER_PEARL, new BindSetting("module.clickAction.enderPearl", "module.clickAction.enderPearl.desc"), new KeyState())
          );
       this.items
          .add(
-            new ClickActionModule.Data(Items.WIND_CHARGE, new BindSetting("module.clickAction.windCharge", "module.clickAction.windCharge.desc"), new Class27())
+            new ClickActionModule.Data(Items.WIND_CHARGE, new BindSetting("module.clickAction.windCharge", "module.clickAction.windCharge.desc"), new KeyState())
          );
    }
 
@@ -134,7 +134,7 @@ public final class ClickActionModule extends Module {
             if (UseItemUtils.method6521(this.expBind) && slot != null) {
                PlayerSimulation playerSimulation = PlayerSimulation.method6031(3);
                Rotation rotation = new Rotation(mc.player.getYRot(), RotationUtils.method6913(playerSimulation.box.getCenter()).getFloatValue2());
-               rotationManager.method7849(
+               rotationManager.requestRotation(
                   new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                   5,
                   this
@@ -150,7 +150,7 @@ public final class ClickActionModule extends Module {
                         this.flag = true;
                      });
                   }
-               } else if (this.stopWatch.method7546(70L) && rotationManager.method7844().method3131(rotation).method5330(180.0F, 10.0F)) {
+               } else if (this.stopWatch.method7546(70L) && rotationManager.getEffectiveRotation().wrappedDeltaTo(rotation).isWithinBounds(180.0F, 10.0F)) {
                   UseItemUtils.useItem(InteractionHand.MAIN_HAND);
                   event.cancel();
                   this.stopWatch.reset();
@@ -178,7 +178,7 @@ public final class ClickActionModule extends Module {
    public static final class Data {
       private final Item item;
       private final BindSetting bindSetting;
-      private final Class27 class27;
+      private final KeyState class27;
 
       public Item item() {
          return this.item;
@@ -188,7 +188,7 @@ public final class ClickActionModule extends Module {
          return this.bindSetting;
       }
 
-      public Class27 class27() {
+      public KeyState class27() {
          return this.class27;
       }
 
@@ -209,7 +209,7 @@ public final class ClickActionModule extends Module {
          return "Data[" + "item=" + this.item + ", " + "bindSetting=" + this.bindSetting + ", " + "class27=" + this.class27 + "]";
       }
 
-      public Data(Item item, BindSetting bindSetting, Class27 class2) {
+      public Data(Item item, BindSetting bindSetting, KeyState class2) {
          this.item = item;
          this.bindSetting = bindSetting;
          this.class27 = class2;
@@ -223,7 +223,7 @@ public final class ClickActionModule extends Module {
          return this.bindSetting;
       }
 
-      public Class27 getClass27() {
+      public KeyState getClass27() {
          return this.class27;
       }
    }

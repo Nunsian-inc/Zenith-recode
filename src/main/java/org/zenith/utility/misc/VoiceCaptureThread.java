@@ -25,7 +25,7 @@ public final class VoiceCaptureThread implements Runnable {
    private String text;
    private boolean flag;
    private long longValue2;
-   private final Class9 class9 = new Class9();
+   private final VoiceAudioProcessor class9 = new VoiceAudioProcessor();
    private final VoiceDenoiser voiceDenoiser = new VoiceDenoiser();
    private OpusEncoder opusEncoder;
    private int intValue;

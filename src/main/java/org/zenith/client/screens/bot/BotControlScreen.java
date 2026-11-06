@@ -57,7 +57,7 @@ import org.zenith.base.bot.world.BotPlayer;
 import org.zenith.base.bot.world.BotWorld;
 import org.zenith.base.font.Fonts;
 import org.zenith.utility.game.other.render.CustomScreen;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.misc.WindowUtils;
 import org.zenith.utility.render.RenderShaders;
@@ -866,7 +866,7 @@ public class BotControlScreen extends CustomScreen {
    }
 
    @Override
-   public void onMouseClicked(double xo, double yo, Enum3 enum2) {
+   public void onMouseClicked(double xo, double yo, MouseButton enum2) {
       if (this.chatOpen) {
          this.chatSuggestor.mouseClicked(xo, yo);
       } else if (this.control != null) {
@@ -875,7 +875,7 @@ public class BotControlScreen extends CustomScreen {
          if (player != null) {
             AbstractContainerMenu currentUiHandler = this.currentUiHandler(boundClient, player);
             if (currentUiHandler != null) {
-               int buttonNum = enum2 == Enum3.RIGHT ? 1 : 0;
+               int buttonNum = enum2 == MouseButton.RIGHT ? 1 : 0;
                Slot hoveredSlot = this.hoveredSlot(player, currentUiHandler, (int)xo, (int)yo);
                if (hoveredSlot != null) {
                   ContainerInput containerInput = WindowUtils.method5476() ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP;
@@ -884,9 +884,9 @@ public class BotControlScreen extends CustomScreen {
                   this.control.clickSlot(64537, buttonNum, ContainerInput.PICKUP);
                }
             } else {
-               if (enum2 == Enum3.LEFT) {
+               if (enum2 == MouseButton.LEFT) {
                   this.control.pressAttack();
-               } else if (enum2 == Enum3.RIGHT) {
+               } else if (enum2 == MouseButton.RIGHT) {
                   this.control.pressUse();
                }
             }
@@ -895,11 +895,11 @@ public class BotControlScreen extends CustomScreen {
    }
 
    @Override
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
       if (this.control != null) {
-         if (enum2 == Enum3.LEFT) {
+         if (enum2 == MouseButton.LEFT) {
             this.control.releaseAttack();
-         } else if (enum2 == Enum3.RIGHT) {
+         } else if (enum2 == MouseButton.RIGHT) {
             this.control.releaseUse();
          }
       }

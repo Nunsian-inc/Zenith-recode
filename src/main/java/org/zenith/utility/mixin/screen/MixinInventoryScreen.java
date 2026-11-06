@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.zenith.utility.misc.Handler3;
+import org.zenith.utility.misc.ContainerScreenAnimationAccess;
 
 @Mixin({InventoryScreen.class})
 public abstract class MixinInventoryScreen extends AbstractRecipeBookScreen<InventoryMenu> {
@@ -24,7 +24,7 @@ public abstract class MixinInventoryScreen extends AbstractRecipeBookScreen<Inve
       at = {@At("RETURN")}
    )
    private void zenith$popInventoryScaleAnimation(GuiGraphicsExtractor guiGraphicsExtractor, int n, int n2, float f, CallbackInfo callbackInfo) {
-      Handler3 handler3 = (Handler3)(Object)this;
+      ContainerScreenAnimationAccess handler3 = (ContainerScreenAnimationAccess)(Object)this;
       handler3.zenith$betterMinecraft$popScaleIfNeeded(guiGraphicsExtractor);
       handler3.zenith$betterMinecraft$finishClosingAnimation();
    }

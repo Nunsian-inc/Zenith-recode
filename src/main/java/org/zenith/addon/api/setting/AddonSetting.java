@@ -55,7 +55,7 @@ public abstract class AddonSetting<T> implements SettingDefinition {
 
    public abstract void load(ModuleConfig config);
 
-   public abstract void setObject(Object obj);
+   public abstract void setObject(Object value);
 
    protected abstract T validate(T value);
 }

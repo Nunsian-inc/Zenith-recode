@@ -139,7 +139,7 @@ public class SearchBox implements MinecraftAccess {
                this.font.height() + 2.0F,
                zenithColor.method7294(
                   this.animation
-                     .method2808(this.animation.getValue() == 0.2F ? 1.0F : (this.animation.getValue() == 1.0F ? 0.2F : this.animation.getFloatValue2()))
+                     .animateTo(this.animation.getValue() == 0.2F ? 1.0F : (this.animation.getValue() == 1.0F ? 0.2F : this.animation.getFloatValue2()))
                )
             );
          }
@@ -177,7 +177,7 @@ public class SearchBox implements MinecraftAccess {
                height + 2.0F,
                zenithColor.method7294(
                   this.animation
-                     .method2808(this.animation.getValue() == 0.2F ? 1.0F : (this.animation.getValue() == 1.0F ? 0.2F : this.animation.getFloatValue2()))
+                     .animateTo(this.animation.getValue() == 0.2F ? 1.0F : (this.animation.getValue() == 1.0F ? 0.2F : this.animation.getFloatValue2()))
                )
             );
          }
@@ -221,10 +221,10 @@ public class SearchBox implements MinecraftAccess {
       return strings;
    }
 
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       UVPair vector2f = this.getVector2f();
       float height = this.multiline ? Math.max(this.font.height(), this.height) : this.font.height();
-      this.selected = enum2.getIntValue() == 0 && MathUtils.method2647(x, y, vector2f.u(), vector2f.v() - 3.0F, this.width, height + 6.0F);
+      this.selected = enum2.getGlfwButton() == 0 && MathUtils.method2647(x, y, vector2f.u(), vector2f.v() - 3.0F, this.width, height + 6.0F);
       if (this.selected) {
          this.flag = false;
          if (!this.multiline) {

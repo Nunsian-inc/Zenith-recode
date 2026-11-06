@@ -127,7 +127,7 @@ public final class VoicePlaybackThread implements Runnable {
 
             int length = voiceSpeakerStream.method1552(data);
             if (length > 0) {
-               float f = Class9.method1531(voiceSpeakerStream.shortValues, length);
+               float f = VoiceAudioProcessor.method1531(voiceSpeakerStream.shortValues, length);
                voiceSpeakerStream.floatValue2 = f;
                if (data.getType2() != VoiceFrameBuffer.Type2.PLC && f > -55.0F) {
                   voiceSpeakerStream.longValue3 = now;

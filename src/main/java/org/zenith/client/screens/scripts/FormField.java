@@ -122,7 +122,7 @@ public final class FormField {
       float height = this.multiline ? Math.min(this.maxLines, Math.max(this.minLines, subList.size())) * f + 8.0F : 16.0F;
       this.bounds = new BoundsData(floatValue, y, shownWidth, height);
       ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(4.0F);
-      float hover = this.focus.method2808(this.focused ? 1.0F : 0.0F);
+      float hover = this.focus.animateTo(this.focused ? 1.0F : 0.0F);
       menuDrawContext.drawRoundedRect(floatValue, y, shownWidth, height, headerRadius, zenithColor.method7295(zenithColor3.method7292(0.08F), hover * 0.6F).method7294(previewAlpha));
       menuDrawContext.drawRoundedBorder(floatValue, y, shownWidth, height, 0.15F, headerRadius, zenithColor2.method7295(zenithColor3, hover).method7294(previewAlpha));
       if (hover > 0.01F) {

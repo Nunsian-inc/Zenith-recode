@@ -30,7 +30,7 @@ import org.zenith.client.events.WorldRenderEvent;
 import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
 import org.zenith.utility.misc.AnimationCache;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 
 public final class CrystalAnimation implements MinecraftAccess {
@@ -41,7 +41,7 @@ public final class CrystalAnimation implements MinecraftAccess {
    private static final float CONST_floatValue2 = 6.2F;
    private static volatile boolean flag;
    private static final List<BlockPos> items = new ArrayList<>();
-   private static final Map<Class15, int[]> items2 = new IdentityHashMap<>();
+   private static final Map<WardrobeModel, int[]> items2 = new IdentityHashMap<>();
    private int intValue;
 
    public CrystalAnimation() {
@@ -58,14 +58,14 @@ public final class CrystalAnimation implements MinecraftAccess {
       return wardrobe != null && wardrobe.showSelf.isEnabled() ? wardrobe.method2491(key) : null;
    }
 
-   private static Class15 method4462(HoveredData hoveredData) {
+   private static WardrobeModel method4462(HoveredData hoveredData) {
       Wardrobe wardrobe = Wardrobe.method2488();
       return hoveredData != null && wardrobe != null ? wardrobe.getRegistry().method1427(hoveredData) : null;
    }
 
    public static boolean method4463(EndCrystalRenderState endCrystalRenderState, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue) {
       HoveredData hoveredData = method4461(FocusSlotEnum.CRYSTAL);
-      Class15 key = method4462(hoveredData);
+      WardrobeModel key = method4462(hoveredData);
       if (key == null) {
          return false;
       } else {
@@ -158,7 +158,7 @@ public final class CrystalAnimation implements MinecraftAccess {
       }
    }
 
-   private static int[] method4465(Class15 key) {
+   private static int[] method4465(WardrobeModel key) {
       return items2.computeIfAbsent(key, class2 -> {
          ArrayList arrayList = new ArrayList();
 
@@ -176,7 +176,7 @@ public final class CrystalAnimation implements MinecraftAccess {
    public void method4466(WorldRenderEvent event) {
       if (flag && !items.isEmpty() && mc.level != null) {
          HoveredData hoveredData = method4461(FocusSlotEnum.ANCHOR);
-         Class15 key = method4462(hoveredData);
+         WardrobeModel key = method4462(hoveredData);
          if (key != null) {
             Vec3 position = mc.gameRenderer.mainCamera().position();
             float floatValue = ((float)mc.level.getGameTime() + event.getFloatValue()) / 20.0F;

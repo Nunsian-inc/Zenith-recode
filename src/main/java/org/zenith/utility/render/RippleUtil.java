@@ -10,7 +10,7 @@ import org.zenith.Zenith;
 import org.zenith.utility.game.FlakeState;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.FrustumHolder;
-import org.zenith.utility.misc.Util15;
+import org.zenith.utility.misc.CameraFov;
 import org.zenith.utility.misc.WeatherFlakeChannel;
 
 public final class RippleUtil {
@@ -98,7 +98,7 @@ public final class RippleUtil {
             double d8 = Math.sqrt(d5 * d5 + d6 * d6 + d7 * d7);
             if (!(d8 < 1.0E-6) && !((d5 * d + d6 * d2 + d7 * d3) / d8 < CONST_doubleValue3)) {
                double d9 = Math.acos(Math.clamp(d4, -1.0, 1.0));
-               double d10 = Util15.method2704();
+               double d10 = CameraFov.getTanHalfFov();
                double d11 = (double)minecraft.getWindow().getWidth() / Math.max(1, minecraft.getWindow().getHeight());
                d9 = Math.max(d9, Math.atan(d10 * Math.sqrt(1.0 + d11 * d11)));
                d9 += CONST_doubleValue;
@@ -150,7 +150,7 @@ public final class RippleUtil {
          if (!(f7 <= 0.01F)) {
             boolean flag = weatherFlakeChannel.intValue2 == 2;
             glowboost.method3235(0.0F);
-            float f8 = 2.0F * Util15.method2704() / Math.max(1, Minecraft.getInstance().getWindow().getHeight());
+            float f8 = 2.0F * CameraFov.getTanHalfFov() / Math.max(1, Minecraft.getInstance().getWindow().getHeight());
             int n2 = (int)Math.floor(x);
             int n3 = (int)Math.floor(z);
             float f9 = (flag ? 3.2F : 3.2F) * f7;

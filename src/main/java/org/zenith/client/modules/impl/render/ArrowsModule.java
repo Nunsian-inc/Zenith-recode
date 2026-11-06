@@ -40,8 +40,8 @@ import org.zenith.utility.render.display.base.GlowColor;
    category = ModuleCategory.RENDER
 )
 public final class ArrowsModule extends Module {
-   private final Identifier identifier = Zenith.method1501("textures/arrows.png");
-   private final Animation animation = new Animation(150L, 12.0F, Easing.INSTANCE13);
+   private final Identifier arrowTexture = Zenith.method1501("textures/arrows.png");
+   private final Animation radiusAnimation = new Animation(150L, 12.0F, Easing.INSTANCE13);
    private final SliderSetting radiusSetting = new SliderSetting(
       "module.arrows.radiusSetting", 50.0F, 30.0F, 100.0F, 10.0F, "module.arrows.radiusSetting.desc", "b"
    );
@@ -53,7 +53,7 @@ public final class ArrowsModule extends Module {
    }
 
    @EventTarget
-   public void method3036(UpdateEvent event) {
+   public void onUpdate(UpdateEvent event) {
    }
 
    @EventTarget
@@ -63,59 +63,59 @@ public final class ArrowsModule extends Module {
          .players()
          .stream()
          .filter(
-            var1x -> var1x != mc.player && !PetManager.method4557(var1x.getId()) && (!this.ignoreGol.isEnabled() || UseItemUtils.method6529(var1x) != 0.0F)
+            player -> player != mc.player && !PetManager.method4557(player.getId()) && (!this.ignoreGol.isEnabled() || UseItemUtils.method6529(player) != 0.0F)
          )
          .toList();
-      float xo = mc.getWindow().getGuiScaledWidth() / 2.0F;
-      float yo = mc.getWindow().getGuiScaledHeight() / 2.0F;
-      float y = yo
+      float centerX = mc.getWindow().getGuiScaledWidth() / 2.0F;
+      float centerY = mc.getWindow().getGuiScaledHeight() / 2.0F;
+      float y = centerY
          - this.radiusSetting.getValue3()
-         - this.animation
-            .method2808(
+         - this.radiusAnimation
+            .animateTo(
                mc.gui.screen() instanceof InventoryScreen
                   ? 80.0F
                   : (mc.gui.screen() instanceof ContainerScreen ? 100.0F : (Objects.requireNonNull(mc.player).isSprinting() ? 12.0F : 0.0F))
             );
-      float f = this.sizeSetting.getValue3();
+      float arrowSize = this.sizeSetting.getValue3();
       if (!mc.gui.hud.isHidden() && mc.options.getCameraType().equals(CameraType.FIRST_PERSON) && !players.isEmpty()) {
          RenderState.method1871();
          RenderState.method1877();
          RenderState.method1879();
          RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
-         RenderState.method1890(0, this.identifier);
+         RenderState.method1890(0, this.arrowTexture);
          RenderState.method1898("core/position_tex_color");
-         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+         BufferBuilder vertexBuffer = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
          players.forEach(
-            var6x -> {
-               int var7x = zenith.getFriends().method7626(var6x)
+            player -> {
+               int arrowColor = zenith.getFriends().method7626(player)
                   ? zenith.getStyleManager().getCurrentStyle().getFriendColor().getZenithColor().method7287()
                   : Zenith.getInstance().getStyleManager().getClientColor(90).method7287();
-               float var8x = method3037(var6x) - Objects.requireNonNull(mc.player).getYRot();
+               float relativeYaw = method3037(player) - Objects.requireNonNull(mc.player).getYRot();
                poseStack.pushPose();
-               poseStack.translate(xo, yo, 0.0F);
-               poseStack.rotate(Axis.ZP.rotationDegrees(var8x));
-               poseStack.translate(-xo, -yo, 0.0F);
+               poseStack.translate(centerX, centerY, 0.0F);
+               poseStack.rotate(Axis.ZP.rotationDegrees(relativeYaw));
+               poseStack.translate(-centerX, -centerY, 0.0F);
                Matrix4f pose = poseStack.last().pose();
-               if (zenith.getFriends().method7626(var6x)) {
-                  begin.addVertex(pose, xo - f / 2.0F, y + f, 0.0F).setUv(0.0F, 1.0F).setColor(var7x);
-                  begin.addVertex(pose, xo + f / 2.0F, y + f, 0.0F).setUv(1.0F, 1.0F).setColor(var7x);
-                  begin.addVertex(pose, xo + f / 2.0F, y, 0.0F).setUv(1.0F, 0.0F).setColor(var7x);
-                  begin.addVertex(pose, xo - f / 2.0F, y, 0.0F).setUv(0.0F, 0.0F).setColor(var7x);
+               if (zenith.getFriends().method7626(player)) {
+                  vertexBuffer.addVertex(pose, centerX - arrowSize / 2.0F, y + arrowSize, 0.0F).setUv(0.0F, 1.0F).setColor(arrowColor);
+                  vertexBuffer.addVertex(pose, centerX + arrowSize / 2.0F, y + arrowSize, 0.0F).setUv(1.0F, 1.0F).setColor(arrowColor);
+                  vertexBuffer.addVertex(pose, centerX + arrowSize / 2.0F, y, 0.0F).setUv(1.0F, 0.0F).setColor(arrowColor);
+                  vertexBuffer.addVertex(pose, centerX - arrowSize / 2.0F, y, 0.0F).setUv(0.0F, 0.0F).setColor(arrowColor);
                } else {
                   GlowColor clientColor = zenith.getStyleManager().getClientColor();
-                  begin.addVertex(pose, xo - f / 2.0F, y + f, 0.0F).setUv(0.0F, 1.0F).setColor(clientColor.getZenithColor2().method7287());
-                  begin.addVertex(pose, xo + f / 2.0F, y + f, 0.0F).setUv(1.0F, 1.0F).setColor(clientColor.getZenithColor4().method7287());
-                  begin.addVertex(pose, xo + f / 2.0F, y, 0.0F).setUv(1.0F, 0.0F).setColor(clientColor.getZenithColor3().method7287());
-                  begin.addVertex(pose, xo - f / 2.0F, y, 0.0F).setUv(0.0F, 0.0F).setColor(clientColor.getZenithColor().method7287());
+                  vertexBuffer.addVertex(pose, centerX - arrowSize / 2.0F, y + arrowSize, 0.0F).setUv(0.0F, 1.0F).setColor(clientColor.getZenithColor2().method7287());
+                  vertexBuffer.addVertex(pose, centerX + arrowSize / 2.0F, y + arrowSize, 0.0F).setUv(1.0F, 1.0F).setColor(clientColor.getZenithColor4().method7287());
+                  vertexBuffer.addVertex(pose, centerX + arrowSize / 2.0F, y, 0.0F).setUv(1.0F, 0.0F).setColor(clientColor.getZenithColor3().method7287());
+                  vertexBuffer.addVertex(pose, centerX - arrowSize / 2.0F, y, 0.0F).setUv(0.0F, 0.0F).setColor(clientColor.getZenithColor().method7287());
                }
 
-               poseStack.translate(xo, yo, 0.0F);
-               poseStack.rotate(Axis.ZP.rotationDegrees(-var8x));
-               poseStack.translate(-xo, -yo, 0.0F);
+               poseStack.translate(centerX, centerY, 0.0F);
+               poseStack.rotate(Axis.ZP.rotationDegrees(-relativeYaw));
+               poseStack.translate(-centerX, -centerY, 0.0F);
                poseStack.popPose();
             }
          );
-         ImmediateRenderer.method8015(begin.buildOrThrow());
+         ImmediateRenderer.method8015(vertexBuffer.buildOrThrow());
          RenderState.method1878();
          RenderState.method1876();
          RenderState.method1873();

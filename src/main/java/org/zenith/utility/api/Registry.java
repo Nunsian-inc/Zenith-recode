@@ -27,7 +27,7 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zenith.utility.game.FocusSlotEnum;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.Rarity;
 import org.zenith.utility.misc.WardrobeCategory;
@@ -39,7 +39,7 @@ public final class Registry {
    private static final String text = "/assets/zenith/wardrobe/";
    private final Map<String, HoveredData> items = new LinkedHashMap<>();
    private final Map<String, WardrobeSetInfo> items2 = new LinkedHashMap<>();
-   private final Map<String, Class15> items3 = new ConcurrentHashMap<>();
+   private final Map<String, WardrobeModel> items3 = new ConcurrentHashMap<>();
    private final Set<String> items4 = ConcurrentHashMap.newKeySet();
    private final Set<String> items5 = ConcurrentHashMap.newKeySet();
    private final Map<String, Long> items6 = new ConcurrentHashMap<>();
@@ -145,7 +145,7 @@ public final class Registry {
          Index2.Data data = this.index2.method6140(text);
          JsonObject jsonObject = JsonParser.parseString(new String(data.getByteValues(), StandardCharsets.UTF_8)).getAsJsonObject();
          Identifier identifier = Identifier.fromNamespaceAndPath("zenith", "wardrobe/dyn/" + text);
-         Class15 class2 = ModelJsonParser.method107(text, jsonObject, identifier);
+         WardrobeModel class2 = ModelJsonParser.method107(text, jsonObject, identifier);
          NativeImage nativeImage = NativeImage.read(data.getByteValues2());
          this.items6.remove(text);
          this.queue.add(new Registry.Data(text, class2, nativeImage));
@@ -189,11 +189,11 @@ public final class Registry {
       return new ArrayList<>(this.items2.values());
    }
 
-   public Class15 method1427(HoveredData hoveredData) {
+   public WardrobeModel method1427(HoveredData hoveredData) {
       if (hoveredData == null) {
          return null;
       } else {
-         Class15 class2 = this.items3.get(hoveredData.getText3());
+         WardrobeModel class2 = this.items3.get(hoveredData.getText3());
          if (class2 == null && !this.items4.contains(hoveredData.getText3())) {
             this.method1423(hoveredData.getText3());
          }
@@ -239,14 +239,14 @@ public final class Registry {
 
    private static final class Data {
       private final String text;
-      private final Class15 class15;
+      private final WardrobeModel class15;
       private final NativeImage nativeImage;
 
       public String text() {
          return this.text;
       }
 
-      public Class15 class15() {
+      public WardrobeModel class15() {
          return this.class15;
       }
 
@@ -271,7 +271,7 @@ public final class Registry {
          return "Data[" + "text=" + this.text + ", " + "class15=" + this.class15 + ", " + "nativeImage=" + this.nativeImage + "]";
       }
 
-      private Data(String text, Class15 class2, NativeImage nativeImage) {
+      private Data(String text, WardrobeModel class2, NativeImage nativeImage) {
          this.text = text;
          this.class15 = class2;
          this.nativeImage = nativeImage;
@@ -281,7 +281,7 @@ public final class Registry {
          return this.text;
       }
 
-      public Class15 getClass15() {
+      public WardrobeModel getClass15() {
          return this.class15;
       }
 

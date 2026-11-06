@@ -17,7 +17,7 @@ import org.zenith.ZenithColor;
 import org.zenith.base.font.Font;
 import org.zenith.base.font.Fonts;
 import org.zenith.client.screens.override.button.ServerButton;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.ThemeStyle;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -132,7 +132,7 @@ public class MenuMultiPlayerScreen extends Screen implements MinecraftAccess {
 
    public boolean mouseClicked(double x, double y, int mouseToGlfw) {
       for (ServerButton serverButton : this.serverButtons) {
-         serverButton.onMouseClicked(x, y, Enum3.method6094(mouseToGlfw));
+         serverButton.onMouseClicked(x, y, MouseButton.fromGlfwButton(mouseToGlfw));
       }
 
       return super.mouseClicked(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);

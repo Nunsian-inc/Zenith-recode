@@ -74,7 +74,7 @@ import org.zenith.client.settings.BindSetting;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.Setting;
-import org.zenith.utility.misc.Class27;
+import org.zenith.utility.misc.KeyState;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.TaskScheduler;
 import org.zenith.utility.mixin.accessors.MinecraftClientAccessor;
@@ -162,7 +162,7 @@ public final class ServerHelperModule extends Module {
       this.items3
          .add(
             new ServerHelperModule.Data3(
-               Items.FIREWORK_STAR, new BindSetting("module.serverHelper.antiFly", "module.serverHelper.antiFly.desc", this::method5181), 0.0F, new Class27()
+               Items.FIREWORK_STAR, new BindSetting("module.serverHelper.antiFly", "module.serverHelper.antiFly.desc", this::method5181), 0.0F, new KeyState()
             )
          );
       this.items3
@@ -171,7 +171,7 @@ public final class ServerHelperModule extends Module {
                Items.FLOWER_BANNER_PATTERN,
                new BindSetting("module.serverHelper.scrollExp", "module.serverHelper.scrollExp.desc", this::method5181),
                0.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
@@ -180,7 +180,7 @@ public final class ServerHelperModule extends Module {
                Items.HEART_OF_THE_SEA,
                new BindSetting("module.serverHelper.enderTrap", "module.serverHelper.enderTrap.desc", this::method5181),
                0.0F,
-               new Class27(),
+               new KeyState(),
                slot -> slot.getItem().getHoverName().getString().equals("Эндер Ловушка")
             )
          );
@@ -190,7 +190,7 @@ public final class ServerHelperModule extends Module {
                Items.HEART_OF_THE_SEA,
                new BindSetting("module.serverHelper.reallyWorldTrap", "module.serverHelper.reallyWorldTrap.desc", this::method5181),
                0.0F,
-               new Class27(),
+               new KeyState(),
                slot -> slot.getItem().getHoverName().getString().equals("Ловушка")
             )
          );
@@ -200,7 +200,7 @@ public final class ServerHelperModule extends Module {
                Items.PRISMARINE_SHARD,
                new BindSetting("module.serverHelper.explosiveTrap", "module.serverHelper.explosiveTrap.desc", this::method5183),
                5.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
@@ -209,13 +209,13 @@ public final class ServerHelperModule extends Module {
                Items.POPPED_CHORUS_FRUIT,
                new BindSetting("module.serverHelper.normalTrap", "module.serverHelper.normalTrap.desc", this::method5183),
                0.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
          .add(
             new ServerHelperModule.Data3(
-               Items.NETHER_STAR, new BindSetting("module.serverHelper.stun", "module.serverHelper.stun.desc", this::method5183), 30.0F, new Class27()
+               Items.NETHER_STAR, new BindSetting("module.serverHelper.stun", "module.serverHelper.stun.desc", this::method5183), 30.0F, new KeyState()
             )
          );
       this.items3
@@ -224,7 +224,7 @@ public final class ServerHelperModule extends Module {
                Items.FIRE_CHARGE,
                new BindSetting("module.serverHelper.explosiveThing", "module.serverHelper.explosiveThing.desc", this::method5183),
                0.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
@@ -233,7 +233,7 @@ public final class ServerHelperModule extends Module {
                Items.SNOWBALL,
                new BindSetting("module.serverHelper.snowball", "module.serverHelper.snowball.desc", () -> this.method5182() || this.method5183()),
                0.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
@@ -242,25 +242,25 @@ public final class ServerHelperModule extends Module {
                Items.PHANTOM_MEMBRANE,
                new BindSetting("module.serverHelper.holyAura", "module.serverHelper.holyAura.desc", this::method5182),
                0.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
          .add(
             new ServerHelperModule.Data3(
-               Items.NETHERITE_SCRAP, new BindSetting("module.serverHelper.trap", "module.serverHelper.trap.desc", this::method5182), 0.0F, new Class27()
+               Items.NETHERITE_SCRAP, new BindSetting("module.serverHelper.trap", "module.serverHelper.trap.desc", this::method5182), 0.0F, new KeyState()
             )
          );
       this.items3
          .add(
             new ServerHelperModule.Data3(
-               Items.DRIED_KELP, new BindSetting("module.serverHelper.plast", "module.serverHelper.plast.desc", this::method5182), 0.0F, new Class27()
+               Items.DRIED_KELP, new BindSetting("module.serverHelper.plast", "module.serverHelper.plast.desc", this::method5182), 0.0F, new KeyState()
             )
          );
       this.items3
          .add(
             new ServerHelperModule.Data3(
-               Items.SUGAR, new BindSetting("module.serverHelper.clearDust", "module.serverHelper.clearDust.desc", this::method5182), 10.0F, new Class27()
+               Items.SUGAR, new BindSetting("module.serverHelper.clearDust", "module.serverHelper.clearDust.desc", this::method5182), 10.0F, new KeyState()
             )
          );
       this.items3
@@ -269,13 +269,13 @@ public final class ServerHelperModule extends Module {
                Items.FIRE_CHARGE,
                new BindSetting("module.serverHelper.fireTornado", "module.serverHelper.fireTornado.desc", this::method5182),
                10.0F,
-               new Class27()
+               new KeyState()
             )
          );
       this.items3
          .add(
             new ServerHelperModule.Data3(
-               Items.ENDER_EYE, new BindSetting("module.serverHelper.disorient", "module.serverHelper.disorient.desc", this::method5182), 10.0F, new Class27()
+               Items.ENDER_EYE, new BindSetting("module.serverHelper.disorient", "module.serverHelper.disorient.desc", this::method5182), 10.0F, new KeyState()
             )
          );
    }
@@ -436,8 +436,8 @@ public final class ServerHelperModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()
-         && event.getPacket3() instanceof ClientboundOpenScreenPacket openScreenPacket
+      if (event.isIncoming()
+         && event.getPacket() instanceof ClientboundOpenScreenPacket openScreenPacket
          && this.closeMenu.isEnabled()
          && this.method5181()
          && mc.player != null
@@ -453,18 +453,18 @@ public final class ServerHelperModule extends Module {
       } else {
          this.method5190(event);
          if (this.consumablesSetting.isEnabled()) {
-            if (Zenith.getInstance().getServerDetector().method1639() && event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+            if (Zenith.getInstance().getServerDetector().method1639() && event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
                mc.execute(() -> this.method5186(blocksUpdatePacket));
             }
 
-            if (event.getPacket3() instanceof ClientboundSoundPacket clientboundSoundPacket
+            if (event.getPacket() instanceof ClientboundSoundPacket clientboundSoundPacket
                && Zenith.getInstance().getServerDetector().method1642()
                && clientboundSoundPacket.getSound().unwrapKey().isPresent()
                && clientboundSoundPacket.getSound().unwrapKey().get().identifier().getPath().equals("block.beacon.deactivate")) {
                this.method5206(Items.NETHER_STAR, new Vec3(clientboundSoundPacket.getX(), clientboundSoundPacket.getY(), clientboundSoundPacket.getZ()), System.currentTimeMillis() + 15000L);
             }
 
-            if (Zenith.getInstance().getServerDetector().method1642() && event.getPacket3() instanceof ClientboundLevelParticlesPacket levelParticlesPacket) {
+            if (Zenith.getInstance().getServerDetector().method1642() && event.getPacket() instanceof ClientboundLevelParticlesPacket levelParticlesPacket) {
                Class clazz = ((ParticleProvider)mc.particleEngine.resourceManager
                      .getProviders()
                      .get(BuiltInRegistries.PARTICLE_TYPE.getId(levelParticlesPacket.particle().getType())))
@@ -475,7 +475,7 @@ public final class ServerHelperModule extends Module {
             }
          }
 
-         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket && this.autoPointSetting.isEnabled() && this.autoPointSetting.getVisible().get()) {
+         if (event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket && this.autoPointSetting.isEnabled() && this.autoPointSetting.getVisible().get()) {
             Component content = systemChatPacket.content();
             String string = content.toString();
             String str = content.getString();
@@ -707,7 +707,7 @@ public final class ServerHelperModule extends Module {
    private void method5190(PacketEvent event) {
       if (this.hitDisplaySetting.isEnabled() && this.hitDisplaySetting.getVisible().get() && mc.level != null) {
          long now = System.currentTimeMillis();
-         if (event.getPacket3() instanceof ClientboundSetEntityDataPacket setEntityDataPacket) {
+         if (event.getPacket() instanceof ClientboundSetEntityDataPacket setEntityDataPacket) {
             this.method5191(setEntityDataPacket, now);
          }
       } else {
@@ -1332,7 +1332,7 @@ public final class ServerHelperModule extends Module {
       private final Item item;
       private final BindSetting bindSetting;
       private final float floatValue;
-      private final Class27 class27;
+      private final KeyState class27;
       private final Predicate<Slot> predicate;
 
       public Item item() {
@@ -1347,7 +1347,7 @@ public final class ServerHelperModule extends Module {
          return this.floatValue;
       }
 
-      public Class27 class27() {
+      public KeyState class27() {
          return this.class27;
       }
 
@@ -1372,11 +1372,11 @@ public final class ServerHelperModule extends Module {
          return "Data3[" + "item=" + this.item + ", " + "bindSetting=" + this.bindSetting + ", " + "floatValue=" + this.floatValue + ", " + "class27=" + this.class27 + ", " + "predicate=" + this.predicate + "]";
       }
 
-      public Data3(Item item, BindSetting bindSetting, float floatValue, Class27 class2) {
+      public Data3(Item item, BindSetting bindSetting, float floatValue, KeyState class2) {
          this(item, bindSetting, floatValue, class2, null);
       }
 
-      public Data3(Item item, BindSetting bindSetting, float floatValue, Class27 class2, Predicate<Slot> predicate) {
+      public Data3(Item item, BindSetting bindSetting, float floatValue, KeyState class2, Predicate<Slot> predicate) {
          this.item = item;
          this.bindSetting = bindSetting;
          this.floatValue = floatValue;
@@ -1404,7 +1404,7 @@ public final class ServerHelperModule extends Module {
          return this.floatValue;
       }
 
-      public Class27 getClass27() {
+      public KeyState getClass27() {
          return this.class27;
       }
 

@@ -15,7 +15,7 @@ import org.zenith.StopWatch;
 import org.zenith.base.Module;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.settings.ModeSetting;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 import org.zenith.utility.network.InventoryUtils;
 import org.zenith.utility.render.KeyBindUtils;
 
@@ -153,7 +153,7 @@ public final class OffHandManagerModule extends Module {
       if (livingEntity.isUsingItem()) {
          return true;
       } else {
-         return Util10.method2178(livingEntity.getMainHandItem())
+         return ItemStackTags.isSword(livingEntity.getMainHandItem())
             ? false
             : livingEntity.getOffhandItem().getItem() != Items.PLAYER_HEAD || this.method7222(livingEntity.getOffhandItem());
       }

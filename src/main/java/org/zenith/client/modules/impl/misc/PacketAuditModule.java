@@ -95,9 +95,9 @@ public class PacketAuditModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      Packet packet3 = event.getPacket3();
+      Packet packet3 = event.getPacket();
       if (packet3 != null) {
-         if (!event.method7100()) {
+         if (!event.isIncoming()) {
             if (this.outgoing.isEnabled()) {
                String simpleName = packet3.getClass().getSimpleName();
                this.items5.computeIfAbsent(simpleName, str -> new AtomicInteger()).incrementAndGet();

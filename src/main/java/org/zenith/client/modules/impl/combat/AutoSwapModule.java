@@ -266,9 +266,9 @@ public final class AutoSwapModule extends Module {
 
    private void method7693(ScreenRenderEvent event) {
       float f;
-      if ((f = this.animation.method2808(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
+      if ((f = this.animation.animateTo(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
          for (Animation animation : this.animations) {
-            animation.method2809(0.0F);
+            animation.snapTo(0.0F);
          }
       } else {
          if (this.flag) {
@@ -330,7 +330,7 @@ public final class AutoSwapModule extends Module {
       boolean flag = this.intValue3 != -1 && System.currentTimeMillis() <= this.longValue2;
 
       for (int i = 0; i < 3; i++) {
-         float hover = this.animations[i].method2808(i == entry.intValue ? 1.0F : 0.0F);
+         float hover = this.animations[i].animateTo(i == entry.intValue ? 1.0F : 0.0F);
          boolean flag2 = this.method7714(i);
          AutoSwapModule.Entry3 entry3 = this.method7699(entry, hover, flag && i == this.intValue3, flag2);
          float f4 = entry.floatValue4 + hover * 6.0F;

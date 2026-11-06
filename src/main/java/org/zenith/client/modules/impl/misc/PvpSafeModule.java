@@ -18,7 +18,7 @@ public final class PvpSafeModule extends Module {
 
    @EventTarget
    public void method1004(PacketEvent event) {
-      if (event.method7099() && Zenith.getInstance().getServerDetector().method1635() && event.getPacket3() instanceof ServerboundChatCommandPacket(String str)) {
+      if (event.isOutgoing() && Zenith.getInstance().getServerDetector().method1635() && event.getPacket() instanceof ServerboundChatCommandPacket(String str)) {
          String str2 = str;
          if (str2.contains("hub")) {
             event.setCancelled(true);

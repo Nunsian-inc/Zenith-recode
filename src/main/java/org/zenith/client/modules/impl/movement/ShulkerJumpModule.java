@@ -14,28 +14,28 @@ import org.zenith.client.events.UpdateEvent;
 )
 public final class ShulkerJumpModule extends Module {
    public static final ShulkerJumpModule INSTANCE = new ShulkerJumpModule();
-   public int intValue = 0;
-   public boolean flag = false;
+   public int jumpTicks = 0;
+   public boolean jumpActive = false;
 
    @EventTarget
-   public void method5129(UpdateEvent event) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (mc.player.containerMenu instanceof ShulkerBoxMenu && !this.flag) {
+         if (mc.player.containerMenu instanceof ShulkerBoxMenu && !this.jumpActive) {
             mc.options.keyJump.setDown(true);
             mc.player.closeContainer();
             mc.player.push(0.0, 2.4, 0.0);
-            this.flag = true;
-            this.intValue = 0;
+            this.jumpActive = true;
+            this.jumpTicks = 0;
          }
 
-         if (this.flag) {
-            if (this.intValue >= 5) {
+         if (this.jumpActive) {
+            if (this.jumpTicks >= 5) {
                mc.player.closeContainer();
                mc.options.keyJump.setDown(false);
-               this.flag = false;
-               this.intValue = 0;
+               this.jumpActive = false;
+               this.jumpTicks = 0;
             } else {
-               this.intValue++;
+               this.jumpTicks++;
             }
          }
       }

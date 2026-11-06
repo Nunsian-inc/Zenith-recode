@@ -21,8 +21,8 @@ import org.zenith.client.settings.ColorSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.game.Class28;
-import org.zenith.utility.misc.Util24;
+import org.zenith.utility.game.ParticleEmitter;
+import org.zenith.utility.misc.TotemParticleRenderer;
 import org.zenith.utility.render.Glowboost;
 import org.zenith.utility.render.MatrixStackUtils;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -76,11 +76,11 @@ public final class TotemParticlesModule extends Module {
    private final ColorSetting customColor = new ColorSetting(
       "module.totemParticles.customColor", "module.totemParticles.customColor.desc", ZenithColor.INSTANCE, () -> this.color.isSelected(2)
    );
-   private final List<Class28> items = new ArrayList<>();
+   private final List<ParticleEmitter> items = new ArrayList<>();
    private final Glowboost glowboost = new Glowboost();
    private long longValue;
    private int intValue;
-   private Class28 class28;
+   private ParticleEmitter class28;
    private long longValue2;
 
    @Override
@@ -121,7 +121,7 @@ public final class TotemParticlesModule extends Module {
 
          this.items
             .add(
-               new Class28(
+               new ParticleEmitter(
                      this.method4702(),
                      vec,
                      new Vec3(0.0, 1.0, 0.0),
@@ -147,7 +147,7 @@ public final class TotemParticlesModule extends Module {
                Camera camera = mc.getEntityRenderDispatcher().camera;
                boolean flag = false;
 
-               for (Class28 class2 : this.items) {
+               for (ParticleEmitter class2 : this.items) {
                   if (!flag) {
                      this.glowboost.method3232(camera, method4701(this.method4702()));
                      flag = true;
@@ -169,7 +169,7 @@ public final class TotemParticlesModule extends Module {
    public void method4699(MenuDrawContext customDrawContext, float xo, float yo, float xScale, float previewAlpha) {
       long now = System.currentTimeMillis();
       if (this.class28 == null || now >= this.longValue2) {
-         this.class28 = new Class28(this.method4702(), Vec3.ZERO, new Vec3(0.0, 1.0, 0.0), 0.6, 1.8, 0.0, 3000, this.intValue += 53, ++this.longValue);
+         this.class28 = new ParticleEmitter(this.method4702(), Vec3.ZERO, new Vec3(0.0, 1.0, 0.0), 0.6, 1.8, 0.0, 3000, this.intValue += 53, ++this.longValue);
          this.longValue2 = now + 3000L + 350L;
       }
 
@@ -182,19 +182,19 @@ public final class TotemParticlesModule extends Module {
       }
    }
 
-   private void method4700(Glowboost glowboost, Class28 class2, float f, float previewAlpha) {
+   private void method4700(Glowboost glowboost, ParticleEmitter class2, float f, float previewAlpha) {
       if (!(f < 0.0F) && !(f >= 1.0F)) {
          glowboost.method3235(method4701(class2.intValue) * previewAlpha);
          int color = this.method4703(class2);
          switch (class2.intValue) {
             case 1:
-               Util24.method6029(glowboost, class2, f, color, 1.0F, 130.0F);
+               TotemParticleRenderer.drawRings(glowboost, class2, f, color, 1.0F, 130.0F);
                break;
             case 2:
-               Util24.method6030(glowboost, class2, f, color, this.stormScale.getValue3(), this.stormDensity.getValue3(), 1.6F);
+               TotemParticleRenderer.drawStorm(glowboost, class2, f, color, this.stormScale.getValue3(), this.stormDensity.getValue3(), 1.6F);
                break;
             default:
-               Util24.method6028(glowboost, class2, f, color, this.burstScale.getValue3(), this.burstDensity.getValue3(), 2.5F);
+               TotemParticleRenderer.drawBurst(glowboost, class2, f, color, this.burstScale.getValue3(), this.burstDensity.getValue3(), 2.5F);
          }
       }
    }
@@ -217,7 +217,7 @@ public final class TotemParticlesModule extends Module {
       return 0;
    }
 
-   private int method4703(Class28 class2) {
+   private int method4703(ParticleEmitter class2) {
       if (this.color.isSelected(2)) {
          return this.customColor.getZenithColor().method7287();
       } else if (this.color.isSelected(1)) {

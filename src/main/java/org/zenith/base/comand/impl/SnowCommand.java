@@ -9,20 +9,20 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import org.zenith.ChatLogger;
 import org.zenith.base.comand.api.CommandAbstract;
 import org.zenith.utility.game.SnowStats;
-import org.zenith.utility.misc.Class32;
+import org.zenith.utility.misc.SparseVoxelGrid;
 import org.zenith.utility.misc.MeshImporter;
 import org.zenith.utility.misc.MeshValidator;
 import org.zenith.utility.misc.SnowVisibility;
 import org.zenith.utility.render.SnowShader;
 
 public class SnowCommand extends CommandAbstract {
-   private static final Class32 VOXELS = new Class32();
+   private static final SparseVoxelGrid VOXELS = new SparseVoxelGrid();
 
    public SnowCommand() {
       super("snow");
    }
 
-   public static Class32 voxels() {
+   public static SparseVoxelGrid voxels() {
       return VOXELS;
    }
 
@@ -98,14 +98,14 @@ public class SnowCommand extends CommandAbstract {
       if (player == null) {
          ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: нет мира");
          return 1;
-      } else if (VOXELS.method4906() == 0) {
+      } else if (VOXELS.chunkCount() == 0) {
          ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: хранилище пустое, сначала snow fill");
          return 1;
       } else {
          int n = integer * 2 * 4;
-         int n2 = Class32.method4911(player.getBlockX() - integer);
-         int n3 = Class32.method4911(player.getBlockY() - 8);
-         int n4 = Class32.method4911(player.getBlockZ() - integer);
+         int n2 = SparseVoxelGrid.blockToVoxel(player.getBlockX() - integer);
+         int n3 = SparseVoxelGrid.blockToVoxel(player.getBlockY() - 8);
+         int n4 = SparseVoxelGrid.blockToVoxel(player.getBlockZ() - integer);
          byte b = 96;
          long nanoTime = System.nanoTime();
          MeshImporter.Entry entry = MeshImporter.method658(VOXELS, SnowVisibility.getFloatArrayBuffer(), n2, n3, n4, n, b, n);
@@ -131,13 +131,13 @@ public class SnowCommand extends CommandAbstract {
       ChatLogger.method2020(
          ChatLogger.Type.INFO,
          "Снег: чанков "
-            + VOXELS.method4906()
+            + VOXELS.chunkCount()
             + " (однородных "
-            + VOXELS.method4907()
+            + VOXELS.uniformChunkCount()
             + "), вокселей "
-            + VOXELS.method4908()
+            + VOXELS.positiveVoxelCount()
             + ", память "
-            + VOXELS.method4909() / 1024L
+            + VOXELS.estimatedMemoryBytes() / 1024L
             + " КБ"
       );
    }

@@ -14,9 +14,9 @@ import net.minecraft.world.phys.Vec3;
 import org.zenith.ChatLogger;
 import org.zenith.Rotation;
 import org.zenith.client.modules.impl.combat.AuraModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public final class NeuroMotorMod extends Util22 {
+public final class NeuroMotorMod extends RotationContext {
    private static final String text = "motor_v10.json";
    private static final String text2 = "models/motor_v10.json";
    private static final List<Path> items = List.of(Path.of("motor_v10.json"), Path.of("models", "motor_v10.json"), Path.of("..", "models", "motor_v10.json"));
@@ -113,7 +113,7 @@ public final class NeuroMotorMod extends Util22 {
    }
 
    public Rotation method3880() {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       if (!method3876()) {
          this.reset();
          return rotation;
@@ -174,7 +174,7 @@ public final class NeuroMotorMod extends Util22 {
                   this.doubleValues[this.doubleValues.length - 1] = new double[]{floatValue, random};
                   this.doubleValues2[0] = entry.doubleValue;
                   this.doubleValues2[1] = entry.doubleValue2;
-                  Rotation rotation2 = rotation.method3140((float)floatValue, (float)random);
+                  Rotation rotation2 = rotation.add((float)floatValue, (float)random);
                   this.intValue2 = tickCount;
                   this.rotation = rotation2;
                   return rotation2;

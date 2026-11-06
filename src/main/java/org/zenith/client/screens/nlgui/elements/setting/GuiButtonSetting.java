@@ -10,7 +10,7 @@ import org.zenith.client.screens.nlgui.elements.api.GuiSetting;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.ButtonSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -35,7 +35,7 @@ public class GuiButtonSetting extends GuiSetting<ButtonSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, MouseButton enum2) {
       if (this.bounds != null && this.bounds.contains(anchorMouseX, lastClickY)) {
          this.setting.toggle();
          this.clickActive = true;
@@ -49,9 +49,9 @@ public class GuiButtonSetting extends GuiSetting<ButtonSetting> {
    public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       if (currentStyle != null) {
-         this.animationVisible.method2807(this.setting.isVisible());
+         this.animationVisible.updateVisibility(this.setting.isVisible());
          previewAlpha *= this.animationVisible.getValue();
-         this.animationClick.method2807(this.clickActive);
+         this.animationClick.updateVisibility(this.clickActive);
          if (this.clickActive && this.animationClick.getValue() > 0.9F) {
             this.clickActive = false;
          }

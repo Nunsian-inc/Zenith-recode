@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.zenith.utility.misc.MapAtlas;
-import org.zenith.utility.misc.Util30;
+import org.zenith.utility.misc.MapAtlasAccess;
 
 @Mixin({MapTextureManager.class})
-public abstract class MixinOptMapTextureManager implements Util30.Handler {
+public abstract class MixinOptMapTextureManager implements MapAtlasAccess.Handler {
    @Shadow
    @Final
    private Int2ObjectMap<?> maps;
@@ -43,7 +43,7 @@ public abstract class MixinOptMapTextureManager implements Util30.Handler {
    @Override
    public MapAtlas.Data zenith$getAtlasSlot(int n) {
       if (this.zenith$atlasPool != null && !this.zenith$atlasPool.isEmpty()) {
-         return this.maps.get(n) instanceof Util30.Handler2 handler2 ? handler2.zenith$getAtlasSlot() : null;
+         return this.maps.get(n) instanceof MapAtlasAccess.Handler2 handler2 ? handler2.zenith$getAtlasSlot() : null;
       } else {
          return null;
       }

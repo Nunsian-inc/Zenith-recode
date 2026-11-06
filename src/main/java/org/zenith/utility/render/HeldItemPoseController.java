@@ -26,7 +26,7 @@ import org.zenith.client.events.AttackEvent;
 import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
 import org.zenith.utility.misc.AnimationCache;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.WardrobeCategory;
 import org.zenith.utility.mixin.accessors.ItemRenderStateAccessor;
@@ -102,12 +102,12 @@ public final class HeldItemPoseController implements MinecraftAccess {
       HoveredData hoveredData, int id, ItemStackRenderState itemStackRenderState, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, float powerForTime, float floatValue, boolean flag
    ) {
       Wardrobe wardrobe = Wardrobe.method2488();
-      Class15 key = wardrobe == null ? null : wardrobe.getRegistry().method1427(hoveredData);
+      WardrobeModel key = wardrobe == null ? null : wardrobe.getRegistry().method1427(hoveredData);
       if (key != null && key.data2 != null) {
          ItemRenderStateAccessor renderStateAccessor = (ItemRenderStateAccessor)(Object)itemStackRenderState;
          if (renderStateAccessor.zenith$getLayerCount() > 0 && renderStateAccessor.zenith$getDisplayContext() != null) {
             ItemTransform zenith$getTransform = ((LayerRenderStateAccessor)(Object)renderStateAccessor.zenith$getLayers()[0]).zenith$getTransform();
-            Class15.Data2 data2 = key.data2;
+            WardrobeModel.Data2 data2 = key.data2;
             AnimationCache.Entry entry = AnimationCache.method7621(id, hoveredData, wardrobe.isFlag());
             entry.animationState.method6539(key, "idle", floatValue);
             float[] floatValues = entry.class16.method2139(key, entry.animationState, floatValue, null);
@@ -161,7 +161,7 @@ public final class HeldItemPoseController implements MinecraftAccess {
       }
    }
 
-   private static Class15 method6160(ItemStack itemInHand) {
+   private static WardrobeModel method6160(ItemStack itemInHand) {
       Wardrobe wardrobe = Wardrobe.method2488();
       if (wardrobe != null && mc.player != null && wardrobe.showSelf.isEnabled()) {
          HoveredData hoveredData = method6158(wardrobe.method2498(mc.player.getGameProfile().name(), true), itemInHand);
@@ -173,14 +173,14 @@ public final class HeldItemPoseController implements MinecraftAccess {
 
    @EventTarget
    public void method6161(AttackEvent event) {
-      if (event.getType4() == AttackEvent.Type.PRE && mc.player != null && Util19.enabled()) {
-         Class15 class2 = method6160(mc.player.getItemInHand(InteractionHand.MAIN_HAND));
+      if (event.getType4() == AttackEvent.Type.PRE && mc.player != null && WardrobeParticleEmitter.enabled()) {
+         WardrobeModel class2 = method6160(mc.player.getItemInHand(InteractionHand.MAIN_HAND));
          Entity entity = event.getEntity();
          if (class2 != null && class2.data2 != null && entity != null) {
             Vec3 center = entity.getBoundingBox().getCenter();
             if (class2.data2.getParticleEffect2() != null) {
                for (int i = 0; i < 10; i++) {
-                  Util19.method5043(
+                  WardrobeParticleEmitter.spawnParticle(
                      class2.data2.getParticleEffect2(),
                      center.x + (Math.random() - 0.5) * entity.getBbWidth(),
                      center.y + (Math.random() - 0.5) * entity.getBbHeight() * 0.8,
@@ -196,8 +196,8 @@ public final class HeldItemPoseController implements MinecraftAccess {
    }
 
    private void tick() {
-      if (mc.player != null && mc.level != null && Util19.enabled()) {
-         Class15 class2 = method6160(mc.player.getItemInHand(InteractionHand.MAIN_HAND));
+      if (mc.player != null && mc.level != null && WardrobeParticleEmitter.enabled()) {
+         WardrobeModel class2 = method6160(mc.player.getItemInHand(InteractionHand.MAIN_HAND));
          if (class2 != null && class2.data2 != null && class2.data2.getParticleEffect() != null && mc.player.isSwinging()) {
             float swingAnimation = mc.player.getSwingAnimation(1.0F);
             float f = (float)Math.toRadians(mc.player.getYRot());
@@ -210,11 +210,11 @@ public final class HeldItemPoseController implements MinecraftAccess {
                double scale = 0.7 - 1.4 * f2;
                double y = 0.35 - 0.7 * f2;
                Vec3 vec3 = eyePosition.add(vec.scale(0.95)).add(vec2.scale(scale)).add(0.0, y, 0.0);
-               Util19.method5043(class2.data2.getParticleEffect(), vec3.x, vec3.y, vec3.z, 0.0, 0.0, 0.0);
+               WardrobeParticleEmitter.spawnParticle(class2.data2.getParticleEffect(), vec3.x, vec3.y, vec3.z, 0.0, 0.0, 0.0);
             }
          }
 
-         Class15 class3 = null;
+         WardrobeModel class3 = null;
          Wardrobe wardrobe = Wardrobe.method2488();
          if (wardrobe != null) {
             FocusSlotEnum key = !FocusSlotEnum.CROSSBOW.matches(mc.player.getMainHandItem()) && !FocusSlotEnum.CROSSBOW.matches(mc.player.getOffhandItem())
@@ -230,7 +230,7 @@ public final class HeldItemPoseController implements MinecraftAccess {
                   && abstractArrow.getOwner() == mc.player
                   && abstractArrow.getDeltaMovement().lengthSqr() > 0.01
                   && abstractArrow.tickCount < 200) {
-                  Util19.method5043(class3.data2.getParticleEffect(), abstractArrow.getX(), abstractArrow.getY(), abstractArrow.getZ(), 0.0, 0.0, 0.0);
+                  WardrobeParticleEmitter.spawnParticle(class3.data2.getParticleEffect(), abstractArrow.getX(), abstractArrow.getY(), abstractArrow.getZ(), 0.0, 0.0, 0.0);
                }
             }
          }

@@ -789,12 +789,12 @@ public final class ScriptScreenApi {
             int priority = (int)Mth.clamp(ScriptValueUtils.method6264(var3x, "priority", 3.0), 0.0, 20.0);
             int intValue = (int)Mth.clamp(ScriptValueUtils.method6264(var3x, "ticks", 1.0), 1.0, 100.0);
             Rotation rotation = new Rotation(var2x.getFloatValue(), Mth.clamp(var2x.getFloatValue2(), -90.0F, 90.0F));
-            if (rotation.method3137()) {
+            if (rotation.isInvalid()) {
                return null;
             } else {
                RotationManager rotationManager = Zenith.getInstance().getRotationManager();
-               rotationManager.method7848(
-                  new RotationRequest(rotation, () -> rotationManager.method7844().method3136(rotation, var4x, var5x), rotationManager.getBcCameraTestnerv().getRotationConfig()),
+               rotationManager.requestRotation(
+                  new RotationRequest(rotation, () -> rotationManager.getEffectiveRotation().stepTowards(rotation, var4x, var5x), rotationManager.getBcCameraTestnerv().getRotationConfig()),
                   priority,
                   (Module)supplier.get(),
                   intValue
@@ -819,7 +819,7 @@ public final class ScriptScreenApi {
             if (method7051() == null) {
                return null;
             } else {
-               Rotation var2x = Rotation.method3128(
+               Rotation var2x = Rotation.lookingAt(
                   new Vec3(ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)),
                   method7051().getEyePosition()
                );
@@ -833,7 +833,7 @@ public final class ScriptScreenApi {
             if (method7051() == null) {
                return ScriptValueUtils.method6247(scope).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject();
             } else {
-               Rotation var2x = Rotation.method3128(
+               Rotation var2x = Rotation.lookingAt(
                   new Vec3(ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)),
                   method7051().getEyePosition()
                );
@@ -850,7 +850,7 @@ public final class ScriptScreenApi {
             if (method7051() == null) {
                return ScriptValueUtils.method6247(scope).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject();
             } else {
-               Rotation var2x = Zenith.getInstance().getRotationManager().method7844();
+               Rotation var2x = Zenith.getInstance().getRotationManager().getEffectiveRotation();
                return ScriptValueUtils.method6247(scope)
                   .method6277("yaw", (double)var2x.getFloatValue())
                   .method6277("pitch", (double)var2x.getFloatValue2())

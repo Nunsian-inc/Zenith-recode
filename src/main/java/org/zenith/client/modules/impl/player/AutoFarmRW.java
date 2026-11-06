@@ -112,7 +112,7 @@ public final class AutoFarmRW extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && this.type == AutoFarmRW.Type.WARP && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+      if (event.isIncoming() && this.type == AutoFarmRW.Type.WARP && event.getPacket() instanceof ClientboundPlayerPositionPacket) {
          this.flag = true;
       }
    }

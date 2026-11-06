@@ -4,11 +4,11 @@ import java.util.List;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.zenith.utility.misc.Handler4;
+import org.zenith.utility.misc.PlayerRenderStateAccess;
 import org.zenith.utility.misc.HoveredData;
 
 @Mixin({AvatarRenderState.class})
-public class MixinPlayerEntityRenderState implements Handler4 {
+public class MixinPlayerEntityRenderState implements PlayerRenderStateAccess {
    @Unique
    private String zenith$profileName;
    @Unique

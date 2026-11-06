@@ -48,7 +48,7 @@ import org.zenith.Rotation;
 import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.GroupSetting;
@@ -301,10 +301,10 @@ public class EndLooterModule extends Module {
    }
 
    @EventTarget
-   public void method3893(Event5 event) {
+   public void method3893(PreRotationEvent event) {
       Rotation rotation = this.rotation;
       if (rotation != null) {
-         rotationManager.method7849(
+         rotationManager.requestRotation(
             new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
             4,
             this
@@ -578,9 +578,9 @@ public class EndLooterModule extends Module {
       if (blockHitResult == null) {
          this.method3944(pos);
       } else {
-         Rotation rotation = Rotation.method3128(blockHitResult.getLocation(), mc.player.getEyePosition());
+         Rotation rotation = Rotation.lookingAt(blockHitResult.getLocation(), mc.player.getEyePosition());
          this.rotation = rotation;
-         if (!(rotationManager.getRotation2().method3130(rotation) > 5.0F)) {
+         if (!(rotationManager.getRotation2().angularDistanceTo(rotation) > 5.0F)) {
             if (now >= this.longValue) {
                if (this.intValue2 >= 2) {
                   this.method3911(pos, "не сломалась после разрешённых попыток");
@@ -680,9 +680,9 @@ public class EndLooterModule extends Module {
                return;
             }
 
-            Rotation rotation = Rotation.method3128(blockHit.getLocation(), mc.player.getEyePosition());
+            Rotation rotation = Rotation.lookingAt(blockHit.getLocation(), mc.player.getEyePosition());
             this.rotation = rotation;
-            if (!(rotationManager.getRotation2().method3130(rotation) > 5.0F)) {
+            if (!(rotationManager.getRotation2().angularDistanceTo(rotation) > 5.0F)) {
                if (this.stopWatch2.method7546(15000L)) {
                   this.method3911(blockPos, "песок не чистится слишком долго");
                } else {
@@ -857,9 +857,9 @@ public class EndLooterModule extends Module {
          if (blockHit == null) {
             this.method3944(pos);
          } else {
-            Rotation rotation = Rotation.method3128(blockHit.getLocation(), mc.player.getEyePosition());
+            Rotation rotation = Rotation.lookingAt(blockHit.getLocation(), mc.player.getEyePosition());
             this.rotation = rotation;
-            if (mc.player.tickCount % 2 == 0 && !(rotationManager.getRotation2().method3130(rotation) > 5.0F)) {
+            if (mc.player.tickCount % 2 == 0 && !(rotationManager.getRotation2().angularDistanceTo(rotation) > 5.0F)) {
                mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             }

@@ -6,7 +6,7 @@ import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.Rotation;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.utility.misc.MovementInputUtils;
 import org.zenith.utility.misc.RotationRequest;
@@ -23,15 +23,15 @@ public final class StrafeModule extends Module {
    }
 
    @EventTarget
-   public void method1527(Event5 event) {
-      float impulse = KeyboardInput.calculateImpulse(mc.options.keyUp.isDown(), mc.options.keyDown.isDown());
-      float f = KeyboardInput.calculateImpulse(mc.options.keyLeft.isDown(), mc.options.keyRight.isDown());
-      if (impulse != 0.0F || f != 0.0F) {
-         float yRot = mc.player.getYRot();
-         float f2 = (float)Math.toDegrees(Math.atan2(-f, impulse));
-         float yRot2 = yRot + f2;
-         Rotation rotation = rotationManager.method7844().method3141(rotationManager.method7844().method3131(new Rotation(yRot2, mc.player.getXRot())));
-         rotationManager.method7849(
+   public void onStrafeRotation(PreRotationEvent event) {
+      float forwardImpulse = KeyboardInput.calculateImpulse(mc.options.keyUp.isDown(), mc.options.keyDown.isDown());
+      float strafeImpulse = KeyboardInput.calculateImpulse(mc.options.keyLeft.isDown(), mc.options.keyRight.isDown());
+      if (forwardImpulse != 0.0F || strafeImpulse != 0.0F) {
+         float playerYaw = mc.player.getYRot();
+         float movementYawOffset = (float)Math.toDegrees(Math.atan2(-strafeImpulse, forwardImpulse));
+         float movementYaw = playerYaw + movementYawOffset;
+         Rotation rotation = rotationManager.getEffectiveRotation().add(rotationManager.getEffectiveRotation().wrappedDeltaTo(new Rotation(movementYaw, mc.player.getXRot())));
+         rotationManager.requestRotation(
             new RotationRequest(
                rotation, () -> rotationManager.getBcCameraTestnerv().method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()
             ),
@@ -42,7 +42,7 @@ public final class StrafeModule extends Module {
    }
 
    @EventTarget
-   public void method1528(MoveInputEvent event) {
+   public void onMoveInput(MoveInputEvent event) {
       if (MovementInputUtils.method7418() && rotationManager.getModule() == this) {
          event.method3047(false);
          event.method3045(false);

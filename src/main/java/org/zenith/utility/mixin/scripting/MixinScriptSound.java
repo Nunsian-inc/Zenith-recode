@@ -21,7 +21,7 @@ public abstract class MixinScriptSound {
          ModuleHookDefinitions.Entry2 entry = new ModuleHookDefinitions.Entry2(
             String.valueOf(soundInstance.getIdentifier()), soundInstance.getSource().getName(), soundInstance.getX(), soundInstance.getY(), soundInstance.getZ(), 1.0F, 1.0F
          );
-         if (ModuleHookDefinitions.class1215.method1645(entry).cancelled) {
+         if (ModuleHookDefinitions.class1215.dispatch(entry).cancelled) {
             callbackInfoReturnable.setReturnValue(PlayResult.NOT_STARTED);
          }
       }

@@ -27,7 +27,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.zenith.base.bot.net.BotPlayHandler;
-import org.zenith.utility.misc.Handler4;
+import org.zenith.utility.misc.PlayerRenderStateAccess;
 import org.zenith.utility.mixin.accessors.EntityRenderDispatcherAccessor;
 import org.zenith.utility.render.OutlineVertexProvider;
 
@@ -164,7 +164,7 @@ public final class BotPlayerRenderer {
       this.state.parrotOnLeftShoulder = null;
       this.state.parrotOnRightShoulder = null;
       this.state.id = player.getId();
-      ((Handler4)this.state).zenith$setProfileName(player.getGameProfile().name());
+      ((PlayerRenderStateAccess)this.state).zenith$setProfileName(player.getGameProfile().name());
       this.state.heldOnHead.clear();
    }
 

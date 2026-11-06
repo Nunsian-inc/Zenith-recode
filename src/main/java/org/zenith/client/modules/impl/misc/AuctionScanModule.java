@@ -77,8 +77,8 @@ public class AuctionScanModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100() && this.type != AuctionScanModule.Type.IDLE && this.type != AuctionScanModule.Type.DONE) {
-         Packet packet3 = event.getPacket3();
+      if (event.isIncoming() && this.type != AuctionScanModule.Type.IDLE && this.type != AuctionScanModule.Type.DONE) {
+         Packet packet3 = event.getPacket();
          if (packet3 instanceof ClientboundContainerSetContentPacket || packet3 instanceof ClientboundContainerSetSlotPacket) {
             this.flag = true;
          }

@@ -42,7 +42,7 @@ public final class MenuNavigationBar {
 
    public void render(MenuDrawContext graphics, float mouseX, float mouseY, float f, float y, int activeIndex) {
       for (int i = 0; i < this.entries.size(); i++) {
-         this.entries.get(i).activity.method2807(i == activeIndex);
+         this.entries.get(i).activity.updateVisibility(i == activeIndex);
       }
 
       float f2 = GAP * (this.entries.size() - 1);
@@ -61,7 +61,7 @@ public final class MenuNavigationBar {
          entry.x = x;
          entry.y = y;
          entry.width = width;
-         entry.hover.method2807(entry.contains((double)mouseX, (double)mouseY));
+         entry.hover.updateVisibility(entry.contains((double)mouseX, (double)mouseY));
          float radius = MenuSkin.radius(HEIGHT);
          ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(radius);
          ZenithColor zenithColor = MenuTheme.panel().method7295(MenuTheme.plate(), entry.hover.getValue() * (1.0F - hover));

@@ -12,7 +12,7 @@ import org.zenith.MinecraftAccess;
 import org.zenith.Zenith;
 import org.zenith.ZenithColor;
 import org.zenith.client.events.WindowResizeEvent;
-import org.zenith.utility.misc.Handler1;
+import org.zenith.utility.misc.ScreenCreationTimeAccess;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -56,7 +56,7 @@ public class MenuParticleRenderer implements MinecraftAccess {
       if (screen == null) {
          return 1.0F;
       } else {
-         Handler1 handler1 = (Handler1)screen;
+         ScreenCreationTimeAccess handler1 = (ScreenCreationTimeAccess)screen;
          long zenithDLC$callGetStartTime = handler1.zenithDLC$callGetStartTime();
          long now = System.currentTimeMillis();
          float f = (float)(now - zenithDLC$callGetStartTime) / 200.0F;

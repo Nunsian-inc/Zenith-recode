@@ -23,7 +23,7 @@ import org.zenith.StopWatch;
 import org.zenith.base.Module;
 import org.zenith.base.bot.client.HeadlessBots;
 import org.zenith.base.rotation.BcCameraTestnerv;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.ModeSetting;
@@ -254,12 +254,12 @@ public final class WarpFarmModule extends Module {
    }
 
    @EventTarget
-   public void method4122(Event5 event) {
+   public void method4122(PreRotationEvent event) {
       if (this.nextRouteBlock != null && mc.player != null) {
          Vec3 vec = Pathfinder.method761(this.nextRouteBlock);
          Vec3 eyePosition = mc.player.getEyePosition(1.0F);
-         Rotation rotation = Rotation.method3128(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
-         this.scopedRotationManager().method7849(new RotationRequest(rotation, () -> {
+         Rotation rotation = Rotation.lookingAt(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
+         this.scopedRotationManager().requestRotation(new RotationRequest(rotation, () -> {
             BcCameraTestnerv var2x = this.scopedRotationManager().getBcCameraTestnerv();
             return var2x.method1851(var2x.getRotationConfig(), rotation);
          }, this.scopedRotationManager().getBcCameraTestnerv().getRotationConfig()), 20, this);

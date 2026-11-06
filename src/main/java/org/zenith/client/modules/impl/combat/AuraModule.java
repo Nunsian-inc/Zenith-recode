@@ -35,11 +35,11 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.base.rotation.mods.Class24;
+import org.zenith.base.rotation.mods.TargetBoxRotation;
 import org.zenith.client.events.EntityAddEvent;
-import org.zenith.client.events.Event2;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PostRotationEvent;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.PostMotionEvent;
 import org.zenith.client.events.SendPacketEvent;
@@ -177,10 +177,10 @@ public final class AuraModule extends Module {
    }
 
    @EventTarget
-   public void method6315(Event2 event) {
+   public void method6315(PostRotationEvent event) {
       if (this.livingEntity != null) {
          if (this.method6316()
-            && zenith.getRotationManager().method7844().method3131(new Rotation(mc.player.yRotLast, mc.player.xRotLast)).method5329(0.0F)) {
+            && zenith.getRotationManager().getEffectiveRotation().wrappedDeltaTo(new Rotation(mc.player.yRotLast, mc.player.xRotLast)).isWithinBounds(0.0F)) {
             zenith.getRotationManager()
                .setCurrentRotation(new Rotation((float)(mc.player.yRotLast + MathUtils.method2651(-1.0, 1.0)), mc.player.xRotLast));
          }
@@ -207,11 +207,11 @@ public final class AuraModule extends Module {
          && (this.flag4 || this.flag2 || this.flag)) {
          Vec3 vec = mc.player.position().subtract(this.livingEntity.position());
          if (vec.horizontalDistanceSqr() > 1.0E-5) {
-            Rotation rotation = rotationManager.method7844();
-            float floatValue = Rotation.method3129(vec).getFloatValue();
+            Rotation rotation = rotationManager.getEffectiveRotation();
+            float floatValue = Rotation.fromDirection(vec).getFloatValue();
             UseItemUtils.method6533(0.0, new Rotation(rotation.getFloatValue() + Mth.wrapDegrees(floatValue - rotation.getFloatValue()), rotation.getFloatValue2()));
          } else {
-            Rotation rotation = rotationManager.method7844();
+            Rotation rotation = rotationManager.getEffectiveRotation();
             UseItemUtils.method6533(0.0, new Rotation(rotation.getFloatValue() + 179.0F, rotation.getFloatValue2()));
          }
       }
@@ -235,7 +235,7 @@ public final class AuraModule extends Module {
    }
 
    @EventTarget
-   public void method6319(Event5 event) {
+   public void method6319(PreRotationEvent event) {
       this.flag3 = false;
       this.flag4 = false;
       if (mc.player.isDeadOrDying()) {
@@ -311,7 +311,7 @@ public final class AuraModule extends Module {
    }
 
    public boolean method6321() {
-      return this.method6322(rotationManager.method7844());
+      return this.method6322(rotationManager.getEffectiveRotation());
    }
 
    public boolean method6322(Rotation rotation) {
@@ -320,7 +320,7 @@ public final class AuraModule extends Module {
 
    public boolean method6323() {
       return TargetUtils.method3212(
-         zenith.getRotationManager().method7844(),
+         zenith.getRotationManager().getEffectiveRotation(),
          PlayerSimulation.method6031(1).vec3d.add(0.0, mc.player.getEyeHeight(mc.player.getPose()), 0.0),
          this.method6324(),
          6.0,
@@ -403,8 +403,8 @@ public final class AuraModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         Packet packet3 = event.getPacket3();
+      if (event.isIncoming()) {
+         Packet packet3 = event.getPacket();
          if (packet3 instanceof ClientboundPlayerPositionPacket) {
             this.intValue2 = 3;
          }
@@ -446,7 +446,7 @@ public final class AuraModule extends Module {
       } else {
          bcCameraTestnerv.getClass24().method3537();
          if (this.entry14.isSelected()) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(
                   rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig16(), rotation), bcCameraTestnerv.getRotationConfig16()
                ),
@@ -454,7 +454,7 @@ public final class AuraModule extends Module {
                this
             );
          } else if (this.method6360()) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(
                   rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig15(), rotation), bcCameraTestnerv.getRotationConfig15()
                ),
@@ -462,7 +462,7 @@ public final class AuraModule extends Module {
                this
             );
          } else if (this.entry12.isSelected()) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(
                   rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig14(), rotation), bcCameraTestnerv.getRotationConfig14()
                ),
@@ -470,7 +470,7 @@ public final class AuraModule extends Module {
                this
             );
          } else if (this.entry11.isSelected()) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(
                   rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig13(), rotation), bcCameraTestnerv.getRotationConfig13()
                ),
@@ -478,20 +478,20 @@ public final class AuraModule extends Module {
                this
             );
          } else if (this.entry6.isSelected()) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig2(), rotation), bcCameraTestnerv.getRotationConfig2()),
                1,
                this
             );
          } else if (this.entry4.isSelected()) {
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig4(), rotation), bcCameraTestnerv.getRotationConfig4()),
                1,
                this
             );
          } else {
             if (flag2 && this.entry8.isSelected() || this.entry9.isSelected() || this.entry10.isSelected()) {
-               rotationManager.method7849(
+               rotationManager.requestRotation(
                   new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                   flag2 ? 3 : 3,
                   this
@@ -503,12 +503,12 @@ public final class AuraModule extends Module {
 
    private void method6338(boolean flag) {
       boolean selected = this.entry17.isSelected();
-      Class24 class2 = bcCameraTestnerv.getClass24();
-      Class24.Data data;
+      TargetBoxRotation class2 = bcCameraTestnerv.getClass24();
+      TargetBoxRotation.Data data;
       if (selected) {
          data = class2.method3536(
             new Rotation(mc.player.getYRot(), mc.player.getXRot(), true),
-            rotationManager.method7844(),
+            rotationManager.getEffectiveRotation(),
             this.method6333(),
             this.method6336(),
             this.legitMaxAngle.getValue3(),
@@ -517,7 +517,7 @@ public final class AuraModule extends Module {
          );
       } else {
          class2.method3537();
-         data = class2.method3535(rotationManager.method7844(), this.method6333(), this.method6336(), this.legitMaxAngle.getValue3(), false);
+         data = class2.method3535(rotationManager.getEffectiveRotation(), this.method6333(), this.method6336(), this.legitMaxAngle.getValue3(), false);
       }
 
       if (data.isFlag()) {
@@ -531,7 +531,7 @@ public final class AuraModule extends Module {
 
          if (selected || data.isFlag3()) {
             int priority = this.entry15.isSelected() ? 3 : 1;
-            rotationManager.method7849(new RotationRequest(data.rotation(), data::rotation, bcCameraTestnerv.getRotationConfig()), priority, this);
+            rotationManager.requestRotation(new RotationRequest(data.rotation(), data::rotation, bcCameraTestnerv.getRotationConfig()), priority, this);
          }
       }
    }
@@ -544,9 +544,9 @@ public final class AuraModule extends Module {
             ? this.livingEntity.dimensions.makeBoundingBox(ReachV3Module.INSTANCE.getVec3d2())
             : (this.livingEntity instanceof Player player ? PlayerSimulation.method6032(player, 1).box : this.livingEntity.getBoundingBox());
          Rotation rotation = RotationUtils.method6912(boundingBox.getCenter().subtract(playerSimulation.vec3d));
-         MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), rotation.getFloatValue());
+         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), rotation.getFloatValue());
       } else if (this.entry24.isSelected() || this.livingEntity == null) {
-         MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
       }
 
       if (this.livingEntity != null) {
@@ -555,7 +555,7 @@ public final class AuraModule extends Module {
    }
 
    @EventTarget(0)
-   public void method6340(Event9 event) {
+   public void method6340(InteractionInputEvent event) {
       if (this.flag4 || this.flag3) {
          event.cancel();
       }

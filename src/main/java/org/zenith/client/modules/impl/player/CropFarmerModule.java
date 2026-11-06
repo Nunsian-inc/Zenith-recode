@@ -52,7 +52,7 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.events.WorldRenderEvent;
@@ -259,7 +259,7 @@ public final class CropFarmerModule extends Module {
    }
 
    @EventTarget
-   public void method4394(Event5 event) {
+   public void method4394(PreRotationEvent event) {
       if (Zenith.getInstance().getTimedBlockPos().getBlockPos() == null) {
          if (mc.player.tickCount % 80 == 0) {
             Zenith.getInstance().getHudHolder().method6973("4", Component.nullToEmpty("Отметьте точку .region pos1"), 4000L);
@@ -299,7 +299,7 @@ public final class CropFarmerModule extends Module {
                   Rotation rotation2 = this.method4400(rotation);
                   Zenith.getInstance()
                      .getRotationManager()
-                     .method7849(
+                     .requestRotation(
                         new RotationRequest(
                            rotation2, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation2), bcCameraTestnerv.getRotationConfig3()
                         ),
@@ -316,7 +316,7 @@ public final class CropFarmerModule extends Module {
    public void method4395(UpdateEvent event) {
       if (!this.method4413()) {
          if (!this.x.isEnabled()) {
-            BlockHitResult blockHitResult = this.method4407(zenith.getRotationManager().method7844());
+            BlockHitResult blockHitResult = this.method4407(zenith.getRotationManager().getEffectiveRotation());
             if (blockHitResult != null) {
                if (this.blockHitResult != null && this.blockHitResult.getBlockPos().equals(blockHitResult.getBlockPos())) {
                   this.blockHitResult = blockHitResult;
@@ -361,11 +361,11 @@ public final class CropFarmerModule extends Module {
       }
 
       Rotation rotation2 = this.method4406(emptySet);
-      Rotation rotation3 = rotation2 != null ? rotation2 : (rotation == null ? zenith.getRotationManager().method7844() : rotation);
-      Rotation rotation4 = this.method4400(rotation3).method3140((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0));
+      Rotation rotation3 = rotation2 != null ? rotation2 : (rotation == null ? zenith.getRotationManager().getEffectiveRotation() : rotation);
+      Rotation rotation4 = this.method4400(rotation3).add((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0));
       Zenith.getInstance()
          .getRotationManager()
-         .method7849(
+         .requestRotation(
             new RotationRequest(rotation4, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation4), bcCameraTestnerv.getRotationConfig()),
             7,
             this
@@ -402,8 +402,8 @@ public final class CropFarmerModule extends Module {
    }
 
    private Rotation method4400(Rotation rotation) {
-      Rotation rotation2 = zenith.getRotationManager().method7844();
-      return rotation2.method3141(rotation2.method3131(rotation));
+      Rotation rotation2 = zenith.getRotationManager().getEffectiveRotation();
+      return rotation2.add(rotation2.wrappedDeltaTo(rotation));
    }
 
    public Item method4401() {
@@ -506,7 +506,7 @@ public final class CropFarmerModule extends Module {
          rotation = RotationUtils.method6912(net.minecraft.world.phys.Vec3.atCenterOf(pos).add(0.0, 0.5, 0.0).subtract(eyePosition));
       }
 
-      return rotation == null ? null : zenith.getRotationManager().method7844().method3141(rotationManager.method7844().method3131(rotation));
+      return rotation == null ? null : zenith.getRotationManager().getEffectiveRotation().add(rotationManager.getEffectiveRotation().wrappedDeltaTo(rotation));
    }
 
    public BlockHitResult method4407(Rotation rotation) {

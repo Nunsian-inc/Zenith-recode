@@ -5,10 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.zenith.utility.misc.MapAtlas;
-import org.zenith.utility.misc.Util30;
+import org.zenith.utility.misc.MapAtlasAccess;
 
 @Mixin({MapRenderState.class})
-public abstract class MixinOptMapRenderState implements Util30.Handler3 {
+public abstract class MixinOptMapRenderState implements MapAtlasAccess.Handler3 {
    @Unique
    private MapAtlas.Data zenith$atlasSlot;
 

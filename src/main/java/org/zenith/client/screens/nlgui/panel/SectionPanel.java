@@ -24,7 +24,7 @@ import org.zenith.client.screens.nlgui.panel.api.ElementPanel;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.Setting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -176,7 +176,7 @@ public abstract class SectionPanel extends ElementPanel {
 
    private void restartSwitch() {
       this.switchAnimation.reset(0.0F);
-      this.switchAnimation.method2810(1.0F);
+      this.switchAnimation.setTarget(1.0F);
    }
 
    public int getActiveTab() {
@@ -473,13 +473,13 @@ public abstract class SectionPanel extends ElementPanel {
       }
 
       if (!this.plateReady) {
-         this.plateX.method2809(floatValue2);
-         this.plateWidth.method2809(floatValue3);
+         this.plateX.snapTo(floatValue2);
+         this.plateWidth.snapTo(floatValue3);
          this.plateReady = true;
       }
 
-      float f5 = f2 - tabScroll + this.plateX.method2808(floatValue2);
-      float f6 = this.plateWidth.method2808(floatValue3);
+      float f5 = f2 - tabScroll + this.plateX.animateTo(floatValue2);
+      float f6 = this.plateWidth.animateTo(floatValue3);
       float height = inlineTabsHeight - 7.0F;
       float width;
       float intValue = Math.min(width = Math.max(0.0F, f6 - 4.0F), height) / 2.0F;
@@ -534,7 +534,7 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       return this.clickTabs(lastClickX, lastClickY);
    }
 
@@ -576,7 +576,7 @@ public abstract class SectionPanel extends ElementPanel {
             menuDrawContext.drawRect(floatValue3, y, 1.0F, f2 - GuiStyle.PADDING.intValue(), currentStyle.getFieldBorder().getZenithColor().method7294(panelAlpha * 2.0F));
          }
 
-         float f3 = this.switchAnimation.method2808(1.0F);
+         float f3 = this.switchAnimation.animateTo(1.0F);
          float previewAlpha = panelAlpha * f3;
          float f4 = (1.0F - f3) * 6.0F;
          this.renderMain(menuDrawContext, lastClickX, lastClickY, floatValue2, y + f4, f2 - f4, previewAlpha, currentStyle);
@@ -744,7 +744,7 @@ public abstract class SectionPanel extends ElementPanel {
    public void renderFooter(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float f, float mainWidth, float previewAlpha, ZenithStyle currentStyle) {
    }
 
-   public boolean onFooterClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onFooterClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       return false;
    }
 
@@ -870,7 +870,7 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       this.ensureBuilt();
       if (this.embedded && this.clickTabs(lastClickX, lastClickY)) {
          return true;
@@ -910,7 +910,7 @@ public abstract class SectionPanel extends ElementPanel {
 
                   for (SectionPanel.Entry entry : new ArrayList<>(this.mainEntries)) {
                      String str = "main:" + n++;
-                     if (enum2 == Enum3.RIGHT && entry.bounds != null && entry.bounds.contains(lastClickX, lastClickY)) {
+                     if (enum2 == MouseButton.RIGHT && entry.bounds != null && entry.bounds.contains(lastClickX, lastClickY)) {
                         this.lastRightClickBounds = entry.bounds;
                      }
 
@@ -928,7 +928,7 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       this.mainScrollbar.release();
       this.asideScrollbar.release();
 
@@ -1172,8 +1172,8 @@ public abstract class SectionPanel extends ElementPanel {
          boolean contains = this.bounds.contains(lastClickX, lastClickY);
          boolean flag = this.onClick != null || this.onRightClick != null;
          boolean flag2 = this.selected != null && this.selected.getAsBoolean();
-         float f = this.hoverAnimation.method2808(contains && flag ? 1.0F : 0.0F);
-         float f2 = this.selectAnimation.method2808(flag2 ? 1.0F : 0.0F);
+         float f = this.hoverAnimation.animateTo(contains && flag ? 1.0F : 0.0F);
+         float f2 = this.selectAnimation.animateTo(flag2 ? 1.0F : 0.0F);
          float f3 = Math.max(f2, f * 0.45F);
          if (f3 > 0.002F) {
             menuDrawContext.drawRect(floatValue, y, mainWidth, 16.0F, currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f3));
@@ -1257,13 +1257,13 @@ public abstract class SectionPanel extends ElementPanel {
          }
       }
 
-      private boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      private boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
          if (this.kind == SectionPanel.Entry.Kind.SETTING) {
             return this.row.onMouseClicked(lastClickX, lastClickY, enum2);
          } else if ((this.kind == SectionPanel.Entry.Kind.ROW || this.kind == SectionPanel.Entry.Kind.CUSTOM)
             && this.bounds != null
             && this.bounds.contains(lastClickX, lastClickY)) {
-            if (enum2 == Enum3.RIGHT && this.onRightClick != null) {
+            if (enum2 == MouseButton.RIGHT && this.onRightClick != null) {
                this.onRightClick.run();
                Zenith.getInstance().getClientSounds().method1570(true);
                return true;
@@ -1279,7 +1279,7 @@ public abstract class SectionPanel extends ElementPanel {
          }
       }
 
-      private void onMouseReleased(double x, double y, Enum3 enum2) {
+      private void onMouseReleased(double x, double y, MouseButton enum2) {
          if (this.kind == SectionPanel.Entry.Kind.SETTING) {
             this.row.onMouseReleased(x, y, enum2);
          }

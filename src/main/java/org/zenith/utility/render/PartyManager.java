@@ -33,8 +33,8 @@ import org.zenith.client.events.AttackEvent;
 import org.zenith.client.events.CloudStateEvent;
 import org.zenith.client.events.EntityDeathEvent;
 import org.zenith.client.events.EntityStatusEvent;
-import org.zenith.client.events.Event10;
-import org.zenith.client.events.Event11;
+import org.zenith.client.events.CloudNotificationEvent;
+import org.zenith.client.events.CloudMessageEvent;
 import org.zenith.client.events.TickEvent;
 import org.zenith.client.modules.impl.render.PartyMarksModule;
 import org.zenith.client.screens.nlgui.chat.ChatCompose;
@@ -462,8 +462,8 @@ public final class PartyManager implements MinecraftAccess {
    }
 
    @EventTarget
-   private void method38(Event10 event) {
-      CloudPackets.Data18 data18 = event.getData18();
+   private void method38(CloudNotificationEvent event) {
+      CloudPackets.Data18 data18 = event.getNotification();
       boolean flag = this.method32() || !this.share.notifyInvites.isEnabled();
       if (!flag && method39(data18.kind()) && !this.method40(data18)) {
          flag = true;
@@ -531,9 +531,9 @@ public final class PartyManager implements MinecraftAccess {
    }
 
    @EventTarget
-   private void method41(Event11 event) {
-      CloudPackets.Data13 data13 = event.getData13();
-      if (!event.isFlag()
+   private void method41(CloudMessageEvent event) {
+      CloudPackets.Data13 data13 = event.getMessage();
+      if (!event.isSelf()
          && data13.getIntValue() == 1
          && this.share.notifyMessages.isEnabled()
          && !this.method32()

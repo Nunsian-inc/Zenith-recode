@@ -746,7 +746,7 @@ public final class PredictionsModule extends Module {
             ArrayList arrayList = new ArrayList();
             if (chargedProjectiles != null) {
                float f = chargedProjectiles.items().getFirst().is(Items.FIREWORK_ROCKET) ? 100.0F : 3.0F;
-               arrayList.add(this.method2917(rotation.method3135(), this.method2904(mainHandItem, () -> new Arrow(mc.level, mc.player, mainHandItem, mainHandItem)), f));
+               arrayList.add(this.method2917(rotation.toDirection(), this.method2904(mainHandItem, () -> new Arrow(mc.level, mc.player, mainHandItem, mainHandItem)), f));
                if (chargedProjectiles.items().size() > 2) {
                   float f2 = mc.player.getXRot() / 90.0F;
                   float alpha1 = f2 * f2 * f2 * f2 * f2;
@@ -754,14 +754,14 @@ public final class PredictionsModule extends Module {
                   float lerpInt2 = Mth.lerpInt(alpha1, 0, 10);
                   arrayList.add(
                      this.method2917(
-                        new Rotation(mc.player.getYRot() - lerpInt, mc.player.getXRot() - lerpInt2).method3135(),
+                        new Rotation(mc.player.getYRot() - lerpInt, mc.player.getXRot() - lerpInt2).toDirection(),
                         this.method2904(mainHandItem, () -> new Arrow(mc.level, mc.player, mainHandItem, mainHandItem)),
                         f
                      )
                   );
                   arrayList.add(
                      this.method2917(
-                        new Rotation(mc.player.getYRot() + lerpInt, mc.player.getXRot() - lerpInt2).method3135(),
+                        new Rotation(mc.player.getYRot() + lerpInt, mc.player.getXRot() - lerpInt2).toDirection(),
                         this.method2904(mainHandItem, () -> new Arrow(mc.level, mc.player, mainHandItem, mainHandItem)),
                         f
                      )
@@ -939,7 +939,7 @@ public final class PredictionsModule extends Module {
    }
 
    public List<HitResult> method2914(Projectile thrownTrident, Rotation rotation, double d) {
-      return new ArrayList<>(Collections.singleton(this.method2917(rotation.method3135(), thrownTrident, d)));
+      return new ArrayList<>(Collections.singleton(this.method2917(rotation.toDirection(), thrownTrident, d)));
    }
 
    public List<HitResult> method2915(Projectile thrownTrident, double d) {
@@ -950,7 +950,7 @@ public final class PredictionsModule extends Module {
       if (useItem.getItem() instanceof BowItem && mc.player.isUsingItem()) {
          float f = mc.player.getTicksUsingItem() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) + n;
          double d = 3.0F * Mth.clamp(f / 20.0F, 0.0F, 1.0F);
-         HitResult hitResult = this.method2918(position, vec3d2, rotation.method3135(), this.method2904(useItem, () -> new Arrow(mc.level, mc.player, useItem, useItem)), d);
+         HitResult hitResult = this.method2918(position, vec3d2, rotation.toDirection(), this.method2904(useItem, () -> new Arrow(mc.level, mc.player, useItem, useItem)), d);
          return (List<HitResult>)(hitResult == null ? List.of() : new ArrayList<>(Collections.singleton(hitResult)));
       } else {
          return null;

@@ -81,7 +81,7 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       if (this.index + 1 < this.steps.size()) {
          this.index++;
          this.syncButton();
-         this.stepTransition.method2809(0.0F);
+         this.stepTransition.snapTo(0.0F);
          this.step().enter();
       } else {
          OnboardingUtil.complete();
@@ -111,8 +111,8 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
          }
 
          this.prepared = true;
-         this.openTransition.method2809(0.0F);
-         this.stepTransition.method2809(0.0F);
+         this.openTransition.snapTo(0.0F);
+         this.stepTransition.snapTo(0.0F);
          this.step().enter();
       }
 
@@ -127,8 +127,8 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       float guiScaledHeight = window.getGuiScaledHeight();
       graphics.drawTexture(Zenith.method1501("menu/background.png"), 0.0F, 0.0F, guiScaledWidth, guiScaledHeight, ZenithColor.INSTANCE);
       Zenith.getInstance().getMenuParticleRenderer().renderParticles(graphics);
-      this.openTransition.method2808(1.0F);
-      this.stepTransition.method2808(1.0F);
+      this.openTransition.animateTo(1.0F);
+      this.stepTransition.animateTo(1.0F);
       OnboardingScreen.Step step = this.step();
       float bodyHeight = step.bodyHeight();
       float f = NUMBER_HEIGHT + GUTTER + TITLE_BLOCK + GUTTER + bodyHeight + GUTTER + MenuButton.HEIGHT + GUTTER + STEPS_HEIGHT;

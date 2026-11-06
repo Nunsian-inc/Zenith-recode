@@ -114,11 +114,11 @@ public class SpaceStarParticle extends Particle {
 
    @Override
    public float getAlpha() {
-      return this.method1449(1.0F);
+      return this.getInterpolatedAlpha(1.0F);
    }
 
    @Override
-   public float method1449(float f) {
+   public float getInterpolatedAlpha(float f) {
       float f2 = this.method6571(f);
       float f3 = Math.min(f2 / 0.12F, 1.0F);
       float f4 = f2 > 0.82F ? 1.0F - (f2 - 0.82F) / 0.18F : 1.0F;

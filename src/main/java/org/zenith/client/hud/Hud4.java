@@ -29,12 +29,12 @@ public class Hud4 extends Interface {
    @Override
    public void method8(CustomDrawContext customDrawContext) {
       if (mc.player == null) {
-         this.animation.method2808(0.0F);
+         this.animation.animateTo(0.0F);
          if (this.animation.getValue() > 0.01F) {
             this.method6476(customDrawContext, this.animation.getValue());
          }
       } else {
-         this.animation.method2808(1.0F);
+         this.animation.animateTo(1.0F);
          if (!(this.animation.getValue() <= 0.01F)) {
             boolean flag = false;
 
@@ -51,10 +51,10 @@ public class Hud4 extends Interface {
             }
 
             if (flag) {
-               this.animation2.method2808(0.0F);
+               this.animation2.animateTo(0.0F);
             }
 
-            this.animation2.method2808(1.0F);
+            this.animation2.animateTo(1.0F);
             this.method6476(customDrawContext, this.animation.getValue() * this.animation2.getValue());
          }
       }

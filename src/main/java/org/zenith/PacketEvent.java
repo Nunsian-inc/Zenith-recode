@@ -13,21 +13,21 @@ public class PacketEvent extends CancellableEvent {
       this(type, packet, null);
    }
 
-   public boolean method7099() {
-      return this.getType3() == PacketEvent.Type.SENT;
+   public boolean isOutgoing() {
+      return this.getType() == PacketEvent.Type.SENT;
    }
 
-   public boolean method7100() {
-      return this.getType3() == PacketEvent.Type.RECEIVE;
+   public boolean isIncoming() {
+      return this.getType() == PacketEvent.Type.RECEIVE;
    }
 
    @Generated
-   public PacketEvent.Type getType3() {
+   public PacketEvent.Type getType() {
       return this.type;
    }
 
    @Generated
-   public Packet<?> getPacket3() {
+   public Packet<?> getPacket() {
       return this.packet;
    }
 
@@ -37,7 +37,7 @@ public class PacketEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setPacket2(Packet<?> packet) {
+   public void setPacket(Packet<?> packet) {
       this.packet = packet;
    }
 

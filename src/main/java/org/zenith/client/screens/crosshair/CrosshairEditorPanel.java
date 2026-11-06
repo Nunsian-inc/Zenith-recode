@@ -16,7 +16,7 @@ import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.Setting;
 import org.zenith.utility.misc.Canvas;
 import org.zenith.utility.misc.CrosshairPresets;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -107,7 +107,7 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
 
    public void render(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float width, float heightPanel, float previewAlpha, float f) {
       ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      this.visible.method2807(this.open);
+      this.visible.updateVisibility(this.open);
       float f2 = this.visible.getValue();
       if (currentStyle != null && !(f2 <= 0.001F) && this.canvas != null) {
          this.mouseX = mouseX;
@@ -400,7 +400,7 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       }
    }
 
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.open && this.canvas != null) {
          for (InspectorRow row : this.rows) {
             if (row.isVisible() && row.onMouseClicked(x, y, enum2)) {
@@ -456,7 +456,7 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
             }
 
             if (hit(this.canvasBounds, x, y)) {
-               boolean erasingStroke = enum2 == Enum3.RIGHT;
+               boolean erasingStroke = enum2 == MouseButton.RIGHT;
                this.canvas.method140();
                this.painting = true;
                this.erasingStroke = erasingStroke;
@@ -471,7 +471,7 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       }
    }
 
-   public void onMouseReleased(double x, double y, Enum3 enum2) {
+   public void onMouseReleased(double x, double y, MouseButton enum2) {
       this.painting = false;
       this.draggingBrushSize = false;
       if (this.open) {

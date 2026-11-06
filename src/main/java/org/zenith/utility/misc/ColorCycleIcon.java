@@ -15,7 +15,7 @@ public class ColorCycleIcon {
    }
 
    public void update() {
-      this.animation.method2808(1.0F);
+      this.animation.animateTo(1.0F);
       this.floatValue = this.animation.getValue() * 360.0F;
       if (this.floatValue >= 360.0F) {
          this.floatValue = 0.0F;

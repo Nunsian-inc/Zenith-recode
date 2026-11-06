@@ -17,55 +17,55 @@ import org.zenith.utility.misc.ScoreboardUtils;
 )
 public final class AutoPayModule extends Module {
    public static final AutoPayModule INSTANCE = new AutoPayModule();
-   private static final long CONST_longValue = 5000L;
+   private static final long PAY_INTERVAL_MS = 5000L;
    private final TextSetting nick = new TextSetting("autopay.nick", "", "autopay.nick.empty", TextSetting.Entry.method2125(16));
    private final TextSetting maxAmount = new TextSetting(
       "autopay.maxAmount",
       "100000",
       "autopay.maxAmount.empty",
-      TextSetting.Entry.method2126(12, str -> str.isEmpty() || str.chars().allMatch(Character::isDigit))
+      TextSetting.Entry.method2126(12, amountText -> amountText.isEmpty() || amountText.chars().allMatch(Character::isDigit))
    );
-   private final StopWatch stopWatch = new StopWatch();
-   private long longValue = -1L;
+   private final StopWatch paymentTimer = new StopWatch();
+   private long balance = -1L;
 
    private AutoPayModule() {
    }
 
    @Override
    public void onEnable() {
-      this.longValue = -1L;
-      this.stopWatch.reset();
+      this.balance = -1L;
+      this.paymentTimer.reset();
       super.onEnable();
    }
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         long longValue = ScoreboardUtils.method5530(mc.level.getScoreboard(), mc.player.getScoreboardName());
-         if (longValue >= 0L) {
-            this.longValue = longValue;
+         long balance = ScoreboardUtils.method5530(mc.level.getScoreboard(), mc.player.getScoreboardName());
+         if (balance >= 0L) {
+            this.balance = balance;
          }
 
-         if (this.longValue >= 0L) {
-            String str = this.nick.getValue().trim();
-            long l = method1220(this.maxAmount.getValue().trim());
-            if (!str.isEmpty() && l >= 0L) {
-               long l2 = this.longValue - l;
-               if (l2 > 0L && this.stopWatch.method7546(5000L)) {
-                  mc.player.connection.sendCommand("pay " + str + " " + l2);
-                  this.stopWatch.reset();
+         if (this.balance >= 0L) {
+            String recipientName = this.nick.getValue().trim();
+            long retainedAmount = parseAmount(this.maxAmount.getValue().trim());
+            if (!recipientName.isEmpty() && retainedAmount >= 0L) {
+               long paymentAmount = this.balance - retainedAmount;
+               if (paymentAmount > 0L && this.paymentTimer.method7546(5000L)) {
+                  mc.player.connection.sendCommand("pay " + recipientName + " " + paymentAmount);
+                  this.paymentTimer.reset();
                }
             }
          }
       }
    }
 
-   private static long method1220(String str) {
-      if (str.isEmpty()) {
+   private static long parseAmount(String amountText) {
+      if (amountText.isEmpty()) {
          return -1L;
       } else {
          try {
-            return Long.parseLong(str);
+            return Long.parseLong(amountText);
          } catch (NumberFormatException e) {
             return -1L;
          }
@@ -74,6 +74,6 @@ public final class AutoPayModule extends Module {
 
    @Generated
    public long getLongValue2() {
-      return this.longValue;
+      return this.balance;
    }
 }

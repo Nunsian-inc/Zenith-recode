@@ -14,14 +14,14 @@ import org.zenith.Zenith;
 import org.zenith.ZenithColor;
 import org.zenith.base.font.MsdfRenderer;
 import org.zenith.client.modules.impl.render.InterfaceModule;
-import org.zenith.utility.misc.Handler2;
+import org.zenith.utility.misc.WindowAccess;
 import org.zenith.utility.misc.KawaseShaderKey;
 import org.zenith.utility.misc.ShadowShaderKey;
 import org.zenith.utility.render.display.base.CategoryIcon;
 import org.zenith.utility.render.display.base.GlowColor;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
 
-public final class RenderShaders implements Handler2 {
+public final class RenderShaders implements WindowAccess {
    public static final float CONST_floatValue = 0.8F;
    public static KawaseShaderKey kawaseShaderKey;
    public static KawaseShaderKey kawaseShaderKey2;

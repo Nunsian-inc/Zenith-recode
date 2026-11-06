@@ -28,7 +28,7 @@ import org.zenith.client.events.ClickSlotEvent;
 import org.zenith.client.events.DrawEvent;
 import org.zenith.client.events.EntityAddEvent;
 import org.zenith.client.events.EntityDeathEvent;
-import org.zenith.client.events.Event6;
+import org.zenith.client.events.RespawnEvent;
 import org.zenith.client.events.FovEvent;
 import org.zenith.client.events.JumpEvent;
 import org.zenith.client.events.ModuleToggleEvent;
@@ -194,7 +194,7 @@ public final class ScriptEventBus {
 
    private static void method1870(Storage storage, Script workspace, ScriptEventBus.Data data, Function function, Event event) {
       if (workspace.isRunning() && ScriptEntityApi.method6575().isSameThread()) {
-         if (!(event instanceof PacketEvent event2 && !event2.method7099())) {
+         if (!(event instanceof PacketEvent event2 && !event2.isOutgoing())) {
             if (!(event instanceof Cancellable cancellable && cancellable.isCancelled() && data.isFlag())) {
                Scriptable scriptable = ScriptScreenApi.method7044(workspace);
                if (scriptable != null) {
@@ -489,8 +489,8 @@ public final class ScriptEventBus {
             true,
             true,
             (scope, event) -> {
-               Packet packet3 = event instanceof PacketEvent event2 ? event2.getPacket3() : ((PacketReceiveEvent)event).getPacket();
-               boolean string = event instanceof PacketEvent event3 && event3.method7099();
+               Packet packet3 = event instanceof PacketEvent event2 ? event2.getPacket() : ((PacketReceiveEvent)event).getPacket();
+               boolean string = event instanceof PacketEvent event3 && event3.isOutgoing();
                return method1866(scope, event)
                   .method6277("name", ScriptEntityEvents.method7557(packet3))
                   .method6277("send", string)
@@ -502,7 +502,7 @@ public final class ScriptEventBus {
             List.of(PacketReceiveEvent.class)
          )
       );
-      method1864("respawn", Event6.class, false, "возрождение или смена измерения", (scope, event) -> method1866(scope, event).getScriptableObject());
+      method1864("respawn", RespawnEvent.class, false, "возрождение или смена измерения", (scope, event) -> method1866(scope, event).getScriptableObject());
       method1864(
          "entity_spawn",
          EntityAddEvent.class,

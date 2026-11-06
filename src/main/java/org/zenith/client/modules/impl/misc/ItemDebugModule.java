@@ -99,8 +99,8 @@ public class ItemDebugModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         Packet packet3 = event.getPacket3();
+      if (event.isIncoming()) {
+         Packet packet3 = event.getPacket();
          if (packet3 instanceof ClientboundSetEquipmentPacket setEquipmentPacket) {
             if (this.equipmentPackets.isEnabled()) {
                int entity = setEquipmentPacket.getEntity();

@@ -14,7 +14,7 @@ import org.zenith.client.screens.nlgui.elements.api.Element;
 import org.zenith.client.screens.nlgui.panel.SectionPanel;
 import org.zenith.client.screens.nlgui.panel.api.ElementPanel;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -75,7 +75,7 @@ public class ToolsSectionPanel extends ElementPanel {
          }
 
          this.switchAnimation.reset(0.0F);
-         this.switchAnimation.method2810(1.0F);
+         this.switchAnimation.setTarget(1.0F);
          if (this.switchDirection > 0.0F) {
             Zenith.getInstance().getClientSounds().method1562();
          } else {
@@ -161,13 +161,13 @@ public class ToolsSectionPanel extends ElementPanel {
          }
 
          if (!this.plateReady) {
-            this.plateX.method2809(floatValue2);
-            this.plateWidth.method2809(tabWidth);
+            this.plateX.snapTo(floatValue2);
+            this.plateWidth.snapTo(tabWidth);
             this.plateReady = true;
          }
 
-         float f4 = this.plateX.method2808(floatValue2);
-         float f5 = this.plateWidth.method2808(tabWidth);
+         float f4 = this.plateX.animateTo(floatValue2);
+         float f5 = this.plateWidth.animateTo(tabWidth);
          float height = 15.0F;
          menuDrawContext.drawRoundedRect(
             f4 + 2.0F,
@@ -209,11 +209,11 @@ public class ToolsSectionPanel extends ElementPanel {
    private void drawLive(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, ZenithStyle currentStyle) {
       boolean live = this.isLive(this.active);
       if (!this.liveReady) {
-         this.liveAnimation.method2809(live ? 1.0F : 0.0F);
+         this.liveAnimation.snapTo(live ? 1.0F : 0.0F);
          this.liveReady = true;
       }
 
-      float hover = this.liveAnimation.method2808(live ? 1.0F : 0.0F);
+      float hover = this.liveAnimation.animateTo(live ? 1.0F : 0.0F);
       Font font = Fonts.NEW_REGULAR.getFont(4.6F);
       String liveText = this.liveText();
       float width = 3.0F;
@@ -227,7 +227,7 @@ public class ToolsSectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       for (int i = 0; i < this.tabBounds.size(); i++) {
          if (this.tabBounds.get(i).contains(lastClickX, lastClickY)) {
             this.switchTo(i);
@@ -246,7 +246,7 @@ public class ToolsSectionPanel extends ElementPanel {
       }
 
       this.lastFrame = now;
-      float f3 = this.switchAnimation.method2808(1.0F);
+      float f3 = this.switchAnimation.animateTo(1.0F);
       float x = 14.0F * this.switchDirection * (1.0F - f3);
       menuDrawContext.pose().pushMatrix();
       menuDrawContext.pose().translate(x, 0.0F);
@@ -265,12 +265,12 @@ public class ToolsSectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       return this.current().onMouseClicked(lastClickX, lastClickY, enum2);
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       return this.current().onMouseReleased(x, y, enum2);
    }
 

@@ -17,8 +17,8 @@ import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.events.BlockPlacedEvent;
 import org.zenith.client.events.EntityAddEvent;
-import org.zenith.client.events.Event5;
-import org.zenith.client.events.Event9;
+import org.zenith.client.events.PreRotationEvent;
+import org.zenith.client.events.InteractionInputEvent;
 import org.zenith.utility.game.AttackUtils;
 import org.zenith.utility.misc.RotationRequest;
 import org.zenith.utility.network.InventoryUtils;
@@ -52,22 +52,22 @@ public final class AutoExplosionModule extends Module {
    }
 
    @EventTarget
-   public void method4899(Event5 event) {
+   public void method4899(PreRotationEvent event) {
       if (this.blockPos2 != null) {
-         Rotation rotation = rotationManager.method7844()
-            .method3141(
-               Zenith.getInstance().getRotationManager().method7844().method3131(RotationUtils.method6913(net.minecraft.world.phys.Vec3.atCenterOf(this.blockPos2).add(0.0, 0.5, 0.0)))
+         Rotation rotation = rotationManager.getEffectiveRotation()
+            .add(
+               Zenith.getInstance().getRotationManager().getEffectiveRotation().wrappedDeltaTo(RotationUtils.method6913(net.minecraft.world.phys.Vec3.atCenterOf(this.blockPos2).add(0.0, 0.5, 0.0)))
             );
-         rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
+         rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
       }
 
       if (this.blockPos != null) {
          if (this.intValue > 0) {
-            Rotation rotation = rotationManager.method7844()
-               .method3141(
-                  Zenith.getInstance().getRotationManager().method7844().method3131(RotationUtils.method6913(net.minecraft.world.phys.Vec3.atCenterOf(this.blockPos).add(0.0, 1.2F, 0.0)))
+            Rotation rotation = rotationManager.getEffectiveRotation()
+               .add(
+                  Zenith.getInstance().getRotationManager().getEffectiveRotation().wrappedDeltaTo(RotationUtils.method6913(net.minecraft.world.phys.Vec3.atCenterOf(this.blockPos).add(0.0, 1.2F, 0.0)))
                );
-            rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
+            rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
             this.intValue--;
          }
       }
@@ -81,7 +81,7 @@ public final class AutoExplosionModule extends Module {
    }
 
    @EventTarget
-   public void method4901(Event9 event) {
+   public void method4901(InteractionInputEvent event) {
       if (!event.isCancelled()
          && this.blockPos != null
          && this.intValue > 0

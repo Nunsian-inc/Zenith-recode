@@ -23,9 +23,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.zenith.Rotation;
 import org.zenith.client.modules.impl.combat.AuraModule;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.RotationContext;
 
-public final class Motor extends Util22 {
+public final class Motor extends RotationContext {
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static final String text = "motor.json";
    private static final String text2 = "models/motor.json";
@@ -65,7 +65,7 @@ public final class Motor extends Util22 {
    public float offset = 0.0F;
 
    public Rotation method3659() {
-      Rotation rotation = rotationManager.method7844();
+      Rotation rotation = rotationManager.getEffectiveRotation();
       LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
       if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
          Motor.Entry4 entry4 = this.method3673();
@@ -83,7 +83,7 @@ public final class Motor extends Util22 {
                }
 
                this.intValue3 = tickCount;
-               float f = Rotation.method3138();
+               float f = Rotation.sensitivityStep();
                if (Float.isFinite(f) && !(f <= 0.0F)) {
                   this.method3669();
                   Motor.Entry entry = this.method3661(rotation, livingEntity);
@@ -118,7 +118,7 @@ public final class Motor extends Util22 {
 
                         int n = this.method3667(doubles[0], 0, f, entry4.flag);
                         int n2 = this.method3667(doubles[1], 1, f, entry4.flag);
-                        Rotation rotation2 = rotation.method3140(n * f, n2 * f);
+                        Rotation rotation2 = rotation.add(n * f, n2 * f);
                         double d2 = Mth.wrapDegrees(rotation2.getFloatValue() - rotation.getFloatValue());
                         double d3 = rotation2.getFloatValue2() - rotation.getFloatValue2();
                         this.method3668(d2, d3);

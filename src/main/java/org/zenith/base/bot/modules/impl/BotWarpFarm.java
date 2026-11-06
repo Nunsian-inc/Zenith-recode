@@ -214,7 +214,7 @@ public class BotWarpFarm extends BotModule {
    private void rotateToRouteBlock() {
       Vec3 vec = Pathfinder.method761(this.nextRouteBlock);
       Vec3 eyePosition = this.player.getEyePosition(1.0F);
-      Rotation rotation = Rotation.method3128(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
+      Rotation rotation = Rotation.lookingAt(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
       this.player.setYRot(Mth.wrapDegrees(rotation.getFloatValue()));
       this.player.setXRot(Mth.clamp(rotation.getFloatValue2(), -90.0F, 90.0F));
    }

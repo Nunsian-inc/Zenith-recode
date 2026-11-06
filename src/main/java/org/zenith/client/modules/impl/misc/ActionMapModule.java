@@ -71,8 +71,8 @@ public class ActionMapModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (!event.method7100()) {
-         Packet packet3 = event.getPacket3();
+      if (!event.isIncoming()) {
+         Packet packet3 = event.getPacket();
          if (packet3 != null) {
             long now = System.currentTimeMillis();
             long l = now - this.longValue;

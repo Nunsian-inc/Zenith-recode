@@ -9,7 +9,7 @@ import org.joml.Quaternionf;
 import org.zenith.MatrixUtils;
 import org.zenith.MinecraftAccess;
 import org.zenith.RenderState;
-import org.zenith.utility.misc.Class15;
+import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 
 public final class Thumbnails implements MinecraftAccess {
@@ -23,7 +23,7 @@ public final class Thumbnails implements MinecraftAccess {
    private final List<Thumbnails.Data> items = new ArrayList<>();
    private final Quaternionf quaternionf = new Quaternionf();
 
-   public boolean method7855(HoveredData hoveredData, Class15 class2, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
+   public boolean method7855(HoveredData hoveredData, WardrobeModel class2, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
       if (class2 != null && class2.intValue3 != 0 && this.items.size() < 30) {
          this.items.add(new Thumbnails.Data(hoveredData, class2, floatValue, f, f2, f3, f4, f5, f6, f7));
          return true;
@@ -53,7 +53,7 @@ public final class Thumbnails implements MinecraftAccess {
                poseStack.pushPose();
 
                try {
-                  Class15 key = data.class15;
+                  WardrobeModel key = data.class15;
                   float[] floatValues7 = key.floatValues7;
                   float f2 = (floatValues7[0] + floatValues7[3]) / 2.0F;
                   float f3 = (floatValues7[1] + floatValues7[4]) / 2.0F;
@@ -105,7 +105,7 @@ public final class Thumbnails implements MinecraftAccess {
 
    private static final class Data {
       private final HoveredData hoveredData;
-      private final Class15 class15;
+      private final WardrobeModel class15;
       private final float floatValue;
       private final float floatValue2;
       private final float floatValue3;
@@ -119,7 +119,7 @@ public final class Thumbnails implements MinecraftAccess {
          return this.hoveredData;
       }
 
-      public Class15 class15() {
+      public WardrobeModel class15() {
          return this.class15;
       }
 
@@ -172,7 +172,7 @@ public final class Thumbnails implements MinecraftAccess {
          return "Data[" + "hoveredData=" + this.hoveredData + ", " + "class15=" + this.class15 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + ", " + "floatValue8=" + this.floatValue8 + "]";
       }
 
-      private Data(HoveredData hoveredData, Class15 class2, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
+      private Data(HoveredData hoveredData, WardrobeModel class2, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
          this.hoveredData = hoveredData;
          this.class15 = class2;
          this.floatValue = floatValue;
@@ -189,7 +189,7 @@ public final class Thumbnails implements MinecraftAccess {
          return this.hoveredData;
       }
 
-      public Class15 getClass15() {
+      public WardrobeModel getClass15() {
          return this.class15;
       }
 

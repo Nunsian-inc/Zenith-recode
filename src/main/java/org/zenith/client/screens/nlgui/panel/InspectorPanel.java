@@ -27,7 +27,7 @@ import org.zenith.client.screens.nlgui.panel.api.Panel;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.Setting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.HeaderBindSetting;
 import org.zenith.utility.misc.KeyName;
 import org.zenith.utility.render.display.base.BoundsData;
@@ -109,7 +109,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
       this.scrollTarget = 0.0F;
       this.entranceShift = 18.0F;
       this.openAnimation.reset(0.0F);
-      this.openAnimation.method2810(1.0F);
+      this.openAnimation.setTarget(1.0F);
    }
 
    public void closeSection() {
@@ -124,7 +124,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
          this.scrollTarget = 0.0F;
          this.entranceShift = -18.0F;
          this.openAnimation.reset(0.0F);
-         this.openAnimation.method2810(1.0F);
+         this.openAnimation.setTarget(1.0F);
       }
    }
 
@@ -140,7 +140,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
          this.scrollTarget = 0.0F;
          this.entranceShift = 7.0F;
          this.openAnimation.reset(0.0F);
-         this.openAnimation.method2810(1.0F);
+         this.openAnimation.setTarget(1.0F);
       }
 
       this.module = moduleValue;
@@ -399,7 +399,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
 
          this.clampScroll(shownContentHeight, max);
          this.scroll = this.scrollbar.isDragging() ? this.scrollTarget : this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-         float f = this.openAnimation.method2808(1.0F);
+         float f = this.openAnimation.animateTo(1.0F);
          customDrawContext.enableScissor(floatValue, y, floatValue + width, y + max);
          float y2 = y + this.scroll;
          int n = 0;
@@ -441,14 +441,14 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean bindMouse(Enum3 enum2) {
+   public boolean bindMouse(MouseButton enum2) {
       if (this.active
          && this.module != null
          && BindCapture.owner() == this
          && this.headerBind != null
          && this.headerBindOwner == (this.sectionSettings == null ? this.module : this.sectionPreviewOwner)
          && MouseBindTarget.bindable(enum2)) {
-         this.headerBind.setBind(enum2.getIntValue(), 0);
+         this.headerBind.setBind(enum2.getGlfwButton(), 0);
          BindCapture.end(this);
          this.headerBindLabel.set();
          Zenith.getInstance().getClientSounds().method1566();
@@ -465,7 +465,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.bindMouse(enum2)) {
          return true;
       } else {
@@ -475,7 +475,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
                && this.headerBindOwner == (this.sectionSettings == null ? this.module : this.sectionPreviewOwner)
                && this.headerBindBounds != null
                && this.headerBindBounds.contains(x, y)) {
-               if (enum2 == Enum3.RIGHT) {
+               if (enum2 == MouseButton.RIGHT) {
                   this.headerBind.setBind(-1, 0);
                   BindCapture.end(this);
                   this.headerBindLabel.cleared();
@@ -521,7 +521,7 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       if (this.module == null) {
          return false;
       } else {

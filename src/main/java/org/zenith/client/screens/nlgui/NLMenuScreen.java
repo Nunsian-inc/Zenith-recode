@@ -47,7 +47,7 @@ import org.zenith.client.screens.nlgui.panel.tools.ToolsSectionPanel;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.scripting.Script;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.misc.WindowUtils;
 import org.zenith.utility.render.Interface;
@@ -124,10 +124,10 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
 
    @Override
    public void init() {
-      this.animationClose.method2809(0.0F);
-      this.animationClose.method2808(1.0F);
+      this.animationClose.snapTo(0.0F);
+      this.animationClose.animateTo(1.0F);
       BindCapture.reset();
-      this.crosshairWidthAnimation.method2809(0.0F);
+      this.crosshairWidthAnimation.snapTo(0.0F);
       this.unlockGuiScale();
       this.ensurePanelsInitialized();
       this.closing = false;
@@ -168,7 +168,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       float intValue = GuiStyle.PANEL_ROUND.intValue();
       this.animationClose.setDuration(MenuModule.INSTANCE.method5345());
       this.setTypeAnimation.setDuration(MenuModule.INSTANCE.method5346());
-      float previewAlpha = this.animationClose.method2808(this.closing ? 0.0F : 1.0F);
+      float previewAlpha = this.animationClose.animateTo(this.closing ? 0.0F : 1.0F);
       this.contentDip = 0.32F + 0.68F * this.languageSwitch();
       float f = previewAlpha * this.contentDip;
       ElementPanel leftOwner = this.type.getPanelSupplier().get();
@@ -185,9 +185,9 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          this.previewStage.hide();
       }
 
-      float f2 = this.previewWidthAnimation.method2808(flag ? 128.0F : 0.0F);
-      float f3 = this.crosshairWidthAnimation.method2808(this.crosshairEditor.isOpen() ? 176.0F : 0.0F);
-      extraWidth = this.extraWidthAnimation.method2808(leftOwner.extraWidth());
+      float f2 = this.previewWidthAnimation.animateTo(flag ? 128.0F : 0.0F);
+      float f3 = this.crosshairWidthAnimation.animateTo(this.crosshairEditor.isOpen() ? 176.0F : 0.0F);
+      extraWidth = this.extraWidthAnimation.animateTo(leftOwner.extraWidth());
       widthPanel = leftWidthPanel + 380.0F + f2 + f3 + extraWidth;
       heightPanel = 320.0F;
       float f4 = guiScaledWidth / 2.0F - widthPanel / 2.0F;
@@ -241,7 +241,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha)
       );
       this.dragBounds = new BoundsData(this.x, this.y, widthPanel, 23.0F);
-      float f7 = this.clientSwapAnimation.method2808(this.quickMenuPanel.isExpanded() ? 1.0F : 0.0F);
+      float f7 = this.clientSwapAnimation.animateTo(this.quickMenuPanel.isExpanded() ? 1.0F : 0.0F);
       boolean expanded = this.quickMenuPanel.isExpanded();
       float swapOut2 = swapOut(f7, expanded);
       float swapIn2 = swapIn(f7, expanded);
@@ -250,7 +250,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          this.leftOwner = leftOwner;
       }
 
-      float f8 = this.leftSwapAnimation.method2808(hasLeftColumn ? 1.0F : 0.0F);
+      float f8 = this.leftSwapAnimation.animateTo(hasLeftColumn ? 1.0F : 0.0F);
       float f9 = 1.0F - Mth.clamp(f8 * 1.6F, 0.0F, 1.0F);
       boolean flag2;
       if (flag2 = f7 > 0.001F && f7 < 0.999F || f8 > 0.001F && f8 < 0.999F) {
@@ -292,7 +292,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          this.prevType.getPanelSupplier().get().close();
          this.prevType = null;
       } else {
-         this.setTypeAnimation.method2808(1.0F);
+         this.setTypeAnimation.animateTo(1.0F);
       }
 
       float y2 = this.y
@@ -362,7 +362,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          } else if (!this.seenLanguage.equals(languageName)) {
             this.seenLanguage = languageName;
             this.languageAnimation.reset(0.0F);
-            this.languageAnimation.method2810(1.0F);
+            this.languageAnimation.setTarget(1.0F);
          }
 
          return this.languageAnimation.update();
@@ -464,7 +464,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
 
    private float seamRetract() {
       boolean flag = !this.closing && this.prevType != null && MenuModule.INSTANCE.method5344() && this.getBlurPower() != 0.0F;
-      return this.seamRetractAnimation.method2808(flag ? 1.0F : 0.0F);
+      return this.seamRetractAnimation.animateTo(flag ? 1.0F : 0.0F);
    }
 
    private void renderContentHeader(
@@ -526,7 +526,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       if (currentStyle != null) {
          boolean flag = this.searchField != null && this.searchField.isSelected();
          float f4 = 8.0F;
-         float hover = this.searchFocusAnimation.method2808(flag ? 1.0F : 0.0F);
+         float hover = this.searchFocusAnimation.animateTo(flag ? 1.0F : 0.0F);
          ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(headerBandHeight / 2.0F);
          customDrawContext.drawRoundedRectBatched(
             f + GuiStyle.PADDING.intValue(),
@@ -928,7 +928,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       float f2 = this.y + heightPanel / 2.0F;
       x = (int)((x - f) / guiScale + f);
       y = (int)((y - f2) / guiScale + f2);
-      Enum3 enum2 = Enum3.method6094(mouseToGlfw);
+      MouseButton enum2 = MouseButton.fromGlfwButton(mouseToGlfw);
       if (BindCapture.owner() == this.inspectorPanel && !MouseBindTarget.bindable(enum2)) {
          this.inspectorPanel.cancelHeaderBindingOutside(x, y);
       }
@@ -1002,16 +1002,16 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       float f2 = this.y + heightPanel / 2.0F;
       x = (int)((x - f) / guiScale + f);
       y = (int)((y - f2) / guiScale + f2);
-      this.crosshairEditor.onMouseReleased(x, y, Enum3.method6094(mouseToGlfw));
+      this.crosshairEditor.onMouseReleased(x, y, MouseButton.fromGlfwButton(mouseToGlfw));
       this.previewStage.onMouseReleased();
       if (this.quickMenuPanel != null) {
-         this.quickMenuPanel.onMouseReleased(x, y, Enum3.method6094(mouseToGlfw));
+         this.quickMenuPanel.onMouseReleased(x, y, MouseButton.fromGlfwButton(mouseToGlfw));
       }
 
-      if (this.getType().getPanelSupplier().get().onMouseReleased(x, y, Enum3.method6094(mouseToGlfw))) {
+      if (this.getType().getPanelSupplier().get().onMouseReleased(x, y, MouseButton.fromGlfwButton(mouseToGlfw))) {
          return true;
       } else {
-         this.inspectorPanel.onMouseReleased(x, y, Enum3.method6094(mouseToGlfw));
+         this.inspectorPanel.onMouseReleased(x, y, MouseButton.fromGlfwButton(mouseToGlfw));
          return super.mouseReleased(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
       }
    }
@@ -1261,7 +1261,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
                this.prevType = prevType;
                this.type = type;
                this.setTypeAnimation.reset(1.0F - f);
-               this.setTypeAnimation.method2810(1.0F);
+               this.setTypeAnimation.setTarget(1.0F);
                return;
             }
 
@@ -1275,7 +1275,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          }
 
          this.setTypeAnimation.reset(0.0F);
-         this.setTypeAnimation.method2810(1.0F);
+         this.setTypeAnimation.setTarget(1.0F);
          this.prevType = this.type;
          this.type = type;
       }

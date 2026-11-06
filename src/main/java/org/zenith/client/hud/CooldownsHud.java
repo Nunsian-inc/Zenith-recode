@@ -51,9 +51,9 @@ public class CooldownsHud extends Interface {
    @EventTarget
    public void onPacket(PacketEvent event) {
       if (mc != null && mc.level != null) {
-         if (event.getPacket3() instanceof ClientboundCooldownPacket cooldownPacket) {
+         if (event.getPacket() instanceof ClientboundCooldownPacket cooldownPacket) {
             this.method6829(() -> this.method6830(cooldownPacket));
-         } else if (event.getPacket3() instanceof ClientboundRespawnPacket) {
+         } else if (event.getPacket() instanceof ClientboundRespawnPacket) {
             this.method6829(() -> {
                this.items3.clear();
                this.items2.clear();
@@ -176,10 +176,10 @@ public class CooldownsHud extends Interface {
       if (mc != null) {
          this.method6837();
          if (this.items.isEmpty()) {
-            this.animation2.method2808(0.0F);
+            this.animation2.animateTo(0.0F);
          } else {
             CooldownsHud.Entry entry = this.items.values().iterator().next();
-            this.animation2.method2808(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+            this.animation2.animateTo(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
          }
 
          float floatValue = this.floatValue;
@@ -189,11 +189,11 @@ public class CooldownsHud extends Interface {
                + this.items.values().stream().mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue()).sum()
          );
          float width = (float)this.items.values().stream().mapToDouble(CooldownsHud.Entry::method6842).max().orElse(0.0);
-         width = this.animation.method2808(Math.max(HudListLayout.method7638("n", "Cooldown"), width));
+         width = this.animation.animateTo(Math.max(HudListLayout.method7638("n", "Cooldown"), width));
          this.width = width;
          this.height = height;
          float f = InterfaceModule.method6801();
-         this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
+         this.animation3.updateVisibility(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
          customDrawContext.pushMatrix();
          customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
          customDrawContext.pose().scale(this.animation3.getValue(), this.animation3.getValue());
@@ -296,7 +296,7 @@ public class CooldownsHud extends Interface {
 
       public void method6843(CustomDrawContext customDrawContext, float floatValue, float y1, float width) {
          float f = this.method6845();
-         this.animation.method2808(f > 0.0F ? 1.0F : 0.0F);
+         this.animation.animateTo(f > 0.0F ? 1.0F : 0.0F);
          customDrawContext.pushMatrix();
          customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
          customDrawContext.pose().scale(this.animation.getValue(), this.animation.getValue());
@@ -320,7 +320,7 @@ public class CooldownsHud extends Interface {
 
       private float method6845() {
          float floatValue = Mth.clamp(this.supplier.get(), 0.0F, 1.0F);
-         this.animation2.method2808(floatValue);
+         this.animation2.animateTo(floatValue);
          return Mth.clamp(this.animation2.getValue(), 0.0F, 1.0F);
       }
 

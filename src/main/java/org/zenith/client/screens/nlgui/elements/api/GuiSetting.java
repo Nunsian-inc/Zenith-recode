@@ -11,7 +11,7 @@ import org.zenith.base.font.Fonts;
 import org.zenith.base.font.MsdfRenderer;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.settings.Setting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.MathUtils;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -65,7 +65,7 @@ public abstract class GuiSetting<T extends Setting> extends Element {
       return false;
    }
 
-   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       return false;
    }
 

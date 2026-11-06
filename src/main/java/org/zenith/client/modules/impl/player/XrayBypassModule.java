@@ -20,7 +20,7 @@ import org.zenith.Rotation;
 import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.events.WorldRenderEvent;
@@ -135,7 +135,7 @@ public final class XrayBypassModule extends Module {
 
    @EventTarget
    public void method4215(WorldRenderEvent event) {
-      BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotationManager.method7844(), 5.0, blockHitResult2 -> true);
+      BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotationManager.getEffectiveRotation(), 5.0, blockHitResult2 -> true);
       if (blockHitResult.getType() != Type.MISS) {
          GlowUtil.method2230(new AABB(blockHitResult.getBlockPos()), Color.RED.getRGB(), 1.0F);
       }
@@ -155,15 +155,15 @@ public final class XrayBypassModule extends Module {
 
    @EventTarget
    public void method4216(PacketEvent event) {
-      if (event.getPacket3() instanceof ClientboundBlockUpdatePacket) {
+      if (event.getPacket() instanceof ClientboundBlockUpdatePacket) {
          this.stopWatch.reset();
       }
    }
 
    @EventTarget
-   public void method4217(Event5 event) {
-      Rotation rotation = new Rotation(rotationManager.method7844().getFloatValue(), -90.0F);
-      rotationManager.method7849(new RotationRequest(rotation, () -> rotation, rotationManager.getBcCameraTestnerv().getRotationConfig3()), 50, this);
+   public void method4217(PreRotationEvent event) {
+      Rotation rotation = new Rotation(rotationManager.getEffectiveRotation().getFloatValue(), -90.0F);
+      rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, rotationManager.getBcCameraTestnerv().getRotationConfig3()), 50, this);
    }
 
    @EventTarget(4)
@@ -173,7 +173,7 @@ public final class XrayBypassModule extends Module {
 
    @EventTarget
    public void method4219(UpdateEvent event) {
-      BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotationManager.method7844(), 5.0, blockHitResult2 -> true);
+      BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotationManager.getEffectiveRotation(), 5.0, blockHitResult2 -> true);
       if (blockHitResult.getType() != Type.MISS) {
          if (mc.player.tickCount % 80 == 0) {
             Zenith.getInstance().getHudHolder().method6973("4", Component.nullToEmpty("Сломайте блок над  головой"), 4000L);

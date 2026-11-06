@@ -18,7 +18,7 @@ import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.utility.game.PlayerSimulation;
 import org.zenith.utility.misc.PacketUtils;
-import org.zenith.utility.misc.Util13;
+import org.zenith.utility.misc.TimerSpeed;
 
 @ModuleInfo(
    name = "NoFall",
@@ -27,14 +27,14 @@ import org.zenith.utility.misc.Util13;
 )
 public final class NoFallModule extends Module {
    public static final NoFallModule INSTANCE = new NoFallModule();
-   private static final double CONST_doubleValue = 3.0;
+   private static final double FALL_DISTANCE_THRESHOLD = 3.0;
    private final ModeSetting mode = new ModeSetting("module.noFall.mode", "module.noFall.mode.desc", "module.noFall.mode.grim72", "module.noFall.mode.grim73");
-   private final StopWatch stopWatch = new StopWatch();
-   private final StopWatch stopWatch2 = new StopWatch();
+   private final StopWatch activationTimer = new StopWatch();
+   private final StopWatch fallFlyingTimer = new StopWatch();
    private boolean falling;
-   private boolean flag;
-   private int intValue;
-   private boolean flag2;
+   private boolean awaitingCorrection;
+   private int correctionTicks;
+   private boolean timerModified;
 
    private NoFallModule() {
    }
@@ -53,11 +53,11 @@ public final class NoFallModule extends Module {
 
    private void reset() {
       this.falling = false;
-      this.flag = false;
-      this.intValue = 0;
-      if (this.flag2) {
-         Util13.method2404(1.0F);
-         this.flag2 = false;
+      this.awaitingCorrection = false;
+      this.correctionTicks = 0;
+      if (this.timerModified) {
+         TimerSpeed.setSpeedMultiplier(1.0F);
+         this.timerModified = false;
       }
    }
 
@@ -65,29 +65,29 @@ public final class NoFallModule extends Module {
    public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          this.falling = mc.player.fallDistance > 3.0;
-         if (this.method1734()) {
-            if (this.falling && !mc.player.onGround() && this.stopWatch2.method7546(200L) && PlayerSimulation.method6031(1).flag4) {
+         if (this.isGrim72Mode()) {
+            if (this.falling && !mc.player.onGround() && this.fallFlyingTimer.method7546(200L) && PlayerSimulation.method6031(1).flag4) {
                PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
                PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
-               this.stopWatch2.reset();
-               this.stopWatch.reset();
-               this.flag = true;
+               this.fallFlyingTimer.reset();
+               this.activationTimer.reset();
+               this.awaitingCorrection = true;
             }
-         } else if (this.intValue == 2) {
-            Util13.method2404(0.5F);
-            this.flag2 = true;
-         } else if (this.flag2) {
-            Util13.method2404(1.0F);
-            this.flag2 = false;
+         } else if (this.correctionTicks == 2) {
+            TimerSpeed.setSpeedMultiplier(0.5F);
+            this.timerModified = true;
+         } else if (this.timerModified) {
+            TimerSpeed.setSpeedMultiplier(1.0F);
+            this.timerModified = false;
          }
 
-         if (this.intValue > 0) {
-            this.intValue--;
+         if (this.correctionTicks > 0) {
+            this.correctionTicks--;
          }
 
-         if (this.stopWatch.method7546(300L)) {
-            this.flag = false;
-            this.intValue = 0;
+         if (this.activationTimer.method7546(300L)) {
+            this.awaitingCorrection = false;
+            this.correctionTicks = 0;
          }
       }
    }
@@ -95,23 +95,23 @@ public final class NoFallModule extends Module {
    @EventTarget
    public void onPacket(PacketEvent event) {
       if (mc.player != null) {
-         if (event.method7099()) {
-            if (this.method1735()
-               && event.getPacket3() instanceof ServerboundMovePlayerPacket movePlayerPacket
+         if (event.isOutgoing()) {
+            if (this.isGrim73Mode()
+               && event.getPacket() instanceof ServerboundMovePlayerPacket movePlayerPacket
                && !PacketUtils.getItems().contains(movePlayerPacket)
                && this.falling
                && movePlayerPacket.isOnGround()
-               && this.intValue == 0) {
+               && this.correctionTicks == 0) {
                PacketUtils.method3150(new StatusOnly(true, false));
-               this.stopWatch.reset();
-               this.flag = true;
+               this.activationTimer.reset();
+               this.awaitingCorrection = true;
             }
-         } else if (!(event.getPacket3() instanceof ClientboundLoginPacket) && !(event.getPacket3() instanceof ClientboundRespawnPacket)) {
-            if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         } else if (!(event.getPacket() instanceof ClientboundLoginPacket) && !(event.getPacket() instanceof ClientboundRespawnPacket)) {
+            if (event.getPacket() instanceof ClientboundPlayerPositionPacket) {
                mc.execute(() -> {
-                  if (this.flag) {
-                     this.intValue = 2;
-                     this.flag = false;
+                  if (this.awaitingCorrection) {
+                     this.correctionTicks = 2;
+                     this.awaitingCorrection = false;
                   }
                });
             }
@@ -123,18 +123,18 @@ public final class NoFallModule extends Module {
 
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
-      if (this.flag || this.intValue == 2) {
+      if (this.awaitingCorrection || this.correctionTicks == 2) {
          event.method3041(false);
-      } else if (this.intValue == 1) {
+      } else if (this.correctionTicks == 1) {
          event.method3041(true);
       }
    }
 
-   private boolean method1734() {
+   private boolean isGrim72Mode() {
       return this.mode.isSelected(0);
    }
 
-   private boolean method1735() {
+   private boolean isGrim73Mode() {
       return this.mode.isSelected(1);
    }
 }

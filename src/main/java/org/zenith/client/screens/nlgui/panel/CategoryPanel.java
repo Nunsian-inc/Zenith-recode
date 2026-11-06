@@ -23,7 +23,7 @@ import org.zenith.client.screens.nlgui.panel.api.Panel;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.utility.config.CloudAvatarCache;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.Localization;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -148,8 +148,8 @@ public class CategoryPanel extends Panel {
          boolean contains = this.profileBounds.contains(mouseX, mouseY);
          boolean flag = Zenith.getInstance().getNLMenuScreen().getQuickMenuPanel() != null
             && Zenith.getInstance().getNLMenuScreen().getQuickMenuPanel().isExpanded();
-         float f3 = this.profileHover.method2808(contains ? 1.0F : 0.0F);
-         float hover = this.profileSelect.method2808(flag ? 1.0F : 0.0F);
+         float f3 = this.profileHover.animateTo(contains ? 1.0F : 0.0F);
+         float hover = this.profileSelect.animateTo(flag ? 1.0F : 0.0F);
          customDrawContext.drawRoundedRect(
             floatValue, y, width2, 26.0F, headerRadius, currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * (2.5F + f3 * 2.0F + hover * 1.5F))
          );
@@ -297,7 +297,7 @@ public class CategoryPanel extends Panel {
    }
 
    @Override
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
       if (this.profileBounds != null && this.profileBounds.contains(x, y)) {
          NLMenuScreen nlMenuScreen = Zenith.getInstance().getNLMenuScreen();
          if (nlMenuScreen.getQuickMenuPanel() != null) {
@@ -385,8 +385,8 @@ public class CategoryPanel extends Panel {
             this.bounds = new BoundsData(floatValue, y, width, height);
             boolean selected = this.target.isSelected();
             boolean contains = this.bounds.contains(mouseX, mouseY);
-            float f = this.selection.method2808(selected ? 1.0F : 0.0F);
-            float f2 = this.hover.method2808(contains ? 1.0F : 0.0F);
+            float f = this.selection.animateTo(selected ? 1.0F : 0.0F);
+            float f2 = this.hover.animateTo(contains ? 1.0F : 0.0F);
             if (f > 0.01F) {
                customDrawContext.drawRect(floatValue, y + 2.0F, 2.0F, height - 4.0F, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * f));
             }

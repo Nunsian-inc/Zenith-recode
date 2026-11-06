@@ -24,46 +24,46 @@ import org.zenith.utility.network.InventoryUtils;
 public final class SlimeFlightModule extends Module {
    public static final SlimeFlightModule INSTANCE = new SlimeFlightModule();
    public int cooldown;
-   public boolean flag = false;
+   public boolean adjustPitchNextTick = false;
 
    @EventTarget
    public void onUpdate(UpdateEvent event) {
-      if (this.flag) {
+      if (this.adjustPitchNextTick) {
          mc.player.setXRot(60.0F);
-         this.flag = false;
+         this.adjustPitchNextTick = false;
       }
    }
 
-   private Block method4512(BlockPos blockPos) {
-      return mc.level.getBlockState(blockPos).getBlock();
+   private Block getBlock(BlockPos southPos) {
+      return mc.level.getBlockState(southPos).getBlock();
    }
 
    @EventTarget
-   public void method4513(PlayerMoveEvent event) {
-      BlockPos pos = new BlockPos(mc.player.getBlockX() + 1, mc.player.getBlockY(), mc.player.getBlockZ());
-      BlockPos blockPos = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() + 1);
-      BlockPos pos2 = new BlockPos(mc.player.getBlockX() - 1, mc.player.getBlockY(), mc.player.getBlockZ());
-      BlockPos pos3 = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() - 1);
-      int selected = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).getItem() == Items.SLIME_BLOCK);
+   public void onPlayerMove(PlayerMoveEvent event) {
+      BlockPos eastPos = new BlockPos(mc.player.getBlockX() + 1, mc.player.getBlockY(), mc.player.getBlockZ());
+      BlockPos southPos = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() + 1);
+      BlockPos westPos = new BlockPos(mc.player.getBlockX() - 1, mc.player.getBlockY(), mc.player.getBlockZ());
+      BlockPos northPos = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() - 1);
+      int slimeHotbarSlot = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).getItem() == Items.SLIME_BLOCK);
       HitResult hitResult = mc.hitResult;
       if (mc.player.horizontalCollision) {
-         if (this.method4512(pos) == Blocks.SLIME_BLOCK
-            || this.method4512(blockPos) == Blocks.SLIME_BLOCK
-            || this.method4512(pos2) == Blocks.SLIME_BLOCK
-            || this.method4512(pos3) == Blocks.SLIME_BLOCK) {
+         if (this.getBlock(eastPos) == Blocks.SLIME_BLOCK
+            || this.getBlock(southPos) == Blocks.SLIME_BLOCK
+            || this.getBlock(westPos) == Blocks.SLIME_BLOCK
+            || this.getBlock(northPos) == Blocks.SLIME_BLOCK) {
             if (!(mc.player.getDeltaMovement().y <= -1.0)) {
                if (hitResult instanceof BlockHitResult blockHitResult) {
                   Direction direction = blockHitResult.getDirection();
-                  if (this.method4512(blockHitResult.getBlockPos()) == Blocks.AIR) {
+                  if (this.getBlock(blockHitResult.getBlockPos()) == Blocks.AIR) {
                      return;
                   }
 
                   BlockHitResult blockHit = new BlockHitResult(blockHitResult.getLocation(), direction, blockHitResult.getBlockPos(), true);
-                  if (selected != -1) {
-                     mc.player.getInventory().setSelectedSlot(selected);
+                  if (slimeHotbarSlot != -1) {
+                     mc.player.getInventory().setSelectedSlot(slimeHotbarSlot);
                   }
 
-                  this.flag = true;
+                  this.adjustPitchNextTick = true;
                   if (this.cooldown >= 1) {
                      mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
                      mc.player.setDeltaMovement(mc.player.getDeltaMovement().x, 0.62, mc.player.getDeltaMovement().z);

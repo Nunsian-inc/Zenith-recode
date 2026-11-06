@@ -22,116 +22,116 @@ import org.zenith.client.modules.impl.combat.AuraModule;
 import org.zenith.utility.misc.Vec2f;
 
 public class AuraRandomizer implements MinecraftAccess {
-   private static final double CONST_doubleValue = 0.15;
-   private static final int CONST_intValue = 14;
-   private static final int CONST_intValue2 = 14;
+   private static final double SAMPLE_SPACING = 0.15;
+   private static final int MAX_HORIZONTAL_SAMPLES = 14;
+   private static final int VERTICAL_SAMPLES = 14;
    private final Random random = new SecureRandom();
-   private Vec3 vec3d = Vec3.ZERO;
+   private Vec3 jitterOffset = Vec3.ZERO;
 
-   public Vec3 method4673(Vec3 eyePosition, AABB boundingBox, float f, Vec3 vec, boolean enabled) {
-      var vecs = this.method4675(eyePosition, boundingBox, f, enabled);
-      var vecs2 = this.method4682(vecs, f);
-      Vec3 vec2 = this.method4681(eyePosition, vecs2, f, enabled);
-      if (vec2 == null) {
-         vec2 = this.method4681(eyePosition, vecs, f, enabled);
+   public Vec3 method4673(Vec3 eyePosition, AABB boundingBox, float range, Vec3 jitterScale, boolean ignoreWalls) {
+      var samples = this.method4675(eyePosition, boundingBox, range, ignoreWalls);
+      var innerSamples = this.filterInnerSamples(samples, range);
+      Vec3 aimPoint = this.selectNearCenter(eyePosition, innerSamples, range, ignoreWalls);
+      if (aimPoint == null) {
+         aimPoint = this.selectNearCenter(eyePosition, samples, range, ignoreWalls);
       }
 
-      if (vec2 == null) {
-         vec2 = this.method4685(eyePosition, vecs);
+      if (aimPoint == null) {
+         aimPoint = this.closestToEyes(eyePosition, samples);
       }
 
-      this.method4686(vec);
-      return (vec2 == null ? boundingBox.getCenter() : vec2).add(this.vec3d);
+      this.updateJitter(jitterScale);
+      return (aimPoint == null ? boundingBox.getCenter() : aimPoint).add(this.jitterOffset);
    }
 
-   public Vec3 method4674(Vec3 eyePosition, AABB boundingBox, float f, Vec3 vec, boolean enabled) {
-      var vecs = this.method4675(eyePosition, boundingBox, f, enabled);
-      var vecs2 = this.method4682(vecs, f);
-      Vec3 vec2 = this.method4680(eyePosition, vecs2, f, enabled);
-      if (vec2 == null) {
-         vec2 = this.method4680(eyePosition, vecs, f, enabled);
+   public Vec3 method4674(Vec3 eyePosition, AABB boundingBox, float range, Vec3 jitterScale, boolean ignoreWalls) {
+      var samples = this.method4675(eyePosition, boundingBox, range, ignoreWalls);
+      var innerSamples = this.filterInnerSamples(samples, range);
+      Vec3 aimPoint = this.selectByRotation(eyePosition, innerSamples, range, ignoreWalls);
+      if (aimPoint == null) {
+         aimPoint = this.selectByRotation(eyePosition, samples, range, ignoreWalls);
       }
 
-      if (vec2 == null) {
-         vec2 = this.method4684(eyePosition, vecs);
+      if (aimPoint == null) {
+         aimPoint = this.closestToRotation(eyePosition, samples);
       }
 
-      this.method4686(vec);
-      return (vec2 == null ? boundingBox.getCenter() : vec2).add(this.vec3d);
+      this.updateJitter(jitterScale);
+      return (aimPoint == null ? boundingBox.getCenter() : aimPoint).add(this.jitterOffset);
    }
 
-   public List<Vec3> method4675(Vec3 eyePosition, AABB boundingBox, float f, boolean enabled) {
-      if (method4677(eyePosition, boundingBox, f)) {
+   public List<Vec3> method4675(Vec3 eyePosition, AABB boundingBox, float range, boolean ignoreWalls) {
+      if (isOutsideRange(eyePosition, boundingBox, range)) {
          return new ArrayList<>();
       } else {
-         double xsize = boundingBox.getXsize();
-         double ysize = boundingBox.getYsize();
-         double zsize = boundingBox.getZsize();
-         int n = this.method4688(xsize);
-         int n2 = this.method4688(zsize);
-         int n3 = Math.max(2, 14);
-         double d = ysize / (n3 - 1);
+         double width = boundingBox.getXsize();
+         double height = boundingBox.getYsize();
+         double depth = boundingBox.getZsize();
+         int samplesX = this.sampleCountForExtent(width);
+         int samplesZ = this.sampleCountForExtent(depth);
+         int samplesY = Math.max(2, VERTICAL_SAMPLES);
+         double stepY = height / (samplesY - 1);
          double minX = boundingBox.minX;
          double minY = boundingBox.minY;
          double minZ = boundingBox.minZ;
-         double d2 = n <= 1 ? 0.0 : xsize / (n - 1);
-         double d3 = n2 <= 1 ? 0.0 : zsize / (n2 - 1);
-         List<Vec3> vecs = new ArrayList<>(n3 * n * n2);
-         double d4 = (double)f * f;
+         double stepX = samplesX <= 1 ? 0.0 : width / (samplesX - 1);
+         double stepZ = samplesZ <= 1 ? 0.0 : depth / (samplesZ - 1);
+         List<Vec3> samples = new ArrayList<>(samplesY * samplesX * samplesZ);
+         double rangeSquared = (double)range * range;
 
-         for (int i = 0; i < n3; i++) {
-            double y = minY + i * d;
+         for (int i = 0; i < samplesY; i++) {
+            double y = minY + i * stepY;
 
-            for (int j = 0; j < n; j++) {
-               double x = minX + j * d2;
+            for (int j = 0; j < samplesX; j++) {
+               double x = minX + j * stepX;
 
-               for (int k = 0; k < n2; k++) {
-                  double z = minZ + k * d3;
-                  if (!(method4678(eyePosition, x, y, z) > d4)) {
-                     Vec3 vec = new Vec3(x, y, z);
-                     if (this.method6838(eyePosition, vec, f, enabled)) {
-                        vecs.add(vec);
+               for (int k = 0; k < samplesZ; k++) {
+                  double z = minZ + k * stepZ;
+                  if (!(distanceSquared(eyePosition, x, y, z) > rangeSquared)) {
+                     Vec3 sample = new Vec3(x, y, z);
+                     if (this.isSampleReachable(eyePosition, sample, range, ignoreWalls)) {
+                        samples.add(sample);
                      }
                   }
                }
             }
          }
 
-         return vecs;
+         return samples;
       }
    }
 
-   public boolean method4676(LivingEntity living, float f, boolean enabled) {
+   public boolean method4676(LivingEntity living, float range, boolean ignoreWalls) {
       AABB boundingBox = living.getBoundingBox();
       Vec3 eyePosition = mc.player.getEyePosition();
-      if (method4677(eyePosition, boundingBox, f)) {
+      if (isOutsideRange(eyePosition, boundingBox, range)) {
          return false;
       } else {
-         double xsize = boundingBox.getXsize();
-         double ysize = boundingBox.getYsize();
-         double zsize = boundingBox.getZsize();
-         int n = this.method4688(xsize);
-         int n2 = this.method4688(zsize);
-         int n3 = Math.max(2, 14);
-         double d = ysize / (n3 - 1);
+         double width = boundingBox.getXsize();
+         double height = boundingBox.getYsize();
+         double depth = boundingBox.getZsize();
+         int samplesX = this.sampleCountForExtent(width);
+         int samplesZ = this.sampleCountForExtent(depth);
+         int samplesY = Math.max(2, VERTICAL_SAMPLES);
+         double stepY = height / (samplesY - 1);
          double minX = boundingBox.minX;
          double minY = boundingBox.minY;
          double minZ = boundingBox.minZ;
-         double d2 = n <= 1 ? 0.0 : xsize / (n - 1);
-         double d3 = n2 <= 1 ? 0.0 : zsize / (n2 - 1);
-         double d4 = (double)f * f;
+         double stepX = samplesX <= 1 ? 0.0 : width / (samplesX - 1);
+         double stepZ = samplesZ <= 1 ? 0.0 : depth / (samplesZ - 1);
+         double rangeSquared = (double)range * range;
 
-         for (int i = 0; i < n3; i++) {
-            double y = minY + i * d;
+         for (int i = 0; i < samplesY; i++) {
+            double y = minY + i * stepY;
 
-            for (int j = 0; j < n; j++) {
-               double x = minX + j * d2;
+            for (int j = 0; j < samplesX; j++) {
+               double x = minX + j * stepX;
 
-               for (int k = 0; k < n2; k++) {
-                  double z = minZ + k * d3;
-                  if (!(method4678(eyePosition, x, y, z) > d4)) {
-                     Vec3 vec = new Vec3(x, y, z);
-                     if (this.method6838(eyePosition, vec, f, enabled)) {
+               for (int k = 0; k < samplesZ; k++) {
+                  double z = minZ + k * stepZ;
+                  if (!(distanceSquared(eyePosition, x, y, z) > rangeSquared)) {
+                     Vec3 sample = new Vec3(x, y, z);
+                     if (this.isSampleReachable(eyePosition, sample, range, ignoreWalls)) {
                         return true;
                      }
                   }
@@ -143,127 +143,127 @@ public class AuraRandomizer implements MinecraftAccess {
       }
    }
 
-   private static boolean method4677(Vec3 eyePosition, AABB boundingBox, float f) {
-      double d = Math.max(0.0, Math.max(boundingBox.minX - eyePosition.x, eyePosition.x - boundingBox.maxX));
-      double d2 = Math.max(0.0, Math.max(boundingBox.minY - eyePosition.y, eyePosition.y - boundingBox.maxY));
-      double d3 = Math.max(0.0, Math.max(boundingBox.minZ - eyePosition.z, eyePosition.z - boundingBox.maxZ));
-      double d4 = Math.abs((double)f) + 1.0E-4;
-      return d * d + d2 * d2 + d3 * d3 > d4 * d4;
+   private static boolean isOutsideRange(Vec3 eyePosition, AABB boundingBox, float range) {
+      double distanceX = Math.max(0.0, Math.max(boundingBox.minX - eyePosition.x, eyePosition.x - boundingBox.maxX));
+      double distanceY = Math.max(0.0, Math.max(boundingBox.minY - eyePosition.y, eyePosition.y - boundingBox.maxY));
+      double distanceZ = Math.max(0.0, Math.max(boundingBox.minZ - eyePosition.z, eyePosition.z - boundingBox.maxZ));
+      double paddedRange = Math.abs((double)range) + 1.0E-4;
+      return distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ > paddedRange * paddedRange;
    }
 
-   private static double method4678(Vec3 eyePosition, double x, double y, double z) {
-      double d = x - eyePosition.x;
-      double d2 = y - eyePosition.y;
-      double d3 = z - eyePosition.z;
-      return d * d + d2 * d2 + d3 * d3;
+   private static double distanceSquared(Vec3 eyePosition, double x, double y, double z) {
+      double deltaX = x - eyePosition.x;
+      double deltaY = y - eyePosition.y;
+      double deltaZ = z - eyePosition.z;
+      return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
    }
 
-   private boolean method6838(Vec3 eyePosition, Vec3 vec, float f, boolean enabled) {
-      if (eyePosition.distanceToSqr(vec) > (double)f * f) {
+   private boolean isSampleReachable(Vec3 eyePosition, Vec3 sample, float range, boolean ignoreWalls) {
+      if (eyePosition.distanceToSqr(sample) > (double)range * range) {
          return false;
-      } else if (enabled) {
+      } else if (ignoreWalls) {
          return true;
       } else {
-         ClipContext clipContext = new ClipContext(eyePosition, vec, Block.COLLIDER, Fluid.NONE, mc.player);
+         ClipContext clipContext = new ClipContext(eyePosition, sample, Block.COLLIDER, Fluid.NONE, mc.player);
          BlockHitResult blockHitResult = TargetUtils.method3217(clipContext, AuraModule.INSTANCE::method6362);
          return blockHitResult.getType() != Type.BLOCK;
       }
    }
 
-   private Vec3 method4680(Vec3 eyePosition, List<Vec3> vecs, float f, boolean enabled) {
-      if (vecs != null && !vecs.isEmpty()) {
-         Vec3 vec = this.method4683(vecs);
-         return this.method6838(eyePosition, vec, f, enabled)
-            ? vec
-            : vecs.stream().filter(var4x -> this.method6838(eyePosition, var4x, f, enabled)).min(Comparator.comparingDouble(var1x -> {
-               Vec2f var2x = Zenith.getInstance().getRotationManager().method7844().method3131(Rotation.method3128(var1x, eyePosition));
-               return Math.abs(var2x.getFloatValue()) + Math.abs(var2x.getFloatValue2());
+   private Vec3 selectByRotation(Vec3 eyePosition, List<Vec3> samples, float range, boolean ignoreWalls) {
+      if (samples != null && !samples.isEmpty()) {
+         Vec3 center = this.averageSamples(samples);
+         return this.isSampleReachable(eyePosition, center, range, ignoreWalls)
+            ? center
+            : samples.stream().filter(sample -> this.isSampleReachable(eyePosition, sample, range, ignoreWalls)).min(Comparator.comparingDouble(sample -> {
+               Vec2f rotationDelta = Zenith.getInstance().getRotationManager().getEffectiveRotation().wrappedDeltaTo(Rotation.lookingAt(sample, eyePosition));
+               return Math.abs(rotationDelta.getFloatValue()) + Math.abs(rotationDelta.getFloatValue2());
             })).orElse(null);
       } else {
          return null;
       }
    }
 
-   private Vec3 method4681(Vec3 eyePosition, List<Vec3> vecs, float f, boolean enabled) {
-      if (vecs != null && !vecs.isEmpty()) {
-         Vec3 vec = this.method4683(vecs);
-         return this.method6838(eyePosition, vec, f, enabled)
-            ? vec
-            : vecs.stream()
-               .filter(var4x -> this.method6838(eyePosition, var4x, f, enabled))
-               .min(Comparator.comparingDouble(var1x -> var1x.distanceToSqr(vec)))
+   private Vec3 selectNearCenter(Vec3 eyePosition, List<Vec3> samples, float range, boolean ignoreWalls) {
+      if (samples != null && !samples.isEmpty()) {
+         Vec3 center = this.averageSamples(samples);
+         return this.isSampleReachable(eyePosition, center, range, ignoreWalls)
+            ? center
+            : samples.stream()
+               .filter(sample -> this.isSampleReachable(eyePosition, sample, range, ignoreWalls))
+               .min(Comparator.comparingDouble(sample -> sample.distanceToSqr(center)))
                .orElse(null);
       } else {
          return null;
       }
    }
 
-   private List<Vec3> method4682(List<Vec3> vecs, float f) {
-      if (vecs != null && !vecs.isEmpty()) {
+   private List<Vec3> filterInnerSamples(List<Vec3> samples, float range) {
+      if (samples != null && !samples.isEmpty()) {
          Vec3 eyePosition = mc.player.getEyePosition();
-         double d = Math.max(0.0, f - 0.3);
-         double d2 = d * d;
-         ArrayList<Vec3> vecs2 = new ArrayList<>();
+         double innerRange = Math.max(0.0, range - 0.3);
+         double innerRangeSquared = innerRange * innerRange;
+         ArrayList<Vec3> innerSamples = new ArrayList<>();
 
-         for (Vec3 vec : vecs) {
-            if (eyePosition.distanceToSqr(vec) < d2) {
-               vecs2.add(vec);
+         for (Vec3 sample : samples) {
+            if (eyePosition.distanceToSqr(sample) < innerRangeSquared) {
+               innerSamples.add(sample);
             }
          }
 
-         return vecs2;
+         return innerSamples;
       } else {
          return List.of();
       }
    }
 
-   private Vec3 method4683(List<Vec3> vecs) {
-      double d = 0.0;
-      double d2 = 0.0;
-      double d3 = 0.0;
-      int size = vecs.size();
+   private Vec3 averageSamples(List<Vec3> samples) {
+      double sumX = 0.0;
+      double sumY = 0.0;
+      double sumZ = 0.0;
+      int size = samples.size();
 
-      for (Vec3 vec : vecs) {
-         d += vec.x;
-         d2 += vec.y;
-         d3 += vec.z;
+      for (Vec3 sample : samples) {
+         sumX += sample.x;
+         sumY += sample.y;
+         sumZ += sample.z;
       }
 
-      return new Vec3(d / size, d2 / size, d3 / size);
+      return new Vec3(sumX / size, sumY / size, sumZ / size);
    }
 
-   private Vec3 method4684(Vec3 eyePosition, List<Vec3> vecs) {
-      return vecs != null && !vecs.isEmpty() ? vecs.stream().min(Comparator.comparingDouble(var1x -> {
-         Vec2f var2x = Zenith.getInstance().getRotationManager().method7844().method3131(Rotation.method3128(var1x, eyePosition));
-         return Math.abs(var2x.getFloatValue()) + Math.abs(var2x.getFloatValue2());
+   private Vec3 closestToRotation(Vec3 eyePosition, List<Vec3> samples) {
+      return samples != null && !samples.isEmpty() ? samples.stream().min(Comparator.comparingDouble(sample -> {
+         Vec2f rotationDelta = Zenith.getInstance().getRotationManager().getEffectiveRotation().wrappedDeltaTo(Rotation.lookingAt(sample, eyePosition));
+         return Math.abs(rotationDelta.getFloatValue()) + Math.abs(rotationDelta.getFloatValue2());
       })).orElse(null) : null;
    }
 
-   private Vec3 method4685(Vec3 eyePosition, List<Vec3> vecs) {
-      return vecs != null && !vecs.isEmpty() ? vecs.stream().min(Comparator.comparingDouble(var1x -> var1x.distanceToSqr(eyePosition))).orElse(null) : null;
+   private Vec3 closestToEyes(Vec3 eyePosition, List<Vec3> samples) {
+      return samples != null && !samples.isEmpty() ? samples.stream().min(Comparator.comparingDouble(sample -> sample.distanceToSqr(eyePosition))).orElse(null) : null;
    }
 
-   private void method4686(Vec3 vec) {
-      this.vec3d = this.vec3d.add(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian()).multiply(vec);
+   private void updateJitter(Vec3 jitterScale) {
+      this.jitterOffset = this.jitterOffset.add(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian()).multiply(jitterScale);
    }
 
-   private double method4687(Vec3 vec, Vec3 vec2, Rotation rotation) {
+   private double rotationDistance(Vec3 origin, Vec3 target, Rotation rotation) {
       if (rotation == null) {
          return Double.POSITIVE_INFINITY;
       } else {
-         Rotation rotation2 = RotationUtils.method6912(vec2.subtract(vec));
-         Vec2f vec2f = rotation.method3131(rotation2);
-         return Math.hypot(vec2f.getFloatValue(), vec2f.getFloatValue2());
+         Rotation targetRotation = RotationUtils.method6912(target.subtract(origin));
+         Vec2f rotationDelta = rotation.wrappedDeltaTo(targetRotation);
+         return Math.hypot(rotationDelta.getFloatValue(), rotationDelta.getFloatValue2());
       }
    }
 
-   private int method4688(double xsize) {
-      if (xsize <= 0.0) {
+   private int sampleCountForExtent(double extent) {
+      if (extent <= 0.0) {
          return 1;
       } else {
-         int n = (int)Math.ceil(xsize / 0.15) + 1;
-         int n2 = Math.min(n, 14);
-         return Math.max(2, n2);
+         int sampleCount = (int)Math.ceil(extent / SAMPLE_SPACING) + 1;
+         int cappedSampleCount = Math.min(sampleCount, MAX_HORIZONTAL_SAMPLES);
+         return Math.max(2, cappedSampleCount);
       }
    }
 
@@ -274,6 +274,6 @@ public class AuraRandomizer implements MinecraftAccess {
 
    @Generated
    public Vec3 getVec3d() {
-      return this.vec3d;
+      return this.jitterOffset;
    }
 }

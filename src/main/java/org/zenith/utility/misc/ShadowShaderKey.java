@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.resources.Identifier;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
 
-public class ShadowShaderKey extends KawaseShaderKey implements Handler2 {
+public class ShadowShaderKey extends KawaseShaderKey implements WindowAccess {
    private ShaderUniform shaderUniform;
    private ShaderUniform shaderUniform2;
    private ShaderUniform shaderUniform3;

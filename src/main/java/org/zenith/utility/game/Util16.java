@@ -20,7 +20,7 @@ public final class Util16 {
 
    public static Util16.Data method3048(WorldStylePlanModel worldStylePlanModel, Rotation rotation) {
       Minecraft minecraft = Minecraft.getInstance();
-      if (minecraft.player != null && minecraft.level != null && rotation != null && !rotation.method3137()) {
+      if (minecraft.player != null && minecraft.level != null && rotation != null && !rotation.isInvalid()) {
          float[][][][] floatValues = method3050(minecraft, worldStylePlanModel, rotation.getFloatValue());
          float[] floatValues2 = method3049(minecraft, worldStylePlanModel, rotation);
          return floatValues != null && floatValues2 != null ? new Util16.Data(floatValues, floatValues2) : null;

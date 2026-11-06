@@ -34,7 +34,7 @@ public final class NoPushModule extends Module {
    }
 
    @EventTarget
-   public void method6590(EntityPushEvent event) {
+   public void onEntityPush(EntityPushEvent event) {
       switch (event.getType()) {
          case COLLISION:
             event.setCancelled(this.ignoreSetting.method5227(2));
@@ -48,7 +48,7 @@ public final class NoPushModule extends Module {
    }
 
    @EventTarget
-   public void method6591(BlockCollisionEvent event) {
+   public void onBlockCollision(BlockCollisionEvent event) {
       Block block = event.getBlock();
       if (block.equals(Blocks.POWDER_SNOW)) {
          event.setCancelled(this.ignoreSetting.method5227(3));

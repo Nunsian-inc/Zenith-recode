@@ -34,7 +34,7 @@ public final class HoverInfo {
    }
 
    public static float boxHeight() {
-      return 34.0F * SHOWN.method2808(enabled() ? 1.0F : 0.0F);
+      return 34.0F * SHOWN.animateTo(enabled() ? 1.0F : 0.0F);
    }
 
    public static void request(String name, String description) {

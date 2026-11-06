@@ -32,7 +32,7 @@ import org.zenith.client.screens.nlgui.HoverInfo;
 import org.zenith.client.screens.nlgui.MenuGlyph;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.SearchBox;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.display.base.BoundsData;
@@ -326,9 +326,9 @@ public class BotsToolPanel extends ToolTab {
       boolean flag2 = insideMain && boundsData.contains(lastClickX, lastClickY) && !flag;
       boolean equalsIgnoreCase = selected.equalsIgnoreCase(this.selected);
       boolean online = this.isOnline(selected);
-      float f4 = animations.hover.method2808(flag2 ? 1.0F : 0.0F);
-      float f5 = animations.select.method2808(equalsIgnoreCase ? 1.0F : 0.0F);
-      float f6 = animations.power.method2808(flag ? 1.0F : 0.0F);
+      float f4 = animations.hover.animateTo(flag2 ? 1.0F : 0.0F);
+      float f5 = animations.select.animateTo(equalsIgnoreCase ? 1.0F : 0.0F);
+      float f6 = animations.power.animateTo(flag ? 1.0F : 0.0F);
       float f7 = Math.max(f5, f4 * 0.5F);
       if (f7 > 0.002F) {
          menuDrawContext.drawRoundedRect(
@@ -1161,7 +1161,7 @@ public class BotsToolPanel extends ToolTab {
    }
 
    @Override
-   public boolean onFooterClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onFooterClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       BoundsData footerBounds = this.footerBounds();
       if (footerBounds == null) {
          return false;
@@ -1216,10 +1216,10 @@ public class BotsToolPanel extends ToolTab {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       this.lastClickX = lastClickX;
       this.lastClickY = lastClickY;
-      if (enum2 == Enum3.LEFT && this.insideMain(lastClickX, lastClickY)) {
+      if (enum2 == MouseButton.LEFT && this.insideMain(lastClickX, lastClickY)) {
          if (this.connectAllBounds != null && this.connectAllBounds.contains(lastClickX, lastClickY)) {
             this.connectAll();
             Zenith.getInstance().getClientSounds().method1570(false);

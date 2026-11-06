@@ -8,11 +8,11 @@ import org.zenith.Rotation;
 import org.zenith.base.rotation.RotationUtils;
 import org.zenith.client.modules.impl.combat.AuraModule;
 import org.zenith.utility.api.JointCodebook;
-import org.zenith.utility.misc.Class6;
-import org.zenith.utility.misc.Util22;
+import org.zenith.utility.misc.GownoRotationConfig;
+import org.zenith.utility.misc.RotationContext;
 import org.zenith.utility.misc.Vec2f;
 
-public class RawDiffFeatures extends Util22 {
+public class RawDiffFeatures extends RotationContext {
    private static final int CONST_intValue = Integer.MIN_VALUE;
    private static final float CONST_floatValue = 50.0F;
    private static final float CONST_floatValue2 = 176.0F;
@@ -73,19 +73,19 @@ public class RawDiffFeatures extends Util22 {
    private float floatValue21 = 0.0F;
    private float floatValue22 = 0.0F;
 
-   public Rotation method3699(Class6 class2, Rotation rotation) {
+   public Rotation method3699(GownoRotationConfig class2, Rotation rotation) {
       return this.method3700(class2, rotation, this.method3719());
    }
 
-   public Rotation method3700(Class6 class2, Rotation rotation, LivingEntity livingEntity) {
-      Rotation rotation2 = rotationManager.method7844();
+   public Rotation method3700(GownoRotationConfig class2, Rotation rotation, LivingEntity livingEntity) {
+      Rotation rotation2 = rotationManager.getEffectiveRotation();
       this.method3720();
       if (!jointCodebook.method2545()) {
          this.method3721();
          return rotation2;
       } else {
          mc.player.tick();
-         if (rotation == null || rotation.method3137()) {
+         if (rotation == null || rotation.isInvalid()) {
             this.method3721();
             return rotation2;
          } else if (livingEntity != null && livingEntity.isAlive()) {
@@ -135,7 +135,7 @@ public class RawDiffFeatures extends Util22 {
                               this.floatValue6 = this.floatValue4;
                               this.floatValue3 = entry22.floatValue5;
                               this.floatValue4 = entry22.floatValue6;
-                              Rotation rotation3 = rotation2.method3140(entry22.floatValue, entry22.floatValue2);
+                              Rotation rotation3 = rotation2.add(entry22.floatValue, entry22.floatValue2);
                               return new Rotation(rotation3.getFloatValue(), Mth.clamp(rotation3.getFloatValue2(), -90.0F, 90.0F));
                            } else {
                               this.entry7 = null;
@@ -326,7 +326,7 @@ public class RawDiffFeatures extends Util22 {
          Vec3 eyePosition = mc.player.getEyePosition();
          Vec3 center = boundingBox.getCenter();
          Rotation rotation2 = RotationUtils.method6912(center.subtract(eyePosition));
-         Vec2f vec2f = rotation.method3131(rotation2);
+         Vec2f vec2f = rotation.wrappedDeltaTo(rotation2);
          float floatValue = vec2f.getFloatValue();
          float y = vec2f.getFloatValue2();
          if (this.isFinite(floatValue) && this.isFinite(y)) {
@@ -347,7 +347,7 @@ public class RawDiffFeatures extends Util22 {
 
             for (Vec3 vec : vecs) {
                Rotation rotation3 = RotationUtils.method6912(vec.subtract(eyePosition));
-               Vec2f vec2f2 = rotation.method3131(rotation3);
+               Vec2f vec2f2 = rotation.wrappedDeltaTo(rotation3);
                float floatValue3 = vec2f2.getFloatValue2();
                if (this.isFinite(vec2f2.getFloatValue()) && this.isFinite(floatValue3)) {
                   float f2 = this.method3718(vec2f2.getFloatValue(), floatValue);

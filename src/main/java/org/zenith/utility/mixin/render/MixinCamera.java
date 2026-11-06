@@ -136,7 +136,7 @@ public abstract class MixinCamera {
 
    @Inject(method = {"calculateFov(F)F"}, at = {@At("RETURN")})
    private void captureWeatherFov(float f, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Float> callbackInfoReturnable) {
-      org.zenith.utility.misc.Util15.method2703(callbackInfoReturnable.getReturnValueF());
+      org.zenith.utility.misc.CameraFov.setCapturedFov(callbackInfoReturnable.getReturnValueF());
    }
 
    // ProjectionMatrixEvent overrides the aspect ratio (old GameRenderer.getProjectionMatrix hook)

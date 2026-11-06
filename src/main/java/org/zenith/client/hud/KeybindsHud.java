@@ -53,9 +53,9 @@ public class KeybindsHud extends Interface {
       }
 
       if (this.linkedHashSet.isEmpty()) {
-         this.animation2.method2808(0.0F);
+         this.animation2.animateTo(0.0F);
       } else {
-         this.animation2.method2808(this.linkedHashSet.size() == 1 && this.linkedHashSet.getFirst().animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+         this.animation2.animateTo(this.linkedHashSet.size() == 1 && this.linkedHashSet.getFirst().animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
       }
 
       float floatValue = this.floatValue;
@@ -65,11 +65,11 @@ public class KeybindsHud extends Interface {
             + this.linkedHashSet.stream().mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue()).sum()
       );
       float width = (float)this.linkedHashSet.stream().mapToDouble(KeybindsHud.Entry::method6486).max().orElse(0.0);
-      width = this.animation.method2808(Math.max(HudListLayout.method7638("n", "Keybinds"), width));
+      width = this.animation.animateTo(Math.max(HudListLayout.method7638("n", "Keybinds"), width));
       this.width = width;
       this.height = height;
       this.animation3
-         .method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.linkedHashSet.isEmpty());
+         .updateVisibility(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.linkedHashSet.isEmpty());
       customDrawContext.pushMatrix();
       float f = InterfaceModule.method6801();
       customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
@@ -120,7 +120,7 @@ public class KeybindsHud extends Interface {
       }
 
       public void method6487(CustomDrawContext customDrawContext, float floatValue, float y1, float width, int n, float f) {
-         this.animation.method2808(this.module.isEnabled() && this.module.getKeyCode() != -1 ? 1.0F : 0.0F);
+         this.animation.animateTo(this.module.isEnabled() && this.module.getKeyCode() != -1 ? 1.0F : 0.0F);
          customDrawContext.pushMatrix();
          customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
          float x = this.animation.getValue();

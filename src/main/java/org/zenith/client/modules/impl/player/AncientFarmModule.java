@@ -62,7 +62,7 @@ import org.zenith.StopWatch;
 import org.zenith.Zenith;
 import org.zenith.base.Module;
 import org.zenith.base.rotation.RotationUtils;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.events.WorldRenderEvent;
@@ -70,7 +70,7 @@ import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.misc.RotationRequest;
-import org.zenith.utility.misc.Util10;
+import org.zenith.utility.misc.ItemStackTags;
 import org.zenith.utility.network.UseItemUtils;
 import org.zenith.utility.render.GlowUtil;
 
@@ -114,7 +114,7 @@ public final class AncientFarmModule extends Module {
    private final SliderSetting tolerance = new SliderSetting("module.ancientFarm.tolerance", 12.0F, 3.0F, 40.0F, 1.0F, "module.ancientFarm.tolerance.desc", "°");
    private final BooleanSetting render = new BooleanSetting("module.ancientFarm.render", "module.ancientFarm.render.desc", true);
    private final BooleanSetting debug = new BooleanSetting("module.ancientFarm.debug", "module.ancientFarm.debug.desc", false, Zenith::method1502);
-   private static final Predicate<ItemStack> predicate = mainHandItem -> Util10.method2177(mainHandItem) && method4258(mainHandItem) > 0.05;
+   private static final Predicate<ItemStack> predicate = mainHandItem -> ItemStackTags.isPickaxe(mainHandItem) && method4258(mainHandItem) > 0.05;
    private final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
       Thread thread = new Thread(task, "Zenith-AncientFarm");
       thread.setDaemon(true);
@@ -205,14 +205,14 @@ public final class AncientFarmModule extends Module {
    }
 
    @EventTarget
-   public void method4220(Event5 event) {
+   public void method4220(PreRotationEvent event) {
       if (mc.player != null && mc.level != null) {
          Vec3 vec3d = this.vec3d != null ? this.vec3d : this.vec3d2;
          if (vec3d != null) {
             Rotation rotation = RotationUtils.method6912(vec3d.subtract(mc.player.getEyePosition()));
             float f = this.method4221();
             Rotation rotation2 = new Rotation(rotation.getFloatValue() + f / 2.0F, Mth.clamp(rotation.getFloatValue2() + f / 4.0F, -90.0F, 90.0F));
-            rotationManager.method7849(
+            rotationManager.requestRotation(
                new RotationRequest(rotation2, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig3(), rotation2), bcCameraTestnerv.getRotationConfig3()),
                7,
                this
@@ -235,7 +235,7 @@ public final class AncientFarmModule extends Module {
 
    private boolean method4222(Vec3 vec3d2) {
       Rotation rotation = RotationUtils.method6912(vec3d2.subtract(mc.player.getEyePosition()));
-      return rotationManager.method7844().method3134(rotation, this.tolerance.getValue3());
+      return rotationManager.getEffectiveRotation().isWithinAngle(rotation, this.tolerance.getValue3());
    }
 
    @EventTarget
@@ -592,8 +592,8 @@ public final class AncientFarmModule extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
-         if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+      if (event.isIncoming()) {
+         if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
             blocksUpdatePacket.runUpdates((var1x, var2x) -> {
                if (var2x.is(Blocks.ANCIENT_DEBRIS)) {
                   this.concurrentLinkedQueue.add(var1x.immutable());
@@ -602,7 +602,7 @@ public final class AncientFarmModule extends Module {
                }
             });
          } else {
-            if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+            if (event.getPacket() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
                if (blockUpdatePacket.getBlockState().is(Blocks.ANCIENT_DEBRIS)) {
                   this.concurrentLinkedQueue.add(blockUpdatePacket.getPos().immutable());
                } else {

@@ -5,9 +5,9 @@ import java.util.List;
 public interface FriendCatalog {
    List<String> friends();
 
-   boolean isFriend(String str);
+   boolean isFriend(String playerName);
 
-   boolean add(String str);
+   boolean add(String playerName);
 
-   boolean remove(String str);
+   boolean remove(String playerName);
 }

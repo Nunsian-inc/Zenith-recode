@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.zenith.utility.misc.OptimizationFlags;
-import org.zenith.utility.misc.Util29;
+import org.zenith.utility.misc.EntityExtractionState;
 
 @Mixin({AvatarRenderer.class})
 public class MixinOptPlayerEntityRenderer {
@@ -19,7 +19,7 @@ public class MixinOptPlayerEntityRenderer {
       at = {@At("TAIL")}
    )
    private void zenith$farSkinLayers(Avatar avatar, AvatarRenderState avatarRenderState, float f, CallbackInfo callbackInfo) {
-      if (OptimizationFlags.flag12 && Util29.flag && !(avatarRenderState.distanceToCameraSq <= OptimizationFlags.doubleValue3)) {
+      if (OptimizationFlags.flag12 && EntityExtractionState.flag && !(avatarRenderState.distanceToCameraSq <= OptimizationFlags.doubleValue3)) {
          if (avatar != Minecraft.getInstance().player) {
             avatarRenderState.showHat = false;
             avatarRenderState.showJacket = false;

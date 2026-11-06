@@ -2,7 +2,7 @@ package org.zenith.client.screens.nlgui.elements.api;
 
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
 public abstract class InterfaceElement extends Element {
@@ -15,12 +15,12 @@ public abstract class InterfaceElement extends Element {
    public void render(MenuDrawContext menuDrawContext, float f, float f2, float f3, float f4, float f5, int n) {
    }
 
-   public boolean onMousePriorityClicked(double d, double d2, Enum3 enum2) {
+   public boolean onMousePriorityClicked(double d, double d2, MouseButton enum2) {
       return false;
    }
 
    @Override
-   public boolean onMouseClicked(double d, double d2, Enum3 enum2) {
+   public boolean onMouseClicked(double d, double d2, MouseButton enum2) {
       return false;
    }
 
@@ -29,7 +29,7 @@ public abstract class InterfaceElement extends Element {
    }
 
    @Override
-   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+   public void onMouseReleased(double d, double d2, MouseButton enum2) {
       super.onMouseReleased(d, d2, enum2);
    }
 

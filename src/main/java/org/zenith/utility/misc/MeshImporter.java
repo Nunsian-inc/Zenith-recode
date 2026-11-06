@@ -9,7 +9,7 @@ public final class MeshImporter {
    private MeshImporter() {
    }
 
-   public static MeshImporter.Entry method658(Class32 class2, FloatArrayBuffer floatArrayBuffer, int n, int n2, int n3, int n4, int n5, int n6) {
+   public static MeshImporter.Entry method658(SparseVoxelGrid class2, FloatArrayBuffer floatArrayBuffer, int n, int n2, int n3, int n4, int n5, int n6) {
       MeshImporter.Entry entry = new MeshImporter.Entry();
       floatArrayBuffer.clear();
       if (n4 > 1 && n5 > 1 && n6 > 1) {
@@ -30,7 +30,7 @@ public final class MeshImporter {
                   int n7 = 0;
 
                   for (int m = 0; m < 8; m++) {
-                     floats7[m] = class2.method4903(
+                     floats7[m] = class2.getDensity(
                         n + k + CONST_intValues[m][0], n2 + j + CONST_intValues[m][1], n3 + i + CONST_intValues[m][2]
                      );
                      if (floats7[m] >= 0.0F) {
@@ -100,9 +100,9 @@ public final class MeshImporter {
          for (int i = 1; i < n6 - 1; i++) {
             for (int j = 1; j < n5 - 1; j++) {
                for (int k = 1; k < n4 - 1; k++) {
-                  float f = class2.method4903(n + k, n2 + j, n3 + i);
+                  float f = class2.getDensity(n + k, n2 + j, n3 + i);
                   boolean flag = f >= 0.0F;
-                  if (flag != class2.method4903(n + k + 1, n2 + j, n3 + i) >= 0.0F) {
+                  if (flag != class2.getDensity(n + k + 1, n2 + j, n3 + i) >= 0.0F) {
                      method659(
                         floatArrayBuffer,
                         ints,
@@ -133,7 +133,7 @@ public final class MeshImporter {
                      );
                   }
 
-                  if (flag != class2.method4903(n + k, n2 + j + 1, n3 + i) >= 0.0F) {
+                  if (flag != class2.getDensity(n + k, n2 + j + 1, n3 + i) >= 0.0F) {
                      method659(
                         floatArrayBuffer,
                         ints,
@@ -164,7 +164,7 @@ public final class MeshImporter {
                      );
                   }
 
-                  if (flag != class2.method4903(n + k, n2 + j, n3 + i + 1) >= 0.0F) {
+                  if (flag != class2.getDensity(n + k, n2 + j, n3 + i + 1) >= 0.0F) {
                      method659(
                         floatArrayBuffer,
                         ints,

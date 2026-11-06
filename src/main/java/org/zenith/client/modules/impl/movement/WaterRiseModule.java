@@ -6,7 +6,7 @@ import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.Rotation;
 import org.zenith.base.Module;
-import org.zenith.client.events.Event5;
+import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.utility.misc.RotationRequest;
 
@@ -18,7 +18,7 @@ import org.zenith.utility.misc.RotationRequest;
 public final class WaterRiseModule extends Module {
    public static final WaterRiseModule INSTANCE = new WaterRiseModule();
    public static final float CONST_floatValue = 1.0E-4F;
-   private int intValue = -1073741824;
+   private int lastSprintAttemptTick = -1073741824;
 
    private WaterRiseModule() {
    }
@@ -28,12 +28,12 @@ public final class WaterRiseModule extends Module {
          return false;
       } else {
          return mc.player.isInWater() && !mc.player.isPassenger() && !mc.player.isFallFlying() && !mc.player.getAbilities().flying
-            ? mc.options.keyJump.isDown() || this.method1741()
+            ? mc.options.keyJump.isDown() || this.isDescending()
             : false;
       }
    }
 
-   private boolean method1741() {
+   private boolean isDescending() {
       return mc.options.keyShift.isDown() && !mc.options.keyJump.isDown();
    }
 
@@ -61,10 +61,10 @@ public final class WaterRiseModule extends Module {
    }
 
    public float method1744() {
-      if (mc.player == null || mc.player.isSprinting() || !this.canStartSprinting() || mc.player.tickCount - this.intValue < 10 && mc.player.tickCount >= this.intValue) {
+      if (mc.player == null || mc.player.isSprinting() || !this.canStartSprinting() || mc.player.tickCount - this.lastSprintAttemptTick < 10 && mc.player.tickCount >= this.lastSprintAttemptTick) {
          return 1.0E-4F;
       } else {
-         this.intValue = mc.player.tickCount;
+         this.lastSprintAttemptTick = mc.player.tickCount;
          mc.player.setSprinting(true);
          return 1.0F;
       }
@@ -78,11 +78,11 @@ public final class WaterRiseModule extends Module {
    }
 
    @EventTarget
-   public void method1745(Event5 event) {
+   public void onWaterRiseRotation(PreRotationEvent event) {
       if (this.active()) {
-         float xRot = this.method1741() ? -90.0F : 90.0F;
-         Rotation rotation = new Rotation(mc.player.getYRot(), xRot);
-         rotationManager.method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 0, this);
+         float verticalPitch = this.isDescending() ? -90.0F : 90.0F;
+         Rotation rotation = new Rotation(mc.player.getYRot(), verticalPitch);
+         rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 0, this);
       }
    }
 }

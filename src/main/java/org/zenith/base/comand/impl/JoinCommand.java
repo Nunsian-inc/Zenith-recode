@@ -84,7 +84,7 @@ public class JoinCommand extends CommandAbstract {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (this.active && event.method7100() && event.getPacket3() instanceof ClientboundLoginPacket) {
+      if (this.active && event.isIncoming() && event.getPacket() instanceof ClientboundLoginPacket) {
          mc.execute(() -> {
             if (this.active) {
                if (this.targetClicked) {

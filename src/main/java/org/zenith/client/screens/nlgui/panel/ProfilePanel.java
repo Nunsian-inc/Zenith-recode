@@ -21,7 +21,7 @@ import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ButtonSetting;
 import org.zenith.utility.api.Manager;
 import org.zenith.utility.api.RegionUtil;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.RenderShaders;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
@@ -54,7 +54,7 @@ public class ProfilePanel extends Panel {
 
    @Override
    public void render(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float floatValue, float f) {
-      this.animationVisible.method2807(this.expanded);
+      this.animationVisible.updateVisibility(this.expanded);
       this.animationVisible.setDuration(200L);
       previewAlpha *= this.animationVisible.getValue();
       float panelWidth = 128.0F;
@@ -220,8 +220,8 @@ public class ProfilePanel extends Panel {
       this.languageRightBounds = new BoundsData(floatValue3 - f4, f2 - f4, width2 + f4 * 2.0F, height2 + f4 * 2.0F);
       boolean contains = this.languageLeftBounds.contains(x, y);
       boolean flag = this.languageRightBounds.contains(x, y);
-      this.languageLeftHoverAnimation.method2808(contains ? 1.0F : 0.0F);
-      this.languageRightHoverAnimation.method2808(flag ? 1.0F : 0.0F);
+      this.languageLeftHoverAnimation.animateTo(contains ? 1.0F : 0.0F);
+      this.languageRightHoverAnimation.animateTo(flag ? 1.0F : 0.0F);
       String languageName = Zenith.getInstance().getLocalization().getLanguageName();
       this.syncDisplayedLanguage(languageName);
       menuDrawContext.drawText(font, "Language", floatValue2, centeredTextY3, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
@@ -310,7 +310,7 @@ public class ProfilePanel extends Panel {
          this.languageSwitchDirection = flag ? 1 : -1;
          this.languageSwitchActive = true;
          this.languageSwitchAnimation.reset(0.0F);
-         this.languageSwitchAnimation.method2810(1.0F);
+         this.languageSwitchAnimation.setTarget(1.0F);
       }
    }
 
@@ -340,8 +340,8 @@ public class ProfilePanel extends Panel {
    }
 
    @Override
-   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
-      if (enum2.getIntValue() != 0 || !this.expanded) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, MouseButton enum2) {
+      if (enum2.getGlfwButton() != 0 || !this.expanded) {
          return false;
       } else if (this.steamMode.onMouseClicked(anchorMouseX, lastClickY, enum2)) {
          return true;

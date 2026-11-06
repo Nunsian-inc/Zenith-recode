@@ -31,8 +31,8 @@ import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.PartyMember;
 import org.zenith.utility.api.Wardrobe;
 import org.zenith.utility.game.FocusSlotEnum;
-import org.zenith.utility.misc.Class15;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.WardrobeModel;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.Rarity;
 import org.zenith.utility.misc.SearchBox;
@@ -599,7 +599,7 @@ public class WardrobeSectionPanel extends ToolTab {
 
    private float hotValue(String key, float floatValue) {
       Animation animation = this.slides.computeIfAbsent(key, var1x -> new Animation(140L, floatValue, Easing.INSTANCE12));
-      return animation.method2808(floatValue);
+      return animation.animateTo(floatValue);
    }
 
    private static String format(SliderSetting particleBudget) {
@@ -954,7 +954,7 @@ public class WardrobeSectionPanel extends ToolTab {
       float floatValue2 = floatValue + width / 2.0F;
       float f4 = y + f3 / 2.0F + 2.0F;
       float f5 = (Math.min(width, f3) - 10.0F) * (1.0F + f * 0.08F);
-      Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+      WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData);
       boolean flag3 = this.isFullyVisible()
          && this.thumbnails.method7855(hoveredData, class2, floatValue2, f4, f5, floatValue + 1.0F, y + 1.0F, floatValue + width - 1.0F, y + f3, f);
       if (!flag3) {
@@ -1022,7 +1022,7 @@ public class WardrobeSectionPanel extends ToolTab {
          lift.put(text, animation);
       }
 
-      float f = animation.method2808(flag ? 1.0F : 0.0F);
+      float f = animation.animateTo(flag ? 1.0F : 0.0F);
       if (f < 0.004F && !flag) {
          lift.remove(text);
          return 0.0F;
@@ -1244,7 +1244,7 @@ public class WardrobeSectionPanel extends ToolTab {
    }
 
    private static void renderPet(Wardrobe wardrobe, HoveredData hoveredData, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue) {
-      Class15 key = wardrobe.getRegistry().method1427(hoveredData);
+      WardrobeModel key = wardrobe.getRegistry().method1427(hoveredData);
       if (key != null && key.data3 != null) {
          float xScale = key.data3.getFloatValue() * wardrobe.petScale.getValue3();
          matrixStack.rotate(new Quaternionf().rotationY((float) Math.PI));
@@ -1305,7 +1305,7 @@ public class WardrobeSectionPanel extends ToolTab {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       if (this.subBounds != null && this.shownSubs != null && this.subBounds.contains(lastClickX, lastClickY)) {
          int hovered = this.shownSubs.hovered();
          int activeTab = this.getActiveTab();
@@ -1332,7 +1332,7 @@ public class WardrobeSectionPanel extends ToolTab {
             return true;
          }
 
-         if (enum2 == Enum3.LEFT && this.presetSave != null && this.presetSave.contains(lastClickX, lastClickY)) {
+         if (enum2 == MouseButton.LEFT && this.presetSave != null && this.presetSave.contains(lastClickX, lastClickY)) {
             this.pressButton("presetSave", lastClickX, lastClickY);
             this.savePreset();
             Zenith.getInstance().getClientSounds().method1570(false);
@@ -1368,7 +1368,7 @@ public class WardrobeSectionPanel extends ToolTab {
          }
       }
 
-      if (this.getActiveTab() == 7 && enum2 == Enum3.LEFT) {
+      if (this.getActiveTab() == 7 && enum2 == MouseButton.LEFT) {
          for (Map.Entry entry : this.sliderTracks.entrySet()) {
             if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
                this.draggingSlider = (SliderSetting)entry.getKey();
@@ -1387,12 +1387,12 @@ public class WardrobeSectionPanel extends ToolTab {
          this.stageDrag = true;
          return true;
       } else {
-         return this.preview != null && this.preview.onMouseClicked(lastClickX, lastClickY, enum2.getIntValue()) ? true : super.onMouseClicked(lastClickX, lastClickY, enum2);
+         return this.preview != null && this.preview.onMouseClicked(lastClickX, lastClickY, enum2.getGlfwButton()) ? true : super.onMouseClicked(lastClickX, lastClickY, enum2);
       }
    }
 
    @Override
-   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+   public boolean onMouseReleased(double x, double y, MouseButton enum2) {
       this.stageDrag = false;
       if (this.draggingSlider != null) {
          this.draggingSlider = null;
@@ -1400,7 +1400,7 @@ public class WardrobeSectionPanel extends ToolTab {
       }
 
       if (this.preview != null) {
-         this.preview.onMouseReleased(x, y, enum2.getIntValue());
+         this.preview.onMouseReleased(x, y, enum2.getGlfwButton());
       }
 
       return super.onMouseReleased(x, y, enum2);

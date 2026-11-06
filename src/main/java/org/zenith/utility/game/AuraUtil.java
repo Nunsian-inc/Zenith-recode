@@ -24,100 +24,100 @@ public final class AuraUtil implements ZenithAccess {
    private static LivingEntity livingEntity;
 
    public static LivingEntity method7442(
-      Iterable<Entity> entitiesForRendering, float f, boolean enabled, List<String> items, List<String> strings, Predicate<LivingEntity> predicate, boolean flag
+      Iterable<Entity> entities, float range, boolean ignoreWalls, List<String> targetTypes, List<String> sortModes, Predicate<LivingEntity> targetFilter, boolean keepCurrentTarget
    ) {
-      if (flag && livingEntity != null && method7445(items, livingEntity, f, enabled, predicate)) {
+      if (keepCurrentTarget && livingEntity != null && method7445(targetTypes, livingEntity, range, ignoreWalls, targetFilter)) {
          return livingEntity;
       } else {
-         ArrayList arrayList = new ArrayList();
+         ArrayList<LivingEntity> candidates = new ArrayList<>();
 
-         for (Entity entity : entitiesForRendering) {
-            if (entity instanceof LivingEntity livingEntity2 && method7445(items, entity, f, enabled, predicate)) {
-               arrayList.add(livingEntity2);
+         for (Entity entity : entities) {
+            if (entity instanceof LivingEntity candidate && method7445(targetTypes, entity, range, ignoreWalls, targetFilter)) {
+               candidates.add(candidate);
             }
          }
 
-         arrayList.sort(method7443(Comparator.comparing(var0x -> true), strings));
-         livingEntity = arrayList.isEmpty() ? null : (LivingEntity)arrayList.getFirst();
+         candidates.sort(method7443(Comparator.comparing(ignoredTarget -> true), sortModes));
+         livingEntity = candidates.isEmpty() ? null : candidates.getFirst();
          return livingEntity;
       }
    }
 
-   public static Comparator<LivingEntity> method7443(Comparator<LivingEntity> comparing, List<String> strings) {
-      comparing = comparing.thenComparing((var0x, var1x) -> Boolean.compare(!(var0x instanceof Player), !(var1x instanceof Player)));
-      if (strings.contains("module.aura.targetFov")) {
-         comparing = comparing.thenComparingDouble(AuraUtil::method7444);
+   public static Comparator<LivingEntity> method7443(Comparator<LivingEntity> comparator, List<String> sortModes) {
+      comparator = comparator.thenComparing((first, second) -> Boolean.compare(!(first instanceof Player), !(second instanceof Player)));
+      if (sortModes.contains("module.aura.targetFov")) {
+         comparator = comparator.thenComparingDouble(AuraUtil::rotationDistanceToTarget);
       }
 
-      if (strings.contains("module.aura.targetArmor")) {
-         comparing = comparing.thenComparing(Comparator.comparingDouble(UseItemUtils::method6529).reversed());
+      if (sortModes.contains("module.aura.targetArmor")) {
+         comparator = comparator.thenComparing(Comparator.comparingDouble(UseItemUtils::method6529).reversed());
       }
 
-      if (strings.contains("module.aura.targetHp")) {
-         comparing = comparing.thenComparingDouble(UseItemUtils::method6527);
+      if (sortModes.contains("module.aura.targetHp")) {
+         comparator = comparator.thenComparingDouble(UseItemUtils::method6527);
       }
 
-      if (strings.contains("module.aura.targetDistance")) {
-         comparing = comparing.thenComparingDouble(mc.player::distanceToSqr);
+      if (sortModes.contains("module.aura.targetDistance")) {
+         comparator = comparator.thenComparingDouble(mc.player::distanceToSqr);
       }
 
-      return comparing;
+      return comparator;
    }
 
-   private static double method7444(LivingEntity livingEntity) {
+   private static double rotationDistanceToTarget(LivingEntity target) {
       if (mc.player == null) {
          return Double.MAX_VALUE;
       } else {
-         Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
+         Rotation playerRotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
          Vec3 eyePosition = mc.player.getEyePosition();
-         Rotation rotation2 = Rotation.method3128(livingEntity.getBoundingBox().getCenter(), eyePosition);
-         return rotation.method3130(rotation2);
+         Rotation targetRotation = Rotation.lookingAt(target.getBoundingBox().getCenter(), eyePosition);
+         return playerRotation.angularDistanceTo(targetRotation);
       }
    }
 
-   public static boolean method7445(List<String> items, Entity livingEntity, float f, boolean enabled, Predicate<LivingEntity> predicate) {
-      return livingEntity instanceof LivingEntity livingEntity2 && method7447(items, livingEntity2) && predicate.test((LivingEntity)livingEntity) ? auraRandomizer.method4676(livingEntity2, f, enabled) : false;
+   public static boolean method7445(List<String> targetTypes, Entity entity, float range, boolean ignoreWalls, Predicate<LivingEntity> targetFilter) {
+      return entity instanceof LivingEntity target && method7447(targetTypes, target) && targetFilter.test(target) ? auraRandomizer.method4676(target, range, ignoreWalls) : false;
    }
 
-   public static LivingEntity method7446(Iterable<Entity> entitiesForRendering, float f, boolean enabled, List<String> items, List<String> strings, boolean flag) {
-      return method7442(entitiesForRendering, f, enabled, items, strings, var0x -> true, flag);
+   public static LivingEntity method7446(Iterable<Entity> entities, float range, boolean ignoreWalls, List<String> targetTypes, List<String> sortModes, boolean keepCurrentTarget) {
+      return method7442(entities, range, ignoreWalls, targetTypes, sortModes, ignoredTarget -> true, keepCurrentTarget);
    }
 
-   public static boolean method7447(List<String> items, LivingEntity livingEntity) {
-      if (method7448(livingEntity)) {
+   public static boolean method7447(List<String> targetTypes, LivingEntity target) {
+      if (isLocalPlayer(target)) {
          return false;
-      } else if (method7449(livingEntity)) {
+      } else if (isDead(target)) {
          return false;
       } else {
-         return method7450(livingEntity) ? false : method7451(items, livingEntity);
+         return isBot(target) ? false : matchesTargetTypes(targetTypes, target);
       }
    }
 
-   private static boolean method7448(LivingEntity livingEntity) {
-      return livingEntity == mc.player;
+   private static boolean isLocalPlayer(LivingEntity target) {
+      return target == mc.player;
    }
 
-   private static boolean method7449(LivingEntity livingEntity) {
-      return !livingEntity.isAlive() || livingEntity.getHealth() <= 0.0F;
+   private static boolean isDead(LivingEntity target) {
+      return !target.isAlive() || target.getHealth() <= 0.0F;
    }
 
-   private static boolean method7450(LivingEntity livingEntity) {
-      return livingEntity instanceof Player player && AntiBotModule.INSTANCE.method2785(player);
+   private static boolean isBot(LivingEntity target) {
+      return target instanceof Player player && AntiBotModule.INSTANCE.method2785(player);
    }
 
-   private static boolean method7451(List<String> items, LivingEntity livingEntity) {
-      if (livingEntity instanceof Player player) {
+   private static boolean matchesTargetTypes(List<String> targetTypes, LivingEntity target) {
+      if (target instanceof Player player) {
          if (PetManager.method4557(player.getId())) {
             return false;
          } else if (Zenith.getInstance().getFriends().method7627(player.getGameProfile().name())) {
             return false;
          } else {
-            return UseItemUtils.method6529(player) == 0.0F ? items.contains("module.aura.noarmor") : items.contains("module.aura.targetPlayers");
+            return UseItemUtils.method6529(player) == 0.0F ? targetTypes.contains("module.aura.noarmor") : targetTypes.contains("module.aura.targetPlayers");
          }
-      } else if (livingEntity instanceof Mob) {
-         return items.contains("module.aura.targetHostile");
+      } else if (target instanceof Mob) {
+         return targetTypes.contains("module.aura.targetHostile");
       } else {
-         return livingEntity instanceof Animal ? items.contains("module.aura.targetPeaceful") : !(livingEntity instanceof ArmorStand);
+         return target instanceof Animal ? targetTypes.contains("module.aura.targetPeaceful") : !(target instanceof ArmorStand);
       }
    }
 

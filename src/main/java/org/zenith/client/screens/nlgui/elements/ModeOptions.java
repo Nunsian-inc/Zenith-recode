@@ -16,7 +16,7 @@ import org.zenith.base.font.Fonts;
 import org.zenith.client.screens.nlgui.HoverInfo;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.client.settings.ModeSetting;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 import org.zenith.utility.render.display.base.ProxyDotRadiusData;
@@ -126,7 +126,7 @@ public final class ModeOptions {
 
          for (int i = 0; i < this.layout.size(); i++) {
             ModeOptions.Option option = this.layout.get(i);
-            option.selection.method2808(option.value.isSelected() ? 1.0F : 0.0F);
+            option.selection.animateTo(option.value.isSelected() ? 1.0F : 0.0F);
             if (option.value.isSelected()) {
                n = i;
             }
@@ -162,7 +162,7 @@ public final class ModeOptions {
                }
 
                boolean contains = mouseInsideClip && option.bounds != null && option.bounds.contains(lastClickX, lastClickY);
-               float f5 = option.hover.method2808(contains ? 1.0F : 0.0F);
+               float f5 = option.hover.animateTo(contains ? 1.0F : 0.0F);
                float f6 = option.selection.getValue();
                float f7 = f5 * (1.0F - f6);
                if (f7 > 0.01F) {
@@ -223,8 +223,8 @@ public final class ModeOptions {
       }
    }
 
-   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
-      if (this.setting.isVisible() && enum2 == Enum3.LEFT) {
+   public boolean onMouseClicked(double x, double y, MouseButton enum2) {
+      if (this.setting.isVisible() && enum2 == MouseButton.LEFT) {
          for (ModeSetting.Entry entry : this.setting.getValues()) {
             ModeOptions.Option option = this.options.get(entry);
             if (option != null && option.bounds != null && option.bounds.contains(x, y)) {

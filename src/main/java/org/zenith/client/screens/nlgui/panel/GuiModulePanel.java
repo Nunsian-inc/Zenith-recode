@@ -32,7 +32,7 @@ import org.zenith.client.screens.nlgui.elements.Scrollbar;
 import org.zenith.client.screens.nlgui.panel.api.ElementPanel;
 import org.zenith.client.screens.nlgui.style.GuiStyle;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
-import org.zenith.utility.misc.Enum3;
+import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
@@ -142,7 +142,7 @@ public class GuiModulePanel extends ElementPanel {
       float orderedContentHeight = this.orderedContentHeight(orderedElements);
       this.clampScroll(orderedContentHeight, height);
       this.scroll = this.scrollbar.isDragging() ? this.scrollTarget : this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-      float f2 = this.animationChangeCategory.method2808(1.0F);
+      float f2 = this.animationChangeCategory.animateTo(1.0F);
       if (this.animationChangeCategory.isDone()) {
          this.lastCategory = null;
       }
@@ -173,10 +173,10 @@ public class GuiModulePanel extends ElementPanel {
 
    private void renderScrollbar(MenuDrawContext menuDrawContext, float floatValue, float y, float height, float shownContentHeight, float f) {
       boolean flag = shownContentHeight > height;
-      float f2 = this.scrollbarPresence.method2808(flag ? 1.0F : 0.0F);
+      float f2 = this.scrollbarPresence.animateTo(flag ? 1.0F : 0.0F);
       if (flag) {
          if (!Float.isNaN(this.shownContentHeight) && !(f2 <= 0.001F)) {
-            this.shownContentHeight = this.scrollbarHeight.method2808(shownContentHeight);
+            this.shownContentHeight = this.scrollbarHeight.animateTo(shownContentHeight);
          } else {
             this.shownContentHeight = shownContentHeight;
             this.scrollbarHeight.reset(shownContentHeight);
@@ -408,7 +408,7 @@ public class GuiModulePanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, MouseButton enum2) {
       float f = this.scrollbar.onMouseClicked(lastClickX, lastClickY);
       if (this.scrollbar.isDragging()) {
          this.scrollTarget = Float.isNaN(f) ? this.scroll : f;
@@ -436,7 +436,7 @@ public class GuiModulePanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseReleased(double d, double d2, Enum3 enum2) {
+   public boolean onMouseReleased(double d, double d2, MouseButton enum2) {
       this.scrollbar.release();
       return false;
    }
@@ -617,14 +617,14 @@ public class GuiModulePanel extends ElementPanel {
                this.lastCategory = this.currentCategory;
                this.categoryDirection = -this.categoryDirection;
                this.animationChangeCategory.reset(1.0F - f);
-               this.animationChangeCategory.method2810(1.0F);
+               this.animationChangeCategory.setTarget(1.0F);
             } else if (flag && f < 0.2F) {
                this.categoryDirection = currentCategory.ordinal() >= this.lastCategory.ordinal() ? 1 : -1;
             } else {
                this.lastCategory = this.currentCategory;
                this.categoryDirection = currentCategory.ordinal() >= this.currentCategory.ordinal() ? 1 : -1;
                this.animationChangeCategory.reset(0.0F);
-               this.animationChangeCategory.method2810(1.0F);
+               this.animationChangeCategory.setTarget(1.0F);
             }
 
             this.scrollTarget = 0.0F;

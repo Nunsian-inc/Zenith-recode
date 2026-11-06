@@ -52,7 +52,7 @@ public final class WeekBlock {
 
    public void opened(Cloud cloud) {
       this.fill.reset(0.0F);
-      this.fill.method2810(1.0F);
+      this.fill.setTarget(1.0F);
       if (cloud != null && cloud.method7860()) {
          this.request(cloud);
       }
@@ -74,7 +74,7 @@ public final class WeekBlock {
                this.week = var2x;
                this.request(cloud);
                this.fill.reset(0.0F);
-               this.fill.method2810(1.0F);
+               this.fill.setTarget(1.0F);
             });
             PartyMember.Data5 data5 = data14.method1219();
             PartyMember.Data9 data9 = data5 == null ? PartyMember.Data9.INSTANCE : data5.method1213();
@@ -222,7 +222,7 @@ public final class WeekBlock {
             (menuDrawContext, n2, n3, f2, f3, f4, previewAlpha, zenithStyle) -> {
                float floatValue = f2 + 8.0F;
                float width = f4 - 16.0F;
-               float f5 = this.fill.method2808(1.0F) * Mth.clamp(f, 0.0F, 1.0F);
+               float f5 = this.fill.animateTo(1.0F) * Mth.clamp(f, 0.0F, 1.0F);
                boolean flag = data5.isFlag();
                menuDrawContext.drawRoundedRect(
                   floatValue,
@@ -373,7 +373,7 @@ public final class WeekBlock {
    }
 
    private float hover(String key, boolean contains) {
-      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).animateTo(contains ? 1.0F : 0.0F);
    }
 
    private static String serverName(String key) {

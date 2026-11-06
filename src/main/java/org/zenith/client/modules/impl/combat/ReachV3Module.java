@@ -212,13 +212,13 @@ public final class ReachV3Module extends Module {
 
    @EventTarget
    public void onPacket(PacketEvent event) {
-      if (event.method7100()) {
+      if (event.isIncoming()) {
          if (this.stopWatch == null) {
             this.stopWatch = new StopWatch();
          }
 
          try {
-            Packet packet3 = event.getPacket3();
+            Packet packet3 = event.getPacket();
             if (packet3 instanceof ClientboundDisconnectPacket || packet3 instanceof ClientboundPlayerPositionPacket) {
                this.stopWatch2.reset();
                this.stopWatch3.reset();

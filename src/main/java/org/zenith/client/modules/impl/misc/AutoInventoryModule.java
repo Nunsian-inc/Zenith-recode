@@ -878,8 +878,8 @@ public class AutoInventoryModule extends Module {
 
    @EventTarget
    public void method193(PacketEvent event) {
-      if (event.method7100() && this.entry2 != null && this.method210()) {
-         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+      if (event.isIncoming() && this.entry2 != null && this.method210()) {
+         if (event.getPacket() instanceof ClientboundSystemChatPacket systemChatPacket) {
             String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
             if (lowerCase.contains("этот товар уже купили")) {
                this.flag = true;
@@ -890,7 +890,7 @@ public class AutoInventoryModule extends Module {
             }
          }
 
-         if (event.getPacket3() instanceof ClientboundOpenScreenPacket && !(mc.gui.screen() instanceof ContainerScreen)) {
+         if (event.getPacket() instanceof ClientboundOpenScreenPacket && !(mc.gui.screen() instanceof ContainerScreen)) {
             if (this.intValue7 >= 8) {
                this.flag4 = true;
             }

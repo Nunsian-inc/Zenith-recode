@@ -34,22 +34,22 @@ public final class NoRenderModule extends Module {
    );
 
    private NoRenderModule() {
-      ModuleHookDefinitions.class125.method1646(0, entry -> {
+      ModuleHookDefinitions.class125.subscribe(0, entry -> {
          if (this.method4529()) {
             entry.cancelled = true;
          }
       });
-      ModuleHookDefinitions.class126.method1646(0, entry -> {
+      ModuleHookDefinitions.class126.subscribe(0, entry -> {
          if (this.method4527()) {
             entry.cancelled = true;
          }
       });
-      ModuleHookDefinitions.class127.method1646(0, entry6 -> {
+      ModuleHookDefinitions.class127.subscribe(0, entry6 -> {
          if (this.method4531()) {
             entry6.value = 0.0;
          }
       });
-      ModuleHookDefinitions.class128.method1646(0, entry3 -> {
+      ModuleHookDefinitions.class128.subscribe(0, entry3 -> {
          if (this.method4530() || "darkness".equals(entry3.text) && this.method4531()) {
             entry3.cancelled = true;
          }
