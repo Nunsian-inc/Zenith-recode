@@ -10,6 +10,10 @@ import java.util.stream.Stream;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.model.geom.builders.UVPair;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.zenith.Animation;
@@ -42,7 +46,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
    private BoundsData searchBounds;
    private BoundsData sortBounds;
    private BoundsData listScissorBounds;
-   private final Map<Block, BoundsData> itemBounds = new HashMap<>();
+   private final Map<Object, BoundsData> itemBounds = new HashMap<>();
    private boolean expanded;
 
    public GuiItemSelectSetting(BlockListSetting setting) {
@@ -247,10 +251,11 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
                this.sortBounds.getFloatValue2() + (width2 - font4.height()) / 2.0F,
                currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
-            List<Block> filteredAndSortedBlocks = this.getFilteredAndSortedBlocks();
+
+            List<Object> filtered = this.getFilteredAndSortedEntries();
             float height4 = 13.0F;
             float f7 = 13.0F + GuiStyle.PADDING.intValue();
-            float f8 = filteredAndSortedBlocks.size() * f7;
+            float f8 = filtered.size() * f7;
             this.scrollHandler.setDoubleValue(Math.max(0.0F, f8 - f5));
             this.scrollHandler.update();
             float y5 = y4 + height2 + f6;
@@ -268,7 +273,7 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
             ZenithColor zenithColor5 = currentStyle.getPrimaryColor().getZenithColor().method7294(0.25F * previewAlpha);
             ZenithColor zenithColor6 = currentStyle.getFieldBorder().method1447(previewAlpha);
 
-            for (Block filteredAndSortedBlock : filteredAndSortedBlocks) {
+            for (Object entryObj : filtered) {
                if (f9 + n * f7 < y5 - f7) {
                   n++;
                } else {
@@ -277,9 +282,9 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
                      break;
                   }
 
-                  boolean flag = this.setting.method1621(filteredAndSortedBlock);
+                  boolean flag = this.isSelected(entryObj);
                   BoundsData boundsData = new BoundsData(floatValue3, y6, width4, height4);
-                  this.itemBounds.put(filteredAndSortedBlock, boundsData);
+                  this.itemBounds.put(entryObj, boundsData);
                   menuDrawContext.drawRoundedRect(
                      boundsData.getFloatValue(),
                      boundsData.getFloatValue2(),
@@ -300,13 +305,9 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
                   menuDrawContext.pose().pushMatrix();
                   menuDrawContext.pose().translate(floatValue3 + 4.0F, y6 + (height4 - f10) / 2.0F);
                   menuDrawContext.pose().scale(x2, x2);
-                  menuDrawContext.item(filteredAndSortedBlock.asItem().getDefaultInstance(), 0, 0);
+                  menuDrawContext.item(this.getStack(entryObj), 0, 0);
                   menuDrawContext.pose().popMatrix();
-                  String name = filteredAndSortedBlock.getDescriptionId().replaceFirst("^block\\.minecraft\\.", "").replaceAll("_", " ");
-                  if (!name.isEmpty()) {
-                     name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                  }
-
+                  String name = this.getDisplayName(entryObj);
                   float floatValue4 = floatValue3 + GuiStyle.PADDING.intValue() + f10 + GuiStyle.PADDING.intValue() / 2.0F;
                   menuDrawContext.drawText(
                      font5,
@@ -321,18 +322,18 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
 
             menuDrawContext.disableScissor();
             float width5 = 1.5F;
-            float floatValue4 = floatValue + width - f4 - width5;
+            float floatValue4b = floatValue + width - f4 - width5;
             float height5 = f5 - f4 / 2.0F;
             if (this.scrollHandler.getDoubleValue() > 0.0) {
                menuDrawContext.drawRoundedRect(
-                  floatValue4, y5, width5, height5, ProxyDotRadiusData.method8069(0.5F), currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha)
+                  floatValue4b, y5, width5, height5, ProxyDotRadiusData.method8069(0.5F), currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha)
                );
                float f11 = (float)(this.scrollHandler.method6103() / this.scrollHandler.getDoubleValue());
                float height6 = Math.max(height5 * (height5 / (float)(height5 + this.scrollHandler.getDoubleValue())), 12.0F);
                float f12 = Math.max(1.0F, height5 - height6);
-               float y6 = y5 + f12 * f11;
-               y6 = Math.min(y5 + height5 - height6, y6);
-               menuDrawContext.drawRoundedRect(floatValue4, y6, width5, height6, ProxyDotRadiusData.method8069(0.5F), currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha));
+               float y6b = y5 + f12 * f11;
+               y6b = Math.min(y5 + height5 - height6, y6b);
+               menuDrawContext.drawRoundedRect(floatValue4b, y6b, width5, height6, ProxyDotRadiusData.method8069(0.5F), currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha));
             }
 
             menuDrawContext.pose().popMatrix();
@@ -340,26 +341,86 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
       }
    }
 
-   private List<Block> getFilteredAndSortedBlocks() {
+   private boolean isItemsMode() {
+      return this.setting.isItemsMode();
+   }
+
+   private boolean isSelected(Object obj) {
+      if (this.isItemsMode() && obj instanceof Item item) {
+         return this.setting.method1622(item);
+      }
+      if (obj instanceof Block block) {
+         return this.setting.method1621(block);
+      }
+      return false;
+   }
+
+   private void toggle(Object obj) {
+      if (this.isItemsMode() && obj instanceof Item item) {
+         if (this.setting.method1622(item)) {
+            this.setting.method1620(item);
+         } else {
+            this.setting.method1618(item);
+         }
+      } else if (obj instanceof Block block) {
+         if (this.setting.method1621(block)) {
+            this.setting.method1619(block);
+         } else {
+            this.setting.method1617(block);
+         }
+      }
+   }
+
+   private ItemStack getStack(Object obj) {
+      if (obj instanceof Item item) {
+         return item.getDefaultInstance();
+      }
+      if (obj instanceof Block block) {
+         return block.asItem().getDefaultInstance();
+      }
+      return ItemStack.EMPTY;
+   }
+
+   private String getDisplayName(Object obj) {
+      String id;
+      if (obj instanceof Item item) {
+         id = item.getDescriptionId().replaceFirst("^item\\.minecraft\\.", "").replaceFirst("^block\\.minecraft\\.", "");
+      } else if (obj instanceof Block block) {
+         id = block.getDescriptionId().replaceFirst("^block\\.minecraft\\.", "").replaceFirst("^item\\.minecraft\\.", "");
+      } else {
+         id = obj.toString();
+      }
+      String name = id.replaceAll("_", " ");
+      if (!name.isEmpty()) {
+         name = name.substring(0, 1).toUpperCase() + name.substring(1);
+      }
+      return name;
+   }
+
+   private String getSearchName(Object obj) {
+      String id;
+      if (obj instanceof Item item) {
+         id = item.getDescriptionId().replaceFirst("^item\\.minecraft\\.", "").replaceFirst("^block\\.minecraft\\.", "");
+      } else if (obj instanceof Block block) {
+         id = block.getDescriptionId().replaceFirst("^block\\.minecraft\\.", "").replaceFirst("^item\\.minecraft\\.", "");
+      } else {
+         id = obj.toString();
+      }
+      return id.replaceAll("_", " ").toLowerCase();
+   }
+
+   private List<Object> getFilteredAndSortedEntries() {
       String str = this.searchBox != null && !this.searchBox.isEmpty() ? this.searchBox.getText().toLowerCase().trim() : "";
-      var stream = getAllBlocks().filter(allBlock -> (allBlock != Blocks.AIR));
+      Stream<Object> stream = this.isItemsMode() ? getAllItems() : getAllBlocks().map(b -> (Object) b);
       if (!str.isEmpty()) {
-         stream = stream.filter(var1x -> {
-            String var2x = var1x.getDescriptionId().replaceFirst("^block\\.minecraft\\.", "").replaceAll("_", " ");
-            return var2x.toLowerCase().contains(str);
-         });
+         final String s = str;
+         stream = stream.filter(obj -> this.getSearchName(obj).contains(s) || this.getSearchName(obj).replace(" ", "_").contains(s.replace(" ", "_")));
       }
-
-      var blocks = new ArrayList<>(stream.toList());
+      var list = new ArrayList<>(stream.toList());
       if (this.sortBySelected || str.isEmpty()) {
-         blocks.sort((var1x, var2x) -> {
-            boolean var3x = this.setting.method1621(var1x);
-            boolean flag = this.setting.method1621(var2x);
-            return Boolean.compare(!var3x, !flag);
-         });
+         list.sort((a, b) -> Boolean.compare(!this.isSelected(a), !this.isSelected(b)));
       }
-
-      return blocks;
+      return list;
    }
 
    private static Stream<Block> getAllBlocks() {
@@ -373,7 +434,14 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
             } catch (IllegalAccessException e) {
                throw new RuntimeException(e);
             }
-         });
+         })
+         .filter(block -> block != Blocks.AIR);
+   }
+
+   private static Stream<Object> getAllItems() {
+      return BuiltInRegistries.ITEM.stream()
+         .filter(item -> item != Items.AIR)
+         .map(item -> (Object) item);
    }
 
    @Override
@@ -385,20 +453,17 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
          if (this.searchBox != null) {
             this.searchBox.setSelected(false);
          }
-
          return false;
       } else if (this.exitBounds != null && this.exitBounds.method8092(lastClickX, lastClickY, 2.0F)) {
          this.expanded = false;
          if (this.searchBox != null) {
             this.searchBox.setSelected(false);
          }
-
          return true;
       } else if (this.searchBounds != null && this.searchBounds.contains(lastClickX, lastClickY)) {
          if (this.searchBox != null) {
             this.searchBox.setSelected(true);
          }
-
          return true;
       } else {
          if (this.searchBox != null) {
@@ -411,19 +476,13 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
             return true;
          } else {
             if (this.listScissorBounds != null && this.listScissorBounds.contains(lastClickX, lastClickY) && enum2.getGlfwButton() == 0) {
-               for (Entry entry : this.itemBounds.entrySet()) {
-                  if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
-                     if (this.setting.method1621((Block)entry.getKey())) {
-                        this.setting.method1619((Block)entry.getKey());
-                     } else {
-                        this.setting.method1617((Block)entry.getKey());
-                     }
-
+               for (Entry<Object, BoundsData> entry : this.itemBounds.entrySet()) {
+                  if (entry.getValue().contains(lastClickX, lastClickY)) {
+                     this.toggle(entry.getKey());
                      return true;
                   }
                }
             }
-
             return true;
          }
       }
@@ -441,7 +500,6 @@ public class GuiItemSelectSetting extends GuiSetting<BlockListSetting> {
          if (this.searchBox != null) {
             this.searchBox.setSelected(false);
          }
-
          return false;
       }
    }

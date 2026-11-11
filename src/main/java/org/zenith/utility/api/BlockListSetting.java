@@ -22,6 +22,7 @@ public class BlockListSetting extends Setting {
    private static final Map<Item, String> items3 = new ConcurrentHashMap<>();
    private volatile BlockListSetting.Data data;
    private static final Gson gson = new Gson();
+   private final boolean itemsMode;
 
    public void method1612(List<String> items) {
       this.items = items;
@@ -41,8 +42,17 @@ public class BlockListSetting extends Setting {
    }
 
    public BlockListSetting(String key, String description, List<String> items, Supplier<Boolean> supplier) {
+      this(key, description, items, supplier, false);
+   }
+
+   public BlockListSetting(String key, String description, List<String> items, Supplier<Boolean> supplier, boolean itemsMode) {
       super(key, description);
       this.items = items;
+      this.itemsMode = itemsMode;
+   }
+
+   public boolean isItemsMode() {
+      return this.itemsMode;
    }
 
    public List<String> getItems() {

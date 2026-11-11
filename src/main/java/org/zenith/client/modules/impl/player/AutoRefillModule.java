@@ -2,9 +2,9 @@ package org.zenith.client.modules.impl.player;
 
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -19,12 +19,11 @@ import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.zenith.ModuleCategory;
@@ -39,7 +38,7 @@ import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.client.settings.TextSetting;
+import org.zenith.utility.api.BlockListSetting;
 import org.zenith.utility.network.InventoryUtils;
 
 @ModuleInfo(name = "AutoRefill", description = "module.autoRefill.description", category = ModuleCategory.PLAYER)
@@ -55,8 +54,9 @@ public final class AutoRefillModule extends Module {
       "module.autoRefill.filter", "module.autoRefill.filter.desc",
       "module.autoRefill.all", "module.autoRefill.selected", "module.autoRefill.consumables"
    );
-   private final TextSetting selectedItems = new TextSetting(
-      "module.autoRefill.items", "module.autoRefill.items.desc", "", "", () -> this.filter.isSelected(1)
+   // Меню выбора предметов с поиском (список всех предметов).
+   private final BlockListSetting selectedItems = new BlockListSetting(
+      "module.autoRefill.items", "module.autoRefill.items.desc", new ArrayList<>(), () -> this.filter.isSelected(1), true
    );
    private final BooleanSetting pauseWhileUsing = new BooleanSetting(
       "module.autoRefill.pauseWhileUsing", "module.autoRefill.pauseWhileUsing.desc", true
@@ -242,36 +242,17 @@ public final class AutoRefillModule extends Module {
          return false;
       }
       if (this.filter.isSelected(1)) {
-         return this.isSelectedItem(stack.getItem());
+         if (this.selectedItems.method1622(stack.getItem())) {
+            return true;
+         }
+         Identifier key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+         String shortId = key.getPath();
+         String fullId = key.toString();
+         return this.selectedItems.contains(shortId) || this.selectedItems.contains(fullId) || this.selectedItems.contains("minecraft:" + shortId);
       }
       return !this.filter.isSelected(2) || stack.getItem() instanceof BlockItem || stack.has(DataComponents.CONSUMABLE)
          || stack.is(Items.ENDER_PEARL) || stack.is(Items.SNOWBALL) || stack.is(Items.EGG)
          || stack.is(Items.EXPERIENCE_BOTTLE) || stack.is(Items.FIREWORK_ROCKET) || stack.is(Items.END_CRYSTAL);
-   }
-
-   private boolean isSelectedItem(Item item) {
-      String raw = this.selectedItems.getValue();
-      if (raw == null || raw.isBlank()) {
-         return false;
-      }
-      ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
-      String fullId = key.toString();
-      String shortId = key.getPath();
-      for (String token : raw.split("[,;\\n]+")) {
-         String t = token.trim().toLowerCase(Locale.ROOT);
-         if (t.isEmpty()) {
-            continue;
-         }
-         if (t.equals("minecraft:" + shortId) || t.equals(fullId) || t.equals(shortId)) {
-            return true;
-         }
-         // allow typing without namespace in other forms, e.g. "ender pearl" -> "ender_pearl"
-         String normalized = t.replace(' ', '_');
-         if (normalized.equals(shortId) || normalized.equals(fullId) || normalized.equals("minecraft:" + shortId)) {
-            return true;
-         }
-      }
-      return false;
    }
 
    private void clearHistory() {
