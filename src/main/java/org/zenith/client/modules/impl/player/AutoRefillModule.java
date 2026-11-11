@@ -1,16 +1,17 @@
-package org.zenith.client.modules.impl.player;
+﻿package org.zenith.client.modules.impl.player;
 
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerInventoryPacket;
@@ -18,10 +19,12 @@ import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.zenith.ModuleCategory;
@@ -36,7 +39,7 @@ import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.settings.BooleanSetting;
 import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.SliderSetting;
-import org.zenith.utility.api.BlockListSetting;
+import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.network.InventoryUtils;
 
 @ModuleInfo(name = "AutoRefill", description = "module.autoRefill.description", category = ModuleCategory.PLAYER)
@@ -52,9 +55,8 @@ public final class AutoRefillModule extends Module {
       "module.autoRefill.filter", "module.autoRefill.filter.desc",
       "module.autoRefill.all", "module.autoRefill.selected", "module.autoRefill.consumables"
    );
-   // Выбор предметов через удобный список с поиском (как в BlockESP), вместо ручного ввода ID.
-   private final BlockListSetting selectedItems = new BlockListSetting(
-      "module.autoRefill.items", "module.autoRefill.items.desc", new ArrayList<>(), () -> this.filter.isSelected(1)
+   private final TextSetting selectedItems = new TextSetting(
+      "module.autoRefill.items", "module.autoRefill.items.desc", "", "", () -> this.filter.isSelected(1)
    );
    private final BooleanSetting pauseWhileUsing = new BooleanSetting(
       "module.autoRefill.pauseWhileUsing", "module.autoRefill.pauseWhileUsing.desc", true
@@ -101,7 +103,6 @@ public final class AutoRefillModule extends Module {
 
    @EventTarget
    public void onReceive(PacketReceiveEvent event) {
-      // Полная синхронизация, в том числе откат сервером, отменяет старые намерения.
       if (event.getPacket() instanceof ClientboundContainerSetContentPacket) {
          this.inventoryChanges.incrementAndGet();
       } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet
@@ -113,7 +114,6 @@ public final class AutoRefillModule extends Module {
    }
 
    private void forgetChangedHotbarItem(int hotbar, ItemStack incoming) {
-      // Пустота после расходования стека сохраняет цель рефила, а новая вещь инвалидирует её.
       if (!incoming.isEmpty() && !this.remembered[hotbar].isEmpty()
          && !ItemStack.isSameItemSameComponents(incoming, this.remembered[hotbar])) {
          this.remembered[hotbar] = ItemStack.EMPTY;
@@ -206,7 +206,6 @@ public final class AutoRefillModule extends Module {
       } finally {
          this.ownSlotClick = null;
       }
-      // Слушатели клика могли сменить экран, меню или содержимое. Отложенных кликов нет.
       if (click.isCancelled() || !this.canRefill() || mc.player != this.owner || mc.level != this.world || mc.gui.screen() != this.screen
          || mc.player.inventoryMenu != menu || menu.getStateId() != stateId || this.inventoryChanges.get() != changes
          || !ItemStack.matches(current, target.getItem()) || !ItemStack.matches(replacement, source.getItem())) {
@@ -214,7 +213,6 @@ public final class AutoRefillModule extends Module {
       }
       this.ownClick = true;
       try {
-         // Один атомарный SWAP: остаток возвращается в исходный слот, курсор не используется.
          InventoryUtils.method901(source, hotbar, false);
       } finally {
          this.ownClick = false;
@@ -233,7 +231,6 @@ public final class AutoRefillModule extends Module {
             if (this.emptySince[slot] == 0) {
                this.emptySince[slot] = now;
             } else if (now - this.emptySince[slot] > 2000) {
-               // Не восстанавливаем давно освобождённый слот по устаревшей памяти.
                this.remembered[slot] = ItemStack.EMPTY;
             }
          }
@@ -245,17 +242,36 @@ public final class AutoRefillModule extends Module {
          return false;
       }
       if (this.filter.isSelected(1)) {
-         // Выбранные предметы: проверяем по списку (поддержка старых записей "minecraft:id" и коротких id).
-         if (this.selectedItems.method1622(stack.getItem())) {
-            return true;
-         }
-         String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-         String shortId = id.startsWith("minecraft:") ? id.substring("minecraft:".length()) : id;
-         return this.selectedItems.contains(id) || this.selectedItems.contains(shortId);
+         return this.isSelectedItem(stack.getItem());
       }
       return !this.filter.isSelected(2) || stack.getItem() instanceof BlockItem || stack.has(DataComponents.CONSUMABLE)
          || stack.is(Items.ENDER_PEARL) || stack.is(Items.SNOWBALL) || stack.is(Items.EGG)
          || stack.is(Items.EXPERIENCE_BOTTLE) || stack.is(Items.FIREWORK_ROCKET) || stack.is(Items.END_CRYSTAL);
+   }
+
+   private boolean isSelectedItem(Item item) {
+      String raw = this.selectedItems.getValue();
+      if (raw == null || raw.isBlank()) {
+         return false;
+      }
+      ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
+      String fullId = key.toString();
+      String shortId = key.getPath();
+      for (String token : raw.split("[,;\\n]+")) {
+         String t = token.trim().toLowerCase(Locale.ROOT);
+         if (t.isEmpty()) {
+            continue;
+         }
+         if (t.equals("minecraft:" + shortId) || t.equals(fullId) || t.equals(shortId)) {
+            return true;
+         }
+         // allow typing without namespace in other forms, e.g. "ender pearl" -> "ender_pearl"
+         String normalized = t.replace(' ', '_');
+         if (normalized.equals(shortId) || normalized.equals(fullId) || normalized.equals("minecraft:" + shortId)) {
+            return true;
+         }
+      }
+      return false;
    }
 
    private void clearHistory() {
@@ -270,4 +286,4 @@ public final class AutoRefillModule extends Module {
       this.screen = null;
       this.watch.reset();
    }
-}
+}
