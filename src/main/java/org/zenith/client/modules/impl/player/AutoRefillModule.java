@@ -1,4 +1,4 @@
-﻿package org.zenith.client.modules.impl.player;
+package org.zenith.client.modules.impl.player;
 
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
