@@ -36,7 +36,7 @@ public final class TapeMouseModule extends Module {
    @EventTarget
    public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gui.screen() == null) {
-         if (!this.stopWatch.method7546((long)this.delay.getValue3())) {
+         if (!this.stopWatch.hasElapsed((long)this.delay.getValue3())) {
             this.method2780();
          } else {
             this.method2780();

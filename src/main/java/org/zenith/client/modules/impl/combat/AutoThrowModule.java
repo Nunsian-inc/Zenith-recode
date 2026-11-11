@@ -196,7 +196,7 @@ public final class AutoThrowModule extends Module {
          } else if (this.trigger.isSelected(0)) {
             if (!this.method7108()) {
                this.method7112();
-               if (this.stopWatch.method7546(5000L)) {
+               if (this.stopWatch.hasElapsed(5000L)) {
                   if (this.livingEntity instanceof Player entity) {
                      if (method7134(entity)) {
                         if (!(UseItemUtils.method6527(entity) >= this.targetHealth.getValue3())) {
@@ -209,7 +209,7 @@ public final class AutoThrowModule extends Module {
                      }
                   }
                }
-            } else if (this.stopWatch.method7546(500L)) {
+            } else if (this.stopWatch.hasElapsed(500L)) {
                if (!(this.method7133() >= this.selfHealth.getValue3())) {
                   if (!this.totemCooldown.isEnabled() || this.method7132()) {
                      Player player = this.method7117();
@@ -244,7 +244,7 @@ public final class AutoThrowModule extends Module {
          this.stopWatch2.reset();
       }
 
-      if (!this.method7113(this.livingEntity) || this.stopWatch2.method7546(5000L)) {
+      if (!this.method7113(this.livingEntity) || this.stopWatch2.hasElapsed(5000L)) {
          this.livingEntity = null;
 
          for (LivingEntity livingEntity : livingEntities) {

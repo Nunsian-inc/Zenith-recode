@@ -51,7 +51,7 @@ public final class ElytraHelperModule extends Module {
             && this.startSetting.isEnabled()
             && Objects.requireNonNull(mc.player).getItemBySlot(EquipmentSlot.CHEST).getItem().equals(Items.ELYTRA)) {
             if (mc.player.onGround()) {
-               event.method3041(true);
+               event.setJump(true);
             } else if (!mc.player.isFallFlying()) {
                if (this.sprintSetting.isEnabled()
                   && mc.player.isSprintingPossible(true)
@@ -61,7 +61,7 @@ public final class ElytraHelperModule extends Module {
                   mc.player.setSprinting(true);
                }
 
-               event.method3041(!mc.player.lastSentInput.jump());
+               event.setJump(!mc.player.lastSentInput.jump());
             } else if (mc.player.isFallFlying() && mc.player.horizontalCollision) {
                event.setPlayerInput(
                   new Input(

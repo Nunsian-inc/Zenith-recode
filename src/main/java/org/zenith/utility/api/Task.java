@@ -153,7 +153,7 @@ public final class Task {
             if (this.intValue == 30) {
                for (String str : this.items3) {
                   boolean startsWith = str.startsWith("-");
-                  Module moduleValue = Zenith.getInstance().getModuleManager().method2484(startsWith ? str.substring(1) : str);
+                  Module moduleValue = Zenith.getInstance().getModuleManager().findByName(startsWith ? str.substring(1) : str);
                   if (moduleValue != null && moduleValue.isEnabled() == startsWith) {
                      moduleValue.toggle();
                   }
@@ -191,7 +191,7 @@ public final class Task {
 
       minecraft.player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
       if (data.getText4() != null && data.getText4().startsWith("module:")) {
-         Module moduleValue = Zenith.getInstance().getModuleManager().method2484(data.getText4().substring(7));
+         Module moduleValue = Zenith.getInstance().getModuleManager().findByName(data.getText4().substring(7));
          if (!MenuModule.INSTANCE.isEnabled()) {
             MenuModule.INSTANCE.toggle();
          }

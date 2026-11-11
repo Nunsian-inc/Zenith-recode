@@ -265,7 +265,7 @@ public final class AuraModule extends Module {
             boolean flag;
             if ((
                   flag = this.entry26.isEnabled()
-                     && this.stopWatch.method7546(300L)
+                     && this.stopWatch.hasElapsed(300L)
                      && Zenith.getInstance().getTaskScheduler().method5116()
                      && selected != -1
                      && UseItemUtils.method6530(this.livingEntity)
@@ -544,9 +544,9 @@ public final class AuraModule extends Module {
             ? this.livingEntity.dimensions.makeBoundingBox(ReachV3Module.INSTANCE.getVec3d2())
             : (this.livingEntity instanceof Player player ? PlayerSimulation.method6032(player, 1).box : this.livingEntity.getBoundingBox());
          Rotation rotation = RotationUtils.method6912(boundingBox.getCenter().subtract(playerSimulation.vec3d));
-         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), rotation.getFloatValue());
+         MovementInputUtils.correctMovement(event, rotationManager.getEffectiveRotation().getFloatValue(), rotation.getFloatValue());
       } else if (this.entry24.isSelected() || this.livingEntity == null) {
-         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.correctMovement(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
       }
 
       if (this.livingEntity != null) {
@@ -795,11 +795,11 @@ public final class AuraModule extends Module {
 
          if (!down) {
             mc.options.keySprint.setDown(false);
-            event.method3039(false);
+            event.setSprint(false);
          }
 
          if (!flag) {
-            event.method3038(false);
+            event.setForward(false);
          }
       }
    }

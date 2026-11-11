@@ -150,7 +150,7 @@ public final class ClickActionModule extends Module {
                         this.flag = true;
                      });
                   }
-               } else if (this.stopWatch.method7546(70L) && rotationManager.getEffectiveRotation().wrappedDeltaTo(rotation).isWithinBounds(180.0F, 10.0F)) {
+               } else if (this.stopWatch.hasElapsed(70L) && rotationManager.getEffectiveRotation().wrappedDeltaTo(rotation).isWithinBounds(180.0F, 10.0F)) {
                   UseItemUtils.useItem(InteractionHand.MAIN_HAND);
                   event.cancel();
                   this.stopWatch.reset();

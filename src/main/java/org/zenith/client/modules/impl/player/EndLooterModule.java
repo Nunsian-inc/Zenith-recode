@@ -477,7 +477,7 @@ public class EndLooterModule extends Module {
       } else {
          long now = System.currentTimeMillis();
          this.items2.values().removeIf(l -> now > l);
-         if (this.stopWatch3.method7546(350L)) {
+         if (this.stopWatch3.hasElapsed(350L)) {
             this.stopWatch3.reset();
             this.items3 = this.method3904();
          }
@@ -498,7 +498,7 @@ public class EndLooterModule extends Module {
             }
 
             this.blockPos2 = null;
-            if (this.stopWatch4.method7546(30000L)) {
+            if (this.stopWatch4.hasElapsed(30000L)) {
                this.stopWatch4.reset();
                this.notify("Ваз не видно — продолжаю обход данжа.");
             }
@@ -539,12 +539,12 @@ public class EndLooterModule extends Module {
       if (this.blockPos != null && this.method3910(this.blockPos)) {
          boolean containsKey = this.items2.containsKey(this.blockPos);
 
-         if (!containsKey && !this.stopWatch2.method7546(6000L)) {
+         if (!containsKey && !this.stopWatch2.hasElapsed(6000L)) {
             return this.blockPos;
          }
       }
 
-      if (this.blockPos != null && this.stopWatch2.method7546(6000L)) {
+      if (this.blockPos != null && this.stopWatch2.hasElapsed(6000L)) {
          this.method3911(this.blockPos, "не приблизился за 6 секунд");
       }
 
@@ -597,7 +597,7 @@ public class EndLooterModule extends Module {
    }
 
    private BlockPos method3907() {
-      if (this.blockPos2 != null && mc.level.getBlockState(this.blockPos2).is(Blocks.SUSPICIOUS_SAND) && !this.stopWatch2.method7546(6000L)) {
+      if (this.blockPos2 != null && mc.level.getBlockState(this.blockPos2).is(Blocks.SUSPICIOUS_SAND) && !this.stopWatch2.hasElapsed(6000L)) {
          return this.blockPos2;
       } else {
          int n = Math.min(24, (int)this.scanRadius.getValue3());
@@ -683,7 +683,7 @@ public class EndLooterModule extends Module {
             Rotation rotation = Rotation.lookingAt(blockHit.getLocation(), mc.player.getEyePosition());
             this.rotation = rotation;
             if (!(rotationManager.getRotation2().angularDistanceTo(rotation) > 5.0F)) {
-               if (this.stopWatch2.method7546(15000L)) {
+               if (this.stopWatch2.hasElapsed(15000L)) {
                   this.method3911(blockPos, "песок не чистится слишком долго");
                } else {
                   mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
@@ -1043,7 +1043,7 @@ public class EndLooterModule extends Module {
       } else {
          this.method3945();
          if (this.intValue3 == 1) {
-            if (!this.stopWatch.method7546(150L)) {
+            if (!this.stopWatch.hasElapsed(150L)) {
                return true;
             }
 
@@ -1053,7 +1053,7 @@ public class EndLooterModule extends Module {
 
          mc.options.keyShift.setDown(true);
          mc.options.keyUse.setDown(true);
-         if (this.stopWatch.method7546(2200L)) {
+         if (this.stopWatch.hasElapsed(2200L)) {
             this.method3938();
          }
 
@@ -1071,8 +1071,8 @@ public class EndLooterModule extends Module {
       if (this.method3922()) {
          this.method3924();
          return true;
-      } else if (!mc.player.getOffhandItem().isEmpty() && !this.stopWatch.method7546(3000L)) {
-         if (this.stopWatch.method7546(100L)) {
+      } else if (!mc.player.getOffhandItem().isEmpty() && !this.stopWatch.hasElapsed(3000L)) {
+         if (this.stopWatch.hasElapsed(100L)) {
             InventoryUtils.method904(this.intValue4, 40, ContainerInput.SWAP, false);
             this.intValue4 = -1;
             this.intValue3 = 0;

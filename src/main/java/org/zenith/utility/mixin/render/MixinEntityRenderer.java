@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.zenith.client.modules.impl.render.PredictionsModule;
 import org.zenith.client.modules.impl.render.ShaderESPModule;
 import org.zenith.utility.api.PetManager;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 
 @Mixin({EntityRenderer.class})
 public class MixinEntityRenderer {
@@ -50,8 +50,8 @@ public class MixinEntityRenderer {
       )
    )
    private int zenith$shaderEspGlowColor(Entity entity) {
-      if (Util4.method1278(entity.getId())) {
-         return Util4.method1279(entity.getId(), entity.getTeamColor());
+      if (ScriptRenderOverrides.hasTeamColorOverride(entity.getId())) {
+         return ScriptRenderOverrides.getTeamColor(entity.getId(), entity.getTeamColor());
       } else {
          ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;
          if (shaderESPModule != null && shaderESPModule.isEnabled() && shaderESPModule.method4584(entity)) {

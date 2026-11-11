@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 
 @Mixin({EntityRenderDispatcher.class})
 public abstract class MixinScriptEntityRender {
@@ -17,7 +17,7 @@ public abstract class MixinScriptEntityRender {
       cancellable = true
    )
    private <E extends Entity> void zenith$scriptHidden(E value2, Frustum frustum, double d, double d2, double d3, float f, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-      if (Util4.method1280(value2.getId())) {
+      if (ScriptRenderOverrides.isEntityHidden(value2.getId())) {
          callbackInfoReturnable.setReturnValue(false);
       }
    }

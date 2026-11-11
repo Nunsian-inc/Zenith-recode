@@ -177,7 +177,7 @@ public final class CloudTicket {
       }
 
       public boolean method1377(long accountUid) {
-         return Util18.method4489() / 1000L < this.longValue - 300L && (this.longValue2 <= 0L || accountUid <= 0L || this.longValue2 == accountUid);
+         return ServerClock.currentTimeMillis() / 1000L < this.longValue - 300L && (this.longValue2 <= 0L || accountUid <= 0L || this.longValue2 == accountUid);
       }
 
       public String value() {

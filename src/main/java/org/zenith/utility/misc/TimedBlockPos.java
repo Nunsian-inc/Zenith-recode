@@ -31,7 +31,7 @@ public class TimedBlockPos {
 
    @EventTarget
    public void method476(WorldRenderEvent event) {
-      if (this.blockPos != null && this.blockPos2 != null && !this.stopWatch.method7546(5000L)) {
+      if (this.blockPos != null && this.blockPos2 != null && !this.stopWatch.hasElapsed(5000L)) {
          GlowUtil.method2230(
             new AABB(new Vec3(this.blockPos), new Vec3(this.blockPos2)).inflate(1.5, 0.0, 1.5),
             Zenith.getInstance().getStyleManager().getClientColor(90).method7287(),

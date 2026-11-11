@@ -143,7 +143,7 @@ public final class ReachV3Module extends Module {
       if (livingEntity == null) {
          this.method5537();
       } else {
-         if (this.vec3d == null || livingEntity.getId() != this.intValue || this.stopWatch.method7546(1000L)) {
+         if (this.vec3d == null || livingEntity.getId() != this.intValue || this.stopWatch.hasElapsed(1000L)) {
             this.method5538(livingEntity);
          }
 
@@ -240,7 +240,7 @@ public final class ReachV3Module extends Module {
                }
             }
 
-            if (this.queue.isEmpty() && (!this.stopWatch2.method7546(200L) || mc.level == null || livingEntity == null || !this.stopWatch3.method7546(200L))) {
+            if (this.queue.isEmpty() && (!this.stopWatch2.hasElapsed(200L) || mc.level == null || livingEntity == null || !this.stopWatch3.hasElapsed(200L))) {
                return;
             }
 
@@ -274,7 +274,7 @@ public final class ReachV3Module extends Module {
          this.queue.removeIf(entry -> {
             boolean flag = (float)(now - entry.getTime()) >= this.delay.getValue3();
             boolean var5x = entry.isFlag();
-            if (!flag && this.stopWatch2.method7546(200L) && !var5x && mc.level != null && this.method5542() != null) {
+            if (!flag && this.stopWatch2.hasElapsed(200L) && !var5x && mc.level != null && this.method5542() != null) {
                return false;
             } else {
                this.method5536(entry);

@@ -66,9 +66,9 @@ public class RotationManager implements MinecraftAccess {
          } else {
             this.handler.call(new PreRotationEvent());
             Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
-            TickingList.Entry entry = this.tickingList.method16();
+            TickingList.Entry entry = this.tickingList.peekEntry();
             if (entry != null) {
-               RotationRequest rotationRequest = (RotationRequest)entry.obj;
+               RotationRequest rotationRequest = (RotationRequest)entry.value;
                Rotation currentRotation = rotationRequest.getSupplier().get();
                if (currentRotation == null || currentRotation.isInvalid()) {
                   currentRotation = this.currentRotation == null ? rotation : this.currentRotation;
@@ -170,11 +170,11 @@ public class RotationManager implements MinecraftAccess {
    }
 
    public void requestRotation(RotationRequest rotationRequest, int priority, Module ownerModule, int lifetimeTicks) {
-      this.tickingList.method14(new TickingList.Entry<>(lifetimeTicks, priority, ownerModule, rotationRequest));
+      this.tickingList.addOrReplace(new TickingList.Entry<>(lifetimeTicks, priority, ownerModule, rotationRequest));
    }
 
    public void requestRotation(RotationRequest rotationRequest, int priority, Module ownerModule) {
-      this.tickingList.method14(new TickingList.Entry<>(1, priority, ownerModule, rotationRequest));
+      this.tickingList.addOrReplace(new TickingList.Entry<>(1, priority, ownerModule, rotationRequest));
    }
 
    @Generated

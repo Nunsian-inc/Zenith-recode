@@ -118,7 +118,7 @@ public final class ChestStealerModule extends Module {
          }
 
          if (!this.startDelayElapsed) {
-            if (!this.startTimer.method7546((long)this.getStartDelayTicks() * 50L)) {
+            if (!this.startTimer.hasElapsed((long)this.getStartDelayTicks() * 50L)) {
                return;
             }
 
@@ -137,7 +137,7 @@ public final class ChestStealerModule extends Module {
                Slot slot = chestMenu.getSlot(index);
                if (slot.hasItem()) {
                   long stealDelayTicks = (long)MathUtils.method2651(Math.min(this.getMinStealDelayTicks(), this.getMaxStealDelayTicks()), Math.max(this.getMinStealDelayTicks(), this.getMaxStealDelayTicks()));
-                  if (this.stealTimer.method7546(stealDelayTicks * 50L)) {
+                  if (this.stealTimer.hasElapsed(stealDelayTicks * 50L)) {
                      mc.gameMode.handleContainerInput(chestMenu.containerId, index, 0, ContainerInput.QUICK_MOVE, mc.player);
                      this.stealTimer.reset();
                      this.waitingToClose = false;
@@ -155,7 +155,7 @@ public final class ChestStealerModule extends Module {
                return;
             }
 
-            if (this.closeTimer.method7546((long)this.getCloseDelayTicks() * 50L)) {
+            if (this.closeTimer.hasElapsed((long)this.getCloseDelayTicks() * 50L)) {
                mc.player.closeContainer();
                this.waitingToClose = false;
             }

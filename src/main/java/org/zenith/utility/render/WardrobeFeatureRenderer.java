@@ -43,7 +43,7 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
             int overlayCoords = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
             HoveredData hoveredData = wardrobe.method2499(hoveredDatas, FocusSlotEnum.CHARACTER);
             WardrobeSetInfo wardrobeSetInfo = hoveredData == null ? wardrobe.method2500(hoveredDatas) : null;
-            Util3.Entry entry = null;
+            WardrobeModelData.WardrobeRenderData entry = null;
             long nanoTime = System.nanoTime();
 
             for (HoveredData hoveredData2 : hoveredDatas) {
@@ -77,10 +77,10 @@ public final class WardrobeFeatureRenderer extends RenderLayer<AvatarRenderState
                               modelPart.translateAndRotate(poseStack);
                               if (hoveredData2 != hoveredData) {
                                  if (entry == null) {
-                                    entry = Util3.method826(state, wardrobe, hoveredDatas, hoveredData);
+                                    entry = WardrobeModelData.createAvatarFitting(state, wardrobe, hoveredDatas, hoveredData);
                                  }
 
-                                 entry.method846(poseStack, hoveredData2, i);
+                                 entry.applyTransform(poseStack, hoveredData2, i);
                               }
 
                               BoneMatrices.method4788(key, floats2, i, poseStack, submitNodeCollector, lightCoords, overlayCoords, flag, flag2, -1);

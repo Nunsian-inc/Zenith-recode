@@ -6,7 +6,7 @@ import net.minecraft.resources.Identifier;
 import org.zenith.Zenith;
 import org.zenith.utility.game.FlakeState;
 import org.zenith.utility.game.Print;
-import org.zenith.utility.game.Util11;
+import org.zenith.utility.game.SnowSurfaceTracker;
 import org.zenith.utility.render.Glowboost;
 import org.zenith.utility.render.SnowShader;
 import org.zenith.utility.render.WorldProfiler;
@@ -104,7 +104,7 @@ public final class FlakeUtil {
       if (!weatherFlakeChannel.flag) {
          entry2.flag = false;
          if (flag) {
-            Util11.method2336();
+            SnowSurfaceTracker.clear();
             method7516();
          }
       } else {
@@ -120,7 +120,7 @@ public final class FlakeUtil {
             int n3 = (int)Math.floor(z);
             int n4 = Math.min(n, flakeState2.getIntValue3());
             if (flag) {
-               Util11.method2331(now);
+               SnowSurfaceTracker.expireTransitions(now);
             }
 
             method7512(glowboost, weatherFlakeChannel, f, now, x, y, z);
@@ -129,7 +129,7 @@ public final class FlakeUtil {
             float[] floatValues2 = entry2.floatValues2;
             int[] intValues = entry2.intValues;
             if (flag2) {
-               long longValue = method7514(entry2, n2, n3, n4, flakeState2) * 31L + Util11.method2333(now);
+               long longValue = method7514(entry2, n2, n3, n4, flakeState2) * 31L + SnowSurfaceTracker.transitionStateHash(now);
                if (longValue == entry2.longValue && SnowShader.isFlag3()) {
                   return;
                }
@@ -156,7 +156,7 @@ public final class FlakeUtil {
                         int n10 = entry2.method7540(x2 + 1, z2 + 1);
                         int n11 = entry2.method7540(x2, z2 + 1);
                         if (n8 >= 0 && n9 >= 0 && n10 >= 0 && n11 >= 0) {
-                           float f4 = Util11.method2334(x2, z2, d, now);
+                           float f4 = SnowSurfaceTracker.accumulationProgress(x2, z2, d, now);
                            if (!(f4 <= 0.001F)) {
                               float f5 = flakeState2.method4545(n6, n7) ? 0.55F : 1.0F;
                               float f6 = floatValues2[n8] * method7511(f4, x2, z2) * f5;
@@ -218,12 +218,12 @@ public final class FlakeUtil {
    }
 
    private static void method7512(Glowboost glowboost, WeatherFlakeChannel weatherFlakeChannel, float f, long now, double x, double y, double z) {
-      List<Util11.Data> items = Util11.getItems();
+      List<SnowSurfaceTracker.FallingSnow> items = SnowSurfaceTracker.getItems();
       if (!items.isEmpty()) {
          glowboost.method3244(identifier);
          glowboost.method3235(0.0F);
 
-         for (Util11.Data data : items) {
+         for (SnowSurfaceTracker.FallingSnow data : items) {
             float f2 = (float)(now - data.getLongValue()) / 900.0F;
             if (!(f2 < 0.0F) && !(f2 >= 1.0F)) {
                double d = data.getDoubleValue() + 0.5;
@@ -274,7 +274,7 @@ public final class FlakeUtil {
       int n2 = z - flakeState2.getIntValue2();
       double d2 = flakeState2.method4544(n, n2);
       if (d2 != Double.NEGATIVE_INFINITY && !(Math.abs(d2 - d) > 0.5)) {
-         float f2 = Util11.method2334(x, z, d2, now);
+         float f2 = SnowSurfaceTracker.accumulationProgress(x, z, d2, now);
          if (flakeState2.method4545(n, n2)) {
             f2 *= 0.55F;
          }

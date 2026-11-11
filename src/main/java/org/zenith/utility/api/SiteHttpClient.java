@@ -81,7 +81,7 @@ public final class SiteHttpClient {
          if (throwable != null) {
             return !flag ? method2413(str, bytes, strings, n + 1) : CompletableFuture.failedFuture(new SiteHttpClient.Entry2(method2424(throwable)));
          } else {
-            Util18.method4491((HttpResponse<?>)var6x);
+            ServerClock.syncFromHttpResponse((HttpResponse<?>)var6x);
             int var8x = var6x.statusCode();
             JsonObject json = method2415(var6x.body());
             if (method2414(var8x, json)) {

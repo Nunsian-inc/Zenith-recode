@@ -66,7 +66,7 @@ public final class NoFallModule extends Module {
       if (mc.player != null && mc.level != null) {
          this.falling = mc.player.fallDistance > 3.0;
          if (this.isGrim72Mode()) {
-            if (this.falling && !mc.player.onGround() && this.fallFlyingTimer.method7546(200L) && PlayerSimulation.method6031(1).flag4) {
+            if (this.falling && !mc.player.onGround() && this.fallFlyingTimer.hasElapsed(200L) && PlayerSimulation.method6031(1).flag4) {
                PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
                PacketUtils.method3150(new ServerboundPlayerCommandPacket(mc.player, Action.START_FALL_FLYING));
                this.fallFlyingTimer.reset();
@@ -85,7 +85,7 @@ public final class NoFallModule extends Module {
             this.correctionTicks--;
          }
 
-         if (this.activationTimer.method7546(300L)) {
+         if (this.activationTimer.hasElapsed(300L)) {
             this.awaitingCorrection = false;
             this.correctionTicks = 0;
          }
@@ -124,9 +124,9 @@ public final class NoFallModule extends Module {
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
       if (this.awaitingCorrection || this.correctionTicks == 2) {
-         event.method3041(false);
+         event.setJump(false);
       } else if (this.correctionTicks == 1) {
-         event.method3041(true);
+         event.setJump(true);
       }
    }
 

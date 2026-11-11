@@ -45,7 +45,7 @@ import org.zenith.utility.api.PartyMember;
 import org.zenith.utility.api.Prefs;
 import org.zenith.utility.api.RegionUtil;
 import org.zenith.utility.api.StoreApi;
-import org.zenith.utility.api.Util18;
+import org.zenith.utility.api.ServerClock;
 import org.zenith.utility.misc.CloudConnectionState;
 import org.zenith.utility.misc.Data1;
 import org.zenith.utility.misc.HudHolder;
@@ -423,7 +423,7 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       CloudWebSocket cloudWebSocket = this.cloudWebSocket;
       if (cloudWebSocket != null && this.cloudConnectionState.method8035() && cloudWebSocket.method1947() > 45000L) {
          cloudWebSocket.method1950("узел не отвечает 45 с");
-      } else if (cloudWebSocket != null && this.cloudConnectionState.getType() == CloudConnectionState.Type.CONNECTING && this.stopWatch2.method7546(15000L)) {
+      } else if (cloudWebSocket != null && this.cloudConnectionState.getType() == CloudConnectionState.Type.CONNECTING && this.stopWatch2.hasElapsed(15000L)) {
          cloudWebSocket.method1950("узел не ответил за 15 с");
       } else {
          this.prefs.flush();
@@ -445,7 +445,7 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
 
             if (this.intValue2 != 0 && this.flag2) {
                if (cloudWebSocket == null || this.cloudConnectionState.getType() != CloudConnectionState.Type.CONNECTING) {
-                  if (this.stopWatch.method7546(this.longValue3)) {
+                  if (this.stopWatch.hasElapsed(this.longValue3)) {
                      this.longValue2 = 0L;
                      this.stopWatch.reset();
                      logger.info("Облако: повтор подключения #{} к {}", this.intValue2, this.method7869());
@@ -825,7 +825,7 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       this.flag3 = false;
       this.booleanValue = (data12.getIntValue2() & 4) != 0;
       this.cloudConnectionState.setIntValue(data12.getIntValue());
-      Util18.method4490(data12.getLongValue2());
+      ServerClock.syncFromServerTime(data12.getLongValue2());
       logger.info(
          "Облако: вошли как {}#{}, всего {} онлайн{}",
          new Object[]{data12.username(), data12.uid(), data12.getIntValue(), (data12.getIntValue2() & 4) != 0 ? ", узел проверяет билеты сайта" : ""}

@@ -36,6 +36,7 @@ import org.zenith.client.modules.impl.combat.RotationRecorderModule;
 import org.zenith.client.modules.impl.combat.TargetPearlModule;
 import org.zenith.client.modules.impl.combat.TrapTpModule;
 import org.zenith.client.modules.impl.combat.TridentAimbotModule;
+import org.zenith.client.modules.impl.combat.SpearAuraModule;
 import org.zenith.client.modules.impl.combat.TriggerBotModule;
 import org.zenith.client.modules.impl.misc.ActionMapModule;
 import org.zenith.client.modules.impl.misc.AntiCheatProbeModule;
@@ -170,187 +171,188 @@ public final class ModuleManager implements MinecraftAccess {
    }
 
    private void init() {
-      this.method2476();
-      this.method2477();
-      this.method2478();
-      this.method2479();
-      this.method2480();
+      this.registerCombatModules();
+      this.registerMovementModules();
+      this.registerRenderModules();
+      this.registerPlayerModules();
+      this.registerMiscModules();
       InterfaceModule.INSTANCE.setToggled(true);
    }
 
-   private void method2476() {
+   private void registerCombatModules() {
       if (Zenith.method1502()) {
-         this.method2481(RotationRecorderModule.INSTANCE);
+         this.registerBuiltinModule(RotationRecorderModule.INSTANCE);
       }
 
-      this.method2481(AimAssistModule.INSTANCE);
-      this.method2481(AuraModule.INSTANCE);
-      this.method2481(ReachModule.INSTANCE);
-      this.method2481(AutoSwapModule.INSTANCE);
-      this.method2481(TriggerBotModule.INSTANCE);
-      this.method2481(OffHandManagerModule.INSTANCE);
-      this.method2481(ElytraTargetModule.INSTANCE);
-      this.method2481(CriticalsModule.INSTANCE);
-      this.method2481(AutoMaceModule.INSTANCE);
-      this.method2481(TargetPearlModule.INSTANCE);
-      this.method2481(AutoTrapModule.INSTANCE);
-      this.method2481(CrystalAuraModule.INSTANCE);
-      this.method2481(AutoTotemModule.INSTANCE);
-      this.method2481(AntiBotModule.INSTANCE);
-      this.method2481(InventorySettingModule.INSTANCE);
-      this.method2481(BlinkModule.INSTANCE);
-      this.method2481(TrapTpModule.INSTANCE);
-      this.method2481(FakeLagModule.INSTANCE);
-      this.method2481(ReachV3Module.INSTANCE);
-      this.method2481(AutoThrowModule.INSTANCE);
-      this.method2481(AutoPotionModule.INSTANCE);
-      this.method2481(PvpHelperModule.INSTANCE);
+      this.registerBuiltinModule(AimAssistModule.INSTANCE);
+      this.registerBuiltinModule(AuraModule.INSTANCE);
+      this.registerBuiltinModule(SpearAuraModule.INSTANCE);
+      this.registerBuiltinModule(ReachModule.INSTANCE);
+      this.registerBuiltinModule(AutoSwapModule.INSTANCE);
+      this.registerBuiltinModule(TriggerBotModule.INSTANCE);
+      this.registerBuiltinModule(OffHandManagerModule.INSTANCE);
+      this.registerBuiltinModule(ElytraTargetModule.INSTANCE);
+      this.registerBuiltinModule(CriticalsModule.INSTANCE);
+      this.registerBuiltinModule(AutoMaceModule.INSTANCE);
+      this.registerBuiltinModule(TargetPearlModule.INSTANCE);
+      this.registerBuiltinModule(AutoTrapModule.INSTANCE);
+      this.registerBuiltinModule(CrystalAuraModule.INSTANCE);
+      this.registerBuiltinModule(AutoTotemModule.INSTANCE);
+      this.registerBuiltinModule(AntiBotModule.INSTANCE);
+      this.registerBuiltinModule(InventorySettingModule.INSTANCE);
+      this.registerBuiltinModule(BlinkModule.INSTANCE);
+      this.registerBuiltinModule(TrapTpModule.INSTANCE);
+      this.registerBuiltinModule(FakeLagModule.INSTANCE);
+      this.registerBuiltinModule(ReachV3Module.INSTANCE);
+      this.registerBuiltinModule(AutoThrowModule.INSTANCE);
+      this.registerBuiltinModule(AutoPotionModule.INSTANCE);
+      this.registerBuiltinModule(PvpHelperModule.INSTANCE);
    }
 
-   private void method2477() {
-      this.method2481(AutoSprintModule.INSTANCE);
-      this.method2481(ElytraBoosterModule.INSTANCE);
-      this.method2481(CastleFlyModule.INSTANCE);
-      this.method2481(GrimGlideModule.INSTANCE);
-      this.method2481(SlimeFlightModule.INSTANCE);
-      this.method2481(ElytraFlyModule.INSTANCE);
-      this.method2481(VelocityModule.INSTANCE);
-      this.method2481(NoWebModule.INSTANCE);
-      this.method2481(GuiWalkModule.INSTANCE);
-      this.method2481(NoSlowModule.INSTANCE);
-      this.method2481(NoFallModule.INSTANCE);
-      this.method2481(WaterRiseModule.INSTANCE);
-      this.method2481(SpiderModule.INSTANCE);
-      this.method2481(SpeedModule.INSTANCE);
-      this.method2481(TimerModule.INSTANCE);
-      this.method2481(ElytraMotionModule.INSTANCE);
-      this.method2481(AutoElytraArmorModule.INSTANCE);
-      this.method2481(BoatHighJumpModule.INSTANCE);
-      this.method2481(BoatLongJumpModule.INSTANCE);
-      this.method2481(ShulkerJumpModule.INSTANCE);
-      this.method2481(StrafeModule.INSTANCE);
-      this.method2481(AirStuckModule.INSTANCE);
-      this.method2481(WallBypassModule.INSTANCE);
+   private void registerMovementModules() {
+      this.registerBuiltinModule(AutoSprintModule.INSTANCE);
+      this.registerBuiltinModule(ElytraBoosterModule.INSTANCE);
+      this.registerBuiltinModule(CastleFlyModule.INSTANCE);
+      this.registerBuiltinModule(GrimGlideModule.INSTANCE);
+      this.registerBuiltinModule(SlimeFlightModule.INSTANCE);
+      this.registerBuiltinModule(ElytraFlyModule.INSTANCE);
+      this.registerBuiltinModule(VelocityModule.INSTANCE);
+      this.registerBuiltinModule(NoWebModule.INSTANCE);
+      this.registerBuiltinModule(GuiWalkModule.INSTANCE);
+      this.registerBuiltinModule(NoSlowModule.INSTANCE);
+      this.registerBuiltinModule(NoFallModule.INSTANCE);
+      this.registerBuiltinModule(WaterRiseModule.INSTANCE);
+      this.registerBuiltinModule(SpiderModule.INSTANCE);
+      this.registerBuiltinModule(SpeedModule.INSTANCE);
+      this.registerBuiltinModule(TimerModule.INSTANCE);
+      this.registerBuiltinModule(ElytraMotionModule.INSTANCE);
+      this.registerBuiltinModule(AutoElytraArmorModule.INSTANCE);
+      this.registerBuiltinModule(BoatHighJumpModule.INSTANCE);
+      this.registerBuiltinModule(BoatLongJumpModule.INSTANCE);
+      this.registerBuiltinModule(ShulkerJumpModule.INSTANCE);
+      this.registerBuiltinModule(StrafeModule.INSTANCE);
+      this.registerBuiltinModule(AirStuckModule.INSTANCE);
+      this.registerBuiltinModule(WallBypassModule.INSTANCE);
    }
 
-   private void method2478() {
-      this.method2481(InterfaceModule.INSTANCE);
-      this.method2481(BetterMinecraftModule.INSTANCE);
-      this.method2481(OptimizationModule.INSTANCE);
-      this.method2481(AntiInvisibleModule.INSTANCE);
-      this.method2481(ArrowsModule.INSTANCE);
-      this.method2481(MenuModule.INSTANCE);
-      this.method2481(NoRenderModule.INSTANCE);
-      this.method2481(PredictionsModule.INSTANCE);
-      this.method2481(ESPModule.INSTANCE);
-      this.method2481(BlockESPModule.INSTANCE);
-      this.method2481(HandsModule.INSTANCE);
-      this.method2481(SwingAnimationModule.INSTANCE);
-      this.method2481(CrosshairModule.INSTANCE);
-      this.method2481(ViewModelModule.INSTANCE);
-      this.method2481(WorldTweaksModule.INSTANCE);
-      this.method2481(WeatherModule.INSTANCE);
-      this.method2481(WorldModule.INSTANCE);
-      this.method2481(ChamsModule.INSTANCE);
-      this.method2481(EntityESPModule.INSTANCE);
-      this.method2481(CloudWaypointsModule.INSTANCE);
-      this.method2481(PartyMarksModule.INSTANCE);
-      this.method2481(TargetESPModule.INSTANCE);
-      this.method2481(CrimsonEmbersModule.INSTANCE);
-      this.method2481(ShaderHandModule.INSTANCE);
-      this.method2481(AutoExplosionModule.INSTANCE);
-      this.method2481(JumpCircleModule.INSTANCE);
-      this.method2481(AmbientParticlesModule.INSTANCE);
-      this.method2481(HitParticlesModule.INSTANCE);
-      this.method2481(TotemParticlesModule.INSTANCE);
-      this.method2481(ParticlesModule.INSTANCE);
-      this.method2481(ViewArmorDurabilityModule.INSTANCE);
-      this.method2481(FireWorkESPModule.INSTANCE);
+   private void registerRenderModules() {
+      this.registerBuiltinModule(InterfaceModule.INSTANCE);
+      this.registerBuiltinModule(BetterMinecraftModule.INSTANCE);
+      this.registerBuiltinModule(OptimizationModule.INSTANCE);
+      this.registerBuiltinModule(AntiInvisibleModule.INSTANCE);
+      this.registerBuiltinModule(ArrowsModule.INSTANCE);
+      this.registerBuiltinModule(MenuModule.INSTANCE);
+      this.registerBuiltinModule(NoRenderModule.INSTANCE);
+      this.registerBuiltinModule(PredictionsModule.INSTANCE);
+      this.registerBuiltinModule(ESPModule.INSTANCE);
+      this.registerBuiltinModule(BlockESPModule.INSTANCE);
+      this.registerBuiltinModule(HandsModule.INSTANCE);
+      this.registerBuiltinModule(SwingAnimationModule.INSTANCE);
+      this.registerBuiltinModule(CrosshairModule.INSTANCE);
+      this.registerBuiltinModule(ViewModelModule.INSTANCE);
+      this.registerBuiltinModule(WorldTweaksModule.INSTANCE);
+      this.registerBuiltinModule(WeatherModule.INSTANCE);
+      this.registerBuiltinModule(WorldModule.INSTANCE);
+      this.registerBuiltinModule(ChamsModule.INSTANCE);
+      this.registerBuiltinModule(EntityESPModule.INSTANCE);
+      this.registerBuiltinModule(CloudWaypointsModule.INSTANCE);
+      this.registerBuiltinModule(PartyMarksModule.INSTANCE);
+      this.registerBuiltinModule(TargetESPModule.INSTANCE);
+      this.registerBuiltinModule(CrimsonEmbersModule.INSTANCE);
+      this.registerBuiltinModule(ShaderHandModule.INSTANCE);
+      this.registerBuiltinModule(AutoExplosionModule.INSTANCE);
+      this.registerBuiltinModule(JumpCircleModule.INSTANCE);
+      this.registerBuiltinModule(AmbientParticlesModule.INSTANCE);
+      this.registerBuiltinModule(HitParticlesModule.INSTANCE);
+      this.registerBuiltinModule(TotemParticlesModule.INSTANCE);
+      this.registerBuiltinModule(ParticlesModule.INSTANCE);
+      this.registerBuiltinModule(ViewArmorDurabilityModule.INSTANCE);
+      this.registerBuiltinModule(FireWorkESPModule.INSTANCE);
    }
 
-   private void method2479() {
-      this.method2481(AutoToolModule.INSTANCE);
-      this.method2481(NoDelayModule.INSTANCE);
-      this.method2481(NoSweetSlowModule.INSTANCE);
-      this.method2481(NoPushModule.INSTANCE);
-      this.method2481(OpenWalsModule.INSTANCE);
-      this.method2481(BaseFinderModule.INSTANCE);
-      this.method2481(AppleFarmModule.INSTANCE);
-      this.method2481(AncientFarmModule.INSTANCE);
-      this.method2481(FastBreakModule.INSTANCE);
-      this.method2481(AutoLootModule.INSTANCE);
-      this.method2481(AutoMineModule.INSTANCE);
-      this.method2481(CropFarmerModule.INSTANCE);
-      this.method2481(AutoZamokModule.INSTANCE);
-      this.method2481(AutoBrewingModule.INSTANCE);
-      this.method2481(BotModule.INSTANCE);
-      this.method2481(AutoWardenModule.INSTANCE);
-      this.method2481(EndLooterModule.INSTANCE);
-      this.method2481(WarpFarmModule.INSTANCE);
-      this.method2481(AutoFarmRW.INSTANCE);
-      this.method2481(TpLootModule.INSTANCE);
-      this.method2481(TpKeyFinderModule.INSTANCE);
+   private void registerPlayerModules() {
+      this.registerBuiltinModule(AutoToolModule.INSTANCE);
+      this.registerBuiltinModule(NoDelayModule.INSTANCE);
+      this.registerBuiltinModule(NoSweetSlowModule.INSTANCE);
+      this.registerBuiltinModule(NoPushModule.INSTANCE);
+      this.registerBuiltinModule(OpenWalsModule.INSTANCE);
+      this.registerBuiltinModule(BaseFinderModule.INSTANCE);
+      this.registerBuiltinModule(AppleFarmModule.INSTANCE);
+      this.registerBuiltinModule(AncientFarmModule.INSTANCE);
+      this.registerBuiltinModule(FastBreakModule.INSTANCE);
+      this.registerBuiltinModule(AutoLootModule.INSTANCE);
+      this.registerBuiltinModule(AutoMineModule.INSTANCE);
+      this.registerBuiltinModule(CropFarmerModule.INSTANCE);
+      this.registerBuiltinModule(AutoZamokModule.INSTANCE);
+      this.registerBuiltinModule(AutoBrewingModule.INSTANCE);
+      this.registerBuiltinModule(BotModule.INSTANCE);
+      this.registerBuiltinModule(AutoWardenModule.INSTANCE);
+      this.registerBuiltinModule(EndLooterModule.INSTANCE);
+      this.registerBuiltinModule(WarpFarmModule.INSTANCE);
+      this.registerBuiltinModule(AutoFarmRW.INSTANCE);
+      this.registerBuiltinModule(TpLootModule.INSTANCE);
+      this.registerBuiltinModule(TpKeyFinderModule.INSTANCE);
    }
 
-   private void method2480() {
-      this.method2481(ResourcePackSpoofModule.INSTANCE);
-      this.method2481(ViaFabricFixModule.INSTANCE);
-      this.method2481(CrystalOptimizerModule.INSTANCE);
-      this.method2481(EmotesModule.INSTANCE);
-      this.method2481(AimBotModule.INSTANCE);
-      this.method2481(BowAimBotModule.INSTANCE);
-      this.method2481(TridentAimbotModule.INSTANCE);
-      this.method2481(AuctionScanModule.INSTANCE);
+   private void registerMiscModules() {
+      this.registerBuiltinModule(ResourcePackSpoofModule.INSTANCE);
+      this.registerBuiltinModule(ViaFabricFixModule.INSTANCE);
+      this.registerBuiltinModule(CrystalOptimizerModule.INSTANCE);
+      this.registerBuiltinModule(EmotesModule.INSTANCE);
+      this.registerBuiltinModule(AimBotModule.INSTANCE);
+      this.registerBuiltinModule(BowAimBotModule.INSTANCE);
+      this.registerBuiltinModule(TridentAimbotModule.INSTANCE);
+      this.registerBuiltinModule(AuctionScanModule.INSTANCE);
       if (Zenith.method1502()) {
-         this.method2481(ItemDebugModule.INSTANCE);
-         this.method2481(ServerProbeModule.INSTANCE);
-         this.method2481(PacketAuditModule.INSTANCE);
-         this.method2481(CommandProbeModule.INSTANCE);
-         this.method2481(AntiCheatProbeModule.INSTANCE);
-         this.method2481(ActionMapModule.INSTANCE);
-         this.method2481(SelfFlagModule.INSTANCE);
-         this.method2481(FakePlayerModule.INSTANCE);
-         this.method2481(PathTeleportModule.INSTANCE);
+         this.registerBuiltinModule(ItemDebugModule.INSTANCE);
+         this.registerBuiltinModule(ServerProbeModule.INSTANCE);
+         this.registerBuiltinModule(PacketAuditModule.INSTANCE);
+         this.registerBuiltinModule(CommandProbeModule.INSTANCE);
+         this.registerBuiltinModule(AntiCheatProbeModule.INSTANCE);
+         this.registerBuiltinModule(ActionMapModule.INSTANCE);
+         this.registerBuiltinModule(SelfFlagModule.INSTANCE);
+         this.registerBuiltinModule(FakePlayerModule.INSTANCE);
+         this.registerBuiltinModule(PathTeleportModule.INSTANCE);
       }
 
-      this.method2481(ShaderESPModule.INSTANCE);
-      this.method2481(ShulkerPreviewModule.INSTANCE);
-      this.method2481(ServerHelperModule.INSTANCE);
-      this.method2481(PotionThrowerModule.INSTANCE);
-      this.method2481(ElytraHelperModule.INSTANCE);
-      this.method2481(ItemScrollerModule.INSTANCE);
-      this.method2481(ClickActionModule.INSTANCE);
-      this.method2481(FreeCamModule.INSTANCE);
-      this.method2481(PvpSafeModule.INSTANCE);
-      this.method2481(CameraTweaksModule.INSTANCE);
-      this.method2481(AutoAuthModule.INSTANCE);
-      this.method2481(AutoCapchaModule.INSTANCE);
-      this.method2481(AutoPayModule.INSTANCE);
-      this.method2481(AutoDuelsModule.INSTANCE);
-      this.method2481(AutoLeaveModule.INSTANCE);
-      this.method2481(AHHelperModule.INSTANCE);
-      this.method2481(AutoInventoryModule.INSTANCE);
-      this.method2481(AutoCraftModule.INSTANCE);
-      this.method2481(ContainerHelperModule.INSTANCE);
-      this.method2481(NoInteractModule.INSTANCE);
-      this.method2481(NoFriendDamageModule.INSTANCE);
-      this.method2481(ChestStealerModule.INSTANCE);
-      this.method2481(AutoAcceptModule.INSTANCE);
-      this.method2481(EventTrackerModule.INSTANCE);
-      this.method2481(AutoUseModule.INSTANCE);
-      this.method2481(TapeMouseModule.INSTANCE);
-      this.method2481(AutoRespawnModule.INSTANCE);
-      this.method2481(NameProtectModule.INSTANCE);
-      this.method2481(AutoWebModule.INSTANCE);
-      this.method2481(XrayBypassModule.INSTANCE);
-      this.method2481(StreamerModeModule.INSTANCE);
+      this.registerBuiltinModule(ShaderESPModule.INSTANCE);
+      this.registerBuiltinModule(ShulkerPreviewModule.INSTANCE);
+      this.registerBuiltinModule(ServerHelperModule.INSTANCE);
+      this.registerBuiltinModule(PotionThrowerModule.INSTANCE);
+      this.registerBuiltinModule(ElytraHelperModule.INSTANCE);
+      this.registerBuiltinModule(ItemScrollerModule.INSTANCE);
+      this.registerBuiltinModule(ClickActionModule.INSTANCE);
+      this.registerBuiltinModule(FreeCamModule.INSTANCE);
+      this.registerBuiltinModule(PvpSafeModule.INSTANCE);
+      this.registerBuiltinModule(CameraTweaksModule.INSTANCE);
+      this.registerBuiltinModule(AutoAuthModule.INSTANCE);
+      this.registerBuiltinModule(AutoCapchaModule.INSTANCE);
+      this.registerBuiltinModule(AutoPayModule.INSTANCE);
+      this.registerBuiltinModule(AutoDuelsModule.INSTANCE);
+      this.registerBuiltinModule(AutoLeaveModule.INSTANCE);
+      this.registerBuiltinModule(AHHelperModule.INSTANCE);
+      this.registerBuiltinModule(AutoInventoryModule.INSTANCE);
+      this.registerBuiltinModule(AutoCraftModule.INSTANCE);
+      this.registerBuiltinModule(ContainerHelperModule.INSTANCE);
+      this.registerBuiltinModule(NoInteractModule.INSTANCE);
+      this.registerBuiltinModule(NoFriendDamageModule.INSTANCE);
+      this.registerBuiltinModule(ChestStealerModule.INSTANCE);
+      this.registerBuiltinModule(AutoAcceptModule.INSTANCE);
+      this.registerBuiltinModule(EventTrackerModule.INSTANCE);
+      this.registerBuiltinModule(AutoUseModule.INSTANCE);
+      this.registerBuiltinModule(TapeMouseModule.INSTANCE);
+      this.registerBuiltinModule(AutoRespawnModule.INSTANCE);
+      this.registerBuiltinModule(NameProtectModule.INSTANCE);
+      this.registerBuiltinModule(AutoWebModule.INSTANCE);
+      this.registerBuiltinModule(XrayBypassModule.INSTANCE);
+      this.registerBuiltinModule(StreamerModeModule.INSTANCE);
    }
 
-   private void method2481(Module moduleValue) {
-      this.method2482(moduleValue);
+   private void registerBuiltinModule(Module moduleValue) {
+      this.registerModule(moduleValue);
    }
 
-   public void method2482(Module moduleValue) {
+   public void registerModule(Module moduleValue) {
       Objects.requireNonNull(moduleValue, "module");
       if (this.items.stream().anyMatch(var1x -> var1x.getId().equals(moduleValue.getId()))) {
          throw new IllegalArgumentException("Duplicate module id: " + moduleValue.getId());
@@ -359,7 +361,7 @@ public final class ModuleManager implements MinecraftAccess {
       }
    }
 
-   public boolean method2483(Module moduleValue) {
+   public boolean unregisterModule(Module moduleValue) {
       if (moduleValue == null) {
          return false;
       } else {
@@ -368,11 +370,11 @@ public final class ModuleManager implements MinecraftAccess {
       }
    }
 
-   public Module method2484(String string) {
+   public Module findByName(String string) {
       return this.items.stream().filter(var1x -> var1x.getName().equalsIgnoreCase(string)).findFirst().orElse(null);
    }
 
-   public Set<Module> method2485() {
+   public Set<Module> getEnabledModules() {
       LinkedHashSet linkedHashSet = new LinkedHashSet();
 
       for (Module moduleValue : this.items) {
@@ -385,7 +387,7 @@ public final class ModuleManager implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method2486(KeyEvent event) {
+   public void onKey(KeyEvent event) {
       if (event.getIntValue() == 1) {
          if (!BindCapture.isActive() || mc.gui.screen() == null || mc.gui.screen() != Zenith.getInstance().getNLMenuScreen()) {
             if (KeyName.method6703(MenuModule.INSTANCE.getKeyCode(), MenuModule.INSTANCE.getKeyModifiers(), event.getKeyCode(), event.getModifiers())) {

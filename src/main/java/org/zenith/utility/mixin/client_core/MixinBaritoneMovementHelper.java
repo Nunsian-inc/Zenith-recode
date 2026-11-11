@@ -43,7 +43,7 @@ public interface MixinBaritoneMovementHelper {
 
    @Unique
    private static boolean zenith$isAutoZamokEnabled() {
-      Module moduleValue = Zenith.getInstance().getModuleManager().method2484("AutoZamok");
+      Module moduleValue = Zenith.getInstance().getModuleManager().findByName("AutoZamok");
       return moduleValue != null && moduleValue.isEnabled();
    }
 }

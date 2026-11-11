@@ -88,7 +88,7 @@ public final class WarpFarmModule extends Module {
    public void onEnable() {
       super.onEnable();
       this.stopWalking();
-      this.stopWatch.setLongValue(0L);
+      this.stopWatch.setStartTime(0L);
       this.stopWatch2.reset();
       this.lastAnarchy = -32768 << 16 | 0;
       this.intValue2 = 0;
@@ -226,7 +226,7 @@ public final class WarpFarmModule extends Module {
    }
 
    private void method4120() {
-      if (this.stopWatch.method7546(5000L)) {
+      if (this.stopWatch.hasElapsed(5000L)) {
          mc.player.connection.sendCommand("warp pvp");
          this.stopWatch.reset();
          this.stopWatch2.reset();
@@ -235,7 +235,7 @@ public final class WarpFarmModule extends Module {
 
    private void method4121() {
       this.stopWalking();
-      if (this.stopWatch2.method7546(2000L)) {
+      if (this.stopWatch2.hasElapsed(2000L)) {
          if (this.method4124()) {
             ChatLogger.method2019("WarpFarm: посторонний игрок у центра, всем отправлен /hub");
             this.method4119();
@@ -269,15 +269,15 @@ public final class WarpFarmModule extends Module {
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
       if (this.nextRouteBlock != null && mc.player != null) {
-         event.method3044();
-         event.method3042(1.0F, 0.0F);
-         event.method3039(true);
+         event.clearInput();
+         event.setMovement(1.0F, 0.0F);
+         event.setSprint(true);
          boolean flag = mc.level != null
             && (
                mc.level.getBlockState(this.nextRouteBlock).getBlock() instanceof SlabBlock
                   || mc.level.getBlockState(this.nextRouteBlock.below()).getBlock() instanceof SlabBlock
             );
-         event.method3041(!flag && this.nextRouteBlock.getY() > Mth.floor(mc.player.getY() + 0.01));
+         event.setJump(!flag && this.nextRouteBlock.getY() > Mth.floor(mc.player.getY() + 0.01));
       }
    }
 

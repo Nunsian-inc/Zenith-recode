@@ -163,7 +163,7 @@ public final class SpiderModule extends Module {
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
       if (mc.player.horizontalCollision && mc.player.lastOnGround) {
-         event.method3041(true);
+         event.setJump(true);
       }
    }
 

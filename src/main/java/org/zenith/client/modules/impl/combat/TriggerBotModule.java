@@ -204,7 +204,7 @@ public final class TriggerBotModule extends Module {
             this.flag2 = this.method5592();
             int selected = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).is(net.minecraft.tags.ItemTags.AXES));
             if (this.entry15.isEnabled()
-               && this.stopWatch.method7546(300L)
+               && this.stopWatch.hasElapsed(300L)
                && Zenith.getInstance().getTaskScheduler().method5117(TriggerBotModule.class)
                && selected != -1
                && UseItemUtils.method6530(this.livingEntity)) {
@@ -383,7 +383,7 @@ public final class TriggerBotModule extends Module {
                boolean flag2 = this.method5591() && !mc.player.onGround() && this.method5589();
                boolean flag3;
                if (!(flag3 = this.neuroClicks.method453(forward, flag, flag2)) && forward) {
-                  event.method3038(false);
+                  event.setForward(false);
                }
 
                this.neuroClicks.method454(true, forward, flag3, flag, this.intValue3 == mc.player.tickCount);
@@ -417,11 +417,11 @@ public final class TriggerBotModule extends Module {
 
             if (!down) {
                mc.options.keySprint.setDown(false);
-               event.method3039(false);
+               event.setSprint(false);
             }
 
             if (!flag) {
-               event.method3038(false);
+               event.setForward(false);
             }
          }
       }

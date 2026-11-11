@@ -143,7 +143,7 @@ public final class VelocityModule extends Module {
 
       if (this.delayingPackets && !this.delayedPackets.isEmpty()) {
          boolean playerOnGround = mc.player != null && mc.player.onGround();
-         boolean delayElapsed = this.delayTimer.method7546((long)this.delay.getValue3());
+         boolean delayElapsed = this.delayTimer.hasElapsed((long)this.delay.getValue3());
          if (playerOnGround || delayElapsed || !this.isDelayMode()) {
             this.flushDelayedPackets();
          }

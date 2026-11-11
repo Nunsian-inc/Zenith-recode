@@ -41,11 +41,11 @@ public final class WaterRiseModule extends Module {
    public void onMoveInput(MoveInputEvent event) {
       if (this.active()) {
          if (event.getPlayerInput().forward()) {
-            event.method3039(true);
+            event.setSprint(true);
          }
 
          if (event.getPlayerInput().shift()) {
-            event.method3040(false);
+            event.setShift(false);
          }
       }
    }

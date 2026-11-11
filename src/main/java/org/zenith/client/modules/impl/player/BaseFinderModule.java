@@ -103,7 +103,7 @@ public final class BaseFinderModule extends Module {
    @Override
    public void onEnable() {
       if (mc.player != null && mc.level != null) {
-         this.stopWatch.setLongValue(0L);
+         this.stopWatch.setStartTime(0L);
          this.copyOnWriteArrayList.clear();
          this.items.clear();
          this.items2.clear();
@@ -141,7 +141,7 @@ public final class BaseFinderModule extends Module {
    @EventTarget
    public void method4060(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (this.stopWatch.method7546(1000L)) {
+         if (this.stopWatch.hasElapsed(1000L)) {
             this.method4064();
             this.stopWatch.reset();
          }

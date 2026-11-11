@@ -14,22 +14,22 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.zenith.Rotation;
 import org.zenith.utility.api.WorldStylePlanModel;
 
-public final class Util16 {
-   private Util16() {
+public final class MovementObservationBuilder {
+   private MovementObservationBuilder() {
    }
 
-   public static Util16.Data method3048(WorldStylePlanModel worldStylePlanModel, Rotation rotation) {
+   public static MovementObservationBuilder.Observation captureObservation(WorldStylePlanModel model, Rotation rotation) {
       Minecraft minecraft = Minecraft.getInstance();
       if (minecraft.player != null && minecraft.level != null && rotation != null && !rotation.isInvalid()) {
-         float[][][][] floatValues = method3050(minecraft, worldStylePlanModel, rotation.getFloatValue());
-         float[] floatValues2 = method3049(minecraft, worldStylePlanModel, rotation);
-         return floatValues != null && floatValues2 != null ? new Util16.Data(floatValues, floatValues2) : null;
+         float[][][][] voxelFeatures = captureVoxelFeatures(minecraft, model, rotation.getFloatValue());
+         float[] playerFeatures = capturePlayerFeatures(minecraft, model, rotation);
+         return voxelFeatures != null && playerFeatures != null ? new MovementObservationBuilder.Observation(voxelFeatures, playerFeatures) : null;
       } else {
          return null;
       }
    }
 
-   private static float[] method3049(Minecraft minecraft, WorldStylePlanModel worldStylePlanModel, Rotation rotation) {
+   private static float[] capturePlayerFeatures(Minecraft minecraft, WorldStylePlanModel model, Rotation rotation) {
       Vec3 deltaMovement = minecraft.player.getDeltaMovement();
       AABB boundingBox = minecraft.player.getBoundingBox();
       double d = Math.toRadians(rotation.getFloatValue());
@@ -37,17 +37,17 @@ public final class Util16 {
          (float)deltaMovement.x,
          (float)deltaMovement.y,
          (float)deltaMovement.z,
-         method3055(minecraft.player.onGround()),
-         method3055(minecraft.player.horizontalCollision),
-         method3055(minecraft.player.verticalCollision),
-         method3055(minecraft.player.isSprinting()),
-         method3055(minecraft.player.jumping),
-         method3055(minecraft.options.keyUp.isDown()),
-         method3055(minecraft.options.keyDown.isDown()),
-         method3055(minecraft.options.keyLeft.isDown()),
-         method3055(minecraft.options.keyRight.isDown()),
-         method3055(minecraft.options.keyJump.isDown()),
-         method3055(minecraft.options.keySprint.isDown()),
+         booleanFeature(minecraft.player.onGround()),
+         booleanFeature(minecraft.player.horizontalCollision),
+         booleanFeature(minecraft.player.verticalCollision),
+         booleanFeature(minecraft.player.isSprinting()),
+         booleanFeature(minecraft.player.jumping),
+         booleanFeature(minecraft.options.keyUp.isDown()),
+         booleanFeature(minecraft.options.keyDown.isDown()),
+         booleanFeature(minecraft.options.keyLeft.isDown()),
+         booleanFeature(minecraft.options.keyRight.isDown()),
+         booleanFeature(minecraft.options.keyJump.isDown()),
+         booleanFeature(minecraft.options.keySprint.isDown()),
          (float)Math.sin(d),
          (float)Math.cos(d),
          rotation.getFloatValue2() / 90.0F,
@@ -59,7 +59,7 @@ public final class Util16 {
          (float)minecraft.player.getAttributeValue(Attributes.JUMP_STRENGTH),
          minecraft.player.maxUpStep()
       };
-      if (floats.length != worldStylePlanModel.getIntValue6()) {
+      if (floats.length != model.getIntValue6()) {
          return null;
       } else {
          for (float f : floats) {
@@ -72,26 +72,26 @@ public final class Util16 {
       }
    }
 
-   private static float[][][][] method3050(Minecraft minecraft, WorldStylePlanModel worldStylePlanModel, float floatValue) {
-      int n = worldStylePlanModel.getIntValue8();
+   private static float[][][][] captureVoxelFeatures(Minecraft minecraft, WorldStylePlanModel model, float floatValue) {
+      int n = model.getIntValue8();
       float[][][][] floatseseses = new float[3][n][n][n];
       Vec3 position = minecraft.player.position();
       AABB boundingBox = minecraft.player.getBoundingBox();
-      List<AABB> aabbs = method3051(minecraft, boundingBox);
+      List<AABB> aabbs = collectCollisionBoxes(minecraft, boundingBox);
       double d = Math.toRadians(floatValue);
       double d2 = Math.sin(d);
       double d3 = Math.cos(d);
-      double d4 = 2.0 * worldStylePlanModel.getFloatValue6() / n;
-      double d5 = (worldStylePlanModel.getFloatValue8() - worldStylePlanModel.getFloatValue7()) / n;
-      int n2 = worldStylePlanModel.getIntValue13();
+      double d4 = 2.0 * model.getFloatValue6() / n;
+      double d5 = (model.getFloatValue8() - model.getFloatValue7()) / n;
+      int n2 = model.getIntValue13();
 
       for (int i = 0; i < n; i++) {
          for (int j = 0; j < n; j++) {
             for (int k = 0; k < n; k++) {
-               double d6 = -worldStylePlanModel.getFloatValue6() + (k + 0.5) * d4;
-               double d7 = worldStylePlanModel.getFloatValue7() + (i + 0.5) * d5;
-               double d8 = -worldStylePlanModel.getFloatValue6() + (j + 0.5) * d4;
-               Vec3 pos = method3052(position, d3, d2, d6, d7, d8);
+               double d6 = -model.getFloatValue6() + (k + 0.5) * d4;
+               double d7 = model.getFloatValue7() + (i + 0.5) * d5;
+               double d8 = -model.getFloatValue6() + (j + 0.5) * d4;
+               Vec3 pos = toWorldPosition(position, d3, d2, d6, d7, d8);
                int n3 = 0;
 
                for (int m = 0; m < n2; m++) {
@@ -100,8 +100,8 @@ public final class Util16 {
                         double d9 = ((i3 + 0.5) / n2 - 0.5) * d4;
                         double d10 = ((m + 0.5) / n2 - 0.5) * d5;
                         double d11 = ((i2 + 0.5) / n2 - 0.5) * d4;
-                        Vec3 vec = method3052(position, d3, d2, d6 + d9, d7 + d10, d8 + d11);
-                        if (method3053(vec, aabbs)) {
+                        Vec3 vec = toWorldPosition(position, d3, d2, d6 + d9, d7 + d10, d8 + d11);
+                        if (isInsideCollision(vec, aabbs)) {
                            n3++;
                         }
                      }
@@ -109,13 +109,13 @@ public final class Util16 {
                }
 
                floatseseses[0][i][j][k] = (float)n3 / (n2 * n2 * n2);
-               double d9 = worldStylePlanModel.getFloatValue9();
+               double d9 = model.getFloatValue9();
 
                for (AABB aabb : aabbs) {
-                  d9 = Math.min(d9, method3054(pos, aabb));
+                  d9 = Math.min(d9, distanceToBox(pos, aabb));
                }
 
-               floatseseses[1][i][j][k] = (float)(d9 / worldStylePlanModel.getFloatValue9());
+               floatseseses[1][i][j][k] = (float)(d9 / model.getFloatValue9());
                BlockState blockState = minecraft.level.getBlockState(BlockPos.containing(pos));
                floatseseses[2][i][j][k] = Mth.clamp(blockState.getBlock().getFriction(), 0.0F, 1.0F);
             }
@@ -125,7 +125,7 @@ public final class Util16 {
       return floatseseses;
    }
 
-   private static List<AABB> method3051(Minecraft minecraft, AABB boundingBox) {
+   private static List<AABB> collectCollisionBoxes(Minecraft minecraft, AABB boundingBox) {
       int n = Mth.floor(boundingBox.minX) - 6;
       int n2 = Mth.floor(boundingBox.maxX) + 6;
       int n3 = Mth.floor(boundingBox.minY) - 3;
@@ -152,11 +152,11 @@ public final class Util16 {
       return aabbs;
    }
 
-   private static Vec3 method3052(Vec3 position, double d, double d2, double d3, double d4, double d5) {
+   private static Vec3 toWorldPosition(Vec3 position, double d, double d2, double d3, double d4, double d5) {
       return new Vec3(position.x + d3 * d - d5 * d2, position.y + d4, position.z + d3 * d2 + d5 * d);
    }
 
-   private static boolean method3053(Vec3 vec, List<AABB> aabbs) {
+   private static boolean isInsideCollision(Vec3 vec, List<AABB> aabbs) {
       for (AABB aabb : aabbs) {
          if (vec.x >= aabb.minX && vec.x < aabb.maxX && vec.y >= aabb.minY && vec.y < aabb.maxY && vec.z >= aabb.minZ && vec.z < aabb.maxZ) {
             return true;
@@ -166,57 +166,57 @@ public final class Util16 {
       return false;
    }
 
-   private static double method3054(Vec3 pos, AABB aabb) {
+   private static double distanceToBox(Vec3 pos, AABB aabb) {
       double d = Math.max(Math.max(aabb.minX - pos.x, 0.0), pos.x - aabb.maxX);
       double d2 = Math.max(Math.max(aabb.minY - pos.y, 0.0), pos.y - aabb.maxY);
       double d3 = Math.max(Math.max(aabb.minZ - pos.z, 0.0), pos.z - aabb.maxZ);
       return Math.sqrt(d * d + d2 * d2 + d3 * d3);
    }
 
-   private static float method3055(boolean down) {
+   private static float booleanFeature(boolean down) {
       return down ? 1.0F : 0.0F;
    }
 
-   public static final class Data {
-      private final float[][][][] floatValues;
-      private final float[] floatValues2;
+   public static final class Observation {
+      private final float[][][][] voxelFeatures;
+      private final float[] playerFeatures;
 
-      public float[][][][] floatValues() {
-         return this.floatValues;
+      public float[][][][] voxelFeatures() {
+         return this.voxelFeatures;
       }
 
-      public float[] floatValues2() {
-         return this.floatValues2;
+      public float[] playerFeatures() {
+         return this.playerFeatures;
       }
 
       @Override
       public boolean equals(Object o) {
          if (this == o) return true;
-         if (!(o instanceof Data other)) return false;
-         return java.util.Objects.equals(this.floatValues, other.floatValues) && java.util.Objects.equals(this.floatValues2, other.floatValues2);
+         if (!(o instanceof Observation other)) return false;
+         return java.util.Objects.equals(this.voxelFeatures, other.voxelFeatures) && java.util.Objects.equals(this.playerFeatures, other.playerFeatures);
       }
 
       @Override
       public int hashCode() {
-         return java.util.Objects.hash(floatValues, floatValues2);
+         return java.util.Objects.hash(voxelFeatures, playerFeatures);
       }
 
       @Override
       public String toString() {
-         return "Data[" + "floatValues=" + this.floatValues + ", " + "floatValues2=" + this.floatValues2 + "]";
+         return "Data[" + "floatValues=" + this.voxelFeatures + ", " + "floatValues2=" + this.playerFeatures + "]";
       }
 
-      public Data(float[][][][] floatValues, float[] floatValues2) {
-         this.floatValues = floatValues;
-         this.floatValues2 = floatValues2;
+      public Observation(float[][][][] voxelFeatures, float[] playerFeatures) {
+         this.voxelFeatures = voxelFeatures;
+         this.playerFeatures = playerFeatures;
       }
 
-      public float[][][][] getFloatValues() {
-         return this.floatValues;
+      public float[][][][] getVoxelFeatures() {
+         return this.voxelFeatures;
       }
 
-      public float[] getFloatValues2() {
-         return this.floatValues2;
+      public float[] getPlayerFeatures() {
+         return this.playerFeatures;
       }
    }
 }

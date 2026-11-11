@@ -179,7 +179,7 @@ public final class SpeedModule extends Module {
             }
 
             if (this.hasMovementInput()) {
-               double movementYawRadians = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
+               double movementYawRadians = MovementInputUtils.movementYawRadians(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
                mc.player.push(-Math.sin(movementYawRadians) * pushSpeed, 0.0, Math.cos(movementYawRadians) * pushSpeed);
             }
          }
@@ -257,7 +257,7 @@ public final class SpeedModule extends Module {
                   pushSpeed = mc.player.onGround() ? 0.085 : 0.03;
                }
 
-               double movementYawRadians = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
+               double movementYawRadians = MovementInputUtils.movementYawRadians(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
                mc.player.push(-Math.sin(movementYawRadians) * pushSpeed, 0.0, Math.cos(movementYawRadians) * pushSpeed);
             }
 
@@ -397,7 +397,7 @@ public final class SpeedModule extends Module {
          && !mc.player.onGround()
          && mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
          float movementYaw = (float)Math.toDegrees(
-            MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input))
+            MovementInputUtils.movementYawRadians(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input))
          );
          if (this.ticks > 0) {
             double heightDifference = Math.abs(mc.player.getY() - this.lastGroundY);
@@ -496,7 +496,7 @@ public final class SpeedModule extends Module {
       if (!this.hasMovementInput()) {
          player.setDeltaMovement(0.0, deltaMovement.y, 0.0);
       } else {
-         double movementYawRadians = MovementInputUtils.method7427(player.getYRot(), ViaCompat.method4846(player.input), ViaCompat.method4847(player.input));
+         double movementYawRadians = MovementInputUtils.movementYawRadians(player.getYRot(), ViaCompat.method4846(player.input), ViaCompat.method4847(player.input));
          player.setDeltaMovement(-Math.sin(movementYawRadians) * horizontalSpeed, deltaMovement.y, Math.cos(movementYawRadians) * horizontalSpeed);
       }
    }

@@ -6,48 +6,48 @@ import net.minecraft.client.Minecraft;
 import org.zenith.base.Module;
 
 public class TickingList<T> {
-   private int intValue = 0;
+   private int currentTick = 0;
    private final PriorityBlockingQueue<TickingList.Entry<T>> priorityBlockingQueue = new PriorityBlockingQueue<>(
-      11, Comparator.comparingInt(entry -> -entry.intValue2)
+      11, Comparator.comparingInt(entry -> -entry.priority)
    );
 
-   public void method13(int n) {
-      this.intValue += n;
+   public void advance(int n) {
+      this.currentTick += n;
    }
 
    public void tick() {
-      this.method13(1);
+      this.advance(1);
    }
 
-   public void method14(TickingList.Entry<T> entry) {
+   public void addOrReplace(TickingList.Entry<T> entry) {
       this.priorityBlockingQueue.removeIf(var1x -> var1x.module == entry.module);
-      entry.intValue = entry.intValue + this.intValue;
+      entry.expiresAt = entry.expiresAt + this.currentTick;
       this.priorityBlockingQueue.add(entry);
    }
 
-   public T method15() {
+   public T peekValue() {
       TickingList.Entry entry = this.priorityBlockingQueue.peek();
       if (entry == null) {
          return null;
       } else {
          if (Minecraft.getInstance().isSameThread()) {
-            while (entry != null && (entry.intValue <= this.intValue || !entry.module.isEnabled())) {
+            while (entry != null && (entry.expiresAt <= this.currentTick || !entry.module.isEnabled())) {
                this.priorityBlockingQueue.poll();
                entry = this.priorityBlockingQueue.peek();
             }
          }
 
-         return entry != null ? (T)entry.obj : null;
+         return entry != null ? (T)entry.value : null;
       }
    }
 
-   public TickingList.Entry<T> method16() {
+   public TickingList.Entry<T> peekEntry() {
       TickingList.Entry entry = this.priorityBlockingQueue.peek();
       if (entry == null) {
          return null;
       } else {
          if (Minecraft.getInstance().isSameThread()) {
-            while (entry != null && (entry.intValue <= this.intValue || !entry.module.isEnabled())) {
+            while (entry != null && (entry.expiresAt <= this.currentTick || !entry.module.isEnabled())) {
                this.priorityBlockingQueue.poll();
                entry = this.priorityBlockingQueue.peek();
             }
@@ -62,16 +62,16 @@ public class TickingList<T> {
    }
 
    public static class Entry<T> {
-      public int intValue;
-      public final int intValue2;
+      public int expiresAt;
+      public final int priority;
       public final Module module;
-      public final T obj;
+      public final T value;
 
-      public Entry(int intValue, int priority, Module moduleValue, T rotationRequest) {
-         this.intValue = intValue;
-         this.intValue2 = priority;
+      public Entry(int expiresAt, int priority, Module moduleValue, T rotationRequest) {
+         this.expiresAt = expiresAt;
+         this.priority = priority;
          this.module = moduleValue;
-         this.obj = (T)rotationRequest;
+         this.value = (T)rotationRequest;
       }
    }
 }

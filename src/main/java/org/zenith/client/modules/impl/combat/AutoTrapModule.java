@@ -253,7 +253,7 @@ public final class AutoTrapModule extends Module {
    public void onMoveInput(MoveInputEvent event) {
       this.class33.onMoveInput(event);
       if (this.rotation != null && mc.player != null) {
-         MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.correctMovement(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
       }
    }
 

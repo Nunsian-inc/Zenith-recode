@@ -111,21 +111,21 @@ public final class WardrobeRenderer implements MinecraftAccess {
                   return false;
                } else {
                   boolean flag3 = mc.player.getSkin().model() == PlayerModelType.SLIM;
-                  Util3.Entry entry = Util3.method827(wardrobe, hoveredDatas, hoveredData, flag3, ordinal, flag);
+                  WardrobeModelData.WardrobeRenderData entry = WardrobeModelData.createArmFitting(wardrobe, hoveredDatas, hoveredData, flag3, ordinal, flag);
                   if (flag2) {
                      modelPart.resetPose();
                      modelPart.visible = true;
                      playerModel.leftArm.zRot = -0.1F;
                      playerModel.rightArm.zRot = 0.1F;
-                     method6697(wardrobe, hoveredData, ordinal, poseStack, orderedRenderCommandQueue, lightCoords, modelPart, false, Util3.Data.INSTANCE);
+                     method6697(wardrobe, hoveredData, ordinal, poseStack, orderedRenderCommandQueue, lightCoords, modelPart, false, WardrobeModelData.Transform.INSTANCE);
                   }
 
                   for (HoveredData hoveredData2 : hoveredDatas) {
                      if (hoveredData2 != hoveredData
-                        && Util3.method824(hoveredData2.getFocusSlotEnum()) >= 0
+                        && WardrobeModelData.getLayerOrder(hoveredData2.getFocusSlotEnum()) >= 0
                         && method6696(wardrobe, hoveredData2, ordinal)
                         && (hoveredData == null || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
-                        method6697(wardrobe, hoveredData2, ordinal, poseStack, orderedRenderCommandQueue, lightCoords, modelPart, hoveredData2.method1546() == WardrobeCategory.ACCESSORY, entry.method845(hoveredData2, ordinal));
+                        method6697(wardrobe, hoveredData2, ordinal, poseStack, orderedRenderCommandQueue, lightCoords, modelPart, hoveredData2.method1546() == WardrobeCategory.ACCESSORY, entry.getTransform(hoveredData2, ordinal));
                      }
                   }
 
@@ -144,7 +144,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
 
    private static void method6691(PoseStack poseStack, WardrobeRenderer.Data data) {
       data.getModelPart().translateAndRotate(poseStack);
-      data.getData().method842(poseStack);
+      data.getData().applyToPoseStack(poseStack);
    }
 
    public static boolean method6692() {
@@ -221,7 +221,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
    }
 
    private static void method6697(
-      Wardrobe wardrobe, HoveredData hoveredData, int ordinal, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, ModelPart modelPart, boolean flag, Util3.Data data
+      Wardrobe wardrobe, HoveredData hoveredData, int ordinal, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, ModelPart modelPart, boolean flag, WardrobeModelData.Transform data
    ) {
       WardrobeModel key = wardrobe.getRegistry().method1427(hoveredData);
       AnimationCache.Entry entry = AnimationCache.method7621(mc.player.getId(), hoveredData, false);
@@ -260,7 +260,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
             OverlayTexture.NO_OVERLAY,
             hoveredData.getRarity().isFlag(),
             modelPart,
-            data == Util3.Data.INSTANCE ? null : data::method842,
+            data == WardrobeModelData.Transform.INSTANCE ? null : data::applyToPoseStack,
             flag2
          );
       }
@@ -277,7 +277,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
       private final SubmitNodeCollector orderedRenderCommandQueue;
       private final Matrix4f matrix4f2;
       private final ModelPart modelPart;
-      private final Util3.Data data;
+      private final WardrobeModelData.Transform data;
 
       public WardrobeModel class15() {
          return this.class15;
@@ -319,7 +319,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
          return this.modelPart;
       }
 
-      public Util3.Data data() {
+      public WardrobeModelData.Transform data() {
          return this.data;
       }
 
@@ -351,7 +351,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
          SubmitNodeCollector orderedRenderCommandQueue,
          Matrix4f matrix4f2,
          ModelPart modelPart,
-         Util3.Data data
+         WardrobeModelData.Transform data
       ) {
          this.class15 = key;
          this.floatValues = floatValues;
@@ -406,7 +406,7 @@ public final class WardrobeRenderer implements MinecraftAccess {
          return this.modelPart;
       }
 
-      public Util3.Data getData() {
+      public WardrobeModelData.Transform getData() {
          return this.data;
       }
    }

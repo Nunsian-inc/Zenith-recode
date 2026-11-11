@@ -5,7 +5,7 @@ import org.zenith.ModuleCategory;
 import org.zenith.ModuleInfo;
 import org.zenith.base.Module;
 import org.zenith.client.settings.BooleanSetting;
-import org.zenith.utility.game.Util14;
+import org.zenith.utility.game.ItemIntegrityTracker;
 import org.zenith.utility.misc.ItemStackTags;
 
 @ModuleInfo(
@@ -29,7 +29,7 @@ public class ViewArmorDurabilityModule extends Module {
       } else if (renderSelf && !this.naSebe.isEnabled()) {
          return false;
       } else {
-         return !renderSelf && Util14.method2640() ? false : renderSelf || this.naEnemies.isEnabled();
+         return !renderSelf && ItemIntegrityTracker.hasSuspiciousStack() ? false : renderSelf || this.naEnemies.isEnabled();
       }
    }
 

@@ -320,7 +320,7 @@ public final class AutoBrewingModule extends Module {
       ChestMenu chestMenu = this.method4305();
       if (chestMenu == null) {
          this.method4280();
-      } else if (this.stopWatch.method7546(50L)) {
+      } else if (this.stopWatch.hasElapsed(50L)) {
          Slot slot = this.method4282(chestMenu);
          if (slot == null) {
             this.method4272();
@@ -425,7 +425,7 @@ public final class AutoBrewingModule extends Module {
          this.type2 = type2;
          this.rotation = null;
          this.stopWatch.reset();
-      } else if (this.stopWatch.method7546(1500L)) {
+      } else if (this.stopWatch.hasElapsed(1500L)) {
          this.blockPos2 = null;
          runnable.run();
       } else {
@@ -435,7 +435,7 @@ public final class AutoBrewingModule extends Module {
             runnable.run();
          } else {
             this.rotation = RotationUtils.method6913(blockHitResult.getLocation());
-            if (this.method4318(this.blockPos2) && this.stopWatch.method7546(50L)) {
+            if (this.method4318(this.blockPos2) && this.stopWatch.hasElapsed(50L)) {
                UseItemUtils.method6514(blockHitResult, InteractionHand.MAIN_HAND);
                this.stopWatch.reset();
             }
@@ -447,7 +447,7 @@ public final class AutoBrewingModule extends Module {
       ChestMenu containerMenu = this.method4305();
       if (containerMenu == null) {
          this.method4288();
-      } else if (this.stopWatch.method7546(50L)) {
+      } else if (this.stopWatch.hasElapsed(50L)) {
          Slot slot = this.method4313(containerMenu, this::method4315);
          if (slot == null) {
             this.method4272();
@@ -567,7 +567,7 @@ public final class AutoBrewingModule extends Module {
          this.intValue5 = 0;
          this.stopWatch.reset();
          this.rotation = null;
-      } else if (this.stopWatch.method7546(1500L)) {
+      } else if (this.stopWatch.hasElapsed(1500L)) {
          this.blockPos = null;
          this.type2 = AutoBrewingModule.Type2.SCAN_STANDS;
          this.rotation = null;
@@ -579,7 +579,7 @@ public final class AutoBrewingModule extends Module {
             this.rotation = null;
          } else {
             this.rotation = RotationUtils.method6913(blockHitResult.getLocation());
-            if (this.method4318(this.blockPos) && this.stopWatch.method7546(50L)) {
+            if (this.method4318(this.blockPos) && this.stopWatch.hasElapsed(50L)) {
                UseItemUtils.method6514(blockHitResult, InteractionHand.MAIN_HAND);
                this.stopWatch.reset();
             }
@@ -591,7 +591,7 @@ public final class AutoBrewingModule extends Module {
       BrewingStandMenu containerMenu = this.method4304();
       if (containerMenu == null) {
          this.method4271();
-      } else if (this.stopWatch.method7546(75L)) {
+      } else if (this.stopWatch.hasElapsed(75L)) {
          if (this.type3 == AutoBrewingModule.Type3.IDLE && !containerMenu.getCarried().isEmpty()) {
             this.method4309(containerMenu);
             this.stopWatch.reset();
@@ -634,7 +634,7 @@ public final class AutoBrewingModule extends Module {
       BrewingStandMenu containerMenu = this.method4304();
       if (containerMenu == null) {
          this.method4271();
-      } else if (this.stopWatch.method7546(50L)) {
+      } else if (this.stopWatch.hasElapsed(50L)) {
          if (this.type3 == AutoBrewingModule.Type3.IDLE && !containerMenu.getCarried().isEmpty()) {
             this.method4309(containerMenu);
             this.stopWatch.reset();
@@ -664,7 +664,7 @@ public final class AutoBrewingModule extends Module {
       BrewingStandMenu containerMenu = this.method4304();
       if (containerMenu == null) {
          this.method4271();
-      } else if (this.stopWatch.method7546(50L)) {
+      } else if (this.stopWatch.hasElapsed(50L)) {
          if (this.type3 == AutoBrewingModule.Type3.IDLE && !containerMenu.getCarried().isEmpty()) {
             this.method4309(containerMenu);
             this.stopWatch.reset();
@@ -689,7 +689,7 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4302() {
-      if (this.stopWatch.method7546(20000L)) {
+      if (this.stopWatch.hasElapsed(20000L)) {
          this.intValue4++;
          if (this.intValue4 >= this.items3.size()) {
             this.type = AutoBrewingModule.Type.COLLECT;
@@ -705,7 +705,7 @@ public final class AutoBrewingModule extends Module {
       BrewingStandMenu brewingStandMenu = this.method4304();
       if (brewingStandMenu == null) {
          this.method4271();
-      } else if (this.stopWatch.method7546(50L)) {
+      } else if (this.stopWatch.hasElapsed(50L)) {
          if (this.intValue6 >= CONST_intValues.length) {
             this.method4296();
          } else {

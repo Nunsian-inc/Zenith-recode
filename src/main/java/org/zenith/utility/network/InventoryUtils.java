@@ -443,7 +443,7 @@ public final class InventoryUtils implements ZenithAccess {
                      );
                      if (InventorySettingModule.INSTANCE.method2397()) {
                         task.method5123(MoveInputEvent.class, var0x -> {
-                           var0x.method3044();
+                           var0x.clearInput();
                            return true;
                         });
                      }
@@ -473,7 +473,7 @@ public final class InventoryUtils implements ZenithAccess {
                   );
                   if (InventorySettingModule.INSTANCE.method2397()) {
                      task.method5123(MoveInputEvent.class, var0x -> {
-                        var0x.method3044();
+                        var0x.clearInput();
                         return true;
                      });
                   }
@@ -609,7 +609,7 @@ public final class InventoryUtils implements ZenithAccess {
                         MoveInputEvent.class,
                         var1x -> {
                            if (InventorySettingModule.INSTANCE.method2397()) {
-                              var1x.method3044();
+                              var1x.clearInput();
                               if (mc.player.lastSentInput.jump()
                                  || mc.player.isSprinting()
                                  || mc.player.lastSentInput.forward()
@@ -631,7 +631,7 @@ public final class InventoryUtils implements ZenithAccess {
                         MoveInputEvent.class,
                         var2x -> {
                            if (InventorySettingModule.INSTANCE.method2397()) {
-                              var2x.method3044();
+                              var2x.clearInput();
                               if (mc.player.lastSentInput.jump()
                                  || mc.player.isSprinting()
                                  || mc.player.lastSentInput.forward()

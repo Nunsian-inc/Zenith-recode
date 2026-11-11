@@ -22,7 +22,7 @@ public class ModuleArgumentType implements ArgumentType<Module> {
    }
 
    public Module parse(StringReader stringReader) throws CommandSyntaxException {
-      Module moduleValue = Zenith.getInstance().getModuleManager().method2484(stringReader.readString());
+      Module moduleValue = Zenith.getInstance().getModuleManager().findByName(stringReader.readString());
       if (moduleValue == null) {
          throw new DynamicCommandExceptionType(obj -> Component.literal(obj.toString() + " не существует.")).create(stringReader.readString());
       } else {

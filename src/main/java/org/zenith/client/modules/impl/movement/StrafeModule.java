@@ -43,11 +43,11 @@ public final class StrafeModule extends Module {
 
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
-      if (MovementInputUtils.method7418() && rotationManager.getModule() == this) {
-         event.method3047(false);
-         event.method3045(false);
-         event.method3046(false);
-         event.method3038(
+      if (MovementInputUtils.hasMovementInput() && rotationManager.getModule() == this) {
+         event.setBackward(false);
+         event.setLeft(false);
+         event.setRight(false);
+         event.setForward(
             mc.options.keyUp.isDown() || mc.options.keyDown.isDown() || mc.options.keyRight.isDown() || mc.options.keyLeft.isDown()
          );
       }

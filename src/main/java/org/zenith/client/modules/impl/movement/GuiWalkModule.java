@@ -68,7 +68,7 @@ public final class GuiWalkModule extends Module {
 
                this.queueNextClick = false;
                if (Objects.requireNonNull(event.getPacket()) instanceof ServerboundContainerClickPacket containerClickPacket
-                  && (!this.queuedClickPackets.isEmpty() || MovementInputUtils.method7418())
+                  && (!this.queuedClickPackets.isEmpty() || MovementInputUtils.hasMovementInput())
                   && KeyBindUtils.method2635()) {
                   this.queuedClickPackets.add(containerClickPacket);
                   this.lastClickAction = containerClickPacket.containerInput();
@@ -112,14 +112,14 @@ public final class GuiWalkModule extends Module {
          if (mc.player.containerMenu instanceof InventoryMenu) {
             ContainerInput lastClickAction = event.getSlotActionType();
             if (this.visualMode.isSelected()) {
-               if (MovementInputUtils.method7418()) {
+               if (MovementInputUtils.hasMovementInput()) {
                   event.setCancelled(true);
                } else {
                   this.clickedWhileStationary = true;
                }
             }
 
-            if (this.queuedClickPackets.isEmpty() && !MovementInputUtils.method7418()) {
+            if (this.queuedClickPackets.isEmpty() && !MovementInputUtils.hasMovementInput()) {
                this.stationaryClick = true;
             } else if ((event.getIntValue3() != 1 || !lastClickAction.equals(ContainerInput.PICKUP))
                && (this.lastClickAction != ContainerInput.PICKUP || event.getSlotActionType() != ContainerInput.QUICK_MOVE)
@@ -148,7 +148,7 @@ public final class GuiWalkModule extends Module {
                this.stationaryClick = false;
             } else {
                this.stationaryClick = false;
-               if (MovementInputUtils.method7418() || !this.queuedClickPackets.isEmpty()) {
+               if (MovementInputUtils.hasMovementInput() || !this.queuedClickPackets.isEmpty()) {
                   event.setCancelled(true);
                }
 
@@ -162,7 +162,7 @@ public final class GuiWalkModule extends Module {
                      task.method5120(
                         MoveInputEvent.class,
                         var1x -> {
-                           var1x.method3044();
+                           var1x.clearInput();
                            if (!mc.player.lastSentInput.jump()
                               && !mc.player.isSprinting()
                               && !mc.player.lastSentInput.forward()
@@ -219,7 +219,7 @@ public final class GuiWalkModule extends Module {
                         }
                      );
                      task.method5123(MoveInputEvent.class, event2 -> {
-                        event2.method3044();
+                        event2.clearInput();
                         return true;
                      });
                      if (this.cameraLock.isEnabled()) {

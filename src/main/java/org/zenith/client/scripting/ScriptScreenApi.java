@@ -956,7 +956,7 @@ public final class ScriptScreenApi {
          return ScriptValueUtils.method6267(scope, var2x);
       });
       entry2.method6274("module", var2x -> {
-         Module var3x = Zenith.getInstance().getModuleManager().method2484(ScriptValueUtils.method6254(var2x, 0, ""));
+         Module var3x = Zenith.getInstance().getModuleManager().findByName(ScriptValueUtils.method6254(var2x, 0, ""));
          if (var3x == null) {
             return null;
          } else {

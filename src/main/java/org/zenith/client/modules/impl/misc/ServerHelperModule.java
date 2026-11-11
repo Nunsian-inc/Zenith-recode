@@ -383,13 +383,13 @@ public final class ServerHelperModule extends Module {
                   && !mc.player.lastSentInput.left()
                   && !mc.player.lastSentInput.right()) {
                   if (mc.player.containerMenu instanceof InventoryMenu) {
-                     if (this.stopWatch2.method7546(1000L)) {
+                     if (this.stopWatch2.hasElapsed(1000L)) {
                         InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true);
                         InventoryUtils.closeScreen();
                         return true;
                      }
                   } else {
-                     this.stopWatch2.setLongValue(0L);
+                     this.stopWatch2.setStartTime(0L);
                   }
 
                   return false;
@@ -399,7 +399,7 @@ public final class ServerHelperModule extends Module {
             }
          );
          task.method5123(MoveInputEvent.class, event2 -> {
-            event2.method3044();
+            event2.clearInput();
             return true;
          });
          Zenith.getInstance().getTaskScheduler().method5110(task);
@@ -412,7 +412,7 @@ public final class ServerHelperModule extends Module {
          if (Zenith.getInstance().getServerDetector().method1635()) {
             this.flag = true;
             this.stopWatch.reset();
-         } else if (this.flag && this.stopWatch.method7546(2000L)) {
+         } else if (this.flag && this.stopWatch.hasElapsed(2000L)) {
             this.flag = false;
             mc.player.connection.sendCommand("fix all");
          }

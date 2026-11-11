@@ -170,12 +170,12 @@ public final class CropFarmerModule extends Module {
             }
          }
 
-         if (!this.stopWatch2.method7546(30L)) {
+         if (!this.stopWatch2.hasElapsed(30L)) {
             return;
          }
 
          this.stopWatch2.reset();
-         if (!(mc.gui.screen() instanceof ContainerScreen) && this.stopWatch.method7546(3000L)) {
+         if (!(mc.gui.screen() instanceof ContainerScreen) && this.stopWatch.hasElapsed(3000L)) {
             mc.getConnection().sendCommand("buyer");
             this.stopWatch.reset();
          } else if (mc.gui.screen() instanceof ContainerScreen containerScreen2
@@ -248,7 +248,7 @@ public final class CropFarmerModule extends Module {
          BlockPos blockPos = Zenith.getInstance().getTimedBlockPos().getBlockPos();
          BlockPos blockPos2 = Zenith.getInstance().getTimedBlockPos().getBlockPos2();
          if (blockPos != null && blockPos2 != null) {
-            if (!this.flag || this.stopWatch3.method7544(1000L)) {
+            if (!this.flag || this.stopWatch3.hasElapsedAndReset(1000L)) {
                this.items3 = this.method4420(blockPos, blockPos2);
                this.flag = true;
             }
@@ -807,7 +807,7 @@ public final class CropFarmerModule extends Module {
    @EventTarget(0)
    public void method4431(MoveInputEvent event) {
       if (!this.method4413() && this.method4405() != null) {
-         event.method3038(true);
+         event.setForward(true);
       }
    }
 

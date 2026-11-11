@@ -27,7 +27,7 @@ import org.zenith.client.modules.impl.render.CrosshairModule;
 import org.zenith.client.modules.impl.render.InterfaceModule;
 import org.zenith.client.modules.impl.render.NoRenderModule;
 import org.zenith.utility.game.StatusBarColors;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 import org.zenith.utility.misc.ScoreboardParser;
 import org.zenith.utility.misc.TextUtils;
 import org.zenith.utility.render.display.base.CustomDrawContext;
@@ -80,7 +80,7 @@ public abstract class MixinInGameHud {
       cancellable = true
    )
    private void removeVanillaCrosshair(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
-      if (Util4.method1287()) {
+      if (ScriptRenderOverrides.isImGuiOpen()) {
          callbackInfo.cancel();
       } else {
          try {

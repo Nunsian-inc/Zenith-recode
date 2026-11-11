@@ -192,12 +192,12 @@ public class AutoInventoryModule extends Module {
       } else {
          switch (this.type) {
             case IDLE:
-               if (this.stopWatch.method7546(1000L)) {
+               if (this.stopWatch.hasElapsed(1000L)) {
                   this.method164();
                }
                break;
             case AUCTION:
-               if (this.stopWatch.method7546(6000L)) {
+               if (this.stopWatch.hasElapsed(6000L)) {
                   this.method166();
                   return;
                }
@@ -205,7 +205,7 @@ public class AutoInventoryModule extends Module {
                this.method167();
                break;
             case PURCHASE:
-               if (this.stopWatch.method7546(6000L)) {
+               if (this.stopWatch.hasElapsed(6000L)) {
                   this.method166();
                   return;
                }
@@ -343,7 +343,7 @@ public class AutoInventoryModule extends Module {
                } else if (this.intValue != containerMenu.containerId) {
                   this.intValue = containerMenu.containerId;
                   this.stopWatch2.reset();
-               } else if (this.stopWatch2.method7546(300L)) {
+               } else if (this.stopWatch2.hasElapsed(300L)) {
                   int n = this.method168(containerMenu, this.entry2);
                   this.intValue = -1;
                   if (n >= 0) {
@@ -446,7 +446,7 @@ public class AutoInventoryModule extends Module {
                   if (this.intValue != containerMenu.containerId) {
                      this.intValue = containerMenu.containerId;
                      this.stopWatch2.reset();
-                  } else if (this.stopWatch2.method7546(100L)) {
+                  } else if (this.stopWatch2.hasElapsed(100L)) {
                      if (this.intValue2 >= 10) {
                         this.method174(containerMenu, 4);
                         this.intValue2 -= 10;
@@ -474,7 +474,7 @@ public class AutoInventoryModule extends Module {
       if (this.entry2 == null) {
          this.type = AutoInventoryModule.Type.IDLE;
          this.stopWatch.reset();
-      } else if (this.stopWatch2.method7546(300L)) {
+      } else if (this.stopWatch2.hasElapsed(300L)) {
          int n = this.method168(containerMenu, this.entry2);
          this.intValue = -1;
          if (n < 0) {
@@ -499,7 +499,7 @@ public class AutoInventoryModule extends Module {
                if (this.intValue != containerMenu.containerId) {
                   this.intValue = containerMenu.containerId;
                   this.stopWatch2.reset();
-               } else if (this.stopWatch2.method7546(100L)) {
+               } else if (this.stopWatch2.hasElapsed(100L)) {
                   this.method174(containerMenu, index);
                   this.type = AutoInventoryModule.Type.INVENTORY;
                   this.intValue = -1;
@@ -555,7 +555,7 @@ public class AutoInventoryModule extends Module {
          this.type = AutoInventoryModule.Type.IDLE;
          this.stopWatch.reset();
       } else if (this.method202(this.entry2.itemMatcher, this.entry2.floatValue) < this.entry2.intValue2) {
-         if (this.stopWatch2.method7546(700L)) {
+         if (this.stopWatch2.hasElapsed(700L)) {
             this.method166();
          }
       } else {
@@ -905,9 +905,9 @@ public class AutoInventoryModule extends Module {
       if (this.method210() && this.entry2 != null) {
          if (this.intValue8 > 0) {
             ThreadLocalRandom current = ThreadLocalRandom.current();
-            event.method3042(current.nextBoolean() ? 1.0F : -1.0F, current.nextBoolean() ? 1.0F : -1.0F);
+            event.setMovement(current.nextBoolean() ? 1.0F : -1.0F, current.nextBoolean() ? 1.0F : -1.0F);
          } else if (mc.gui.screen() instanceof AbstractContainerScreen) {
-            event.method3042(0.0F, 0.0F);
+            event.setMovement(0.0F, 0.0F);
          }
       }
    }

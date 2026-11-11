@@ -1115,9 +1115,9 @@ public class PlayerSimulation implements ZenithAccess {
          double horizontalDistanceSqr = vec.horizontalDistanceSqr();
          Input input = new Input(false, false, false, false, !player.onGround(), player.isShiftKeyDown(), horizontalDistanceSqr >= 0.014641);
          if (horizontalDistanceSqr > 0.0025000000000000005) {
-            double angle = MovementInputUtils.method7424(vec, player.getYRot());
+            double angle = MovementInputUtils.relativeMovementAngle(vec, player.getYRot());
             double d = Mth.wrapDegrees(angle);
-            input = MovementInputUtils.method7428(input, d);
+            input = MovementInputUtils.inputForDirection(input, d);
          }
 
          return new PlayerSimulation.Entry(input);

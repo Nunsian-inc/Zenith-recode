@@ -68,7 +68,7 @@ public class DebugModule extends Module {
          Vec3 vec = position.subtract(vec3d);
          double d = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
          double length = vec.length();
-         if (this.stopWatch.method7546((long)this.messageDelay.getValue3())) {
+         if (this.stopWatch.hasElapsed((long)this.messageDelay.getValue3())) {
             ChatLogger.method2019(
                String.format(
                   Locale.ROOT,
@@ -98,7 +98,7 @@ public class DebugModule extends Module {
          if (packet3 instanceof ServerboundContainerClickPacket containerClickPacket) {
             short slotNum = containerClickPacket.slotNum();
             Object obj = mc.player.containerMenu.isValidSlotIndex(slotNum) ? mc.player.containerMenu.getSlot(slotNum).getItem() : "";
-            this.method4453(containerClickPacket.containerInput().name() + ": " + slotNum + " " + MovementInputUtils.method7418() + " " + obj);
+            this.method4453(containerClickPacket.containerInput().name() + ": " + slotNum + " " + MovementInputUtils.hasMovementInput() + " " + obj);
          }
       }
    }

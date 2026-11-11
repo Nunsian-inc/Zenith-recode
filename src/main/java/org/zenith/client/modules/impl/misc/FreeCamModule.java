@@ -80,7 +80,7 @@ public final class FreeCamModule extends Module {
       if (this.vec3d == null) {
          Entity cameraEntity = mc.getCameraEntity();
          if (cameraEntity == null) {
-            event.method3044();
+            event.clearInput();
             return;
          }
 
@@ -88,10 +88,10 @@ public final class FreeCamModule extends Module {
       }
 
       float speed = this.speedSetting.getValue3();
-      double[] horizontalMovement = MovementInputUtils.method7421(speed);
+      double[] horizontalMovement = MovementInputUtils.horizontalVelocityForPlayer(speed);
       this.vec3d2 = this.vec3d;
       this.vec3d = this.vec3d.add(horizontalMovement[0], event.getPlayerInput().jump() ? speed : (event.getPlayerInput().shift() ? -speed : 0.0), horizontalMovement[1]);
-      event.method3044();
+      event.clearInput();
    }
 
    @EventTarget

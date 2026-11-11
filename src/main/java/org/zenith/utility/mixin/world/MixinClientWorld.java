@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.zenith.client.events.EntityAddEvent;
-import org.zenith.utility.game.Util11;
+import org.zenith.utility.game.SnowSurfaceTracker;
 
 @Mixin({ClientLevel.class})
 public class MixinClientWorld {
@@ -27,6 +27,6 @@ public class MixinClientWorld {
       at = {@At("RETURN")}
    )
    public void zenith$snowBlockChanged(BlockPos pos, BlockState blockState, BlockState blockState2, int n, CallbackInfo callbackInfo) {
-      Util11.method2330((ClientLevel)(Object)this, pos, blockState, blockState2);
+      SnowSurfaceTracker.onBlockChanged((ClientLevel)(Object)this, pos, blockState, blockState2);
    }
 }

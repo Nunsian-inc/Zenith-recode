@@ -11,21 +11,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import org.zenith.utility.misc.FlakeUtil;
 
-public final class Util11 {
+public final class SnowSurfaceTracker {
    private static final long CONST_longValue = 15000L;
    private static final int CONST_intValue = 12;
    public static final long CONST_longValue2 = 900L;
    private static final int CONST_intValue2 = 96;
    private static final int CONST_intValue3 = 4096;
-   private static final Long2ObjectOpenHashMap<Util11.Entry> long2ObjectOpenHashMap = new Long2ObjectOpenHashMap();
-   private static final List<Util11.Data> items = new ArrayList<>();
+   private static final Long2ObjectOpenHashMap<SnowSurfaceTracker.AccumulatingColumn> long2ObjectOpenHashMap = new Long2ObjectOpenHashMap();
+   private static final List<SnowSurfaceTracker.FallingSnow> items = new ArrayList<>();
    private static final LongArrayList longArrayList = new LongArrayList();
    private static long longValue;
 
-   private Util11() {
+   private SnowSurfaceTracker() {
    }
 
-   public static void method2330(Level level, BlockPos pos, BlockState blockState, BlockState blockState2) {
+   public static void onBlockChanged(Level level, BlockPos pos, BlockState blockState, BlockState blockState2) {
       boolean flag = !blockState.isAir();
       boolean flag2 = !blockState2.isAir();
       if (flag != flag2) {
@@ -39,7 +39,7 @@ public final class Util11 {
                   return;
                }
 
-               Util11.Entry entry = method2338(x, z);
+               SnowSurfaceTracker.AccumulatingColumn entry = getOrCreateColumn(x, z);
                entry.longValue = now;
                entry.doubleValue = height;
                longValue++;
@@ -50,26 +50,26 @@ public final class Util11 {
 
                float f = FlakeUtil.method7509(x + 0.5, z + 0.5);
                if (f <= 0.02F) {
-                  long2ObjectOpenHashMap.remove(method2339(x, z));
-                  longArrayList.add(method2339(x, z));
+                  long2ObjectOpenHashMap.remove(columnKey(x, z));
+                  longArrayList.add(columnKey(x, z));
                   return;
                }
 
-               long2ObjectOpenHashMap.remove(method2339(x, z));
+               long2ObjectOpenHashMap.remove(columnKey(x, z));
                if (items.size() >= 96) {
                   items.remove(0);
                }
 
-               items.add(new Util11.Data(x, z, pos.getY() + 1 + f, height, now));
+               items.add(new SnowSurfaceTracker.FallingSnow(x, z, pos.getY() + 1 + f, height, now));
                longValue++;
             }
 
-            longArrayList.add(method2339(x, z));
+            longArrayList.add(columnKey(x, z));
          }
       }
    }
 
-   public static void method2331(long now) {
+   public static void expireTransitions(long now) {
       if (!items.isEmpty()) {
          items.removeIf(data -> now - data.getLongValue() > 900L);
       }
@@ -86,7 +86,7 @@ public final class Util11 {
       }
    }
 
-   public static void method2332(Level level, FlakeState flakeState) {
+   public static void invalidateChangedColumns(Level level, FlakeState flakeState) {
       if (!longArrayList.isEmpty()) {
          for (int i = 0; i < longArrayList.size(); i++) {
             long z = longArrayList.getLong(i);
@@ -97,47 +97,47 @@ public final class Util11 {
       }
    }
 
-   public static List<Util11.Data> getItems() {
+   public static List<SnowSurfaceTracker.FallingSnow> getItems() {
       return items;
    }
 
-   public static long method2333(long now) {
+   public static long transitionStateHash(long now) {
       long l = longValue;
       ObjectIterator objectIterator = long2ObjectOpenHashMap.values().iterator();
 
       while (objectIterator.hasNext()) {
-         Util11.Entry entry = (Util11.Entry)objectIterator.next();
-         l = l * 31L + method2337(entry, now);
+         SnowSurfaceTracker.AccumulatingColumn entry = (SnowSurfaceTracker.AccumulatingColumn)objectIterator.next();
+         l = l * 31L + accumulationStage(entry, now);
       }
 
       return l;
    }
 
-   public static float method2334(int x, int z, double d, long now) {
+   public static float accumulationProgress(int x, int z, double d, long now) {
       if (long2ObjectOpenHashMap.isEmpty()) {
          return 1.0F;
       } else {
-         Util11.Entry entry = (Util11.Entry)long2ObjectOpenHashMap.get(method2339(x, z));
+         SnowSurfaceTracker.AccumulatingColumn entry = (SnowSurfaceTracker.AccumulatingColumn)long2ObjectOpenHashMap.get(columnKey(x, z));
          if (entry == null) {
             return 1.0F;
          } else {
-            return Math.abs(entry.doubleValue - d) > 0.51 ? 1.0F : Math.clamp(method2337(entry, now) / 12.0F, 0.0F, 1.0F);
+            return Math.abs(entry.doubleValue - d) > 0.51 ? 1.0F : Math.clamp(accumulationStage(entry, now) / 12.0F, 0.0F, 1.0F);
          }
       }
    }
 
-   public static boolean method2335() {
+   public static boolean hasAccumulatingColumns() {
       return !long2ObjectOpenHashMap.isEmpty();
    }
 
-   public static void method2336() {
+   public static void clear() {
       long2ObjectOpenHashMap.clear();
       items.clear();
       longArrayList.clear();
       longValue++;
    }
 
-   private static int method2337(Util11.Entry entry, long now) {
+   private static int accumulationStage(SnowSurfaceTracker.AccumulatingColumn entry, long now) {
       long l = now - entry.longValue;
       if (l <= 0L) {
          return 0;
@@ -149,9 +149,9 @@ public final class Util11 {
       }
    }
 
-   private static Util11.Entry method2338(int x, int z) {
-      long l = method2339(x, z);
-      Util11.Entry entry = (Util11.Entry)long2ObjectOpenHashMap.get(l);
+   private static SnowSurfaceTracker.AccumulatingColumn getOrCreateColumn(int x, int z) {
+      long l = columnKey(x, z);
+      SnowSurfaceTracker.AccumulatingColumn entry = (SnowSurfaceTracker.AccumulatingColumn)long2ObjectOpenHashMap.get(l);
       if (entry != null) {
          return entry;
       } else {
@@ -159,17 +159,17 @@ public final class Util11 {
             long2ObjectOpenHashMap.clear();
          }
 
-         entry = new Util11.Entry();
+         entry = new SnowSurfaceTracker.AccumulatingColumn();
          long2ObjectOpenHashMap.put(l, entry);
          return entry;
       }
    }
 
-   private static long method2339(int x, int z) {
+   private static long columnKey(int x, int z) {
       return (long)x << 32 | z & 4294967295L;
    }
 
-   public static final class Data {
+   public static final class FallingSnow {
       private final double doubleValue;
       private final double doubleValue2;
       private final double doubleValue3;
@@ -199,7 +199,7 @@ public final class Util11 {
       @Override
       public boolean equals(Object o) {
          if (this == o) return true;
-         if (!(o instanceof Data other)) return false;
+         if (!(o instanceof FallingSnow other)) return false;
          return java.util.Objects.equals(this.doubleValue, other.doubleValue) && java.util.Objects.equals(this.doubleValue2, other.doubleValue2) && java.util.Objects.equals(this.doubleValue3, other.doubleValue3) && java.util.Objects.equals(this.doubleValue4, other.doubleValue4) && java.util.Objects.equals(this.longValue, other.longValue);
       }
 
@@ -213,7 +213,7 @@ public final class Util11 {
          return "Data[" + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "doubleValue4=" + this.doubleValue4 + ", " + "longValue=" + this.longValue + "]";
       }
 
-      public Data(double doubleValue, double z, double d, double height, long longValue) {
+      public FallingSnow(double doubleValue, double z, double d, double height, long longValue) {
          this.doubleValue = doubleValue;
          this.doubleValue2 = z;
          this.doubleValue3 = d;
@@ -242,7 +242,7 @@ public final class Util11 {
       }
    }
 
-   private static final class Entry {
+   private static final class AccumulatingColumn {
       private long longValue;
       private double doubleValue;
    }

@@ -4,35 +4,35 @@ import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public final class Util18 {
-   private static final long CONST_longValue = 2000L;
-   private static final long CONST_longValue2 = 86400000L;
-   private static volatile long longValue;
-   private static volatile boolean flag;
+public final class ServerClock {
+   private static final long HTTP_OFFSET_TOLERANCE_MILLIS = 2000L;
+   private static final long MAX_OFFSET_MILLIS = 86400000L;
+   private static volatile long offsetMillis;
+   private static volatile boolean serverTimeReceived;
 
-   private Util18() {
+   private ServerClock() {
    }
 
-   public static long method4489() {
-      return System.currentTimeMillis() + longValue;
+   public static long currentTimeMillis() {
+      return System.currentTimeMillis() + offsetMillis;
    }
 
-   public static long getLongValue() {
-      return longValue;
+   public static long getOffsetMillis() {
+      return offsetMillis;
    }
 
-   public static void method4490(long l) {
+   public static void syncFromServerTime(long l) {
       if (l > 0L) {
          long l2 = l - System.currentTimeMillis();
          if (Math.abs(l2) <= 86400000L) {
-            longValue = Math.abs(l2) < 500L ? 0L : l2;
-            flag = true;
+            offsetMillis = Math.abs(l2) < 500L ? 0L : l2;
+            serverTimeReceived = true;
          }
       }
    }
 
-   public static void method4491(HttpResponse<?> httpResponse) {
-      if (httpResponse != null && !flag) {
+   public static void syncFromHttpResponse(HttpResponse<?> httpResponse) {
+      if (httpResponse != null && !serverTimeReceived) {
          try {
             String text = httpResponse.headers().firstValue("Date").orElse(null);
             if (text == null || text.isBlank()) {
@@ -53,7 +53,7 @@ public final class Util18 {
                return;
             }
 
-            longValue = Math.abs(l2) < 2000L ? 0L : l2;
+            offsetMillis = Math.abs(l2) < 2000L ? 0L : l2;
          } catch (RuntimeException e) {
          }
       }

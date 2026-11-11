@@ -190,7 +190,7 @@ public class ServerDetector implements MinecraftAccess {
    }
 
    public boolean method1635() {
-      return !this.stopWatch.method7546(250L);
+      return !this.stopWatch.hasElapsed(250L);
    }
 
    private boolean method1636() {

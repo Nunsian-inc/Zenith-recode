@@ -101,19 +101,19 @@ public class JoinCommand extends CommandAbstract {
    @EventTarget
    public void onUpdate(UpdateEvent event) {
       if (this.active && mc.gameMode != null) {
-         if (this.timeoutTimer.method7546(30000L)) {
+         if (this.timeoutTimer.hasElapsed(30000L)) {
             int grief = this.grief;
             this.stop();
             ChatLogger.method2022("Не удалось зайти на гриф #" + grief + " за 30 секунд");
          } else if (mc.gui.screen() == null) {
-            if (this.reopenTimer.method7546(this.targetClicked ? 5000L : 1000L)) {
+            if (this.reopenTimer.hasElapsed(this.targetClicked ? 5000L : 1000L)) {
                this.reopenTimer.reset();
                this.targetClicked = false;
                this.useCompass();
             }
          } else {
             this.reopenTimer.reset();
-            if (mc.gui.screen() instanceof ContainerScreen containerScreen && this.clickTimer.method7546(100L)) {
+            if (mc.gui.screen() instanceof ContainerScreen containerScreen && this.clickTimer.hasElapsed(100L)) {
                this.handleMenu(containerScreen);
             }
          }

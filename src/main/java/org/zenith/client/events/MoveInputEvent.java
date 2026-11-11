@@ -7,7 +7,7 @@ import org.zenith.CancellableEvent;
 public class MoveInputEvent extends CancellableEvent {
    private Input playerInput;
 
-   public void method3038(boolean forward) {
+   public void setForward(boolean forward) {
       this.playerInput = new Input(
          forward,
          this.playerInput.backward(),
@@ -19,7 +19,7 @@ public class MoveInputEvent extends CancellableEvent {
       );
    }
 
-   public void method3039(boolean sprint) {
+   public void setSprint(boolean sprint) {
       this.playerInput = new Input(
          this.playerInput.forward(),
          this.playerInput.backward(),
@@ -31,7 +31,7 @@ public class MoveInputEvent extends CancellableEvent {
       );
    }
 
-   public void method3040(boolean shift) {
+   public void setShift(boolean shift) {
       this.playerInput = new Input(
          this.playerInput.forward(),
          this.playerInput.backward(),
@@ -43,7 +43,7 @@ public class MoveInputEvent extends CancellableEvent {
       );
    }
 
-   public void method3041(boolean jump) {
+   public void setJump(boolean jump) {
       this.playerInput = new Input(
          this.playerInput.forward(),
          this.playerInput.backward(),
@@ -55,13 +55,13 @@ public class MoveInputEvent extends CancellableEvent {
       );
    }
 
-   public void method3042(float f, float f2) {
-      boolean[] flags = method3043(f);
-      boolean[] flags2 = method3043(f2);
+   public void setMovement(float f, float f2) {
+      boolean[] flags = decodeMovementAxis(f);
+      boolean[] flags2 = decodeMovementAxis(f2);
       this.playerInput = new Input(flags[0], flags[1], flags2[0], flags2[1], this.playerInput.jump(), this.playerInput.shift(), this.playerInput.sprint());
    }
 
-   private static boolean[] method3043(float f) {
+   private static boolean[] decodeMovementAxis(float f) {
       if (f == 1.0F) {
          return new boolean[]{true, false};
       } else {
@@ -69,11 +69,11 @@ public class MoveInputEvent extends CancellableEvent {
       }
    }
 
-   public void method3044() {
+   public void clearInput() {
       this.playerInput = new Input(false, false, false, false, false, false, false);
    }
 
-   public void method3045(boolean left) {
+   public void setLeft(boolean left) {
       this.playerInput = new Input(
          this.playerInput.forward(),
          this.playerInput.backward(),
@@ -85,7 +85,7 @@ public class MoveInputEvent extends CancellableEvent {
       );
    }
 
-   public void method3046(boolean right) {
+   public void setRight(boolean right) {
       this.playerInput = new Input(
          this.playerInput.forward(),
          this.playerInput.backward(),
@@ -97,7 +97,7 @@ public class MoveInputEvent extends CancellableEvent {
       );
    }
 
-   public void method3047(boolean backward) {
+   public void setBackward(boolean backward) {
       this.playerInput = new Input(
          this.playerInput.forward(),
          backward,

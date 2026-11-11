@@ -21,7 +21,7 @@ import org.zenith.client.modules.impl.misc.NameProtectModule;
 import org.zenith.client.modules.impl.render.InterfaceModule;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
 import org.zenith.utility.game.ArmorSlots;
-import org.zenith.utility.game.Util14;
+import org.zenith.utility.game.ItemIntegrityTracker;
 import org.zenith.utility.misc.HudListLayout;
 import org.zenith.utility.network.UseItemUtils;
 import org.zenith.utility.render.Interface;
@@ -188,7 +188,7 @@ public class TargetHud extends Interface {
       float x = f + (width - f3) / 2.0F;
       float y = f2 + 1.5F;
       Font font = Fonts.ICONS.getFont(4.5F);
-      boolean flag = Util14.method2639(livingEntity);
+      boolean flag = ItemIntegrityTracker.isStackDamageValid(livingEntity);
 
       for (int i = 0; i < stacks2.length; i++) {
          if (i == 2) {

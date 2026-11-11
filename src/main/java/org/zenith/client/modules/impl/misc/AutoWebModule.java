@@ -254,7 +254,7 @@ public final class AutoWebModule extends Module {
    @EventTarget
    private void method283(MoveInputEvent event) {
       if (this.handler != null) {
-         MovementInputUtils.method7426(event, zenith.getRotationManager().getEffectiveRotation().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.correctMovement(event, zenith.getRotationManager().getEffectiveRotation().getFloatValue(), mc.player.getYRot());
       }
    }
 

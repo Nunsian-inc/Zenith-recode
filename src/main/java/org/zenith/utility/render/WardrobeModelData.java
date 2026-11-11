@@ -20,7 +20,7 @@ import org.zenith.utility.misc.WardrobeModel;
 import org.zenith.utility.misc.HoveredData;
 import org.zenith.utility.misc.WardrobeCategory;
 
-public final class Util3 {
+public final class WardrobeModelData {
    private static final float CONST_floatValue = 0.0625F;
    private static final int CONST_intValue = 6;
    private static final int CONST_intValue2 = WardrobeModel.Type.HEAD.ordinal();
@@ -57,19 +57,19 @@ public final class Util3 {
    private static final int CONST_intValue8 = 5;
    private static final float[] CONST_floatValues7 = new float[0];
    private static final int CONST_intValue9 = 512;
-   private static final Map<Util3.Entry2, Util3.Data[]> items = new LinkedHashMap<Util3.Entry2, Util3.Data[]>(64, 0.75F, true) {
+   private static final Map<WardrobeModelData.WardrobeRenderCacheKey, WardrobeModelData.Transform[]> items = new LinkedHashMap<WardrobeModelData.WardrobeRenderCacheKey, WardrobeModelData.Transform[]>(64, 0.75F, true) {
       @Override
-      public boolean removeEldestEntry(java.util.Map.Entry<Util3.Entry2, Util3.Data[]> eldest) {
+      public boolean removeEldestEntry(java.util.Map.Entry<WardrobeModelData.WardrobeRenderCacheKey, WardrobeModelData.Transform[]> eldest) {
          return this.size() > 512;
       }
    };
    private static final Object obj = new Object();
    private static final Object obj2 = new Object();
 
-   private Util3() {
+   private WardrobeModelData() {
    }
 
-   public static int method824(FocusSlotEnum focusSlotEnum) {
+   public static int getLayerOrder(FocusSlotEnum focusSlotEnum) {
       return switch (focusSlotEnum) {
          case CHARACTER -> 0;
          case LEGS -> 1;
@@ -81,15 +81,15 @@ public final class Util3 {
       };
    }
 
-   private static boolean method825(int ordinal) {
+   private static boolean isArm(int ordinal) {
       return ordinal == CONST_intValue4 || ordinal == CONST_intValue5;
    }
 
-   public static Util3.Entry method826(AvatarRenderState state, Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData) {
+   public static WardrobeModelData.WardrobeRenderData createAvatarFitting(AvatarRenderState state, Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData) {
       boolean flag = state.skin != null && state.skin.model() == PlayerModelType.SLIM;
-      Util3.Entry entry = Util3.Entry.method843(wardrobe, hoveredDatas, hoveredData, flag);
+      WardrobeModelData.WardrobeRenderData entry = WardrobeModelData.WardrobeRenderData.collectModels(wardrobe, hoveredDatas, hoveredData, flag);
       if (wardrobe.clothesOverArmor.isEnabled() && !WardrobeRenderer.method6688(state)) {
-         method828(state, entry.floatValues);
+         computeArmorPadding(state, entry.floatValues);
       }
 
       if (hoveredData == null) {
@@ -101,13 +101,13 @@ public final class Util3 {
          entry.floatValues2[CONST_intValue7] = state.showLeftPants ? 0.015625F : 0.0F;
       }
 
-      entry.method844();
+      entry.reuseCachedTransforms();
       return entry;
    }
 
-   public static Util3.Entry method827(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag, int ordinal, boolean flag2) {
-      Util3.Entry entry = Util3.Entry.method843(wardrobe, hoveredDatas, hoveredData, flag);
-      if (hoveredData == null && flag2 && method825(ordinal)) {
+   public static WardrobeModelData.WardrobeRenderData createArmFitting(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag, int ordinal, boolean flag2) {
+      WardrobeModelData.WardrobeRenderData entry = WardrobeModelData.WardrobeRenderData.collectModels(wardrobe, hoveredDatas, hoveredData, flag);
+      if (hoveredData == null && flag2 && isArm(ordinal)) {
          boolean flag3 = false;
 
          for (WardrobeModel class2 : entry.class15s) {
@@ -117,11 +117,11 @@ public final class Util3 {
          entry.floatValues2[ordinal] = flag3 ? 0.0F : 0.015625F;
       }
 
-      entry.method844();
+      entry.reuseCachedTransforms();
       return entry;
    }
 
-   private static void method828(AvatarRenderState state, float[] floatValues) {
+   private static void computeArmorPadding(AvatarRenderState state, float[] floatValues) {
       boolean shouldRender = HumanoidArmorLayer.shouldRender(state.headEquipment, EquipmentSlot.HEAD);
       boolean flag = HumanoidArmorLayer.shouldRender(state.chestEquipment, EquipmentSlot.CHEST)
          && !state.chestEquipment.has(DataComponents.GLIDER);
@@ -135,7 +135,7 @@ public final class Util3 {
       floatValues[CONST_intValue7] = floatValues[CONST_intValue6];
    }
 
-   private static float[] method829(int ordinal, int n) {
+   private static float[] getBodyProjectionBounds(int ordinal, int n) {
       float f = ordinal == CONST_intValue2 ? 0.0625F : 0.0F;
       float f2 = n == 1 ? CONST_floatValues[ordinal] - CONST_floatValues2[ordinal] : CONST_floatValues4[ordinal] - f;
       float f3 = n == 1 ? CONST_floatValues[ordinal] + CONST_floatValues2[ordinal] : CONST_floatValues5[ordinal];
@@ -144,26 +144,26 @@ public final class Util3 {
       return new float[]{f2, f3, f4, f5};
    }
 
-   private static float method830(int ordinal, int n) {
+   private static float getMinimumSurfaceDepth(int ordinal, int n) {
       float f = n == 0 ? CONST_floatValues2[ordinal] : (n == 2 ? CONST_floatValues3[ordinal] : -CONST_floatValues4[ordinal]);
       return f * 0.85F;
    }
 
-   public static float method831(WardrobeModel class2, int ordinal, int n, float floatValue) {
-      Util3.Data3 data3 = new Util3.Data3(ordinal, n, floatValue);
+   public static float findSurfaceDepth(WardrobeModel class2, int ordinal, int n, float floatValue) {
+      WardrobeModelData.SurfaceDepthCacheKey data3 = new WardrobeModelData.SurfaceDepthCacheKey(ordinal, n, floatValue);
       float[] floats = class2.items4.get(data3);
       if (floats != null) {
          return floats == CONST_floatValues7 ? Float.NaN : floats[0];
       } else {
-         float[] floats2 = method829(ordinal, n);
+         float[] floats2 = getBodyProjectionBounds(ordinal, n);
          int n2 = n == 1 ? 0 : 1;
          int n3 = n == 2 ? 0 : 2;
          float f = n == 0 ? CONST_floatValues[ordinal] : 0.0F;
-         float f2 = method830(ordinal, n);
+         float f2 = getMinimumSurfaceDepth(ordinal, n);
          float[] floats3 = new float[Math.max(0, class2.method2029(ordinal) - class2.method2028(ordinal)) * 5];
-         int n4 = method837(class2, ordinal, n, floatValue, f, n2, n3, false, floats3);
+         int n4 = projectModelFaces(class2, ordinal, n, floatValue, f, n2, n3, false, floats3);
          float[] floats4 = new float[]{Float.MAX_VALUE};
-         method833(floats3, n4, floats3, 0, floats2, (var2x, var3x) -> {
+         visitProjectedSurfaceCells(floats3, n4, floats3, 0, floats2, (var2x, var3x) -> {
             if (var2x >= f2 && var2x < floats4[0]) {
                floats4[0] = var2x;
             }
@@ -174,37 +174,37 @@ public final class Util3 {
       }
    }
 
-   private static float[] method832(WardrobeModel class2, WardrobeModel class3, int ordinal, int n, float floatValue, float f) {
-      Util3.Data2 data2 = new Util3.Data2(class2, ordinal, n, floatValue, f);
+   private static float[] findOverlapDepthPairs(WardrobeModel class2, WardrobeModel class3, int ordinal, int n, float floatValue, float f) {
+      WardrobeModelData.OverlapCacheKey data2 = new WardrobeModelData.OverlapCacheKey(class2, ordinal, n, floatValue, f);
       float[] floats = class3.items4.get(data2);
       if (floats != null) {
          return floats == CONST_floatValues7 ? null : floats;
       } else {
-         float[] floats2 = method829(ordinal, n);
+         float[] floats2 = getBodyProjectionBounds(ordinal, n);
          int n2 = n == 1 ? 0 : 1;
          int n3 = n == 2 ? 0 : 2;
          float f2 = n == 0 ? CONST_floatValues[ordinal] : 0.0F;
-         float f3 = method830(ordinal, n);
+         float f3 = getMinimumSurfaceDepth(ordinal, n);
          float[] floats3 = new float[Math.max(0, class3.method2029(ordinal) - class3.method2028(ordinal)) * 5];
          float[] floats4 = new float[Math.max(0, class2.method2029(ordinal) - class2.method2028(ordinal)) * 5];
-         int n4 = method837(class3, ordinal, n, floatValue, f2, n2, n3, false, floats3);
-         int n5 = method837(class2, ordinal, n, floatValue, f2, n2, n3, true, floats4);
-         Util3.Entry3 entry3 = new Util3.Entry3();
+         int n4 = projectModelFaces(class3, ordinal, n, floatValue, f2, n2, n3, false, floats3);
+         int n5 = projectModelFaces(class2, ordinal, n, floatValue, f2, n2, n3, true, floats4);
+         WardrobeModelData.PairAccumulator entry3 = new WardrobeModelData.PairAccumulator();
          if (n5 > 0) {
-            method833(floats3, n4, floats4, n5, floats2, (var3x, var4x) -> {
+            visitProjectedSurfaceCells(floats3, n4, floats4, n5, floats2, (var3x, var4x) -> {
                if (var3x >= f3 && var4x >= f3 && var4x <= var3x * f) {
-                  entry3.method851(var3x, var4x);
+                  entry3.addPair(var3x, var4x);
                }
             });
          }
 
-         float[] floats5 = entry3.method852();
+         float[] floats5 = entry3.toUniquePairs();
          class3.items4.put(data2, floats5);
          return floats5 == CONST_floatValues7 ? null : floats5;
       }
    }
 
-   private static void method833(float[] floats, int n, float[] floats2, int n2, float[] floats3, Util3.Handler handler) {
+   private static void visitProjectedSurfaceCells(float[] floats, int n, float[] floats2, int n2, float[] floats3, WardrobeModelData.IntersectionHandler handler) {
       int[] ints = new int[n];
       int[] ints2 = new int[n2];
       float[] floats4 = new float[(n + n2) * 2 + 2];
@@ -217,24 +217,24 @@ public final class Util3 {
          float f3 = Math.max(floats3[2], floats[n3 + 3]);
          float f4 = Math.min(floats3[3], floats[n3 + 4]);
          if (!(f >= f2) && !(f3 >= f4)) {
-            int n4 = method834(floats, n, f, f2, f3, f4, ints);
-            int n5 = method834(floats2, n2, f, f2, f3, f4, ints2);
-            int n6 = method835(floats4, f, f2, 1, floats, ints, n4, floats2, ints2, n5);
-            int n7 = method835(floats5, f3, f4, 3, floats, ints, n4, floats2, ints2, n5);
+            int n4 = collectOverlappingFaces(floats, n, f, f2, f3, f4, ints);
+            int n5 = collectOverlappingFaces(floats2, n2, f, f2, f3, f4, ints2);
+            int n6 = collectSortedBoundaries(floats4, f, f2, 1, floats, ints, n4, floats2, ints2, n5);
+            int n7 = collectSortedBoundaries(floats5, f3, f4, 3, floats, ints, n4, floats2, ints2, n5);
 
             for (int j = 0; j + 1 < n6; j++) {
                float f5 = (floats4[j] + floats4[j + 1]) * 0.5F;
 
                for (int k = 0; k + 1 < n7; k++) {
                   float f6 = (floats5[k] + floats5[k + 1]) * 0.5F;
-                  handler.accept(method838(floats, ints, n4, f5, f6), method838(floats2, ints2, n5, f5, f6));
+                  handler.accept(findIndexedSurfaceDepth(floats, ints, n4, f5, f6), findIndexedSurfaceDepth(floats2, ints2, n5, f5, f6));
                }
             }
          }
       }
    }
 
-   private static int method834(float[] floats, int n, float f, float f2, float f3, float f4, int[] ints) {
+   private static int collectOverlappingFaces(float[] floats, int n, float f, float f2, float f3, float f4, int[] ints) {
       int n2 = 0;
 
       for (int i = 0; i < n; i++) {
@@ -247,19 +247,19 @@ public final class Util3 {
       return n2;
    }
 
-   private static int method835(float[] floats, float f, float f2, int n, float[] floats2, int[] ints, int n2, float[] floats3, int[] ints2, int n3) {
+   private static int collectSortedBoundaries(float[] floats, float f, float f2, int n, float[] floats2, int[] ints, int n2, float[] floats3, int[] ints2, int n3) {
       int toIndex = 0;
       floats[toIndex++] = f;
       floats[toIndex++] = f2;
 
       for (int i = 0; i < n2; i++) {
-         toIndex = method836(floats, toIndex, f, f2, floats2[ints[i] * 5 + n]);
-         toIndex = method836(floats, toIndex, f, f2, floats2[ints[i] * 5 + n + 1]);
+         toIndex = appendInteriorBoundary(floats, toIndex, f, f2, floats2[ints[i] * 5 + n]);
+         toIndex = appendInteriorBoundary(floats, toIndex, f, f2, floats2[ints[i] * 5 + n + 1]);
       }
 
       for (int i = 0; i < n3; i++) {
-         toIndex = method836(floats, toIndex, f, f2, floats3[ints2[i] * 5 + n]);
-         toIndex = method836(floats, toIndex, f, f2, floats3[ints2[i] * 5 + n + 1]);
+         toIndex = appendInteriorBoundary(floats, toIndex, f, f2, floats3[ints2[i] * 5 + n]);
+         toIndex = appendInteriorBoundary(floats, toIndex, f, f2, floats3[ints2[i] * 5 + n + 1]);
       }
 
       Arrays.sort(floats, 0, toIndex);
@@ -274,7 +274,7 @@ public final class Util3 {
       return n4;
    }
 
-   private static int method836(float[] floats, int toIndex, float f, float f2, float f3) {
+   private static int appendInteriorBoundary(float[] floats, int toIndex, float f, float f2, float f3) {
       if (f3 > f && f3 < f2) {
          floats[toIndex++] = f3;
       }
@@ -282,10 +282,10 @@ public final class Util3 {
       return toIndex;
    }
 
-   private static int method837(WardrobeModel class2, int ordinal, int n, float floatValue, float f, int n2, int n3, boolean flag, float[] floats) {
-      float[] floats2 = method841(class2, obj);
-      float[] floats3 = method841(class2, obj2);
-      boolean flag2 = flag && method840(class2, ordinal);
+   private static int projectModelFaces(WardrobeModel class2, int ordinal, int n, float floatValue, float f, int n2, int n3, boolean flag, float[] floats) {
+      float[] floats2 = getTransformedGeometry(class2, obj);
+      float[] floats3 = getTransformedGeometry(class2, obj2);
+      boolean flag2 = flag && hasRootBoneForPart(class2, ordinal);
       int n4 = 0;
       int n5 = class2.method2028(ordinal);
 
@@ -324,7 +324,7 @@ public final class Util3 {
       return n4;
    }
 
-   private static float method838(float[] floats, int[] ints, int n, float f, float f2) {
+   private static float findIndexedSurfaceDepth(float[] floats, int[] ints, int n, float f, float f2) {
       float f3 = -Float.MAX_VALUE;
 
       for (int i = 0; i < n; i++) {
@@ -337,7 +337,7 @@ public final class Util3 {
       return f3;
    }
 
-   private static float method839(float[] floats, int n, float f, float f2) {
+   private static float findSurfaceDepthAt(float[] floats, int n, float f, float f2) {
       float f3 = -Float.MAX_VALUE;
 
       for (int i = 0; i < n; i++) {
@@ -350,7 +350,7 @@ public final class Util3 {
       return f3;
    }
 
-   private static boolean method840(WardrobeModel class2, int ordinal) {
+   private static boolean hasRootBoneForPart(WardrobeModel class2, int ordinal) {
       for (int i = 0; i < class2.method2030(); i++) {
          if (class2.intValues[i] < 0 && class2.intValues2[i] == ordinal) {
             return true;
@@ -360,7 +360,7 @@ public final class Util3 {
       return false;
    }
 
-   private static float[] method841(WardrobeModel key, Object obj3) {
+   private static float[] getTransformedGeometry(WardrobeModel key, Object obj3) {
       float[] floats = key.items4.get(obj3);
       if (floats != null) {
          return floats;
@@ -406,7 +406,7 @@ public final class Util3 {
       }
    }
 
-   public static final class Data {
+   public static final class Transform {
       private final float floatValue;
       private final float floatValue2;
       private final float floatValue3;
@@ -446,7 +446,7 @@ public final class Util3 {
       @Override
       public boolean equals(Object o) {
          if (this == o) return true;
-         if (!(o instanceof Data other)) return false;
+         if (!(o instanceof Transform other)) return false;
          return java.util.Objects.equals(this.floatValue, other.floatValue) && java.util.Objects.equals(this.floatValue2, other.floatValue2) && java.util.Objects.equals(this.floatValue3, other.floatValue3) && java.util.Objects.equals(this.floatValue4, other.floatValue4) && java.util.Objects.equals(this.floatValue5, other.floatValue5) && java.util.Objects.equals(this.floatValue6, other.floatValue6) && java.util.Objects.equals(this.floatValue7, other.floatValue7);
       }
 
@@ -459,9 +459,9 @@ public final class Util3 {
       public String toString() {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + "]";
       }
-      public static final Util3.Data INSTANCE = new Util3.Data(0.0F, 0.0F, 1.0F, 0.0F, 1.0F, 1.0F, 0.0F);
+      public static final WardrobeModelData.Transform INSTANCE = new WardrobeModelData.Transform(0.0F, 0.0F, 1.0F, 0.0F, 1.0F, 1.0F, 0.0F);
 
-      public Data(float floatValue, float f, float f2, float f3, float f4, float f5, float f6) {
+      public Transform(float floatValue, float f, float f2, float f3, float f4, float f5, float f6) {
          this.floatValue = floatValue;
          this.floatValue2 = f;
          this.floatValue3 = f2;
@@ -471,7 +471,7 @@ public final class Util3 {
          this.floatValue7 = f6;
       }
 
-      public void method842(PoseStack poseStack) {
+      public void applyToPoseStack(PoseStack poseStack) {
          if (this != INSTANCE) {
             poseStack.translate(this.floatValue2 + this.floatValue4, 0.0F, this.floatValue7);
             poseStack.scale(this.floatValue3, this.floatValue5, this.floatValue6);
@@ -508,7 +508,7 @@ public final class Util3 {
       }
    }
 
-   private static final class Data2 {
+   private static final class OverlapCacheKey {
       private final WardrobeModel class15;
       private final int intValue;
       private final int intValue2;
@@ -538,7 +538,7 @@ public final class Util3 {
       @Override
       public boolean equals(Object o) {
          if (this == o) return true;
-         if (!(o instanceof Data2 other)) return false;
+         if (!(o instanceof OverlapCacheKey other)) return false;
          return java.util.Objects.equals(this.class15, other.class15) && java.util.Objects.equals(this.intValue, other.intValue) && java.util.Objects.equals(this.intValue2, other.intValue2) && java.util.Objects.equals(this.floatValue, other.floatValue) && java.util.Objects.equals(this.floatValue2, other.floatValue2);
       }
 
@@ -552,7 +552,7 @@ public final class Util3 {
          return "Data2[" + "class15=" + this.class15 + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + "]";
       }
 
-      private Data2(WardrobeModel class2, int intValue, int n, float floatValue, float f) {
+      private OverlapCacheKey(WardrobeModel class2, int intValue, int n, float floatValue, float f) {
          this.class15 = class2;
          this.intValue = intValue;
          this.intValue2 = n;
@@ -581,7 +581,7 @@ public final class Util3 {
       }
    }
 
-   private static final class Data3 {
+   private static final class SurfaceDepthCacheKey {
       private final int intValue;
       private final int intValue2;
       private final float floatValue;
@@ -601,7 +601,7 @@ public final class Util3 {
       @Override
       public boolean equals(Object o) {
          if (this == o) return true;
-         if (!(o instanceof Data3 other)) return false;
+         if (!(o instanceof SurfaceDepthCacheKey other)) return false;
          return java.util.Objects.equals(this.intValue, other.intValue) && java.util.Objects.equals(this.intValue2, other.intValue2) && java.util.Objects.equals(this.floatValue, other.floatValue);
       }
 
@@ -615,7 +615,7 @@ public final class Util3 {
          return "Data3[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + "]";
       }
 
-      private Data3(int intValue, int n, float floatValue) {
+      private SurfaceDepthCacheKey(int intValue, int n, float floatValue) {
          this.intValue = intValue;
          this.intValue2 = n;
          this.floatValue = floatValue;
@@ -634,16 +634,16 @@ public final class Util3 {
       }
    }
 
-   public static final class Entry {
+   public static final class WardrobeRenderData {
       private final HoveredData[] hoveredDatas;
       private final WardrobeModel[] class15s;
       private final int[] intValues;
       private final boolean flag;
       private final float[] floatValues = new float[6];
       private final float[] floatValues2 = new float[6];
-      private Util3.Data[] datas;
+      private WardrobeModelData.Transform[] datas;
 
-      public Entry(List<HoveredData> hoveredDatas, List<WardrobeModel> classes, boolean flag) {
+      public WardrobeRenderData(List<HoveredData> hoveredDatas, List<WardrobeModel> classes, boolean flag) {
          int size = hoveredDatas.size();
          this.hoveredDatas = hoveredDatas.toArray(new HoveredData[0]);
          this.class15s = classes.toArray(new WardrobeModel[0]);
@@ -651,20 +651,20 @@ public final class Util3 {
          boolean flag2 = false;
 
          for (int i = 0; i < size; i++) {
-            this.intValues[i] = Util3.method824(this.hoveredDatas[i].getFocusSlotEnum());
+            this.intValues[i] = WardrobeModelData.getLayerOrder(this.hoveredDatas[i].getFocusSlotEnum());
             flag2 |= this.hoveredDatas[i].getFocusSlotEnum() == FocusSlotEnum.CHARACTER;
          }
 
          this.flag = flag && !flag2;
-         this.datas = new Util3.Data[size * 6];
+         this.datas = new WardrobeModelData.Transform[size * 6];
       }
 
-      private static Util3.Entry method843(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag) {
+      private static WardrobeModelData.WardrobeRenderData collectModels(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag) {
          List<HoveredData> hoveredDatas2 = new ArrayList<>(hoveredDatas.size());
          List<WardrobeModel> classes = new ArrayList<>(hoveredDatas.size());
 
          for (HoveredData hoveredData2 : hoveredDatas) {
-            if (Util3.method824(hoveredData2.getFocusSlotEnum()) >= 0 && (hoveredData == null || hoveredData2 == hoveredData || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
+            if (WardrobeModelData.getLayerOrder(hoveredData2.getFocusSlotEnum()) >= 0 && (hoveredData == null || hoveredData2 == hoveredData || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
                WardrobeModel class2 = wardrobe.getRegistry().method1427(hoveredData2);
                if (class2 != null) {
                   hoveredDatas2.add(hoveredData2);
@@ -673,61 +673,61 @@ public final class Util3 {
             }
          }
 
-         return new Util3.Entry(hoveredDatas2, classes, flag);
+         return new WardrobeModelData.WardrobeRenderData(hoveredDatas2, classes, flag);
       }
 
-      private void method844() {
-         Util3.Entry2 entry2 = new Util3.Entry2(this);
-         Util3.Data[] datas = Util3.items.get(entry2);
+      private void reuseCachedTransforms() {
+         WardrobeModelData.WardrobeRenderCacheKey entry2 = new WardrobeModelData.WardrobeRenderCacheKey(this);
+         WardrobeModelData.Transform[] datas = WardrobeModelData.items.get(entry2);
          if (datas == null) {
-            Util3.items.put(entry2, this.datas);
+            WardrobeModelData.items.put(entry2, this.datas);
          } else {
             this.datas = datas;
          }
       }
 
-      public Util3.Data method845(HoveredData hoveredData, int ordinal) {
+      public WardrobeModelData.Transform getTransform(HoveredData hoveredData, int ordinal) {
          for (int i = 0; i < this.hoveredDatas.length; i++) {
             if (this.hoveredDatas[i] == hoveredData) {
-               return this.method847(i, ordinal);
+               return this.getOrComputeTransform(i, ordinal);
             }
          }
 
-         return Util3.Data.INSTANCE;
+         return WardrobeModelData.Transform.INSTANCE;
       }
 
-      public void method846(PoseStack poseStack, HoveredData hoveredData, int ordinal) {
-         this.method845(hoveredData, ordinal).method842(poseStack);
+      public void applyTransform(PoseStack poseStack, HoveredData hoveredData, int ordinal) {
+         this.getTransform(hoveredData, ordinal).applyToPoseStack(poseStack);
       }
 
-      private Util3.Data method847(int n, int ordinal) {
+      private WardrobeModelData.Transform getOrComputeTransform(int n, int ordinal) {
          if (ordinal >= 0 && ordinal < 6) {
             int n2 = n * 6 + ordinal;
-            Util3.Data data = this.datas[n2];
+            WardrobeModelData.Transform data = this.datas[n2];
             if (data == null) {
-               data = this.hoveredDatas[n].getFocusSlotEnum() == FocusSlotEnum.CHARACTER ? Util3.Data.INSTANCE : this.method848(n, ordinal);
+               data = this.hoveredDatas[n].getFocusSlotEnum() == FocusSlotEnum.CHARACTER ? WardrobeModelData.Transform.INSTANCE : this.computeTransform(n, ordinal);
                this.datas[n2] = data;
             }
 
             return data;
          } else {
-            return Util3.Data.INSTANCE;
+            return WardrobeModelData.Transform.INSTANCE;
          }
       }
 
-      private Util3.Data method848(int n, int ordinal) {
-         boolean flag = this.flag && Util3.method825(ordinal) && this.floatValues[ordinal] <= 0.0F;
-         float f = flag ? 0.09375F : Util3.CONST_floatValues2[ordinal];
-         float f2 = flag ? Util3.CONST_floatValues6[ordinal] : Util3.CONST_floatValues[ordinal];
-         float[] floats = this.method849(n, ordinal, 0, f, f / Util3.CONST_floatValues2[ordinal]);
-         float[] floats2 = this.method849(n, ordinal, 2, Util3.CONST_floatValues3[ordinal], 1.0F);
-         float f3 = ordinal == Util3.CONST_intValue2 ? this.method849(n, ordinal, 1, -Util3.CONST_floatValues4[Util3.CONST_intValue2], 1.0F)[0] : 1.0F;
-         return floats[0] == 1.0F && floats[1] == 0.0F && floats2[0] == 1.0F && floats2[1] == 0.0F && f3 == 1.0F && f2 == Util3.CONST_floatValues[ordinal]
-            ? Util3.Data.INSTANCE
-            : new Util3.Data(Util3.CONST_floatValues[ordinal], f2, floats[0], floats[1], f3, floats2[0], floats2[1]);
+      private WardrobeModelData.Transform computeTransform(int n, int ordinal) {
+         boolean flag = this.flag && WardrobeModelData.isArm(ordinal) && this.floatValues[ordinal] <= 0.0F;
+         float f = flag ? 0.09375F : WardrobeModelData.CONST_floatValues2[ordinal];
+         float f2 = flag ? WardrobeModelData.CONST_floatValues6[ordinal] : WardrobeModelData.CONST_floatValues[ordinal];
+         float[] floats = this.computeAxisFit(n, ordinal, 0, f, f / WardrobeModelData.CONST_floatValues2[ordinal]);
+         float[] floats2 = this.computeAxisFit(n, ordinal, 2, WardrobeModelData.CONST_floatValues3[ordinal], 1.0F);
+         float f3 = ordinal == WardrobeModelData.CONST_intValue2 ? this.computeAxisFit(n, ordinal, 1, -WardrobeModelData.CONST_floatValues4[WardrobeModelData.CONST_intValue2], 1.0F)[0] : 1.0F;
+         return floats[0] == 1.0F && floats[1] == 0.0F && floats2[0] == 1.0F && floats2[1] == 0.0F && f3 == 1.0F && f2 == WardrobeModelData.CONST_floatValues[ordinal]
+            ? WardrobeModelData.Transform.INSTANCE
+            : new WardrobeModelData.Transform(WardrobeModelData.CONST_floatValues[ordinal], f2, floats[0], floats[1], f3, floats2[0], floats2[1]);
       }
 
-      private float[] method849(int n, int ordinal, int n2, float f, float f2) {
+      private float[] computeAxisFit(int n, int ordinal, int n2, float f, float f2) {
          WardrobeModel class2 = this.class15s[n];
          boolean flag = this.hoveredDatas[n].method1546() == WardrobeCategory.ACCESSORY;
          float[][] floatses = new float[2][];
@@ -739,12 +739,12 @@ public final class Util3 {
                break;
             }
 
-            float f3 = Util3.method831(class2, ordinal, n2, floatValue);
+            float f3 = WardrobeModelData.findSurfaceDepth(class2, ordinal, n2, floatValue);
             if (!Float.isNaN(f3)) {
                float f4 = f + this.floatValues2[ordinal];
                float f5;
                if (flag) {
-                  f5 = Util3.method825(ordinal) ? f4 + 0.00625F : Math.max(f3 * f2, f4 + 0.00625F);
+                  f5 = WardrobeModelData.isArm(ordinal) ? f4 + 0.00625F : Math.max(f3 * f2, f4 + 0.00625F);
                } else {
                   f5 = f3 * f2;
                   if (this.floatValues2[ordinal] > 0.0F) {
@@ -760,13 +760,13 @@ public final class Util3 {
                int n3 = 0;
                original[n3++] = f3;
                original[n3++] = f5;
-               float f6 = !flag && this.intValues[n] < Util3.method824(FocusSlotEnum.CAPE) ? 1.15F : 1.9F;
+               float f6 = !flag && this.intValues[n] < WardrobeModelData.getLayerOrder(FocusSlotEnum.CAPE) ? 1.15F : 1.9F;
 
                for (int j = 0; j < this.hoveredDatas.length; j++) {
                   if (j != n && this.intValues[j] < this.intValues[n] && this.class15s[j].method2033(ordinal)) {
-                     float[] floats = Util3.method832(this.class15s[j], class2, ordinal, n2, floatValue, flag ? 1.6F : 1.35F);
+                     float[] floats = WardrobeModelData.findOverlapDepthPairs(this.class15s[j], class2, ordinal, n2, floatValue, flag ? 1.6F : 1.35F);
                      if (floats != null) {
-                        Util3.Data data = this.method847(j, ordinal);
+                        WardrobeModelData.Transform data = this.getOrComputeTransform(j, ordinal);
                         float f7 = n2 == 0 ? data.getFloatValue3() : (n2 == 1 ? data.getFloatValue5() : data.getFloatValue6());
                         float f8 = n2 == 0 ? data.getFloatValue4() : (n2 == 1 ? 0.0F : data.getFloatValue7());
                         if (n3 + floats.length > original.length) {
@@ -785,7 +785,7 @@ public final class Util3 {
                   }
                }
 
-               floatses[i] = method850(original, n3);
+               floatses[i] = pruneDominatedConstraints(original, n3);
                ints[i] = floatses[i].length;
             }
          }
@@ -837,7 +837,7 @@ public final class Util3 {
          return new float[]{f3, f4};
       }
 
-      private static float[] method850(float[] original, int n) {
+      private static float[] pruneDominatedConstraints(float[] original, int n) {
          int n2 = n / 2;
          Integer[] integers = new Integer[n2];
 
@@ -868,7 +868,7 @@ public final class Util3 {
       }
    }
 
-   private static final class Entry2 {
+   private static final class WardrobeRenderCacheKey {
       private final WardrobeModel[] class15s;
       private final FocusSlotEnum[] focusSlotEnums;
       private final boolean flag;
@@ -876,7 +876,7 @@ public final class Util3 {
       private final float[] floatValues2;
       private final int intValue;
 
-      public Entry2(Util3.Entry entry) {
+      public WardrobeRenderCacheKey(WardrobeModelData.WardrobeRenderData entry) {
          this.class15s = entry.class15s;
          this.focusSlotEnums = new FocusSlotEnum[entry.hoveredDatas.length];
 
@@ -896,7 +896,7 @@ public final class Util3 {
 
       @Override
       public boolean equals(Object obj) {
-         return obj instanceof Util3.Entry2 entry2
+         return obj instanceof WardrobeModelData.WardrobeRenderCacheKey entry2
             && this.intValue == entry2.intValue
             && this.flag == entry2.flag
             && Arrays.equals((Object[])this.class15s, (Object[])entry2.class15s)
@@ -911,11 +911,11 @@ public final class Util3 {
       }
    }
 
-   private static final class Entry3 {
+   private static final class PairAccumulator {
       private float[] floatValues = new float[64];
       private int size;
 
-      public void method851(float f, float f2) {
+      public void addPair(float f, float f2) {
          if (this.size == this.floatValues.length) {
             this.floatValues = Arrays.copyOf(this.floatValues, this.size * 2);
          }
@@ -924,9 +924,9 @@ public final class Util3 {
          this.floatValues[this.size++] = f2;
       }
 
-      public float[] method852() {
+      public float[] toUniquePairs() {
          if (this.size == 0) {
-            return Util3.CONST_floatValues7;
+            return WardrobeModelData.CONST_floatValues7;
          } else {
             HashSet hashSet = new HashSet();
             float[] original = new float[this.size];
@@ -946,7 +946,7 @@ public final class Util3 {
       }
    }
 
-   private interface Handler {
+   private interface IntersectionHandler {
       void accept(float f, float f2);
    }
 }

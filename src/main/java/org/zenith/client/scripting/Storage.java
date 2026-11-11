@@ -661,7 +661,7 @@ public final class Storage {
             module1.toggle();
          }
 
-         Zenith.getInstance().getModuleManager().method2483(module1);
+         Zenith.getInstance().getModuleManager().unregisterModule(module1);
          this.items2.add(module1);
       }
 

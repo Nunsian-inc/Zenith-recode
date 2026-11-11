@@ -78,7 +78,7 @@ public final class AutoDuelsModule extends Module {
             this.previousX = mc.player.getX();
             this.previousY = mc.player.getY();
             this.previousZ = mc.player.getZ();
-            if (this.inviteTimer.method7546(600L)) {
+            if (this.inviteTimer.hasElapsed(600L)) {
                List<String> onlinePlayerNames = this.getOnlinePlayerNames();
                this.onlinePlayerCount = onlinePlayerNames.size();
                this.resetInviteCycleIfElapsed();
@@ -108,7 +108,7 @@ public final class AutoDuelsModule extends Module {
    }
 
    private void resetInviteCycleIfElapsed() {
-      if (this.inviteCycleTimer.method7546(80L * Math.max(1, this.onlinePlayerCount))) {
+      if (this.inviteCycleTimer.hasElapsed(80L * Math.max(1, this.onlinePlayerCount))) {
          this.invitedPlayers.clear();
          this.inviteCycleTimer.reset();
       }

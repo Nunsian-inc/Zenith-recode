@@ -127,7 +127,7 @@ public final class TargetPearlModule extends Module {
    }
 
    private boolean method4832() {
-      if (!this.stopWatch.method7546(1000L)) {
+      if (!this.stopWatch.hasElapsed(1000L)) {
          return false;
       } else if (this.modeSetting.isSelected(0) && !UseItemUtils.method6521(this.throwSetting)) {
          return false;

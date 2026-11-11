@@ -96,16 +96,16 @@ public final class RouteCommand extends CommandAbstract {
    public void onMoveInput(MoveInputEvent event) {
       LocalPlayer player = mc.player;
       if (this.route != null && this.nextBlock != null && player != null) {
-         event.method3044();
+         event.clearInput();
          float yawTo = this.yawTo(player, this.nextBlock);
          float f = Math.abs(Mth.wrapDegrees(yawTo - player.getYRot()));
          if (f <= 55.0F) {
-            event.method3038(true);
+            event.setForward(true);
          }
 
          int n = Mth.floor(player.getY() + 0.01);
          boolean jump = this.nextBlock.getY() > n || player.horizontalCollision;
-         event.method3041(jump);
+         event.setJump(jump);
       }
    }
 

@@ -152,7 +152,7 @@ public final class CastleFlyModule extends Module {
          );
       } else {
          this.placementData = null;
-         if (mc.options.keyJump.isDown() && !MovementInputUtils.method7418()) {
+         if (mc.options.keyJump.isDown() && !MovementInputUtils.hasMovementInput()) {
             this.placementY = (int)Math.floor(mc.player.getY() - 1.0);
          }
 
@@ -179,7 +179,7 @@ public final class CastleFlyModule extends Module {
 
    @EventTarget(0)
    public void onMoveInput(MoveInputEvent event) {
-      MovementInputUtils.method7426(event, Zenith.getInstance().getRotationManager().getEffectiveRotation().getFloatValue(), RotationUtils.method6911().getFloatValue());
+      MovementInputUtils.correctMovement(event, Zenith.getInstance().getRotationManager().getEffectiveRotation().getFloatValue(), RotationUtils.method6911().getFloatValue());
    }
 
    @EventTarget

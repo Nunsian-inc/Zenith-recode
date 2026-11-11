@@ -115,7 +115,7 @@ public final class FakeLagModule extends Module {
       if (mc.player != null && mc.level != null) {
          this.method6956();
          if (!this.queue.isEmpty()) {
-            if (this.method6941() || !this.stopWatch.method7546((long)this.recoilTime.getValue3())) {
+            if (this.method6941() || !this.stopWatch.hasElapsed((long)this.recoilTime.getValue3())) {
                this.method6953();
             } else if (this.method6949()) {
                this.method6954();
@@ -179,7 +179,7 @@ public final class FakeLagModule extends Module {
    }
 
    private int method6937(Packet<?> packet4) {
-      if (this.method6941() || !this.stopWatch.method7546((long)this.recoilTime.getValue3())) {
+      if (this.method6941() || !this.stopWatch.hasElapsed((long)this.recoilTime.getValue3())) {
          return 0;
       } else if (this.method6949()) {
          return 4;

@@ -209,14 +209,14 @@ public final class StreamerModeModule extends Module {
                if (anarchy == this.intValue) {
                   this.type = StreamerModeModule.Type.WAIT_TAB;
                   this.stopWatch.reset();
-               } else if (this.stopWatch.method7546(60000L)) {
+               } else if (this.stopWatch.hasElapsed(60000L)) {
                   this.type = StreamerModeModule.Type.IDLE;
                   ChatLogger.method2022("Не дождался захода на ан" + this.intValue);
                }
                break;
             case WAIT_TAB:
                int size = mc.player.connection.getListedOnlinePlayers().size();
-               if (this.stopWatch.method7546(5000L) && size > 1 || this.stopWatch.method7546(15000L)) {
+               if (this.stopWatch.hasElapsed(5000L) && size > 1 || this.stopWatch.hasElapsed(15000L)) {
                   this.method6287();
                   this.type = StreamerModeModule.Type.RETURN;
                   this.stopWatch.reset();
@@ -224,7 +224,7 @@ public final class StreamerModeModule extends Module {
                }
                break;
             case RETURN:
-               if (anarchy == this.intValue2 || this.stopWatch.method7546(60000L)) {
+               if (anarchy == this.intValue2 || this.stopWatch.hasElapsed(60000L)) {
                   this.type = StreamerModeModule.Type.IDLE;
                   this.flag = !this.items.isEmpty();
                   if (this.flag) {

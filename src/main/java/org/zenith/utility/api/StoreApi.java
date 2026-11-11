@@ -344,7 +344,7 @@ public final class StoreApi {
       String str4 = str3 + str2;
       String str5 = "/store/" + str2;
       byte[] input = bytes == null ? new byte[0] : bytes;
-      long l = Util18.method4489();
+      long l = ServerClock.currentTimeMillis();
       long accountUid2 = accountUid();
       if (accountUid2 <= 0L) {
          return CompletableFuture.failedFuture(new StoreApi.Entry(401, "аккаунт ещё не готов"));
@@ -375,7 +375,7 @@ public final class StoreApi {
 
          BodyHandler<byte[]> bodyHandler = responseInfo -> new StoreApi.Entry2(33554432L);
          return this.httpClient.sendAsync(httpRequest, bodyHandler).thenApply(var1x -> {
-            Util18.method4491((HttpResponse<?>)var1x);
+            ServerClock.syncFromHttpResponse((HttpResponse<?>)var1x);
             if (var1x.statusCode() / 100 == 2) {
                return (byte[])var1x.body();
             } else {

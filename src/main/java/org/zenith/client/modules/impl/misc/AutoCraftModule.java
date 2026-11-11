@@ -247,7 +247,7 @@ public final class AutoCraftModule extends Module {
                if (containerMenu instanceof CraftingMenu craftingMenu) {
                   this.method1016(craftRecipe, craftingMenu);
                } else if (this.method1019(containerMenu)) {
-                  if (this.type != AutoCraftModule.Type.OPENING_OUTPUT && !containerMenu.getCarried().isEmpty() && this.stopWatch.method7546(85L)) {
+                  if (this.type != AutoCraftModule.Type.OPENING_OUTPUT && !containerMenu.getCarried().isEmpty() && this.stopWatch.hasElapsed(85L)) {
                      this.method1075(containerMenu);
                      this.stopWatch.reset();
                   } else {
@@ -279,7 +279,7 @@ public final class AutoCraftModule extends Module {
       this.intValue = 0;
       this.type = AutoCraftModule.Type.CRAFTING;
       this.statusText = "Крафчу " + craftRecipe.method5400(this);
-      if (this.stopWatch.method7546(85L)) {
+      if (this.stopWatch.hasElapsed(85L)) {
          if (!containerMenu.getCarried().isEmpty()) {
             this.method1075(containerMenu);
             this.stopWatch.reset();
@@ -399,7 +399,7 @@ public final class AutoCraftModule extends Module {
       String str = craftRecipe.method5395(key);
       String anotherString = craftRecipe.method5396(key);
       this.statusText = "Забираю " + this.method1107(str, anotherString);
-      if (this.stopWatch.method7546(85L)) {
+      if (this.stopWatch.hasElapsed(85L)) {
          if (!this.autoCraftState.method746(craftRecipe, key)) {
             int n = this.items6.getOrDefault(key, craftRecipe.method5389(key));
             int n2 = this.method1067(str, anotherString);
@@ -474,7 +474,7 @@ public final class AutoCraftModule extends Module {
       } else if (!containerMenu.getCarried().isEmpty()) {
          this.type2 = AutoCraftModule.Type2.DEPOSIT_CURSOR;
          this.method1028(containerMenu, n);
-      } else if (this.stopWatch.method7546(85L)) {
+      } else if (this.stopWatch.hasElapsed(85L)) {
          int n2 = this.method1067(craftRecipe.getText4(), craftRecipe.getText5());
          if (n2 <= 0 && this.method1066() <= 1) {
             n2 = this.method1068(craftRecipe);
@@ -1002,7 +1002,7 @@ public final class AutoCraftModule extends Module {
    }
 
    private AutoCraftModule.Type3 method1054(BlockPos blockPos4, AutoCraftModule.Type type) {
-      if (blockPos4 != null && this.stopWatch.method7546(85L)) {
+      if (blockPos4 != null && this.stopWatch.hasElapsed(85L)) {
          BlockHitResult blockHitResult = this.method1056(blockPos4);
          if (blockHitResult == null) {
             this.statusText = "Нет луча до блока " + this.method1062(blockPos4);

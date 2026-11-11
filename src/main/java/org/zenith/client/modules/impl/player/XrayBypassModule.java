@@ -168,7 +168,7 @@ public final class XrayBypassModule extends Module {
 
    @EventTarget(4)
    public void method4218(MoveInputEvent event) {
-      event.method3044();
+      event.clearInput();
    }
 
    @EventTarget
@@ -181,11 +181,11 @@ public final class XrayBypassModule extends Module {
 
          this.stopWatch.reset();
       } else {
-         if (this.stopWatch.method7546(20000L)) {
+         if (this.stopWatch.hasElapsed(20000L)) {
             this.stopWatch.reset();
          }
 
-         if (!this.stopWatch.method7546(1000L)) {
+         if (!this.stopWatch.hasElapsed(1000L)) {
             for (int i = 0; i < this.delay.getValue3(); i++) {
                if (this.blockPos != null) {
                   BlockPos blockPos = this.blockPos;

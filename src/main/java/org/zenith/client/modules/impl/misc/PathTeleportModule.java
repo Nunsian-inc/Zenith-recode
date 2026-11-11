@@ -70,7 +70,7 @@ public final class PathTeleportModule extends Module {
    @EventTarget
    public void onMoveInput(MoveInputEvent event) {
       if (this.flag2) {
-         event.method3044();
+         event.clearInput();
       }
    }
 

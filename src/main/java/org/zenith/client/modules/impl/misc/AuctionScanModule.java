@@ -97,8 +97,8 @@ public class AuctionScanModule extends Module {
 
    private void method1649() {
       if (mc.player != null && mc.getConnection() != null) {
-         if (this.stopWatch.method7546((long)this.delay.getValue3())) {
-            if (this.type != AuctionScanModule.Type.PAGES || this.flag || this.stopWatch2.method7546(6000L)) {
+         if (this.stopWatch.hasElapsed((long)this.delay.getValue3())) {
+            if (this.type != AuctionScanModule.Type.PAGES || this.flag || this.stopWatch2.hasElapsed(6000L)) {
                this.flag = false;
                switch (this.type) {
                   case OPEN:
@@ -133,7 +133,7 @@ public class AuctionScanModule extends Module {
    private void method1651() {
       AbstractContainerMenu containerMenu = mc.player.containerMenu;
       if (!this.method1657(containerMenu)) {
-         if (this.stopWatch2.method7546(6000L)) {
+         if (this.stopWatch2.hasElapsed(6000L)) {
             ChatLogger.method2022("AuctionScan: окно аукциона не открылось");
             this.method1655();
          }

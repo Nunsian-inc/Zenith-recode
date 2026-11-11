@@ -370,7 +370,7 @@ public final class ScriptModuleApi {
             Module1 module12 = Module1.method7802(workspace, name, str, category);
             module12.setFlag2(scriptable != null && ScriptValueUtils.method6265(scriptable, "enabled", false));
             workspace.getItems32().put(name, module12);
-            Zenith.getInstance().getModuleManager().method2482(module12);
+            Zenith.getInstance().getModuleManager().registerModule(module12);
             return method330(storage, workspace, scope, module12);
          }
       } else {

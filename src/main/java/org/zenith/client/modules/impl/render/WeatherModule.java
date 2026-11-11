@@ -24,7 +24,7 @@ import org.zenith.client.settings.Setting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.game.FlakeState;
 import org.zenith.utility.game.Print;
-import org.zenith.utility.game.Util11;
+import org.zenith.utility.game.SnowSurfaceTracker;
 import org.zenith.utility.misc.ColorUtils;
 import org.zenith.utility.misc.FlakeUtil;
 import org.zenith.utility.misc.FoliageSprites;
@@ -465,7 +465,7 @@ public final class WeatherModule extends Module {
          this.flakeState.method4537(mc.level, intValue, n);
       }
 
-      Util11.method2332(mc.level, this.flakeState);
+      SnowSurfaceTracker.invalidateChangedColumns(mc.level, this.flakeState);
       this.intValue = intValue;
       this.intValue2 = n;
       return this.flakeState;

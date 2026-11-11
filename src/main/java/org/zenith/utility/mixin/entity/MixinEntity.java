@@ -18,7 +18,7 @@ import org.zenith.client.events.MovementCorrectionEvent;
 import org.zenith.client.modules.impl.render.AntiInvisibleModule;
 import org.zenith.client.modules.impl.render.PredictionsModule;
 import org.zenith.client.modules.impl.render.ShaderESPModule;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 import org.zenith.utility.misc.ServerPositionTracker;
 
 @Mixin({Entity.class})
@@ -97,7 +97,7 @@ public abstract class MixinEntity implements MinecraftAccess {
    )
    private void zenith$shaderEspGlowing(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
       Entity entity = (Entity)(Object)this;
-      if (Util4.method1278(entity.getId())) {
+      if (ScriptRenderOverrides.hasTeamColorOverride(entity.getId())) {
          callbackInfoReturnable.setReturnValue(true);
       } else {
          ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;

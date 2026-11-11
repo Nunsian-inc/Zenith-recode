@@ -380,7 +380,7 @@ public final class AutoTotemModule extends Module {
                      this.method712(slot, tickCount);
                   }
                } else {
-                  if (!flag5 && !flag && !flag4 && !this.stopWatch.method7546(150L)) {
+                  if (!flag5 && !flag && !flag4 && !this.stopWatch.hasElapsed(150L)) {
                      return;
                   }
 

@@ -230,7 +230,7 @@ public final class PvpHelperModule extends Module {
             boolean flag = entity.isUsingItem() && entity.getUseItem().is(Items.CHORUS_FRUIT);
             if (!flag || mc.player.distanceToSqr(entity) > 25.0) {
                this.stopWatch.reset();
-            } else if (!this.flag2 && mc.gui.screen() == null && !mc.player.isUsingItem() && this.stopWatch.method7546(200L)) {
+            } else if (!this.flag2 && mc.gui.screen() == null && !mc.player.isUsingItem() && this.stopWatch.hasElapsed(200L)) {
                this.method4650();
             }
 
@@ -242,7 +242,7 @@ public final class PvpHelperModule extends Module {
                   return;
                }
 
-               if (this.stopWatch2.method7546(2500L)) {
+               if (this.stopWatch2.hasElapsed(2500L)) {
                   this.method4651();
                }
             }

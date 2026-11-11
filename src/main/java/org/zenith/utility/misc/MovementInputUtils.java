@@ -10,11 +10,11 @@ import org.zenith.MinecraftAccess;
 import org.zenith.client.events.MoveInputEvent;
 
 public final class MovementInputUtils implements MinecraftAccess {
-   public static boolean method7418() {
+   public static boolean hasMovementInput() {
       return ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F || mc.player.input.keyPresses.jump();
    }
 
-   public static double[] method7419(double d, float yRot) {
+   public static double[] horizontalVelocity(double d, float yRot) {
       float f = ViaCompat.method4846(mc.player.input);
       float f2 = ViaCompat.method4847(mc.player.input);
       if (f != 0.0F) {
@@ -35,7 +35,7 @@ public final class MovementInputUtils implements MinecraftAccess {
       return new double[]{d4, d5};
    }
 
-   public static double[] method7420(double d, float f, Vec3 vec, double d2) {
+   public static double[] clampedHorizontalVelocity(double d, float f, Vec3 vec, double d2) {
       float f2 = ViaCompat.method4846(mc.player.input);
       float f3 = ViaCompat.method4847(mc.player.input);
       double x = vec.x;
@@ -74,27 +74,27 @@ public final class MovementInputUtils implements MinecraftAccess {
       }
    }
 
-   public static double[] method7421(double d) {
-      return method7419(d, mc.player.getYRot());
+   public static double[] horizontalVelocityForPlayer(double d) {
+      return horizontalVelocity(d, mc.player.getYRot());
    }
 
-   public static void method7422(double d) {
-      double[] doubles = method7421(d);
+   public static void setHorizontalVelocity(double d) {
+      double[] doubles = horizontalVelocityForPlayer(d);
       Objects.requireNonNull(mc.player).setDeltaMovement(doubles[0], mc.player.getDeltaMovement().y(), doubles[1]);
    }
 
-   public static void method7423(double d, double yd) {
-      double[] doubles = method7421(d);
+   public static void setVelocityFromInput(double d, double yd) {
+      double[] doubles = horizontalVelocityForPlayer(d);
       Objects.requireNonNull(mc.player).setDeltaMovement(doubles[0], yd, doubles[1]);
    }
 
-   public static double method7424(Vec3 vec, float yRot) {
+   public static double relativeMovementAngle(Vec3 vec, float yRot) {
       float f = (float)Math.atan2(-vec.x, vec.z);
       double d = Math.toRadians(Mth.wrapDegrees(yRot));
       return Math.toDegrees(Mth.wrapDegrees(f - d));
    }
 
-   public static Input method7425(Input input, double d, float f) {
+   public static Input inputForAngle(Input input, double d, float f) {
       boolean forward = input.forward();
       boolean backward = input.backward();
       boolean left = input.left();
@@ -114,10 +114,10 @@ public final class MovementInputUtils implements MinecraftAccess {
       return new Input(forward, backward, left, right, input.jump(), input.shift(), input.sprint());
    }
 
-   public static void method7426(MoveInputEvent event, float floatValue, float yRot) {
+   public static void correctMovement(MoveInputEvent event, float floatValue, float yRot) {
       float f = ViaCompat.method4846(mc.player.input);
       float f2 = ViaCompat.method4847(mc.player.input);
-      double d = Mth.wrapDegrees(Math.toDegrees(method7427(mc.player.isFallFlying() ? floatValue : yRot, f, f2)));
+      double d = Mth.wrapDegrees(Math.toDegrees(movementYawRadians(mc.player.isFallFlying() ? floatValue : yRot, f, f2)));
       if (f != 0.0F || f2 != 0.0F) {
          float f3 = 0.0F;
          float f4 = 0.0F;
@@ -126,7 +126,7 @@ public final class MovementInputUtils implements MinecraftAccess {
          for (float f6 = -1.0F; f6 <= 1.0F; f6++) {
             for (float f7 = -1.0F; f7 <= 1.0F; f7++) {
                if (f7 != 0.0F || f6 != 0.0F) {
-                  double d2 = Mth.wrapDegrees(Math.toDegrees(method7427(floatValue, f6, f7)));
+                  double d2 = Mth.wrapDegrees(Math.toDegrees(movementYawRadians(floatValue, f6, f7)));
                   double d3 = Math.abs(d - d2);
                   if (d3 < f5) {
                      f5 = (float)d3;
@@ -137,11 +137,11 @@ public final class MovementInputUtils implements MinecraftAccess {
             }
          }
 
-         event.method3042(f3, f4);
+         event.setMovement(f3, f4);
       }
    }
 
-   public static double method7427(float yRot, float f, float f2) {
+   public static double movementYawRadians(float yRot, float f, float f2) {
       if (f < 0.0F) {
          yRot += 180.0F;
       }
@@ -166,11 +166,11 @@ public final class MovementInputUtils implements MinecraftAccess {
       return Math.toRadians(yRot);
    }
 
-   public static Input method7428(Input input, double d) {
-      return method7425(input, d, 20.0F);
+   public static Input inputForDirection(Input input, double d) {
+      return inputForAngle(input, d, 20.0F);
    }
 
-   public static double method7429(Entity entity) {
+   public static double movementSpeed(Entity entity) {
       double d = entity.getX() - entity.xo;
       double d2 = entity.getY() - entity.yo;
       double d3 = entity.getZ() - entity.zo;

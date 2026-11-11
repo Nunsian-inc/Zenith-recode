@@ -92,7 +92,7 @@ public final class UserSearchClient {
       if (accountUid <= 0L) {
          return CompletableFuture.failedFuture(new IllegalStateException("аккаунт ещё не готов"));
       } else {
-         long l = Util18.method4489();
+         long l = ServerClock.currentTimeMillis();
 
          HttpRequest httpRequest;
          String str2;
@@ -117,7 +117,7 @@ public final class UserSearchClient {
             if (var7x != null) {
                return !flag ? method4763(bytes, strings, n + 1) : CompletableFuture.failedFuture(var7x);
             } else {
-               Util18.method4491((HttpResponse<?>)httpResponse);
+               ServerClock.syncFromHttpResponse((HttpResponse<?>)httpResponse);
                int statusCode = httpResponse.statusCode();
                JsonObject var9x = SiteHttpClient.method2415(httpResponse.body());
                if (SiteHttpClient.method2414(statusCode, var9x)) {

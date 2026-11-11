@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 import org.zenith.utility.misc.ModuleHookDefinitions;
 
 @Mixin({GameRenderer.class})

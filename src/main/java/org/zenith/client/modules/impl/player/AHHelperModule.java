@@ -98,7 +98,7 @@ public final class AHHelperModule extends Module {
                this.method4050();
                break;
             case WAIT_CONFIRM:
-               if (this.stopWatch.method7546(5000L)) {
+               if (this.stopWatch.hasElapsed(5000L)) {
                   this.method4055();
                }
          }
@@ -158,15 +158,15 @@ public final class AHHelperModule extends Module {
    }
 
    private void method4047() {
-      if (this.stopWatch2.method7546(250L)) {
+      if (this.stopWatch2.hasElapsed(250L)) {
          if (!this.method4049()) {
-            if (this.stopWatch.method7546(5000L)) {
+            if (this.stopWatch.hasElapsed(5000L)) {
                this.method4048("Аукцион не открылся");
             }
          } else {
             Long l = this.method4051();
             if (l == null) {
-               if (this.stopWatch.method7546(5000L)) {
+               if (this.stopWatch.hasElapsed(5000L)) {
                   this.method4048("Не удалось найти цену на аукционе");
                }
             } else {
@@ -205,8 +205,8 @@ public final class AHHelperModule extends Module {
          ItemStack mainHandItem = mc.player.getMainHandItem();
          if (mainHandItem.isEmpty() || !ItemStack.isSameItemSameComponents(mainHandItem, this.itemStack)) {
             this.method4048("Держи тот же предмет в руке");
-         } else if (mc.gui.screen() == null || this.stopWatch.method7546(1500L)) {
-            if (this.stopWatch2.method7546(250L)) {
+         } else if (mc.gui.screen() == null || this.stopWatch.hasElapsed(1500L)) {
+            if (this.stopWatch2.hasElapsed(250L)) {
                mc.getConnection().sendCommand("ah sell " + this.longValue);
                this.method4055();
             }

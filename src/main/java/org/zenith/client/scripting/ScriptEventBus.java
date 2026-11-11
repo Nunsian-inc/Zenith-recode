@@ -377,39 +377,39 @@ public final class ScriptEventBus {
                .method6277("sneak", playerInput.shift())
                .method6277("sprint", playerInput.sprint())
                .method6274("setForward", var1x -> {
-                  event2.method3038(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setForward(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setBack", var1x -> {
-                  event2.method3047(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setBackward(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setLeft", var1x -> {
-                  event2.method3045(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setLeft(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setRight", var1x -> {
-                  event2.method3046(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setRight(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setJump", var1x -> {
-                  event2.method3041(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setJump(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setSneak", var1x -> {
-                  event2.method3040(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setShift(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setSprint", var1x -> {
-                  event2.method3039(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.setSprint(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("set", var1x -> {
-                  event2.method3042((float)ScriptValueUtils.method6256(var1x, 0, 0.0), (float)ScriptValueUtils.method6256(var1x, 1, 0.0));
+                  event2.setMovement((float)ScriptValueUtils.method6256(var1x, 0, 0.0), (float)ScriptValueUtils.method6256(var1x, 1, 0.0));
                   return null;
                })
                .method6274("none", var1x -> {
-                  event2.method3044();
+                  event2.clearInput();
                   return null;
                })
                .getScriptableObject();

@@ -132,7 +132,7 @@ public final class ElytraTargetModule extends Module {
          if (this.autoFWSetting.isEnabled()
             && !ElytraMotionModule.INSTANCE.isMovementStopped()
             && !AutoTotemModule.INSTANCE.method725()
-            && this.fireworkTimer.method7546(400L)) {
+            && this.fireworkTimer.hasElapsed(400L)) {
             InventoryUtils.useFireworkInFlight();
             this.fireworkTimer.reset();
          }

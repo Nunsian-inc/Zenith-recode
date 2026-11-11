@@ -138,12 +138,12 @@ public final class AutoFarmRW extends Module {
                   if (this.flag) {
                      this.stopWatch.reset();
                      this.type = AutoFarmRW.Type.LOADING;
-                  } else if (this.stopWatch.method7546(15000L)) {
+                  } else if (this.stopWatch.hasElapsed(15000L)) {
                      this.method3881("не дождался /warp farm — проверь доступ к варпу");
                   }
                   break;
                case LOADING:
-                  if (!this.stopWatch.method7546((long)this.warpDelay.getValue3() * 1000L)) {
+                  if (!this.stopWatch.hasElapsed((long)this.warpDelay.getValue3() * 1000L)) {
                      return;
                   }
 
@@ -173,9 +173,9 @@ public final class AutoFarmRW extends Module {
          if (!method3886(this.center, mc.player.blockPosition(), n + 8)) {
             this.method3881("сбор остановлен — игрок ушёл с фермы");
          } else {
-            if (this.stopWatch2.method7546((long)this.sellInterval.getValue3() * 1000L)) {
+            if (this.stopWatch2.hasElapsed((long)this.sellInterval.getValue3() * 1000L)) {
                this.method3883();
-            } else if (this.sellWhenFull.isEnabled() && this.stopWatch3.method7546(10000L) && mc.player.getInventory().getFreeSlot() == -1) {
+            } else if (this.sellWhenFull.isEnabled() && this.stopWatch3.hasElapsed(10000L) && mc.player.getInventory().getFreeSlot() == -1) {
                this.method3883();
             }
 

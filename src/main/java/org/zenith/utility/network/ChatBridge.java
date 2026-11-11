@@ -200,7 +200,7 @@ public final class ChatBridge implements MinecraftAccess {
    private void method501(String content) {
       String[] strings = content.split("\\s+");
       if (strings.length != 0 && !strings[0].isEmpty()) {
-         Module moduleValue = Zenith.getInstance().getModuleManager().method2484(strings[0]);
+         Module moduleValue = Zenith.getInstance().getModuleManager().findByName(strings[0]);
          if (moduleValue == null) {
             this.write("module| не найден " + strings[0]);
          } else {

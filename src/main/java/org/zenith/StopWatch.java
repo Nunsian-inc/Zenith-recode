@@ -3,14 +3,14 @@ package org.zenith;
 import lombok.Generated;
 
 public class StopWatch {
-   private long longValue;
+   private long startTime;
 
    public StopWatch() {
       this.reset();
    }
 
-   public boolean method7544(long l) {
-      boolean flag = this.method7546(l);
+   public boolean hasElapsedAndReset(long l) {
+      boolean flag = this.hasElapsed(l);
       if (flag) {
          this.reset();
       }
@@ -18,29 +18,29 @@ public class StopWatch {
       return flag;
    }
 
-   public boolean method7545(float f) {
-      return System.currentTimeMillis() - (long)f >= this.longValue;
+   public boolean hasElapsedSinceFloat(float f) {
+      return System.currentTimeMillis() - (long)f >= this.startTime;
    }
 
-   public boolean method7546(long l) {
-      return System.currentTimeMillis() - l >= this.longValue;
+   public boolean hasElapsed(long l) {
+      return System.currentTimeMillis() - l >= this.startTime;
    }
 
    public void reset() {
-      this.longValue = System.currentTimeMillis();
+      this.startTime = System.currentTimeMillis();
    }
 
-   public long method7547() {
-      return System.currentTimeMillis() - this.longValue;
-   }
-
-   @Generated
-   public long getLongValue() {
-      return this.longValue;
+   public long elapsedMillis() {
+      return System.currentTimeMillis() - this.startTime;
    }
 
    @Generated
-   public void setLongValue(long longValue) {
-      this.longValue = longValue;
+   public long getStartTime() {
+      return this.startTime;
+   }
+
+   @Generated
+   public void setStartTime(long startTime) {
+      this.startTime = startTime;
    }
 }

@@ -37,7 +37,7 @@ public final class KeyBindUtils implements MinecraftAccess {
             MoveInputEvent.class,
             var1x -> {
                if (InventorySettingModule.INSTANCE.method2397()) {
-                  var1x.method3044();
+                  var1x.clearInput();
                   if (mc.player.lastSentInput.jump()
                      || mc.player.isSprinting()
                      || mc.player.lastSentInput.forward()

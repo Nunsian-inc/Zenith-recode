@@ -224,7 +224,7 @@ public final class ServicesTicker implements MinecraftAccess {
       long now = System.currentTimeMillis();
       boolean flag = health == this.floatValue3 && maxHealth == this.floatValue4 && absorptionAmount == this.floatValue5 && foodLevel == this.intValue;
       if (!flag || now - this.longValue2 >= 5000L) {
-         if (this.stopWatch.method7546(50L) || !(this.floatValue3 >= 0.0F)) {
+         if (this.stopWatch.hasElapsed(50L) || !(this.floatValue3 >= 0.0F)) {
             this.stopWatch.reset();
             this.floatValue3 = health;
             this.floatValue4 = maxHealth;

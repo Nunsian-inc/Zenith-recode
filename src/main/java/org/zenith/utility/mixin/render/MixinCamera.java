@@ -130,7 +130,7 @@ public abstract class MixinCamera {
    // script zoom (was MixinScriptCamera on GameRenderer.getFov); runs before the weather capture below
    @com.llamalad7.mixinextras.injector.ModifyReturnValue(method = {"calculateFov(F)F"}, at = {@At("RETURN")})
    private float zenith$scriptZoom(float f) {
-      float f2 = org.zenith.utility.game.Util4.method1281();
+      float f2 = org.zenith.utility.game.ScriptRenderOverrides.getMaxCameraZoom();
       return f2 > 1.001F ? Math.max(1.0F, f / f2) : f;
    }
 

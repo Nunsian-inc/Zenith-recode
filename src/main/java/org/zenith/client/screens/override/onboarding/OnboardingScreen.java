@@ -286,7 +286,7 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
          this.modules.clear();
 
          for (String string : WANTED) {
-            Module moduleValue = Zenith.getInstance().getModuleManager().method2484(string);
+            Module moduleValue = Zenith.getInstance().getModuleManager().findByName(string);
             if (moduleValue != null) {
                this.modules.add(moduleValue);
             }

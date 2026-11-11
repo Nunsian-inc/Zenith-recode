@@ -27,7 +27,7 @@ import org.zenith.client.events.DrawEvent;
 import org.zenith.client.events.MouseButtonEvent;
 import org.zenith.client.events.TickEvent;
 import org.zenith.client.events.WorldRenderEvent;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 import org.zenith.utility.render.GlowUtil;
 import org.zenith.utility.render.ProjectionUtils;
 import org.zenith.utility.render.display.base.CustomDrawContext;
@@ -936,7 +936,7 @@ public final class ScriptImGui {
    }
 
    public static void method655(Script workspace, Scriptable scope, ScriptableObject scriptableObject) {
-      workspace.method1413(() -> Util4.method1290(workspace));
+      workspace.method1413(() -> ScriptRenderOverrides.clearPlayerSkinOverrides(workspace));
       ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6246(scope, scriptableObject);
       entry2.method6274("skin", var1x -> {
          Object var2x = ScriptValueUtils.arg(var1x, 0);
@@ -947,14 +947,14 @@ public final class ScriptImGui {
                if (texture == null) {
                   throw ScriptValueUtils.method6251("картинка ещё не готова");
                } else {
-                  Util4.method1288(workspace, texture, ScriptValueUtils.method6259(var1x, 1, false));
+                  ScriptRenderOverrides.setPlayerSkinTexture(workspace, texture, ScriptValueUtils.method6259(var1x, 1, false));
                   return null;
                }
             } else {
                throw ScriptValueUtils.method6251("скин — картинка 64×64 (или 64×32)");
             }
          } else {
-            Util4.method1288(workspace, null, false);
+            ScriptRenderOverrides.setPlayerSkinTexture(workspace, null, false);
             return null;
          }
       });
@@ -969,12 +969,12 @@ public final class ScriptImGui {
                if (texture == null) {
                   throw ScriptValueUtils.method6251("картинка ещё не готова");
                } else {
-                  Util4.method1289(workspace, texture);
+                  ScriptRenderOverrides.setPlayerCapeTexture(workspace, texture);
                   return null;
                }
             }
          } else {
-            Util4.method1289(workspace, null);
+            ScriptRenderOverrides.setPlayerCapeTexture(workspace, null);
             return null;
          }
       });

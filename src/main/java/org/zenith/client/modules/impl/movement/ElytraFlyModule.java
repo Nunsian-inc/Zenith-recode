@@ -38,7 +38,7 @@ public final class ElytraFlyModule extends Module {
          ItemStack chestItem = mc.player.getItemBySlot(EquipmentSlot.CHEST);
          if (chestItem.is(Items.ELYTRA)) {
             if (mc.player.onGround()) {
-               event.method3041(true);
+               event.setJump(true);
                this.jumpPending = true;
             } else if (!mc.player.isFallFlying()) {
                if (!this.jumpPending) {

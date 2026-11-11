@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 
 @Mixin({AbstractClientPlayer.class})
 public abstract class MixinScriptSkin {
@@ -17,11 +17,11 @@ public abstract class MixinScriptSkin {
       cancellable = true
    )
    private void zenith$scriptSkin(CallbackInfoReturnable<PlayerSkin> callbackInfoReturnable) {
-      if (Util4.method1285()) {
+      if (ScriptRenderOverrides.hasSkinOverride()) {
          if ((Object)this == Minecraft.getInstance().player) {
             PlayerSkin returnValue = (PlayerSkin)callbackInfoReturnable.getReturnValue();
             if (returnValue != null) {
-               callbackInfoReturnable.setReturnValue(Util4.method1286(returnValue));
+               callbackInfoReturnable.setReturnValue(ScriptRenderOverrides.applySkinOverride(returnValue));
             }
          }
       }

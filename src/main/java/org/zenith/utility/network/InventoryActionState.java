@@ -41,7 +41,7 @@ public final class InventoryActionState implements MinecraftAccess {
 
    public void onMoveInput(MoveInputEvent event) {
       if (this.flag && this.predicate != null) {
-         event.method3044();
+         event.clearInput();
       }
    }
 

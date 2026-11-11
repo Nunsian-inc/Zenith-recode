@@ -42,7 +42,7 @@ import net.minecraft.world.scores.Scoreboard;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.zenith.client.modules.impl.misc.FreeCamModule;
-import org.zenith.utility.game.Util4;
+import org.zenith.utility.game.ScriptRenderOverrides;
 
 public final class ScriptWorldApi {
    private ScriptWorldApi() {
@@ -217,14 +217,14 @@ public final class ScriptWorldApi {
          } else {
             Object var3x = ScriptValueUtils.arg(var1x, 1);
             boolean flag = var3x instanceof Boolean flag2 && !flag2 || var3x == null;
-            Util4.method1282(workspace, var2x.getId(), flag && !ScriptValueUtils.method6253(var3x) ? null : ScriptValueUtils.method6258(var1x, 1, -1));
+            ScriptRenderOverrides.setTeamColorOverride(workspace, var2x.getId(), flag && !ScriptValueUtils.method6253(var3x) ? null : ScriptValueUtils.method6258(var1x, 1, -1));
             return null;
          }
       });
       entry2.method6274("hide", var1x -> {
          Entity var2x = ScriptScreenApi.method7048(ScriptValueUtils.arg(var1x, 0));
          if (var2x != null) {
-            Util4.method1283(workspace, var2x.getId(), !ScriptValueUtils.method6252(var1x, 1) || ScriptValueUtils.method6259(var1x, 1, true));
+            ScriptRenderOverrides.setEntityHidden(workspace, var2x.getId(), !ScriptValueUtils.method6252(var1x, 1) || ScriptValueUtils.method6259(var1x, 1, true));
          }
 
          return null;
@@ -502,7 +502,7 @@ public final class ScriptWorldApi {
 
    public static Scriptable method4828(Script workspace, Scriptable scope) {
       ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
-      workspace.method1413(() -> Util4.method1291(workspace));
+      workspace.method1413(() -> ScriptRenderOverrides.clearScriptOverrides(workspace));
       entry2.method6274("perspective", var0x -> {
          if (!ScriptValueUtils.method6252(var0x, 0)) {
             return switch (method4816().options.getCameraType()) {
@@ -523,7 +523,7 @@ public final class ScriptWorldApi {
          }
       });
       entry2.method6274("zoom", var1x -> {
-         Util4.method1284(workspace, (float)Math.max(1.0, ScriptValueUtils.method6256(var1x, 0, 1.0)));
+         ScriptRenderOverrides.setCameraZoom(workspace, (float)Math.max(1.0, ScriptValueUtils.method6256(var1x, 0, 1.0)));
          return null;
       });
       entry2.method6274("freecam", var0x -> {

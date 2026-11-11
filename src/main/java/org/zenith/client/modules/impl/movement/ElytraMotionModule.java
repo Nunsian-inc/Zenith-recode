@@ -60,7 +60,7 @@ public final class ElytraMotionModule extends Module {
          if (this.isWithinTargetRange()) {
             if (UseItemUtils.method6517() != null) {
                this.movementStopped = true;
-            } else if (this.fireworkTimer.method7546(300L) && !this.movementStopped) {
+            } else if (this.fireworkTimer.hasElapsed(300L) && !this.movementStopped) {
                InventoryUtils.useFireworkInFlight();
                this.fireworkTimer.reset();
             }

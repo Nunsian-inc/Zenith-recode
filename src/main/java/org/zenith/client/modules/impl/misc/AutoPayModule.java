@@ -51,7 +51,7 @@ public final class AutoPayModule extends Module {
             long retainedAmount = parseAmount(this.maxAmount.getValue().trim());
             if (!recipientName.isEmpty() && retainedAmount >= 0L) {
                long paymentAmount = this.balance - retainedAmount;
-               if (paymentAmount > 0L && this.paymentTimer.method7546(5000L)) {
+               if (paymentAmount > 0L && this.paymentTimer.hasElapsed(5000L)) {
                   mc.player.connection.sendCommand("pay " + recipientName + " " + paymentAmount);
                   this.paymentTimer.reset();
                }

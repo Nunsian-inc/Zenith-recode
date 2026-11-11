@@ -432,17 +432,17 @@ public class AutoWardenModule extends Module {
    public void onMoveInput(MoveInputEvent event) {
       if (mc.player != null) {
          if (!mc.player.onGround() && !mc.player.onClimbable()) {
-            event.method3040(false);
+            event.setShift(false);
          }
 
          if (this.humanLook.isEnabled() && mc.player.onGround() && this.method3998() > 70.0F) {
-            event.method3042(0.0F, 0.0F);
-            event.method3039(false);
+            event.setMovement(0.0F, 0.0F);
+            event.setSprint(false);
          }
 
          if (this.method4034() && mc.player.getMainHandItem().isEmpty() && !this.method4001(3.0)) {
             int n = mc.player.tickCount % 10 <= ThreadLocalRandom.current().nextFloat(3.0F, 8.0F) ? -1 : 1;
-            event.method3042(n, n);
+            event.setMovement(n, n);
          }
       }
    }
@@ -813,7 +813,7 @@ public class AutoWardenModule extends Module {
 
    private BlockPos method3983() {
       if (this.blockPos != null) {
-         if (this.stopWatch.method7546(30000L)) {
+         if (this.stopWatch.hasElapsed(30000L)) {
             this.method3984(this.blockPos);
          } else {
             if (this.method3985(this.blockPos)) {
@@ -1486,7 +1486,7 @@ public class AutoWardenModule extends Module {
       } else {
          this.method3977();
          if (this.intValue4 == 1) {
-            if (!this.stopWatch2.method7546(150L)) {
+            if (!this.stopWatch2.hasElapsed(150L)) {
                return true;
             }
 
@@ -1496,7 +1496,7 @@ public class AutoWardenModule extends Module {
 
          mc.options.keyShift.setDown(true);
          mc.options.keyUse.setDown(true);
-         if (this.stopWatch2.method7546(2200L)) {
+         if (this.stopWatch2.hasElapsed(2200L)) {
             this.method4030();
          }
 
@@ -1514,8 +1514,8 @@ public class AutoWardenModule extends Module {
       if (this.method4011()) {
          this.method4013();
          return true;
-      } else if (!mc.player.getOffhandItem().isEmpty() && !this.stopWatch2.method7546(3000L)) {
-         if (this.stopWatch2.method7546(100L)) {
+      } else if (!mc.player.getOffhandItem().isEmpty() && !this.stopWatch2.hasElapsed(3000L)) {
+         if (this.stopWatch2.hasElapsed(100L)) {
             InventoryUtils.method904(this.intValue5, 40, ContainerInput.SWAP, false);
             this.intValue5 = -1;
             this.intValue4 = 0;

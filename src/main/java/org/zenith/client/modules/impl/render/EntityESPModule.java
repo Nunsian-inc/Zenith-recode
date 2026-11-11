@@ -65,7 +65,7 @@ import org.zenith.client.settings.SliderSetting;
 import org.zenith.client.settings.TextSetting;
 import org.zenith.utility.api.PetManager;
 import org.zenith.utility.game.ArmorSlots;
-import org.zenith.utility.game.Util14;
+import org.zenith.utility.game.ItemIntegrityTracker;
 import org.zenith.utility.misc.MouseButton;
 import org.zenith.utility.misc.PartyPlayerInfo;
 import org.zenith.utility.misc.TextUtils;
@@ -747,7 +747,7 @@ public final class EntityESPModule extends Module {
          stacks.add(player.getMainHandItem());
 
          for (ItemStack stack : stacks) {
-            Util14.method2637(player, stack);
+            ItemIntegrityTracker.recordSuspiciousStack(player, stack);
          }
 
          return new EntityESPModule.Entry(
@@ -1009,7 +1009,7 @@ public final class EntityESPModule extends Module {
                                  );
                               }
 
-                              boolean flag = !(entry.getEntity() instanceof Player player && !Util14.method2638(player));
+                              boolean flag = !(entry.getEntity() instanceof Player player && !ItemIntegrityTracker.isStackCountValid(player));
                               if ((!Zenith.getInstance().getServerDetector().method1642() || entry.flag7) && flag && itemStack.getCount() > 1) {
                                  setStyle.append(
                                     Component.nullToEmpty(" x" + itemStack.getCount())

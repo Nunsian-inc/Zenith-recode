@@ -46,8 +46,8 @@ public final class NoWebModule extends Module {
                verticalVelocity = -0.8;
             }
 
-            if (MovementInputUtils.method7418()) {
-               double[] horizontalVelocity = MovementInputUtils.method7421(0.22F);
+            if (MovementInputUtils.hasMovementInput()) {
+               double[] horizontalVelocity = MovementInputUtils.horizontalVelocityForPlayer(0.22F);
                mc.player.setDeltaMovement(new Vec3(horizontalVelocity[0], verticalVelocity, horizontalVelocity[1]));
             } else {
                mc.player.setDeltaMovement(new Vec3(0.0, verticalVelocity, 0.0));
@@ -60,7 +60,7 @@ public final class NoWebModule extends Module {
             }
 
             if (ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F) {
-               double[] horizontalVelocity = MovementInputUtils.method7421(0.62F);
+               double[] horizontalVelocity = MovementInputUtils.horizontalVelocityForPlayer(0.62F);
                mc.player.setDeltaMovement(new Vec3(horizontalVelocity[0], mc.player.getDeltaMovement().y, horizontalVelocity[1]));
             }
          }

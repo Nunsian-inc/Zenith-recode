@@ -271,7 +271,7 @@ public final class AncientFarmModule extends Module {
                this.method4237();
             }
          } else {
-            if (this.stopWatch5.method7544(10000L)) {
+            if (this.stopWatch5.hasElapsedAndReset(10000L)) {
                ChatLogger.method2019("AncientFarm: " + type3.description());
             }
 
@@ -378,7 +378,7 @@ public final class AncientFarmModule extends Module {
          this.vec3d = null;
          this.vec3d2 = vec;
          if (this.method4256(stack -> stack.is(Items.FLINT_AND_STEEL))) {
-            if (this.method4222(vec) && this.stopWatch3.method7544(250L)) {
+            if (this.method4222(vec) && this.stopWatch3.hasElapsedAndReset(250L)) {
                UseItemUtils.method6514(new BlockHitResult(vec, direction, blockPos, false), InteractionHand.MAIN_HAND);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             }
@@ -429,7 +429,7 @@ public final class AncientFarmModule extends Module {
          this.vec3d = null;
          this.vec3d2 = vec;
          if (this.method4256(stack -> stack.is(Items.TNT))) {
-            if (this.method4222(vec) && this.stopWatch3.method7544(250L)) {
+            if (this.method4222(vec) && this.stopWatch3.hasElapsedAndReset(250L)) {
                UseItemUtils.method6514(new BlockHitResult(vec, Direction.UP, below, false), InteractionHand.MAIN_HAND);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
                this.intValue++;
@@ -490,7 +490,7 @@ public final class AncientFarmModule extends Module {
             if (!blockPos2.equals(this.blockPos2)) {
                this.blockPos2 = blockPos2;
                this.stopWatch2.reset();
-            } else if (this.stopWatch2.method7546(9000L)) {
+            } else if (this.stopWatch2.hasElapsed(9000L)) {
                this.items2.add(blockPos2);
                this.items.remove(blockPos2);
                this.blockPos2 = null;
@@ -646,7 +646,7 @@ public final class AncientFarmModule extends Module {
    }
 
    private void method4233() {
-      if (this.stopWatch.method7544(500L)) {
+      if (this.stopWatch.hasElapsedAndReset(500L)) {
          int n = (int)this.scanRadius.getValue3();
          BlockPos containing = this.box != null && this.type2 != AncientFarmModule.Type2.SEARCH ? BlockPos.containing(this.box.getCenter()) : mc.player.blockPosition();
          MutableBlockPos mutablePos = new MutableBlockPos();
@@ -855,7 +855,7 @@ public final class AncientFarmModule extends Module {
          }
 
          if (entry.ticks >= 80) {
-            if (this.stopWatch4.method7544(15000L)) {
+            if (this.stopWatch4.hasElapsedAndReset(15000L)) {
                ChatLogger.method2019("AncientFarm: применить предмет не удалось, пропускаем");
             }
 
@@ -975,7 +975,7 @@ public final class AncientFarmModule extends Module {
             this.method4257(intValue);
             return predicate.test(mc.player.getMainHandItem());
          } else {
-            if (this.stopWatch3.method7544(250L)) {
+            if (this.stopWatch3.hasElapsedAndReset(250L)) {
                mc.gameMode
                   .handleContainerInput(mc.player.inventoryMenu.containerId, intValue, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, mc.player);
             }

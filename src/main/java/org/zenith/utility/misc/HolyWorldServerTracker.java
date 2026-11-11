@@ -73,7 +73,7 @@ public class HolyWorldServerTracker implements ZenithAccess {
                if (currentAnarchyHere == -1) {
                   this.lobby = false;
                   this.stopWatch.reset();
-               } else if (this.stopWatch.method7544(1500L)) {
+               } else if (this.stopWatch.hasElapsedAndReset(1500L)) {
                   mc.player.connection.sendCommand("hub");
                }
             } else if (currentAnarchyHere == this.anarchy) {
@@ -83,7 +83,7 @@ public class HolyWorldServerTracker implements ZenithAccess {
              {
                if (System.currentTimeMillis() - ((ScreenCreationTimeAccess)mc.gui.screen()).zenithDLC$callGetStartTime() > 4000L) {
                   mc.player.closeContainer();
-               } else if (this.stopWatch.method7546(500L)) {
+               } else if (this.stopWatch.hasElapsed(500L)) {
                   byte index = 0;
                   byte b = 1;
                   if (this.anarchy >= 10 && this.anarchy <= 19) {
@@ -105,7 +105,7 @@ public class HolyWorldServerTracker implements ZenithAccess {
                   }
                }
             } else {
-               if (this.stopWatch.method7544(3000L)) {
+               if (this.stopWatch.hasElapsedAndReset(3000L)) {
                   mc.player.connection.sendCommand("lite");
                }
             }

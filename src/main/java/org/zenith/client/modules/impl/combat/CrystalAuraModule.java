@@ -786,7 +786,7 @@ public final class CrystalAuraModule extends Module {
       this.class33.onMoveInput(event);
       if (mc.player == null || this.blockPos9 == null || !this.method5773(event)) {
          if (this.rotation != null && mc.player != null) {
-            MovementInputUtils.method7426(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
+            MovementInputUtils.correctMovement(event, rotationManager.getEffectiveRotation().getFloatValue(), mc.player.getYRot());
          }
       }
    }
@@ -1686,7 +1686,7 @@ public final class CrystalAuraModule extends Module {
          double d3 = d - deltaMovement.x * 2.2;
          double d4 = d2 - deltaMovement.z * 2.2;
          if (Math.abs(d3) <= 0.15 && Math.abs(d4) <= 0.15) {
-            event.method3044();
+            event.clearInput();
             return true;
          } else {
             double d5 = Math.abs(d3) > 0.15 ? d3 : 0.0;
@@ -1701,7 +1701,7 @@ public final class CrystalAuraModule extends Module {
                for (float f5 = -1.0F; f5 <= 1.0F; f5++) {
                   double d7;
                   if ((f4 != 0.0F || f5 != 0.0F)
-                     && (d7 = Math.abs(Mth.wrapDegrees(Math.toDegrees(MovementInputUtils.method7427(floatValue, f4, f5)) - f))) < d6) {
+                     && (d7 = Math.abs(Mth.wrapDegrees(Math.toDegrees(MovementInputUtils.movementYawRadians(floatValue, f4, f5)) - f))) < d6) {
                      d6 = d7;
                      f2 = f4;
                      f3 = f5;
@@ -1709,8 +1709,8 @@ public final class CrystalAuraModule extends Module {
                }
             }
 
-            event.method3044();
-            event.method3042(f2, f3);
+            event.clearInput();
+            event.setMovement(f2, f3);
             return true;
          }
       }

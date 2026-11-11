@@ -200,7 +200,7 @@ public final class AutoMineModule extends Module {
    @EventTarget
    public void method4355(MoveInputEvent event) {
       if (!zenith.getHolyWorldServerTracker().isActive() && mc.player != null) {
-         event.method3038(true);
+         event.setForward(true);
       }
    }
 

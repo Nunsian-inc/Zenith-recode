@@ -85,7 +85,7 @@ public final class OffHandManagerModule extends Module {
    }
 
    private boolean method7218() {
-      return this.stopWatch.method7546(1000L);
+      return this.stopWatch.hasElapsed(1000L);
    }
 
    private Slot method7219(ModeSetting swapEnemyMode) {
