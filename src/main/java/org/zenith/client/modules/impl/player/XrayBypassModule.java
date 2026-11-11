@@ -10,6 +10,9 @@ import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
@@ -24,6 +27,7 @@ import org.zenith.client.events.PreRotationEvent;
 import org.zenith.client.events.MoveInputEvent;
 import org.zenith.client.events.UpdateEvent;
 import org.zenith.client.events.WorldRenderEvent;
+import org.zenith.client.settings.ModeSetting;
 import org.zenith.client.settings.SliderSetting;
 import org.zenith.utility.game.TargetUtils;
 import org.zenith.utility.misc.RotationRequest;
@@ -37,9 +41,32 @@ import org.zenith.utility.render.GlowUtil;
 )
 public final class XrayBypassModule extends Module {
    public static final XrayBypassModule INSTANCE = new XrayBypassModule();
-   private final SliderSetting range = new SliderSetting("module.xrayBypass.range", 30.0F, 1.0F, 128.0F, 2.0F, "module.xrayBypass.range.desc", "b");
-   private final SliderSetting height = new SliderSetting("module.xrayBypass.height", 20.0F, 1.0F, 255.0F, 2.0F, "module.xrayBypass.height.desc", "b");
-   private final SliderSetting delay = new SliderSetting("module.xrayBypass.delay", 3.0F, 1.0F, 5.0F, 1.0F, "module.xrayBypass.delay.desc", "t");
+   private static volatile boolean vanillaRendering;
+   private final ModeSetting mode = new ModeSetting("module.xrayBypass.mode", "module.xrayBypass.mode.desc") {
+      @Override
+      public void set(String key) {
+         String previous = this.get();
+         super.set(key);
+         if (!previous.equals(this.get())) {
+            XrayBypassModule.this.onModeChanged();
+         }
+      }
+
+      @Override
+      public void setValue(ModeSetting.Entry entry) {
+         String previous = this.get();
+         super.setValue(entry);
+         if (!previous.equals(this.get())) {
+            XrayBypassModule.this.onModeChanged();
+         }
+      }
+   };
+   private final ModeSetting.Entry bypassMode = new ModeSetting.Entry(this.mode, "module.xrayBypass.mode.bypass");
+   private final ModeSetting.Entry vanillaMode = new ModeSetting.Entry(this.mode, "module.xrayBypass.mode.vanilla");
+   private final SliderSetting range = new SliderSetting("module.xrayBypass.range", 30.0F, 1.0F, 128.0F, 2.0F, "module.xrayBypass.range.desc", "b", this.bypassMode::isSelected);
+   private final SliderSetting height = new SliderSetting("module.xrayBypass.height", 20.0F, 1.0F, 255.0F, 2.0F, "module.xrayBypass.height.desc", "b", this.bypassMode::isSelected);
+   private final SliderSetting delay = new SliderSetting("module.xrayBypass.delay", 3.0F, 1.0F, 5.0F, 1.0F, "module.xrayBypass.delay.desc", "t", this.bypassMode::isSelected);
+   private boolean bypassReady;
    private BlockPos blockPos;
    private int intValue;
    private int intValue2;
@@ -60,14 +87,61 @@ public final class XrayBypassModule extends Module {
 
    @Override
    public void onEnable() {
-      if (mc.player != null && mc.level != null) {
-         this.method4213(mc.player.blockPosition(), this.range.getValue3(), this.height.getValue3());
-         this.stopWatch = new StopWatch();
-         this.stopWatch.reset();
-         super.onEnable();
-      } else {
+      if (this.bypassMode.isSelected() && (mc.player == null || mc.level == null)) {
          this.setEnabled(false);
+         this.rebuildMeshes();
+         return;
       }
+      super.onEnable();
+      if (this.isEnabled()) {
+         this.onModeChanged();
+      }
+   }
+
+   @Override
+   public void onDisable() {
+      this.blockPos = null;
+      this.longOpenHashSet.clear();
+      this.bypassReady = false;
+      this.rebuildMeshes();
+      super.onDisable();
+   }
+
+   private void onModeChanged() {
+      // Первый Entry выбирается ещё до завершения инициализации полей модуля.
+      if (this.vanillaMode == null) {
+         return;
+      }
+      this.blockPos = null;
+      this.longOpenHashSet.clear();
+      this.bypassReady = false;
+      this.rebuildMeshes();
+      if (this.isEnabled() && this.bypassMode.isSelected() && mc.player != null && mc.level != null) {
+         this.startBypassScan();
+      }
+   }
+
+   private void startBypassScan() {
+      this.method4213(mc.player.blockPosition(), this.range.getValue3(), this.height.getValue3());
+      this.stopWatch = new StopWatch();
+      this.stopWatch.reset();
+      this.bypassReady = true;
+   }
+
+   private void rebuildMeshes() {
+      vanillaRendering = this.isEnabled() && this.vanillaMode.isSelected();
+      // В 26.3 allChanged безопасен без мира; вход в мир создаёт новые меши с актуальным режимом.
+      if (mc.levelExtractor != null) {
+         mc.levelExtractor.allChanged();
+      }
+   }
+
+   public static boolean isVanillaRendering() {
+      return vanillaRendering;
+   }
+
+   public static boolean hidesBlock(BlockState state) {
+      return vanillaRendering && !state.is(BlockTags.ORES) && !state.is(Blocks.ANCIENT_DEBRIS);
    }
 
    private void method4213(BlockPos blockPosition, float f, float f2) {
@@ -135,6 +209,9 @@ public final class XrayBypassModule extends Module {
 
    @EventTarget
    public void method4215(WorldRenderEvent event) {
+      if (!this.bypassMode.isSelected() || mc.player == null || mc.level == null) {
+         return;
+      }
       BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotationManager.getEffectiveRotation(), 5.0, blockHitResult2 -> true);
       if (blockHitResult.getType() != Type.MISS) {
          GlowUtil.method2230(new AABB(blockHitResult.getBlockPos()), Color.RED.getRGB(), 1.0F);
@@ -155,24 +232,38 @@ public final class XrayBypassModule extends Module {
 
    @EventTarget
    public void method4216(PacketEvent event) {
-      if (event.getPacket() instanceof ClientboundBlockUpdatePacket) {
+      if (this.bypassMode.isSelected() && event.getPacket() instanceof ClientboundBlockUpdatePacket) {
          this.stopWatch.reset();
       }
    }
 
    @EventTarget
    public void method4217(PreRotationEvent event) {
+      if (!this.bypassMode.isSelected() || mc.player == null || mc.level == null) {
+         return;
+      }
       Rotation rotation = new Rotation(rotationManager.getEffectiveRotation().getFloatValue(), -90.0F);
       rotationManager.requestRotation(new RotationRequest(rotation, () -> rotation, rotationManager.getBcCameraTestnerv().getRotationConfig3()), 50, this);
    }
 
    @EventTarget(4)
    public void method4218(MoveInputEvent event) {
-      event.clearInput();
+      if (this.bypassMode.isSelected()) {
+         event.clearInput();
+      }
    }
 
    @EventTarget
    public void method4219(UpdateEvent event) {
+      if (!this.bypassMode.isSelected() || mc.player == null || mc.level == null) {
+         if (mc.level == null) {
+            this.bypassReady = false;
+         }
+         return;
+      }
+      if (!this.bypassReady) {
+         this.startBypassScan();
+      }
       BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotationManager.getEffectiveRotation(), 5.0, blockHitResult2 -> true);
       if (blockHitResult.getType() != Type.MISS) {
          if (mc.player.tickCount % 80 == 0) {

@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +23,7 @@ import org.zenith.Zenith;
 import org.zenith.client.events.EntityDeathEvent;
 import org.zenith.client.events.EntityPushEvent;
 import org.zenith.client.events.JumpEvent;
+import org.zenith.client.modules.impl.movement.AntiLevitationModule;
 import org.zenith.client.modules.impl.movement.ElytraBoosterModule;
 import org.zenith.client.modules.impl.movement.ElytraTargetModule;
 import org.zenith.client.modules.impl.movement.GrimGlideModule;
@@ -193,6 +195,22 @@ public class MixinLivingEntity implements MinecraftAccess, ServerPositionTracker
       EventManager.call(event);
       if (event.isCancelled()) {
          callbackInfoReturnable.setReturnValue(false);
+      }
+   }
+
+   // Скрываем эффект только в расчёте движения: серверный эффект и остальная логика остаются нетронутыми.
+   @ModifyExpressionValue(
+      method = "travelInAir(Lnet/minecraft/world/phys/Vec3;)V",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getEffect(Lnet/minecraft/core/Holder;)Lnet/minecraft/world/effect/MobEffectInstance;")
+   )
+   private MobEffectInstance ignoreLevitationMovement(MobEffectInstance effect) {
+      return (Object)this == mc.player && AntiLevitationModule.INSTANCE.shouldIgnoreEffect() ? null : effect;
+   }
+
+   @Inject(method = "travelInAir(Lnet/minecraft/world/phys/Vec3;)V", at = @At("RETURN"))
+   private void limitLevitationMovement(Vec3 input, CallbackInfo callbackInfo) {
+      if ((Object)this == mc.player) {
+         AntiLevitationModule.INSTANCE.limitVerticalMovement();
       }
    }
 

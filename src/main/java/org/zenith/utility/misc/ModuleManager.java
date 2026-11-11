@@ -76,6 +76,7 @@ import org.zenith.client.modules.impl.misc.NoInteractModule;
 import org.zenith.client.modules.impl.misc.OpenWalsModule;
 import org.zenith.client.modules.impl.misc.PacketAuditModule;
 import org.zenith.client.modules.impl.misc.PathTeleportModule;
+import org.zenith.client.modules.impl.misc.PortalGUIModule;
 import org.zenith.client.modules.impl.misc.PotionThrowerModule;
 import org.zenith.client.modules.impl.misc.PvpSafeModule;
 import org.zenith.client.modules.impl.misc.ResourcePackSpoofModule;
@@ -87,6 +88,7 @@ import org.zenith.client.modules.impl.misc.StreamerModeModule;
 import org.zenith.client.modules.impl.misc.TapeMouseModule;
 import org.zenith.client.modules.impl.misc.ViaFabricFixModule;
 import org.zenith.client.modules.impl.movement.AirStuckModule;
+import org.zenith.client.modules.impl.movement.AntiLevitationModule;
 import org.zenith.client.modules.impl.movement.AutoElytraArmorModule;
 import org.zenith.client.modules.impl.movement.AutoSprintModule;
 import org.zenith.client.modules.impl.movement.StepModule;
@@ -106,6 +108,8 @@ import org.zenith.client.modules.impl.movement.NoPushModule;
 import org.zenith.client.modules.impl.movement.NoSlowModule;
 import org.zenith.client.modules.impl.movement.NoSweetSlowModule;
 import org.zenith.client.modules.impl.movement.NoWebModule;
+import org.zenith.client.modules.impl.movement.ParkourModule;
+import org.zenith.client.modules.impl.movement.SafeWalkModule;
 import org.zenith.client.modules.impl.movement.ShulkerJumpModule;
 import org.zenith.client.modules.impl.movement.SlimeFlightModule;
 import org.zenith.client.modules.impl.movement.SpeedModule;
@@ -121,6 +125,7 @@ import org.zenith.client.modules.impl.player.AppleFarmModule;
 import org.zenith.client.modules.impl.player.AutoBrewingModule;
 import org.zenith.client.modules.impl.player.AutoFarmRW;
 import org.zenith.client.modules.impl.player.AutoLootModule;
+import org.zenith.client.modules.impl.player.AutoMendModule;
 import org.zenith.client.modules.impl.player.AutoMineModule;
 import org.zenith.client.modules.impl.player.AutoWardenModule;
 import org.zenith.client.modules.impl.player.AutoZamokModule;
@@ -147,6 +152,7 @@ import org.zenith.client.modules.impl.render.CrosshairModule;
 import org.zenith.client.modules.impl.render.ESPModule;
 import org.zenith.client.modules.impl.render.EntityESPModule;
 import org.zenith.client.modules.impl.render.FireWorkESPModule;
+import org.zenith.client.modules.impl.render.HoleESPModule;
 import org.zenith.client.modules.impl.render.HandsModule;
 import org.zenith.client.modules.impl.render.HitParticlesModule;
 import org.zenith.client.modules.impl.render.InterfaceModule;
@@ -217,6 +223,9 @@ public final class ModuleManager implements MinecraftAccess {
    }
 
    private void registerMovementModules() {
+      this.registerBuiltinModule(AntiLevitationModule.INSTANCE);
+      this.registerBuiltinModule(ParkourModule.INSTANCE);
+      this.registerBuiltinModule(SafeWalkModule.INSTANCE);
       this.registerBuiltinModule(StepModule.INSTANCE);
       this.registerBuiltinModule(ScaffoldModule.INSTANCE);
       this.registerBuiltinModule(AutoSprintModule.INSTANCE);
@@ -270,6 +279,7 @@ public final class ModuleManager implements MinecraftAccess {
       this.registerBuiltinModule(CrimsonEmbersModule.INSTANCE);
       this.registerBuiltinModule(ShaderHandModule.INSTANCE);
       this.registerBuiltinModule(AutoExplosionModule.INSTANCE);
+      this.registerBuiltinModule(HoleESPModule.INSTANCE);
       this.registerBuiltinModule(VoidESPModule.INSTANCE);
       this.registerBuiltinModule(ChunkBordersModule.INSTANCE);
       this.registerBuiltinModule(DamageDirectionModule.INSTANCE);
@@ -283,6 +293,7 @@ public final class ModuleManager implements MinecraftAccess {
    }
 
    private void registerPlayerModules() {
+      this.registerBuiltinModule(AutoMendModule.INSTANCE);
       this.registerBuiltinModule(AutoToolModule.INSTANCE);
       this.registerBuiltinModule(NoDelayModule.INSTANCE);
       this.registerBuiltinModule(NoSweetSlowModule.INSTANCE);
@@ -336,6 +347,7 @@ public final class ModuleManager implements MinecraftAccess {
       this.registerBuiltinModule(ClickActionModule.INSTANCE);
       this.registerBuiltinModule(FreeCamModule.INSTANCE);
       this.registerBuiltinModule(PvpSafeModule.INSTANCE);
+      this.registerBuiltinModule(PortalGUIModule.INSTANCE);
       this.registerBuiltinModule(CameraTweaksModule.INSTANCE);
       this.registerBuiltinModule(AutoAuthModule.INSTANCE);
       this.registerBuiltinModule(AutoCapchaModule.INSTANCE);
