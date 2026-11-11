@@ -58,8 +58,11 @@ import org.zenith.client.modules.impl.misc.AutoWebModule;
 import org.zenith.client.modules.impl.misc.CameraTweaksModule;
 import org.zenith.client.modules.impl.misc.ChestStealerModule;
 import org.zenith.client.modules.impl.misc.ClickActionModule;
+import org.zenith.client.modules.impl.misc.MiddleClickModule;
 import org.zenith.client.modules.impl.misc.CommandProbeModule;
 import org.zenith.client.modules.impl.misc.ContainerHelperModule;
+import org.zenith.client.modules.impl.misc.ContainerSearchModule;
+import org.zenith.client.modules.impl.player.AutoRefillModule;
 import org.zenith.client.modules.impl.misc.CrystalOptimizerModule;
 import org.zenith.client.modules.impl.misc.ElytraHelperModule;
 import org.zenith.client.modules.impl.misc.EmotesModule;
@@ -89,6 +92,8 @@ import org.zenith.client.modules.impl.misc.TapeMouseModule;
 import org.zenith.client.modules.impl.misc.ViaFabricFixModule;
 import org.zenith.client.modules.impl.movement.AirStuckModule;
 import org.zenith.client.modules.impl.movement.AntiLevitationModule;
+import org.zenith.client.modules.impl.movement.AntiVoidModule;
+import org.zenith.client.modules.impl.movement.JesusModule;
 import org.zenith.client.modules.impl.movement.AutoElytraArmorModule;
 import org.zenith.client.modules.impl.movement.AutoSprintModule;
 import org.zenith.client.modules.impl.movement.StepModule;
@@ -144,6 +149,9 @@ import org.zenith.client.modules.impl.render.DamageDirectionModule;
 import org.zenith.client.modules.impl.render.AntiInvisibleModule;
 import org.zenith.client.modules.impl.render.ArrowsModule;
 import org.zenith.client.modules.impl.render.BetterMinecraftModule;
+import org.zenith.client.modules.impl.render.BreakProgressModule;
+import org.zenith.client.modules.impl.render.LogoutSpotsModule;
+import org.zenith.client.modules.impl.misc.TotemPopModule;
 import org.zenith.client.modules.impl.render.BlockESPModule;
 import org.zenith.client.modules.impl.render.ChamsModule;
 import org.zenith.client.modules.impl.render.CloudWaypointsModule;
@@ -224,6 +232,8 @@ public final class ModuleManager implements MinecraftAccess {
 
    private void registerMovementModules() {
       this.registerBuiltinModule(AntiLevitationModule.INSTANCE);
+      this.registerBuiltinModule(AntiVoidModule.INSTANCE);
+      this.registerBuiltinModule(JesusModule.INSTANCE);
       this.registerBuiltinModule(ParkourModule.INSTANCE);
       this.registerBuiltinModule(SafeWalkModule.INSTANCE);
       this.registerBuiltinModule(StepModule.INSTANCE);
@@ -286,6 +296,8 @@ public final class ModuleManager implements MinecraftAccess {
       this.registerBuiltinModule(JumpCircleModule.INSTANCE);
       this.registerBuiltinModule(AmbientParticlesModule.INSTANCE);
       this.registerBuiltinModule(HitParticlesModule.INSTANCE);
+      this.registerBuiltinModule(BreakProgressModule.INSTANCE);
+      this.registerBuiltinModule(LogoutSpotsModule.INSTANCE);
       this.registerBuiltinModule(TotemParticlesModule.INSTANCE);
       this.registerBuiltinModule(ParticlesModule.INSTANCE);
       this.registerBuiltinModule(ViewArmorDurabilityModule.INSTANCE);
@@ -294,6 +306,7 @@ public final class ModuleManager implements MinecraftAccess {
 
    private void registerPlayerModules() {
       this.registerBuiltinModule(AutoMendModule.INSTANCE);
+      this.registerBuiltinModule(AutoRefillModule.INSTANCE);
       this.registerBuiltinModule(AutoToolModule.INSTANCE);
       this.registerBuiltinModule(NoDelayModule.INSTANCE);
       this.registerBuiltinModule(NoSweetSlowModule.INSTANCE);
@@ -345,6 +358,8 @@ public final class ModuleManager implements MinecraftAccess {
       this.registerBuiltinModule(ElytraHelperModule.INSTANCE);
       this.registerBuiltinModule(ItemScrollerModule.INSTANCE);
       this.registerBuiltinModule(ClickActionModule.INSTANCE);
+      this.registerBuiltinModule(MiddleClickModule.INSTANCE);
+      this.registerBuiltinModule(TotemPopModule.INSTANCE);
       this.registerBuiltinModule(FreeCamModule.INSTANCE);
       this.registerBuiltinModule(PvpSafeModule.INSTANCE);
       this.registerBuiltinModule(PortalGUIModule.INSTANCE);
@@ -359,6 +374,7 @@ public final class ModuleManager implements MinecraftAccess {
       this.registerBuiltinModule(AutoInventoryModule.INSTANCE);
       this.registerBuiltinModule(AutoCraftModule.INSTANCE);
       this.registerBuiltinModule(ContainerHelperModule.INSTANCE);
+      this.registerBuiltinModule(ContainerSearchModule.INSTANCE);
       this.registerBuiltinModule(NoInteractModule.INSTANCE);
       this.registerBuiltinModule(NoFriendDamageModule.INSTANCE);
       this.registerBuiltinModule(ChestStealerModule.INSTANCE);

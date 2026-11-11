@@ -3,6 +3,7 @@ package org.zenith.client.modules.impl.player;
 import com.darkmagician6.eventapi.EventTarget;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import java.awt.Color;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -11,6 +12,7 @@ import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -42,6 +44,18 @@ import org.zenith.utility.render.GlowUtil;
 public final class XrayBypassModule extends Module {
    public static final XrayBypassModule INSTANCE = new XrayBypassModule();
    private static volatile boolean vanillaRendering;
+   // Серверные теги могут отличаться от ванильных: базовые руды не должны исчезать из фильтра.
+   private static final Set<Block> VANILLA_ORES = Set.of(
+      Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE,
+      Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE,
+      Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE,
+      Blocks.GOLD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.NETHER_GOLD_ORE,
+      Blocks.REDSTONE_ORE, Blocks.DEEPSLATE_REDSTONE_ORE,
+      Blocks.LAPIS_ORE, Blocks.DEEPSLATE_LAPIS_ORE,
+      Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
+      Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE,
+      Blocks.NETHER_QUARTZ_ORE, Blocks.ANCIENT_DEBRIS
+   );
    private final ModeSetting mode = new ModeSetting("module.xrayBypass.mode", "module.xrayBypass.mode.desc") {
       @Override
       public void set(String key) {
@@ -141,7 +155,7 @@ public final class XrayBypassModule extends Module {
    }
 
    public static boolean hidesBlock(BlockState state) {
-      return vanillaRendering && !state.is(BlockTags.ORES) && !state.is(Blocks.ANCIENT_DEBRIS);
+      return vanillaRendering && !VANILLA_ORES.contains(state.getBlock()) && !state.is(BlockTags.ORES);
    }
 
    private void method4213(BlockPos blockPosition, float f, float f2) {

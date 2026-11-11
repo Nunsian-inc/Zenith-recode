@@ -29,6 +29,7 @@ public final class BetterMinecraftModule extends Module {
    private final MultiSelectSetting.Entry entry2 = new MultiSelectSetting.Entry(this.animate, "module.betterMinecraft.animate.inventory", true);
    private final MultiSelectSetting chat = new MultiSelectSetting("module.betterMinecraft.chat", "module.betterMinecraft.chat.desc");
    private final MultiSelectSetting.Entry antiSpam = new MultiSelectSetting.Entry(this.chat, "module.betterMinecraft.chat.antiSpam", true);
+   private final MultiSelectSetting.Entry readableDurations = new MultiSelectSetting.Entry(this.chat, "module.betterMinecraft.chat.readableDurations", false);
    private final MultiSelectSetting screens = new MultiSelectSetting("module.betterMinecraft.screen", "module.betterMinecraft.screen.desc");
    private final MultiSelectSetting.Entry deathScreen = new MultiSelectSetting.Entry(this.screens, "module.betterMinecraft.screen.death", true);
    private ZenithDeathScreen lastDeathScreen;
@@ -63,6 +64,10 @@ public final class BetterMinecraftModule extends Module {
    /** Антиспам чата: одинаковые сообщения подряд схлопываются в одно со счётчиком «(x3)» (см. MixinChatComponent). */
    public boolean isAntiSpamEnabled() {
       return this.isEnabled() && this.antiSpam.isEnabled();
+   }
+
+   public boolean isReadableDurationsEnabled() {
+      return this.isEnabled() && this.readableDurations.isEnabled();
    }
 
    public boolean isDeathScreenEnabled() {

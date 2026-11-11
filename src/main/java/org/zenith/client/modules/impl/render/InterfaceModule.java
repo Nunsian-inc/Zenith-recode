@@ -39,6 +39,7 @@ import org.zenith.client.hud.TargetHud;
 import org.zenith.client.hud.TargetPotionsHud;
 import org.zenith.client.hud.TimerHud;
 import org.zenith.client.hud.SessionStatsHud;
+import org.zenith.client.hud.TotemPopHud;
 import org.zenith.client.hud.WatermarkIslandHud;
 import org.zenith.client.screens.nlgui.NLMenuScreen;
 import org.zenith.client.screens.nlgui.style.ZenithStyle;
@@ -313,6 +314,7 @@ public final class InterfaceModule extends Module {
       this.method6793(new TargetPotionsHud("TargetPotions", 0.0F, 0.0F, 960.0F, 495.5F, 119.15234F, 90.0F, Interface.Type.TOP_LEFT));
       this.method6793(new EventsHud("Events", 116.5F, 265.0F, 960.0F, 495.5F, 0.0F, -16.5F, Interface.Type.BOTTOM_CENTER));
       this.method6793(new SessionStatsHud("SessionStats", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 182.0F, Interface.Type.TOP_LEFT));
+      this.method6793(new TotemPopHud("TotemPopCounter", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 220.0F, Interface.Type.TOP_LEFT));
       this.method6793(new PartyHud("Party", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 150.0F, Interface.Type.TOP_LEFT));
    }
 

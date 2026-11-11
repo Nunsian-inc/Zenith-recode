@@ -4,6 +4,8 @@ import com.darkmagician6.eventapi.EventManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -23,14 +25,17 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.zenith.client.events.HandledScreenRenderEvent;
 import org.zenith.client.events.SlotClickEvent;
 import org.zenith.client.modules.impl.misc.AutoInventoryModule;
 import org.zenith.client.modules.impl.misc.ContainerHelperModule;
+import org.zenith.client.modules.impl.misc.ContainerSearchModule;
 import org.zenith.client.modules.impl.player.AHHelperModule;
 import org.zenith.client.modules.impl.render.BetterMinecraftModule;
 import org.zenith.utility.game.ItemNbtUtils;
 import org.zenith.utility.misc.ContainerScreenAnimationAccess;
+import org.zenith.utility.misc.KeyCompat;
 
 @Mixin({AbstractContainerScreen.class})
 public abstract class MixinHandledScreen extends Screen implements ContainerScreenAnimationAccess {
@@ -57,6 +62,9 @@ public abstract class MixinHandledScreen extends Screen implements ContainerScre
    private boolean zenith$forceClose;
    @Unique
    private boolean zenith$scaleApplied;
+   @Unique
+   private EditBox zenith$containerSearch;
+
    @Shadow
    @Final
    public AbstractContainerMenu menu;
@@ -278,6 +286,43 @@ public abstract class MixinHandledScreen extends Screen implements ContainerScre
       if (!this.zenith$isInventoryScreen()) {
          this.zenith$betterMinecraft$popScaleIfNeeded(drawContext);
          this.zenith$finishClosingAnimation();
+      }
+   }
+
+   @Inject(method = "init()V", at = @At("RETURN"))
+   private void zenith$initContainerSearch(CallbackInfo callbackInfo) {
+      String query = this.zenith$containerSearch == null ? "" : this.zenith$containerSearch.getValue();
+      this.zenith$containerSearch = null;
+      if (ContainerSearchModule.INSTANCE.supports(this.menu)) {
+         // Обычный виджет уже умеет Unicode, вставку, выделение и озвучивание; отдельный перехват символов не нужен.
+         this.zenith$containerSearch = this.addRenderableWidget(ContainerSearchModule.INSTANCE.createSearchBox(
+            this.leftPos, this.topPos, this.imageWidth, this.imageHeight, this.width, this.height, query
+         ));
+      }
+   }
+
+   @Inject(method = "extractContents(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V", at = @At("HEAD"))
+   private void zenith$updateContainerSearch(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo callbackInfo) {
+      ContainerSearchModule.INSTANCE.updateSearchBox(this.zenith$containerSearch);
+   }
+
+   @Inject(method = "extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V", at = @At("RETURN"))
+   private void zenith$highlightSearchSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo callbackInfo) {
+      ContainerSearchModule.INSTANCE.renderSlot(graphics, this.menu, slot, this.zenith$containerSearch);
+   }
+
+   @Inject(method = "keyPressed(Lnet/minecraft/client/input/KeyEvent;)Z", at = @At("HEAD"), cancellable = true)
+   private void zenith$containerSearchKey(KeyEvent input, CallbackInfoReturnable<Boolean> callbackInfo) {
+      ContainerSearchModule.INSTANCE.updateSearchBox(this.zenith$containerSearch);
+      if (this.zenith$containerSearch != null && this.zenith$containerSearch.isFocused()) {
+         int key = KeyCompat.toGlfw(input.key());
+         if (key == 256 || key == 257 || key == 258 || key == 335) {
+            this.setFocused(null);
+         } else {
+            this.zenith$containerSearch.keyPressed(input);
+         }
+         // Пока вводим запрос, E, Q и цифры не должны закрывать меню, выбрасывать или переставлять предметы.
+         callbackInfo.setReturnValue(true);
       }
    }
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageSource;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.zenith.client.modules.impl.render.BetterMinecraftModule;
+import org.zenith.utility.misc.RussianDurationFormatter;
 
 /**
  * Антиспам чата (BetterMinecraft → Чат → Антиспам): если пришло сообщение, которое уже было в чате
@@ -50,6 +52,15 @@ public abstract class MixinChatComponent {
       )
    )
    private GuiMessage zenith$stackRepeatedMessage(GuiMessage message) {
+      // Серверные ответы меняем только после сетевой обработки; сообщения игроков и подписи не трогаем.
+      if (BetterMinecraftModule.INSTANCE.isReadableDurationsEnabled()
+         && message.source() == GuiMessageSource.SYSTEM_SERVER && message.signature() == null) {
+         Component formatted = RussianDurationFormatter.format(message.content());
+         if (formatted != message.content()) {
+            message = new GuiMessage(message.addedTime(), formatted, message.signature(), message.source(), message.tag());
+         }
+      }
+
       if (!BetterMinecraftModule.INSTANCE.isAntiSpamEnabled()) {
          this.zenith$repeatCounts.clear();
          return message;
