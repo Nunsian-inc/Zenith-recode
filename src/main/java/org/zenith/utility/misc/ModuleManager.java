@@ -51,6 +51,7 @@ import org.zenith.client.modules.impl.misc.AutoInventoryModule;
 import org.zenith.client.modules.impl.misc.AutoLeaveModule;
 import org.zenith.client.modules.impl.misc.AutoPayModule;
 import org.zenith.client.modules.impl.misc.AutoRespawnModule;
+import org.zenith.client.modules.impl.misc.AutoFishModule;
 import org.zenith.client.modules.impl.misc.AutoToolModule;
 import org.zenith.client.modules.impl.misc.AutoUseModule;
 import org.zenith.client.modules.impl.misc.AutoWebModule;
@@ -88,6 +89,8 @@ import org.zenith.client.modules.impl.misc.ViaFabricFixModule;
 import org.zenith.client.modules.impl.movement.AirStuckModule;
 import org.zenith.client.modules.impl.movement.AutoElytraArmorModule;
 import org.zenith.client.modules.impl.movement.AutoSprintModule;
+import org.zenith.client.modules.impl.movement.StepModule;
+import org.zenith.client.modules.impl.movement.ScaffoldModule;
 import org.zenith.client.modules.impl.movement.BoatHighJumpModule;
 import org.zenith.client.modules.impl.movement.BoatLongJumpModule;
 import org.zenith.client.modules.impl.movement.CastleFlyModule;
@@ -214,6 +217,8 @@ public final class ModuleManager implements MinecraftAccess {
    }
 
    private void registerMovementModules() {
+      this.registerBuiltinModule(StepModule.INSTANCE);
+      this.registerBuiltinModule(ScaffoldModule.INSTANCE);
       this.registerBuiltinModule(AutoSprintModule.INSTANCE);
       this.registerBuiltinModule(ElytraBoosterModule.INSTANCE);
       this.registerBuiltinModule(CastleFlyModule.INSTANCE);
@@ -350,6 +355,7 @@ public final class ModuleManager implements MinecraftAccess {
       this.registerBuiltinModule(AutoUseModule.INSTANCE);
       this.registerBuiltinModule(TapeMouseModule.INSTANCE);
       this.registerBuiltinModule(AutoRespawnModule.INSTANCE);
+      this.registerBuiltinModule(AutoFishModule.INSTANCE);
       this.registerBuiltinModule(NameProtectModule.INSTANCE);
       this.registerBuiltinModule(AutoWebModule.INSTANCE);
       this.registerBuiltinModule(XrayBypassModule.INSTANCE);

@@ -26,6 +26,7 @@
     "world.MixinWorld"
   ],
   "client": [
+    "gui.MixinGameMenuScreen",
     "screen.MixinGuiDeathScreen",
     "network.MixinClientConnectionChannelInit",
     "scripting.MixinScriptSound",
@@ -119,6 +120,8 @@
     "screen.MixinInGameHud",
     "screen.MixinInventoryScreen",
     "screen.MixinScreen",
+    "screen.MixinGuiPauseMenuScope",
+    "screen.MixinPauseSelectionList",
     "screen.MixinGuiTextInput",
     "world.MixinClientChunkManager",
     "world.MixinClientWorldProperties",

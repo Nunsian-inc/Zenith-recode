@@ -18,6 +18,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -61,6 +63,10 @@ public final class NoFallModule extends Module {
    private BlockHitResult clutchHit;
    private boolean clutchPlaced;
    private int nextClutchAttempt;
+   private BlockPos clutchWaterSource;
+   private int clutchBucketSlot = -1;
+   private int clutchWaterDeadline;
+   private int clutchSettledTicks;
    private final StopWatch activationTimer = new StopWatch();
    private final StopWatch fallFlyingTimer = new StopWatch();
    private boolean falling;
@@ -189,6 +195,14 @@ public final class NoFallModule extends Module {
          this.resetClutch();
          this.clutchLevel = mc.level;
       }
+      if (mc.player.isDeadOrDying() || mc.player.isSpectator()) {
+         this.resetClutch();
+         return;
+      }
+      if (this.clutchWaterSource != null) {
+         this.prepareWaterPickup();
+         return;
+      }
       if (mc.player.onGround() || mc.player.isInWater() || mc.player.isInLava() || mc.player.getDeltaMovement().y >= 0.0) {
          this.clutchPlaced = false;
          return;
@@ -217,11 +231,7 @@ public final class NoFallModule extends Module {
                this.clutchHit = null;
                return;
             }
-            Rotation target = Rotation.lookingAt(aim, mc.player.getEyePosition());
-            Rotation stepped = rotationManager.getEffectiveRotation().stepTowards(target,
-               this.clutchRotationSpeed.getValue3(), this.clutchRotationSpeed.getValue3());
-            var config = rotationManager.getBcCameraTestnerv().getRotationConfig();
-            rotationManager.requestRotation(new RotationRequest(target, () -> stepped, config), 20, this);
+            this.requestClutchRotation(aim);
             return;
          }
          if (!mc.level.hasChunkAt(BlockPos.containing(simulation.vec3d)) || simulation.vec3d.y < mc.level.getMinY()) {
@@ -230,15 +240,71 @@ public final class NoFallModule extends Module {
       }
    }
 
+   private void prepareWaterPickup() {
+      // Источник запоминается только после собственного успешного выливания в сухую клетку.
+      if (!this.clutchWater.isEnabled() || mc.player.tickCount > this.clutchWaterDeadline
+         || !mc.level.hasChunkAt(this.clutchWaterSource) || !this.isClutchWaterSource()
+         || !mc.player.getInventory().getItem(this.clutchBucketSlot).is(Items.BUCKET)) {
+         this.clearWaterPickup();
+         return;
+      }
+      // Вход в воду ещё не означает остановку падения: ждём два спокойных тика.
+      if (!this.hasFinishedClutchFall()) {
+         if (this.clutchSettledTicks > 0) {
+            // Новый прыжок/падение важнее подбора воды от предыдущего спасения.
+            this.clearWaterPickup();
+            this.clutchPlaced = false;
+         }
+         return;
+      }
+      if (++this.clutchSettledTicks < 2 || mc.player.isUsingItem() || mc.gui.screen() != null
+         || mc.player.isPassenger() || mc.player.isFallFlying() || mc.player.getAbilities().flying) {
+         return;
+      }
+      Vec3 aim = Vec3.atCenterOf(this.clutchWaterSource);
+      double reach = mc.player.blockInteractionRange();
+      if (mc.player.getEyePosition().distanceToSqr(aim) > reach * reach) {
+         return;
+      }
+      this.clutchHit = new BlockHitResult(aim, Direction.UP, this.clutchWaterSource, false);
+      this.requestClutchRotation(aim);
+   }
+
+   private boolean isClutchWaterSource() {
+      return this.clutchWaterSource != null && this.clutchLevel == mc.level
+         && mc.level.getBlockState(this.clutchWaterSource).is(Blocks.WATER)
+         && mc.level.getFluidState(this.clutchWaterSource).is(Fluids.WATER)
+         && mc.level.getFluidState(this.clutchWaterSource).isSource();
+   }
+
+   private boolean hasFinishedClutchFall() {
+      return mc.player.onGround() || mc.player.isInWater() && mc.player.fallDistance == 0.0
+         && mc.player.getDeltaMovement().y >= -0.03;
+   }
+
+   private void requestClutchRotation(Vec3 aim) {
+      Rotation target = Rotation.lookingAt(aim, mc.player.getEyePosition());
+      Rotation stepped = rotationManager.getEffectiveRotation().stepTowards(target,
+         this.clutchRotationSpeed.getValue3(), this.clutchRotationSpeed.getValue3());
+      var config = rotationManager.getBcCameraTestnerv().getRotationConfig();
+      rotationManager.requestRotation(new RotationRequest(target, () -> stepped, config), 20, this);
+   }
+
    @EventTarget
    public void onPostRotation(PostRotationEvent event) {
+      boolean pickup = this.clutchWaterSource != null;
       if (!this.isClutchMode() || mc.player == null || mc.level == null || mc.gameMode == null
-         || this.clutchLevel != mc.level || this.clutchHit == null || this.clutchPlaced
+         || this.clutchLevel != mc.level || this.clutchHit == null || this.clutchPlaced && !pickup
          || rotationManager.getModule() != this || mc.player.tickCount < this.nextClutchAttempt) {
          return;
       }
       BlockPos support = this.clutchHit.getBlockPos();
-      if (!this.validSupport(support) || mc.player.onGround() || mc.player.isUsingItem() || mc.gui.screen() != null) {
+      if (mc.player.isDeadOrDying() || mc.player.isSpectator() || mc.player.isUsingItem() || mc.gui.screen() != null) {
+         return;
+      }
+      if (pickup ? !support.equals(this.clutchWaterSource) || !this.isClutchWaterSource()
+         || !this.hasFinishedClutchFall() || this.clutchSettledTicks < 2
+         : !this.validSupport(support) || mc.player.onGround()) {
          return;
       }
       Vec3 eye = mc.player.getEyePosition();
@@ -246,18 +312,21 @@ public final class NoFallModule extends Module {
       Rotation rotation = rotationManager.getEffectiveRotation();
       // Используется реальный луч текущего поворота, а не синтетический результат прогноза.
       BlockHitResult hit = mc.level.clip(new ClipContext(eye, eye.add(rotation.toDirection().scale(reach)),
-         ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, mc.player));
+         ClipContext.Block.OUTLINE, pickup ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE, mc.player));
       if (hit.getType() != HitResult.Type.BLOCK || hit.isInside() || !hit.getBlockPos().equals(support)
-         || hit.getDirection() != Direction.UP || eye.distanceToSqr(hit.getLocation()) > reach * reach) {
+         || !pickup && hit.getDirection() != Direction.UP || eye.distanceToSqr(hit.getLocation()) > reach * reach) {
          return;
       }
-      int slot = this.findClutchSlot(support.above());
+      int slot = pickup ? this.clutchBucketSlot : this.findClutchSlot(support.above());
       if (slot == -1) {
          return;
       }
       var stack = mc.player.getInventory().getItem(slot);
-      boolean water = stack.is(Items.WATER_BUCKET);
-      if (!water) {
+      if (pickup && (!stack.is(Items.BUCKET) || mc.player.getCooldowns().isOnCooldown(stack))) {
+         return;
+      }
+      boolean water = !pickup && stack.is(Items.WATER_BUCKET);
+      if (!water && !pickup) {
          BlockPlaceContext context = new BlockPlaceContext(mc.player, InteractionHand.MAIN_HAND, stack, hit);
          if (!context.canPlace() || !context.getClickedPos().equals(support.above())) {
             return;
@@ -280,10 +349,28 @@ public final class NoFallModule extends Module {
          // useItemOn не выливает BucketItem: ведро использует обычный useItem и собственный луч.
          mc.player.connection.send(new ServerboundMovePlayerPacket.Rot(rotation.getFloatValue(), rotation.getFloatValue2(),
             mc.player.onGround(), mc.player.horizontalCollision));
-         InteractionResult result = water ? mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND)
+         // Обработчики пакетов могли сменить слот или состояние источника до самого использования.
+         if (mc.player.getInventory().getSelectedSlot() != slot
+            || pickup && (!mc.player.getInventory().getItem(slot).is(Items.BUCKET) || !this.isClutchWaterSource())
+            || water && !this.validSupport(support)) {
+            return;
+         }
+         InteractionResult result = water || pickup ? mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND)
             : mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, hit);
          if (result instanceof InteractionResult.Success success) {
             this.clutchPlaced = true;
+            if (pickup) {
+               // После единственного успешного подбора больше не используем уже полное ведро.
+               this.clearWaterPickup();
+            } else if (water && mc.player.getInventory().getItem(slot).is(Items.BUCKET)) {
+               this.clutchWaterSource = support.above().immutable();
+               this.clutchBucketSlot = slot;
+               this.clutchWaterDeadline = mc.player.tickCount + 100;
+               this.clutchSettledTicks = 0;
+               if (!this.isClutchWaterSource()) {
+                  this.clearWaterPickup();
+               }
+            }
             if (success.swingSource() == InteractionResult.SwingSource.PREDICTED) {
                SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             }
@@ -324,7 +411,15 @@ public final class NoFallModule extends Module {
       });
    }
 
+   private void clearWaterPickup() {
+      this.clutchWaterSource = null;
+      this.clutchBucketSlot = -1;
+      this.clutchWaterDeadline = 0;
+      this.clutchSettledTicks = 0;
+   }
+
    private void resetClutch() {
+      this.clearWaterPickup();
       this.clutchHit = null;
       this.clutchLevel = null;
       this.clutchPlaced = false;

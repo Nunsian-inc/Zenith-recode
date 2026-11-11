@@ -16,7 +16,12 @@ public abstract class MixinPressableWidget {
       cancellable = true
    )
    private void zenith$style(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo callbackInfo) {
-      if (VanillaOptionStyle.isActive()) {
+      AbstractButton button = (AbstractButton)(Object)this;
+      boolean pauseMenu = org.zenith.client.screens.override.main.component.PauseMenuScope.isDescendant(
+         net.minecraft.client.Minecraft.getInstance().gui.screen());
+      if (VanillaOptionStyle.isActive() && (!pauseMenu || button.getWidth() > button.getHeight()
+         && (button.getClass() == net.minecraft.client.gui.components.Button.Plain.class
+            || button instanceof net.minecraft.client.gui.components.CycleButton<?>))) {
          VanillaOptionStyle.drawButton((AbstractButton)(Object)this, context, mouseX, mouseY, deltaTicks);
          callbackInfo.cancel();
       }
