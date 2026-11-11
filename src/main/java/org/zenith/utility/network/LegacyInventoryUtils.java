@@ -9,20 +9,20 @@ import org.zenith.MinecraftAccess;
 import org.zenith.utility.misc.PacketUtils;
 
 @Deprecated
-public class Util1 implements MinecraftAccess {
-   public static int method688(Item item) {
-      return method691(item, 0, 35);
+public class LegacyInventoryUtils implements MinecraftAccess {
+   public static int findItemSlot(Item item) {
+      return findItemSlotInRange(item, 0, 35);
    }
 
-   public static int method689(Item item) {
-      return method691(item, 0, 8);
+   public static int findHotbarItemSlot(Item item) {
+      return findItemSlotInRange(item, 0, 8);
    }
 
-   public static int method690(Item item) {
-      return method691(item, 9, 35);
+   public static int findInventoryItemSlot(Item item) {
+      return findItemSlotInRange(item, 9, 35);
    }
 
-   public static int method691(Item item, int n, int n2) {
+   public static int findItemSlotInRange(Item item, int n, int n2) {
       for (int i = n2; i >= n; i--) {
          if (mc.player.getInventory().getItem(i).getItem() == item) {
             return i;
@@ -32,7 +32,7 @@ public class Util1 implements MinecraftAccess {
       return -1;
    }
 
-   public static int method692(int n, int n2) {
+   public static int findEmptySlotInRange(int n, int n2) {
       for (int i = n2; i >= n; i--) {
          if (mc.player.getInventory().getItem(i).isEmpty()) {
             return i;
@@ -42,7 +42,7 @@ public class Util1 implements MinecraftAccess {
       return -1;
    }
 
-   public static void method693(Util1.Type2 type2, int selected, int slotNum) {
+   public static void selectSlot(LegacyInventoryUtils.SlotSwapMode type2, int selected, int slotNum) {
       if (selected != -1 && slotNum != -1) {
          switch (type2) {
             case NORMAL:
@@ -53,12 +53,12 @@ public class Util1 implements MinecraftAccess {
                PacketUtils.sendPacket(new ServerboundSetCarriedItemPacket(selected));
                break;
             case ALTERNATIVE:
-               method695(selected, slotNum);
+               swapContainerSlots(selected, slotNum);
          }
       }
    }
 
-   public static void method694(Util1.Type2 type2, int selected, int n) {
+   public static void restoreSlot(LegacyInventoryUtils.SlotSwapMode type2, int selected, int n) {
       if (selected != -1 && n != -1) {
          switch (type2) {
             case NORMAL:
@@ -69,12 +69,12 @@ public class Util1 implements MinecraftAccess {
                PacketUtils.sendPacket(new ServerboundSetCarriedItemPacket(n));
                break;
             case ALTERNATIVE:
-               method695(selected, n);
+               swapContainerSlots(selected, n);
          }
       }
    }
 
-   public static void method695(int selected, int slotNum) {
+   public static void swapContainerSlots(int selected, int slotNum) {
       if (selected != -1 && slotNum != -1) {
          mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, selected, 0, ContainerInput.PICKUP, mc.player);
          mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, slotNum, 0, ContainerInput.PICKUP, mc.player);
@@ -82,25 +82,25 @@ public class Util1 implements MinecraftAccess {
       }
    }
 
-   public static void method696(int n, int n2) {
+   public static void swapInventorySlots(int n, int n2) {
       if (n != -1 && n2 != -1) {
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(n), 0, ContainerInput.PICKUP, mc.player);
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(n2), 0, ContainerInput.PICKUP, mc.player);
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(n), 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, toContainerSlot(n), 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, toContainerSlot(n2), 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, toContainerSlot(n), 0, ContainerInput.PICKUP, mc.player);
       }
    }
 
-   public static void method697(int n, int n2) {
+   public static void swapSlots(int n, int n2) {
       if (n != -1 && n2 != -1) {
-         method696(n, n2);
+         swapInventorySlots(n, n2);
       }
    }
 
-   public static int method698(int n) {
+   public static int toContainerSlot(int n) {
       return n >= 0 && n <= 8 ? 36 + n : n;
    }
 
-   public static void method699(Util1.Type type) {
+   public static void swing(LegacyInventoryUtils.SwingMode type) {
       switch (type) {
          case MAINHAND:
             org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
@@ -113,14 +113,14 @@ public class Util1 implements MinecraftAccess {
       }
    }
 
-   public static enum Type {
+   public static enum SwingMode {
       MAINHAND,
       OFFHAND,
       PACKET,
       NONE;
    }
 
-   public static enum Type2 {
+   public static enum SlotSwapMode {
       NORMAL,
       SILENT,
       ALTERNATIVE,
