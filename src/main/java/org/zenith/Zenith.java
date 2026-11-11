@@ -31,6 +31,7 @@ import org.zenith.utility.api.Manager;
 import org.zenith.utility.api.OnboardingUtil;
 import org.zenith.utility.api.PetManager;
 import org.zenith.utility.api.PlayTimeTracker;
+import org.zenith.utility.api.SessionStats;
 import org.zenith.utility.api.RegionUtil;
 import org.zenith.utility.api.Share;
 import org.zenith.utility.api.SiteLicenseService;
@@ -117,6 +118,11 @@ public final class Zenith {
    private Proxies proxies;
    private Accounts accounts;
    private PlayTimeTracker playTimeTracker;
+   private SessionStats sessionStats;
+
+   public SessionStats getSessionStats() {
+      return sessionStats;
+   }
    private final Zenith.Entry entry;
    private KawaseBlur kawaseBlur;
 
@@ -159,6 +165,7 @@ public final class Zenith {
       this.proxies = new Proxies();
       this.accounts = new Accounts();
       this.playTimeTracker = new PlayTimeTracker();
+      this.sessionStats = new SessionStats();
       this.names = new Names();
       this.chatBridge = new ChatBridge();
       this.manager = new Manager();
@@ -266,6 +273,7 @@ public final class Zenith {
       }
 
       try {
+         if (this.sessionStats != null) this.sessionStats.save();
          this.playTimeTracker.save();
       } catch (Throwable e) {
          method1500("playTimeManager", e);

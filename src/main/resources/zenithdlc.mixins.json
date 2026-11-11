@@ -26,6 +26,7 @@
     "world.MixinWorld"
   ],
   "client": [
+    "screen.MixinGuiDeathScreen",
     "network.MixinClientConnectionChannelInit",
     "scripting.MixinScriptSound",
     "scripting.MixinScriptSkin",
