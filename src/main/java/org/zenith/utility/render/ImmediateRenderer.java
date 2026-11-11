@@ -154,6 +154,16 @@ public final class ImmediateRenderer {
 
                      boolean flag = type2 != ImmediateRenderer.Type.DEFAULT || intValue > 0;
                      RenderTarget mainRenderTarget = renderTarget != null ? renderTarget : Minecraft.getInstance().gameRenderer.mainRenderTarget();
+                     ScissorState scissor = RenderSystem.getScissorStateForRenderTypeDraws();
+                     // Масштаб GUI округляет размеры вверх, поэтому scissor может выйти за нечётный framebuffer.
+                     int scissorX = Math.clamp(scissor.x(), 0, mainRenderTarget.width);
+                     int scissorY = Math.clamp(scissor.y(), 0, mainRenderTarget.height);
+                     int scissorRight = (int)Math.clamp((long)scissor.x() + scissor.width(), 0L, (long)mainRenderTarget.width);
+                     int scissorTop = (int)Math.clamp((long)scissor.y() + scissor.height(), 0L, (long)mainRenderTarget.height);
+                     if (scissor.enabled() && (scissorRight <= scissorX || scissorTop <= scissorY)) {
+                        break label295;
+                     }
+
                      RenderState.Data2 data2 = RenderState.method1904();
                      if (flag) {
                         boolean flag2 = type2 == ImmediateRenderer.Type.DEFAULT && RenderState.isFlag4() && mainRenderTarget.hasDepth();
@@ -205,9 +215,8 @@ public final class ImmediateRenderer {
 
                      try (RenderPass renderPass = commandEncoder.createRenderPass(() -> "Zenith immediate", colorTextureView, Optional.empty(), depthTextureView, OptionalDouble.empty())) {
                         renderPass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
-                        ScissorState scissorStateForRenderTypeDraws = RenderSystem.getScissorStateForRenderTypeDraws();
-                        if (scissorStateForRenderTypeDraws.enabled()) {
-                           renderPass.enableScissor(scissorStateForRenderTypeDraws.x(), scissorStateForRenderTypeDraws.y(), scissorStateForRenderTypeDraws.width(), scissorStateForRenderTypeDraws.height());
+                        if (scissor.enabled()) {
+                           renderPass.enableScissor(scissorX, scissorY, scissorRight - scissorX, scissorTop - scissorY);
                         }
 
                         RenderSystem.bindDefaultUniforms(renderPass);
